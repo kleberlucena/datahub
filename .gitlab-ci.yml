@@ -1,0 +1,204 @@
+# Usando uma imagem do Docker para rodar o Docker
+# Isso é chamado de docker-in-docker e pode ser complicado as vezes.
+# Caso tenha problemas, melhor utilizar o bash executor do Gitlab runner
+image: docker:19.03.7
+
+# habilita docker-in-docker communication
+services:
+  - docker:19.03.7-dind
+
+
+variables:
+  # Criando variáveis de ambiente globais para mais fácil acesso.
+  # Variáveis de ambiente que começam com $CI_ são disponibilizadas pelo Gitlab
+  # Leia mais aqui: https://docs.gitlab.com/ee/ci/variables/predefined_variables.html
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  CACHE_IMAGE_TAG: $CI_REGISTRY_IMAGE:latest
+
+# Debug para verificar se o docker
+# está funcinando corretamente no runner
+before_script:
+  - docker info
+  - echo "Image tag ${IMAGE_TAG}"
+  - echo "Cache image tag ${CACHE_IMAGE_TAG}"
+
+stages:
+  - build
+  - deploy
+  - cleanup
+
+build_image:
+  stage: build
+  tags:
+    - docker
+    - pmpb
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $CACHE_IMAGE_TAG || true
+    - docker build --cache-from $CACHE_IMAGE_TAG --tag $IMAGE_TAG --tag $CACHE_IMAGE_TAG .
+    - docker push $IMAGE_TAG
+    - docker push $CACHE_IMAGE_TAG
+
+# Da acesso ao servidor que queremos acessar via SSH
+# Para utilizar esse template, você precisa definir as variáveis de ambiente:
+#  - SERVER_IP
+#  - SERVER_PRIVATE_KEY
+.server_access_granted:
+  before_script:
+    - mkdir -p ~/.ssh
+    - echo "${SERVER_PRIVATE_KEY}" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - echo "IP do servidor - ${SERVER_IP}"
+    - ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+
+
+# Template para adicionar usuário admin do Django
+# Para utilizar esse template, você precisa definir as variáveis de ambiente:
+#  - SERVER_IP
+#  - SERVER_PRIVATE_KEY
+#  - DB_PASSWORD
+#  - DJANGO_SUPERUSER_PASSWORD
+#  - DJANGO_SUPERUSER_EMAIL
+#  - DJANGO_SUPERUSER_USERNAME
+.create_django_admin_user:
+  extends: .server_access_granted
+  when: manual
+  tags:
+    - docker
+    - pmpb
+  script:
+    - >
+        ssh root@$SERVER_IP << ENDSSH
+          export IMAGE_TAG=${IMAGE_TAG}
+          export DB_PASSWORD=${DB_PASSWORD}
+          export DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
+          export DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
+          export DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
+          cd app
+          docker-compose run app python manage.py createsuperuser --noinput
+        ENDSSH
+
+# Template de execução de deploy de containers Docker em servidores remotos.
+# Outros build steps podem usar esse template e sobreesecrever variáveis
+# Para utilizar esse template, você precisa definir as variáveis de ambiente:
+#  - SERVER_IP
+#  - SERVER_PRIVATE_KEY
+#  - DB_PASSWORD
+.deploy_template:
+  extends: .server_access_granted
+  stage: deploy
+  when: manual
+  tags:
+    - docker
+  script:
+    - ssh root@$SERVER_IP "mkdir -p app"
+    - scp -r ./$COMPOSE_FILE root@$SERVER_IP:~/app/docker-compose.yml
+    - >
+        ssh root@$SERVER_IP << ENDSSH
+          cd app
+          export IMAGE_TAG=${IMAGE_TAG}
+          export DB_PASSWORD=${DB_PASSWORD}
+          docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+          docker-compose down
+          docker system prune --all --force
+          docker-compose pull
+          docker-compose up -d
+        ENDSSH
+
+# Build step para deployments no servidor de stage
+deploy stage:
+  extends: .deploy_template
+  tags:
+    - docker
+    - pmpb
+  environment:
+    name: stage
+    url: https://sadmi-stage.apps.pm.pb.gov.br
+  variables:
+    COMPOSE_FILE: "docker-compose.stage.yml"
+    SERVER_IP: $STAGE_SERVER_IP
+    SERVER_PRIVATE_KEY: $STAGE_SERVER_PRIVATE_KEY
+    DB_PASSWORD: $STAGE_DB_PASSWORD
+
+# Build step para deployments no servidor de Produção
+deploy prod:
+  extends: .deploy_template
+  tags:
+    - docker
+    - pmpb
+  only:
+    - master
+  environment:
+    name: production
+    url: https://sadmi.apps.pm.pb.gov.br
+  variables:
+    COMPOSE_FILE: "docker-compose.prod.yml"
+    SERVER_IP: $PROD_SERVER_IP
+    SERVER_PRIVATE_KEY: $PROD_SERVER_PRIVATE_KEY
+    DB_PASSWORD: $PROD_DB_PASSWORD
+
+create stage admin user:
+  extends: .create_django_admin_user
+  tags:
+    - docker
+    - pmpb
+  stage: deploy
+  variables:
+    SERVER_IP: $STAGE_SERVER_IP
+    SERVER_PRIVATE_KEY: $STAGE_SERVER_PRIVATE_KEY
+    DB_PASSWORD: $STAGE_DB_PASSWORD
+    DJANGO_SUPERUSER_PASSWORD: $STAGE_SUPERUSER_PW
+    DJANGO_SUPERUSER_EMAIL: $STAGE_SUPERUSER_EMAIL
+    DJANGO_SUPERUSER_USERNAME: admin
+
+create prod admin user:
+  extends: .create_django_admin_user
+  tags:
+    - docker
+    - pmpb
+  stage: deploy
+  only:
+    - master
+  variables:
+    SERVER_IP: $PROD_SERVER_IP
+    SERVER_PRIVATE_KEY: $PROD_SERVER_PRIVATE_KEY
+    DB_PASSWORD: $PROD_DB_PASSWORD
+    DJANGO_SUPERUSER_PASSWORD: $PROD_SUPERUSER_PW
+    DJANGO_SUPERUSER_EMAIL: $PROD_SUPERUSER_EMAIL
+    DJANGO_SUPERUSER_USERNAME: admin
+
+# Remove containers e limpa arquivos criados pelo deploy
+# ATENÇÃO:
+# Esse build step é um caminho sem volta.
+# Depois de executado, todos os arquivos serão exclúidos, incluindo o banco de dados
+undeploy stage:
+  extends: .deploy_template
+  tags:
+    - docker
+    - pmpb
+  stage: cleanup
+  environment:
+    name: stage
+  variables:
+    COMPOSE_FILE: "docker-compose.stage.yml"
+    SERVER_IP: $STAGE_SERVER_IP
+    SERVER_PRIVATE_KEY: $STAGE_SERVER_PRIVATE_KEY
+    DB_PASSWORD: $STAGE_DB_PASSWORD
+  script:
+    - >
+        ssh root@$SERVER_IP << ENDSSH
+          cd app
+          export IMAGE_TAG=${IMAGE_TAG}
+          export DB_PASSWORD=${DB_PASSWORD}
+          docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+          docker-compose stop
+          docker-compose down -v
+          docker system prune --all --volumes --force
+          cd ..
+          rm -rf app
+        ENDSSH
+
+
+

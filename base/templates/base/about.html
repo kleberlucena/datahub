@@ -1,0 +1,117 @@
+{% extends "base/base.html" %}
+
+<!-- browser title -->
+{% block title %} Sobre {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}{% endblock %}
+
+<!-- context title -->
+{% block title-header %} Sobre o SADMI {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'base:index' %}">Início</a></li>
+  <li class="breadcrumb-item active">Sobre</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title"> Recursos do Sistema</h3>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
+        <div class="row">
+          <div class="col-12 col-sm-6">
+            <div class="info-box bg-light">
+              <div class="info-box-content">
+                <span class="info-box-text text-center text-muted">Próxima entrega estimada</span>
+                <span class="info-box-number text-center text-muted mb-0">25 de outubro 2021</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6">
+            <div class="info-box bg-light">
+              <div class="info-box-content">
+                <span class="info-box-text text-center text-muted">Tempo de desenvolvimento</span>
+                <span class="info-box-number text-center text-muted mb-0"> 02 meses <span>
+              </span></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <h4>Atividades recentes</h4>
+            <p></p>
+           <div class="timeline">
+              <!-- timeline time label -->
+              <div class="time-label">
+                <span class="bg-red">Nesse momento</span>
+              </div>
+              <!-- /.timeline-label -->
+              <!-- timeline item -->
+              <div>
+                <i class="fas fa-code bg-blue"></i>
+                <div class="timeline-item">
+                  <span class="time"><i class="fas fa-clock"></i> 26/08/2021</span>
+                  <h3 class="timeline-header no-border"> Desenvolvimento do Controle de Material</h3>
+                </div>
+              </div>
+              <!-- END timeline item -->
+              <!-- timeline item -->
+              <div>
+                <i class="fas fa-check bg-green"></i>
+                <div class="timeline-item">
+                  <span class="time"><i class="fas fa-clock"></i> 25/08/2021</span>
+                  <h3 class="timeline-header">Projeto inicial</h3>
+                  <div class="timeline-body">
+                    Desenvolvidos recursos de autenticação, controle de permissão, inserido
+                    template, e definida a arquitetura do sistema.
+                  </div>
+                </div>
+              </div>
+              <!-- END timeline item -->
+              <div>
+                <i class="fas fa-clock bg-gray"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
+        <h3 class="text-primary"><i class="far fa-calendar-check"></i> Foco administrativo</h3>
+        <p class="text-muted">O SADMI está sendo desenvolvido com o intuito de prover os recursos necessários para
+          processo administrativo voltado para qualidade. Isso inclui funcionalidades com foco na gestão e integração
+          entre setores e entre sistemas.</p>
+        <br>
+
+        <h5 class="mt-5 text-muted">Sistemas integrados</h5>
+        <ul class="list-unstyled">
+          <li>
+            <a href="" class="btn-link text-secondary"><i class="fas fa-check"></i>&nbsp;&nbsp;SIGPMPB</a>
+          </li>
+          <li>
+            <a href="" class="btn-link text-secondary"><i class="fas fa-check"></i>&nbsp;&nbsp;SAI</a>
+          </li>
+          <li>
+            <a href="" class="btn-link text-secondary"><i class="fas fa-check"></i>&nbsp;&nbsp;SASP</a>
+          </li>
+          <li>
+            <a href="" class="btn-link text-secondary"><i class="fas fa-check"></i>&nbsp;&nbsp;SAC</a>
+          </li>
+          <li>
+            <a href="" class="btn-link text-secondary"><i class="fas fa-check"></i>&nbsp;&nbsp;RISis</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- /.card-body -->
+</div>
+{% endblock %}
+
+<!-- javascripts -->
+{% block js %}{% endblock %}

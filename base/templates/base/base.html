@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static '/sti/img/coint_64.png' %}">
+    <title>
+      SADMI | {% block title %}{% endblock %}
+    </title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
+    {% block style_sheet %}{% endblock %}
+    <style>
+      .pm-nav-header-red{ background-color: #B22222; color: white;}
+      a.nav-link { color: #fff !important; }
+      a.nav-link:hover { color: rgba(255,255,255,.75) !important; }
+      a.nav-link:hover { color: rgba(255,255,255,.75) !important; }
+    </style>
+  </head>
+  <body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+
+      {% include 'base/nav-header.html' %}
+      {% include 'base/nav-left.html' %}
+
+      <div class="content-wrapper">
+          <section class="content-header">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-sm-6">
+                  <h4>{% block title-header %}{% endblock %}</h4>
+                </div>
+                <div class="col-sm-6 d-sm-inline-block d-none">
+                  <ol class="breadcrumb float-sm-right">
+                    {% block breadcrumb %} {% endblock %}
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </section>
+        <section class="content">
+          <div class="container-fluid mt-3">
+            {% block content %} {% endblock %}
+          </div>
+        </section>
+      </div>
+
+      {% include 'base/footer.html' %}
+      {% include 'base/nav-right.html' %}
+
+    </div>
+    <!-- ./wrapper -->
+
+    <script src="{% static 'adminlte-3.1.0/plugins/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'adminlte-3.1.0/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    {% block js %}{% endblock %}
+    <script src="{% static 'adminlte-3.1.0/js/adminlte.min.js' %}"></script>
+    <!-- Nav right statements-->
+    <script src="{% static 'adminlte-3.1.0/js/demo.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+{% extends "socialaccount/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Social Network Login Failure" %}{% endblock %}
+
+{% block content %}
+
+    <div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-red">
+          <div class="card-header text-center">
+              <i class="fas fa-exclamation-triangle text-warning fa-5x m-2"></i>
+            <hr>
+            <a href="{% url 'base:index' %}" class="h3"><b>Falha durante autenticação</b></a>
+          </div>
+          <div class="card-body">
+            <p class="login-box-msg">Por favor realize nova tentativa através do botão abaixo</p>
+            <div class="social-auth-links text-center mt-2 mb-3">
+                <a href="{% url 'base:index' %}" class="btn btn-block btn-primary">
+                  <i class="fas fa-undo-alt mr-2"></i> Voltar
+                </a>
+            </div>
+          </div>
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+  </div>
+{% endblock %}

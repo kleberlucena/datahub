@@ -1,0 +1,49 @@
+#version: "3.4"
+#
+#services:
+#
+#  app:
+#    image: $IMAGE_TAG
+#    environment:
+#      - DEBUG=on
+#      - SECRET_KEY=cmVBRUtB326j56hu397JvITD
+#      - DB_NAME=django
+#      - DB_USER=django
+#      # Variáveis de ambiente são injetadas pelo Gitlab durante a execução
+#      # do pipeline de deploy. Verifique as variáveis de ambiente do Gitlab
+#      # https://gitlab.apps.pm.pb.gov.br/sti/reconhecimento-facial-backend/-/settings/ci_cd
+#      - DB_PASSWORD=$DB_PASSWORD
+#      - DB_HOST=db
+#      - DB_PORT=5432
+#      - ALLOWED_HOSTS=.apps.pm.pb.gov.br,172.16.20.18,172.16.20.19
+#      - DJANGO_SUPERUSER_PASSWORD=$DJANGO_SUPERUSER_PASSWORD
+#      - DJANGO_SUPERUSER_EMAIL=$DJANGO_SUPERUSER_EMAIL
+#      - DJANGO_SUPERUSER_USERNAME=admin
+#      - FACES_CACHE_PATH=/faces_cache/
+#    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+#    volumes:
+#      - ./app_cache:/faces_cache
+#      - ./logs:/code/logs
+#    ports:
+#      - "8000:8000"
+#    depends_on:
+#      - db
+#    restart: always
+#
+#  db:
+#    image: postgres:10.3
+#    healthcheck:
+#      test: ["CMD", "sh", "-c", "psql -U django django -c 'select 1;'"]
+#      start_period: 2s
+#      interval: 5s
+#      timeout: 1s
+#      retries: 1
+#    environment:
+#      - POSTGRES_USER=django
+#      - POSTGRES_PASSWORD=$DB_PASSWORD
+#      - POSTGRES_DB=django
+#    volumes:
+#      - ./postgres_data:/var/lib/postgresql/data
+#    restart: always
+#    ports:
+#      - "5432:5432"
