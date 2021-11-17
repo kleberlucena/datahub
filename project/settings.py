@@ -5,22 +5,18 @@ from pathlib import Path
 from datetime import timedelta
 from typing import List, Tuple
 
-
 # Environment variable definitions
 env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env()
-
 
 # Variable default of Django
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG', default=False)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 ALLOWED_HOSTS = list(
     filter(lambda h: h != '', env('ALLOWED_HOSTS', default='*').split(','))
 )
-
 
 # Application definition
 INSTALLED_APPS = [
@@ -53,7 +49,6 @@ INSTALLED_APPS = [
     'base',
 ]
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -65,15 +60,12 @@ MIDDLEWARE = [
     'global_login_required.GlobalLoginRequiredMiddleware',
 ]
 
-
 ROOT_URLCONF = 'project.urls'
-
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
-
 
 TEMPLATES = [
     {
@@ -91,9 +83,7 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'project.wsgi.application'
-
 
 # Databases
 DATABASES = {
@@ -135,7 +125,6 @@ DEFAULT_FILE_STORAGE = 'django_minio_backend.models.MinioBackend'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
@@ -143,7 +132,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated'
     ]
 }
-
 
 # Allauth
 SITE_ID = int(env('SITE_ID'))  # Verify the site id in django admin"
@@ -161,7 +149,6 @@ SOCIALACCOUNT_PROVIDERS = {
         'KEYCLOAK_REALM': env('KEYCLOAK_REALM')
     }
 }
-
 
 # Minio
 MINIO_CONSISTENCY_CHECK_ON_START = True
@@ -181,7 +168,6 @@ MINIO_MEDIA_FILES_BUCKET = env('MINIO_MEDIA_FILES_BUCKET')
 MINIO_STATIC_FILES_BUCKET = env('MINIO_STATIC_FILES_BUCKET')
 MINIO_BUCKET_CHECK_ON_SAVE = True
 
-
 # Global login required middleware
 PUBLIC_VIEWS = [
     'base.views.health_check',  # view to verify health system status
@@ -190,6 +176,9 @@ PUBLIC_VIEWS = [
 PUBLIC_PATHS = [
     r'^/accounts/.*',  # allow public access to all django-allauth views
 ]
+
+if DEBUG:
+    PUBLIC_PATHS.append(r'^/admin/.*', )  # allow access to admin views
 
 
 # Logs
