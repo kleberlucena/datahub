@@ -1,10 +1,10 @@
 DEBUG=on
-SECRET_KEY=t4rggeUzryG5Wzc965rgerggge4Vq5XkJgdfe37K
+DJANGO_SECRET_KEY=secret_xpto_key
 
-# POSTGRES (Se usar banco externo)
-DB_NAME=sadmi
-DB_USER=postgres
-DB_PASSWORD=postgres
+# POSTGRES
+DB_NAME=portal
+DB_USER=keycloak
+DB_PASSWORD=keycloak
 DB_HOST=127.0.0.1
 DB_PORT=5432
 
@@ -15,14 +15,23 @@ MINIO_EXTERNAL_ENDPOINT_USE_HTTPS=False
 MINIO_USE_HTTPS=False
 MINIO_ACCESS_KEY=J7i6wMWSLzGm2F
 MINIO_SECRET_KEY=J7i6wMWSLzGm2Ffa9dALyn4d7pE7
-MINIO_PRIVATE_BUCKETS=bacinf-media-files-bucket
-MINIO_PUBLIC_BUCKETS=bacinf-static-files-bucket
-MINIO_MEDIA_FILES_BUCKET=bacinf-media-files-bucket
-MINIO_STATIC_FILES_BUCKET=bacinf-static-files-bucket
 
-# KEYCLOAK
 SITE_ID=2
-KEYCLOAK_URL=https://accounts.apps.pm.pb.gov.br/auth
+KEYCLOAK_URL=http://localhost:8080/auth
 KEYCLOAK_REALM=pmpb
-ACCOUNT_LOGOUT_REDIRECT_URL=http://localhost:8000/accounts/login/
+KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL=http://localhost:8000/accounts/login/
+KEYCLOAK_API_ADMIN_USERNAME=admin
+KEYCLOAK_API_ADMIN_PASSWORD=toor
 
+# SIGPMPB
+SIGPMPB_TOKEN=xpto.xpto.xpto
+SIGPMPB_URL_OPMS=https://intranet.pm.pb.gov.br/api/v2/unidades
+SIGPMPB_URL_MILITARES=https://intranet.pm.pb.gov.br/api/v2/servidores
+SIGPMPB_REFERER=https://apps.pm.pb.gov.br
+
+# CELERY
+CELERY_BROKER_URL=redis://localhost:6379
+CELERY_RESULT_BACKEND=django-db
+
+# GRAYLOG
+GRAYLOG_HTTP_ENDPOINT=http://localhost:12201/gelf

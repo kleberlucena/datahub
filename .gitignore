@@ -82,14 +82,16 @@ celerybeat-schedule.*
 
 # Environments
 .env
+.env_local
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+docker-compose.yml
 
-# mkdocs documentation
+# mkdocs docs
 /site
 
 # mypy
@@ -146,8 +148,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# Sphinx documentation
+# Sphinx docs
 docs/_build/
 
 # PyBuilder
 target/
+/docker-compose.yml

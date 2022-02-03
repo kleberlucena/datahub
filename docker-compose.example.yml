@@ -1,0 +1,99 @@
+version: "3.4"
+
+services:
+  app:
+    build: .
+    environment:
+      - DEBUG=on
+      - DJANGO_SECRET_KEY=secret_xpto_key
+      - DJANGO_SITE_ID=2
+      - DB_NAME=bacinf
+      - DB_USER=keycloak
+      - DB_PASSWORD=keycloak
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_EXTERNAL_ENDPOINT=localhost:9000
+      - MINIO_ACCESS_KEY=J7i6wMWSLzGm2F
+      - MINIO_SECRET_KEY=J7i6wMWSLzGm2Ffa9dALyn4d7pE7
+      - KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL=http://localhost:8000/accounts/login/
+      - KEYCLOAK_REALM=pmpb
+      - KEYCLOAK_URL=http://localhost:8080/auth
+      - CELERY_BROKER_URL=redis://localhost:6379
+      - CELERY_RESULT_BACKEND=django-db
+      - GRAYLOG_HTTP_ENDPOINT=http://localhost:12201/gelf
+    command: bash -c "python manage.py migrate
+      && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+
+  celery:
+    build: .
+    environment:
+      - DEBUG=on
+      - DJANGO_SECRET_KEY=secret_xpto_key
+      - DJANGO_SITE_ID=2
+      - DB_NAME=bacinf
+      - DB_USER=keycloak
+      - DB_PASSWORD=keycloak
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_EXTERNAL_ENDPOINT=localhost:9000
+      - MINIO_ACCESS_KEY=J7i6wMWSLzGm2F
+      - MINIO_SECRET_KEY=J7i6wMWSLzGm2Ffa9dALyn4d7pE7
+      - KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL=http://localhost:8000/accounts/login/
+      - KEYCLOAK_REALM=pmpb
+      - KEYCLOAK_URL=http://localhost:8080/auth
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=django-db
+      - GRAYLOG_HTTP_ENDPOINT=http://localhost:12201/gelf
+    command: celery -A project worker -l info
+    volumes:
+      - .:/code
+    depends_on:
+      - app
+      - redis
+
+  celery-beat:
+    build: .
+    environment:
+      - DEBUG=on
+      - DJANGO_SECRET_KEY=secret_xpto_key
+      - DJANGO_SITE_ID=2
+      - DB_NAME=bacinf
+      - DB_USER=keycloak
+      - DB_PASSWORD=keycloak
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_EXTERNAL_ENDPOINT=localhost:9000
+      - MINIO_ACCESS_KEY=J7i6wMWSLzGm2F
+      - MINIO_SECRET_KEY=J7i6wMWSLzGm2Ffa9dALyn4d7pE7
+      - KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL=http://localhost:8000/accounts/login/
+      - KEYCLOAK_API_ADMIN_PASSWORD=toor
+      - KEYCLOAK_API_ADMIN_USERNAME=admin
+      - KEYCLOAK_REALM=pmpb
+      - KEYCLOAK_URL=http://localhost:8080/auth
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=django-db
+      - SIGPMPB_TOKEN=xpto.xpto.xpto
+      - SIGPMPB_URL_OPMS=https://intranet.pm.pb.gov.br/api/v2/unidades
+      - SIGPMPB_URL_MILITARES=https://intranet.pm.pb.gov.br/api/v2/servidores
+      - SIGPMPB_REFERER=https://apps.pm.pb.gov.br
+      - GRAYLOG_HTTP_ENDPOINT=http://localhost:12201/gelf
+    command: celery -A project beat -l info
+    volumes:
+      - .:/code
+    depends_on:
+      - app
+      - redis
+
+networks:
+  default:
+    external: true
+    name: nginx-proxy
+
+#      && python manage.py collectstatic --noinput

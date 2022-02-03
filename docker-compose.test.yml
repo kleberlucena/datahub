@@ -6,7 +6,7 @@ services:
     environment:
       - DJANGO_SECRET_KEY=$STAGE_DJANGO_SECRET_KEY
       - DJANGO_SITE_ID=$STAGE_DJANGO_SITE_ID
-      - ALLOWED_HOSTS=172.16.150.141,.stage.pm.pb.gov.br
+      - ALLOWED_HOSTS=.apps.pm.pb.gov.br,172.16.150.141,.stage.pm.pb.gov.br
       - DB_NAME=$STAGE_DB_NAME
       - DB_USER=$STAGE_DB_USER
       - DB_PASSWORD=$STAGE_DB_PASSWORD
@@ -21,13 +21,8 @@ services:
       - KEYCLOAK_URL=$STAGE_KEYCLOAK_URL
       - CELERY_BROKER_URL=$STAGE_CELERY_BROKER_URL
       - CELERY_RESULT_BACKEND=$STAGE_CELERY_RESULT_BACKEND
-#      - GRAYLOG_HTTP_ENDPOINT=$STAGE_GRAYLOG_HTTP_ENDPOINT
-    command: bash -c "python manage.py migrate
-      && python manage.py collectstatic --noinput
-      && gunicorn --bind 0.0.0.0:8000 --workers 3 project.wsgi:application"
-    volumes:
-      - ./logs:/code/logs
-    ports:
-      - "8000:8000"
-    restart: always
+      - STAGE_GRAYLOG_HTTP_ENDPOINT=$STAGE_GRAYLOG_HTTP_ENDPOINT
+    command: bash -c -o pipefail "python manage.py migrate 
+              && python manage.py collectstatic --noinput
+              && python manage.py test"
 

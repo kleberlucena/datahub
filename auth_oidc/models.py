@@ -11,8 +11,11 @@ logger = logging.getLogger(__name__)
 def synchronize_oidc_permission(sender, user, request, **kwargs):
     try:
         data = SocialAccount.objects.get(user_id=user.id).extra_data['resource_access']
-        client = list(data.keys())[0]  # get the first key in the dictionary which is the client
-        roles_oidc = data[client]['roles']  # list of roles from provider oidc
+        clients = list(data.keys())  # get the first key in the dictionary which is the client
+        if 'bacinf' in clients:
+            roles_oidc = data['bacinf']['roles']
+        else:
+            roles_oidc = []
         roles_oidc_to_analyze = []  # list of roles not existing in user
         groups_all = [group.name for group in Group.objects.all()]  # groups from system local
         groups_user = user.groups.all()

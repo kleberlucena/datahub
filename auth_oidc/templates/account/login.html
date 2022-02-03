@@ -3,16 +3,11 @@
 
 {% load i18n %}
 
-{% block head_links %} 
-
-<title>Login | BACINF</title>
-
-{% endblock %}
+{% block head_links %} <title>Login | APPS</title> {% endblock %}
 
 {% block head_title %}{% trans "Sign In" %} {% endblock %}
 
 {% block content %}
-
   <div class="login-box">
     <!-- /.login-logo -->
     <div class="card card-outline card-red">
@@ -21,7 +16,7 @@
           <img src="{% static 'sti/img/pmpb_128.png' %}" alt="Brasão PMPB"/>
         </div>
         <hr>
-        <a href="{% url 'base:index' %}" class="h1"><b>BACINF</b></a>
+        <a href="{% url 'base:index' %}" class="h1"><b>bacinf</b></a>
       </div>
       <div class="card-body">
         <p class="login-box-msg">Clique no botão abaixo para se autenticar em nossos sistemas</p>
@@ -39,22 +34,4 @@
     </div>
     <!-- /.card -->
   </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 {% endblock %}
