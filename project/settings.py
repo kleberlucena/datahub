@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List, Tuple
 import environ
 
+
 # Environment variable definitions
 env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env()
@@ -133,8 +134,6 @@ DEFAULT_FILE_STORAGE = 'django_minio_backend.models.MinioBackend'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
     ]
@@ -163,9 +162,6 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-# API_ADMIN_USERNAME = env('KEYCLOAK_API_ADMIN_USERNAME')
-# API_ADMIN_PASSWORD = env('KEYCLOAK_API_ADMIN_PASSWORD')
-API_WELL_KNOWN = KEYCLOAK_URL + '/realms/' + KEYCLOAK_REALM + '/.well-known/openid-configuration'
 
 # Minio
 MINIO_CONSISTENCY_CHECK_ON_START = True
@@ -175,10 +171,10 @@ MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = True
 MINIO_ACCESS_KEY = env('MINIO_ACCESS_KEY')
 MINIO_SECRET_KEY = env('MINIO_SECRET_KEY')
 MINIO_USE_HTTPS = False
-MINIO_PRIVATE_BUCKETS = ['bacinf_private']
-MINIO_PUBLIC_BUCKETS = ['bacinf_public']
-MINIO_MEDIA_FILES_BUCKET = 'bacinf_media'
-MINIO_STATIC_FILES_BUCKET = 'bacinf_static'
+MINIO_PRIVATE_BUCKETS = ['bacinf-private']
+MINIO_PUBLIC_BUCKETS = ['bacinf-public']
+MINIO_MEDIA_FILES_BUCKET = 'bacinf-media'
+MINIO_STATIC_FILES_BUCKET = 'bacinf-static'
 MINIO_PRIVATE_BUCKETS.append(MINIO_MEDIA_FILES_BUCKET)
 MINIO_PUBLIC_BUCKETS.append(MINIO_STATIC_FILES_BUCKET)
 MINIO_URL_EXPIRY_HOURS = timedelta(days=1)
@@ -187,13 +183,11 @@ MINIO_BUCKET_CHECK_ON_SAVE = True
 
 # Global login required middleware
 PUBLIC_VIEWS = [
-    'base.views.health_check',  # view to verify health system status
     'auth_oidc.views.logout'
 ]
 PUBLIC_PATHS = [
     r'^/accounts/.*',  # allow public access to all django-allauth views
     r'^/health_check',
-    r'^/admin/.*',
 ]
 
 if DEBUG:
@@ -216,6 +210,7 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_BROKER_URL = env('CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND')
 
-
 # Graylog
-# GRAYLOG_ENDPOINT = env('GRAYLOG_HTTP_ENDPOINT')
+GRAYLOG_ENDPOINT = env('GRAYLOG_HTTP_ENDPOINT')
+
+

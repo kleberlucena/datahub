@@ -82,14 +82,13 @@ celerybeat-schedule.*
 
 # Environments
 .env
-.env_local
+.env.container
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
-docker-compose.yml
 
 # mkdocs docs
 /site
@@ -153,4 +152,3 @@ docs/_build/
 
 # PyBuilder
 target/
-/docker-compose.yml

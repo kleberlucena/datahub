@@ -2,11 +2,14 @@ version: "3.4"
 
 services:
   app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     image: $IMAGE_TAG
     environment:
       - DJANGO_SECRET_KEY=$STAGE_DJANGO_SECRET_KEY
       - DJANGO_SITE_ID=$STAGE_DJANGO_SITE_ID
-      - ALLOWED_HOSTS=172.16.150.141,.stage.pm.pb.gov.br
+      - ALLOWED_HOSTS=172.16.150.140,.stage.pm.pb.gov.br
       - DB_NAME=$STAGE_DB_NAME
       - DB_USER=$STAGE_DB_USER
       - DB_PASSWORD=$STAGE_DB_PASSWORD
@@ -21,7 +24,7 @@ services:
       - KEYCLOAK_URL=$STAGE_KEYCLOAK_URL
       - CELERY_BROKER_URL=$STAGE_CELERY_BROKER_URL
       - CELERY_RESULT_BACKEND=$STAGE_CELERY_RESULT_BACKEND
-#      - GRAYLOG_HTTP_ENDPOINT=$STAGE_GRAYLOG_HTTP_ENDPOINT
+      - GRAYLOG_HTTP_ENDPOINT=$STAGE_GRAYLOG_HTTP_ENDPOINT
     command: bash -c "python manage.py migrate
       && python manage.py collectstatic --noinput
       && gunicorn --bind 0.0.0.0:8000 --workers 3 project.wsgi:application"
@@ -31,3 +34,62 @@ services:
       - "8000:8000"
     restart: always
 
+  celery:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: $IMAGE_TAG
+    environment:
+      - DJANGO_SECRET_KEY=$STAGE_DJANGO_SECRET_KEY
+      - DJANGO_SITE_ID=$STAGE_DJANGO_SITE_ID
+      - ALLOWED_HOSTS=172.16.150.140,.stage.pm.pb.gov.br
+      - DB_NAME=$STAGE_DB_NAME
+      - DB_USER=$STAGE_DB_USER
+      - DB_PASSWORD=$STAGE_DB_PASSWORD
+      - DB_HOST=$STAGE_DB_HOST
+      - DB_PORT=$STAGE_DB_PORT
+      - MINIO_ENDPOINT=$STAGE_MINIO_ENDPOINT
+      - MINIO_EXTERNAL_ENDPOINT=$STAGE_MINIO_EXTERNAL_ENDPOINT
+      - MINIO_ACCESS_KEY=$STAGE_MINIO_ACCESS_KEY
+      - MINIO_SECRET_KEY=$STAGE_MINIO_SECRET_KEY
+      - KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL=$STAGE_KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL
+      - KEYCLOAK_REALM=$STAGE_KEYCLOAK_REALM
+      - KEYCLOAK_URL=$STAGE_KEYCLOAK_URL
+      - CELERY_BROKER_URL=$STAGE_CELERY_BROKER_URL
+      - CELERY_RESULT_BACKEND=$STAGE_CELERY_RESULT_BACKEND
+      - GRAYLOG_HTTP_ENDPOINT=$STAGE_GRAYLOG_HTTP_ENDPOINT
+    command: bash -c "celery -A project worker -l info"
+    volumes:
+      - ./logs:/code/logs
+    depends_on:
+      - app
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: $IMAGE_TAG
+    environment:
+      - DJANGO_SECRET_KEY=$STAGE_DJANGO_SECRET_KEY
+      - DJANGO_SITE_ID=$STAGE_DJANGO_SITE_ID
+      - ALLOWED_HOSTS=172.16.150.140,.stage.pm.pb.gov.br
+      - DB_NAME=$STAGE_DB_NAME
+      - DB_USER=$STAGE_DB_USER
+      - DB_PASSWORD=$STAGE_DB_PASSWORD
+      - DB_HOST=$STAGE_DB_HOST
+      - DB_PORT=$STAGE_DB_PORT
+      - MINIO_ENDPOINT=$STAGE_MINIO_ENDPOINT
+      - MINIO_EXTERNAL_ENDPOINT=$STAGE_MINIO_EXTERNAL_ENDPOINT
+      - MINIO_ACCESS_KEY=$STAGE_MINIO_ACCESS_KEY
+      - MINIO_SECRET_KEY=$STAGE_MINIO_SECRET_KEY
+      - KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL=$STAGE_KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL
+      - KEYCLOAK_REALM=$STAGE_KEYCLOAK_REALM
+      - KEYCLOAK_URL=$STAGE_KEYCLOAK_URL
+      - CELERY_BROKER_URL=$STAGE_CELERY_BROKER_URL
+      - CELERY_RESULT_BACKEND=$STAGE_CELERY_RESULT_BACKEND
+      - GRAYLOG_HTTP_ENDPOINT=$STAGE_GRAYLOG_HTTP_ENDPOINT
+    command: bash -c "celery -A project beat -l info"
+    volumes:
+      - ./logs:/code/logs
+    depends_on:
+      - app

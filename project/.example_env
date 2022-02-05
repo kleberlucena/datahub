@@ -23,12 +23,6 @@ KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL=http://localhost:8000/accounts/login/
 KEYCLOAK_API_ADMIN_USERNAME=admin
 KEYCLOAK_API_ADMIN_PASSWORD=toor
 
-# SIGPMPB
-SIGPMPB_TOKEN=xpto.xpto.xpto
-SIGPMPB_URL_OPMS=https://intranet.pm.pb.gov.br/api/v2/unidades
-SIGPMPB_URL_MILITARES=https://intranet.pm.pb.gov.br/api/v2/servidores
-SIGPMPB_REFERER=https://apps.pm.pb.gov.br
-
 # CELERY
 CELERY_BROKER_URL=redis://localhost:6379
 CELERY_RESULT_BACKEND=django-db

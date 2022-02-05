@@ -7,7 +7,6 @@ services:
 
 
 variables:
-  # Criando variáveis de ambiente globais para mais fácil acesso.
   # Variáveis de ambiente que começam com $CI_ são disponibilizadas pelo Gitlab
   IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   CACHE_IMAGE_TAG: $CI_REGISTRY_IMAGE:latest
@@ -58,27 +57,11 @@ run tests:
   script:
     - ssh root@$SERVER_IP "mkdir -p $APP_FOLDER"
     - scp -r ./$COMPOSE_FILE root@$SERVER_IP:~/$APP_FOLDER/docker-compose.yml
+    - scp -r ./Dockerfile root@$SERVER_IP:~/$APP_FOLDER/Dockerfile
     - >
       ssh root@$SERVER_IP << ENDSSH
         cd $APP_FOLDER
         export IMAGE_TAG=${IMAGE_TAG}
-        export PROD_DJANGO_SECRET_KEY=${PROD_DJANGO_SECRET_KEY}
-        export PROD_DJANGO_SITE_ID=${PROD_DJANGO_SITE_ID}
-        export PROD_DB_NAME=${PROD_DB_NAME}
-        export PROD_DB_USER=${PROD_DB_USER}
-        export PROD_DB_PASSWORD=${PROD_DB_PASSWORD}
-        export PROD_DB_HOST=${PROD_DB_HOST}
-        export PROD_DB_PORT=${PROD_DB_PORT}
-        export PROD_MINIO_ENDPOINT=${PROD_MINIO_ENDPOINT}
-        export PROD_MINIO_EXTERNAL_ENDPOINT=${PROD_MINIO_EXTERNAL_ENDPOINT}
-        export PROD_MINIO_ACCESS_KEY=${PROD_MINIO_ACCESS_KEY}
-        export PROD_MINIO_SECRET_KEY=${PROD_MINIO_SECRET_KEY}
-        export PROD_KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL=${PROD_KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL}
-        export PROD_KEYCLOAK_REALM=${PROD_KEYCLOAK_REALM}
-        export PROD_KEYCLOAK_URL=${PROD_KEYCLOAK_URL}
-        export PROD_CELERY_BROKER_URL=${PROD_CELERY_BROKER_URL}
-        export PROD_CELERY_RESULT_BACKEND=${PROD_CELERY_RESULT_BACKEND}
-        export PROD_GRAYLOG_HTTP_ENDPOINT=${PROD_GRAYLOG_HTTP_ENDPOINT}
         export STAGE_DJANGO_SECRET_KEY=${STAGE_DJANGO_SECRET_KEY}
         export STAGE_DJANGO_SITE_ID=${STAGE_DJANGO_SITE_ID}
         export STAGE_DB_NAME=${STAGE_DB_NAME}
@@ -123,7 +106,6 @@ deploy stage:
     APP_FOLDER_NAME: stage
 
 
-# Build step para deployments no servidor de Produção
 deploy prod:
   extends: .deploy_template
   stage: deploy
@@ -148,7 +130,6 @@ deploy prod:
 # Remove containers e limpa arquivos criados pelo deploy
 # ATENÇÃO:
 # Esse build step é um caminho sem volta.
-# Depois de executado, todos os arquivos serão exclúidos, incluindo o banco de dados
 undeploy stage:
   extends: .deploy_template
   stage: cleanup
@@ -163,13 +144,11 @@ undeploy stage:
     COMPOSE_FILE: "docker-compose.stage.yml"
     SERVER_IP: $STAGE_SERVER_IP
     SERVER_PRIVATE_KEY: $STAGE_SERVER_PRIVATE_KEY
-    DB_PASSWORD: $STAGE_DB_PASSWORD
   script:
     - >
       ssh root@$SERVER_IP << ENDSSH
         cd app
         export IMAGE_TAG=${IMAGE_TAG}
-        export DB_PASSWORD=${DB_PASSWORD}
         docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
         docker-compose stop
         docker-compose down -v
@@ -177,8 +156,6 @@ undeploy stage:
         cd ..
         rm -rf app
       ENDSSH
-
-
 
 
 # Da acesso ao servidor que queremos acessar via SSH
@@ -203,6 +180,7 @@ undeploy stage:
   script:
     - ssh root@$SERVER_IP "mkdir -p $APP_FOLDER"
     - scp -r ./$COMPOSE_FILE root@$SERVER_IP:~/$APP_FOLDER/docker-compose.yml
+    - scp -r ./Dockerfile root@$SERVER_IP:~/$APP_FOLDER/Dockerfile
     - >
       ssh root@$SERVER_IP << ENDSSH
         cd $APP_FOLDER
@@ -247,8 +225,4 @@ undeploy stage:
         docker system prune --all --force
         docker-compose pull
         docker-compose up -d
-
-        docker exec $APP_FOLDER-app-1 celery -A project worker -l info --detach
-        docker exec $APP_FOLDER-app-1 celery -A project beat -l info --detach
       ENDSSH
-      
