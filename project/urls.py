@@ -11,8 +11,5 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('', include('auth_oidc.urls'), name='auth_oidc'),
     path('', include('base.urls'), name='base'),
-    path('entity/', include('entity.urls'), name='entity'),
-    path('enjoyer/', include('enjoyer.urls'), name='enjoyer'),
-    path('sigpmpb/', include('sigpmpb.urls'), name='sigpmpb'),
     path('celery-progress/', include('celery_progress.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
