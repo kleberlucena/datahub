@@ -27,6 +27,6 @@ services:
       - GRAYLOG_HTTP_ENDPOINT=$STAGE_GRAYLOG_HTTP_ENDPOINT
 
     command: bash -c -o pipefail "python manage.py migrate 
-              && python manage.py collectstatic --noinput
-              && python manage.py test"
+      && python manage.py collectstatic --noinput
+      && python manage.py test"
 
