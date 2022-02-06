@@ -2,63 +2,6 @@
 
 <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
-<!--        {% if perms.enjoyer or perms.entity %}-->
-<!--            <li class="nav-header">SISTEMA</li>-->
-<!--          {% if perms.enjoyer %}-->
-<!--            <li class="nav-item">-->
-<!--                <a href="#" class="nav-link">-->
-<!--                  <i class="nav-icon fas fa-users"></i>-->
-<!--                  <p>-->
-<!--                    Utilizadores-->
-<!--                    <i class="fas fa-angle-left right"></i>-->
-<!--                  </p>-->
-<!--                </a>-->
-<!--                <ul class="nav nav-treeview" style="display: none;">-->
-<!--                    <li class="nav-item">-->
-<!--                        <a href="{% url 'enjoyer:enjoyer_list' %}" class="nav-link">-->
-<!--                          <i class="far fa-circle nav-icon"></i>-->
-<!--                          <p>Visualizar utilizadores</p>-->
-<!--                        </a>-->
-<!--                    </li>-->
-<!--                    {% if perms.enjoyer.change_enjoyer %}-->
-<!--                      <li class="nav-item">-->
-<!--                          <a href="{% url 'enjoyer:commands' %}" class="nav-link">-->
-<!--                            <i class="fas fa-terminal nav-icon"></i>-->
-<!--                            <p>Comandos Disponíveis</p>-->
-<!--                          </a>-->
-<!--                      </li>-->
-<!--                    {% endif %}-->
-<!--                </ul>-->
-<!--            </li>-->
-<!--          {% endif %}-->
-<!--          {% if perms.entity %}-->
-<!--            <li class="nav-item">-->
-<!--                <a href="#" class="nav-link">-->
-<!--                  <i class="nav-icon fas fa-university"></i>-->
-<!--                  <p>-->
-<!--                    Entidades-->
-<!--                    <i class="fas fa-angle-left right"></i>-->
-<!--                  </p>-->
-<!--                </a>-->
-<!--                <ul class="nav nav-treeview" style="display: none;">-->
-<!--                    <li class="nav-item">-->
-<!--                        <a href="{% url 'entity:entity_list' %}" class="nav-link">-->
-<!--                          <i class="far fa-circle nav-icon"></i>-->
-<!--                          <p>Visualizar entidades</p>-->
-<!--                        </a>-->
-<!--                    </li>-->
-<!--                    {% if perms.entity.change_entity %}-->
-<!--                      <li class="nav-item">-->
-<!--                          <a href="{% url 'entity:commands' %}" class="nav-link">-->
-<!--                            <i class="fas fa-terminal nav-icon"></i>-->
-<!--                            <p>Comandos Disponíveis</p>-->
-<!--                          </a>-->
-<!--                      </li>-->
-<!--                    {% endif %}-->
-<!--                </ul>-->
-<!--            </li>-->
-<!--          {% endif %}-->
-<!--        {% endif %}-->
         {% if user.is_superuser %}
             <li class="nav-item">
                 <a href="{% url 'admin:index' %}" class="nav-link">
@@ -67,48 +10,6 @@
                 </a>
             </li>
         {% endif %}
-<!--        {% if perms.sigpmpb %}-->
-<!--          <li class="nav-header">INTEGRAÇÕES</li>-->
-<!--          {% if perms.sigpmpb %}-->
-<!--              <li class="nav-item">-->
-<!--              <a href="#" class="nav-link">-->
-<!--                <i class="fas fa-sync-alt nav-icon"></i>-->
-<!--                <p>-->
-<!--                  SIGPMPB-->
-<!--                  <i class="fas fa-angle-left right"></i>-->
-<!--                </p>-->
-<!--              </a>-->
-<!--              <ul class="nav nav-treeview" style="display: none;">-->
-<!--                <li class="nav-item">-->
-<!--                  <a href="{% url 'sigpmpb:cop_list' %}" class="nav-link">-->
-<!--                    <i class="far fa-circle nav-icon"></i>-->
-<!--                    <p>Visualizar militares</p>-->
-<!--                  </a>-->
-<!--                </li>-->
-<!--                <li class="nav-item">-->
-<!--                  <a href="{% url 'sigpmpb:unit_list' %}" class="nav-link">-->
-<!--                    <i class="far fa-circle nav-icon"></i>-->
-<!--                    <p>API - Unidades</p>-->
-<!--                  </a>-->
-<!--                </li>-->
-<!--                <li class="nav-item">-->
-<!--                  <a href="{% url 'sigpmpb:api_military_list' %}" class="nav-link">-->
-<!--                    <i class="far fa-circle nav-icon"></i>-->
-<!--                    <p>API  - Militares</p>-->
-<!--                  </a>-->
-<!--                </li>-->
-<!--                {% if perms.sigpmpb.change_military %}-->
-<!--                  <li class="nav-item">-->
-<!--                    <a href="{% url 'sigpmpb:commands' %}" class="nav-link">-->
-<!--                      <i class="fas fa-terminal nav-icon"></i>-->
-<!--                      <p>Comandos Disponíveis</p>-->
-<!--                    </a>-->
-<!--                  </li>-->
-<!--                {% endif %}-->
-<!--              </ul>-->
-<!--            {% endif %}-->
-<!--          </li>-->
-<!--        {% endif %}-->
         <li class="nav-header">INFORMAÇÕES</li>
         <li class="nav-item">
             <a href="{% url 'base:about' %}" class="nav-link">
