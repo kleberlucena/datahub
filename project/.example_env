@@ -2,7 +2,7 @@ DEBUG=on
 DJANGO_SECRET_KEY=secret_xpto_key
 
 # POSTGRES
-DB_NAME=portal
+DB_NAME=bacinf
 DB_USER=keycloak
 DB_PASSWORD=keycloak
 DB_HOST=127.0.0.1
