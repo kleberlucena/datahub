@@ -11,7 +11,7 @@ class Base(models.Model):
 
 
 class Person(Base):
-    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     
     def __str__(self):
         return f"{self.uuid}"

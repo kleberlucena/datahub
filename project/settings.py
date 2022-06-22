@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     # Apps
     'base',
     'apps.person',
+    'apps.image',
+    'apps.address',
 ]
 
 MIDDLEWARE = [

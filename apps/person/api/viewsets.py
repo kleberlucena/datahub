@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions
 
-from .serializers import *
-from ..models import *
+from apps.person.api.serializers import *
+from apps.person.models import *
 
 
 class PersonList(generics.ListAPIView):
