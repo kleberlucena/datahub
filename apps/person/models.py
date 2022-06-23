@@ -1,10 +1,12 @@
 import uuid
 from django.db import models
 
+from apps.address.models import Address
+
 
 class Base(models.Model):
-    created_at = models.DateTimeField('Criado', auto_now_add=True)
-    updated_at = models.DateTimeField('Atualizado', auto_now=True)
+    created = models.DateTimeField('Criado', auto_now_add=True)
+    updated = models.DateTimeField('Atualizado', auto_now=True)
 
     class Meta:
         abstract = True
@@ -45,5 +47,18 @@ class PersonNickname(Base):
     class Meta:
         verbose_name = "Alcunha de Pessoa"
         verbose_name_plural = "Alcunhas de Pessoas"
+        
+        
+class PersonAddress(Base):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    person = models.ForeignKey(Person, related_name='person_address', related_query_name='person_address', on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, related_name='address_person_address', related_query_name='address_person_address', on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.uuid}"
+    
+    class Meta:
+        verbose_name = "Endereço de Pessoa"
+        verbose_name_plural = "Endereços de Pessoas"
         
         
