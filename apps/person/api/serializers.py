@@ -3,7 +3,7 @@ from numpy import source
 from rest_framework import serializers
 
 from apps.person.models import *
-from apps.address.api.serializers import AddressSerializer
+from apps.address.api.serializers import AddressSerializer, AddressListSerializer
 
 
 class PersonNicknameSerializer(serializers.ModelSerializer):
@@ -14,13 +14,14 @@ class PersonNicknameSerializer(serializers.ModelSerializer):
         
 
 class PersonDocumentSerializer(serializers.ModelSerializer):
-    
+        
     class Meta:
         model = PersonDocument
         fields = ('uuid',)
         
 
 class PersonAddressSerializer(serializers.ModelSerializer):
+    address = AddressSerializer()
     
     class Meta:
         model = PersonAddress
@@ -28,13 +29,13 @@ class PersonAddressSerializer(serializers.ModelSerializer):
 
 
 class PersonListSerializer(serializers.ModelSerializer):
-    nicknames = PersonNicknameSerializer(many=True, source='person_nicknames')
-    documents = PersonDocumentSerializer(many=True, source='person_documents')
-    address = PersonAddressSerializer(many=True, source='person_address')
+    nicknames_list = PersonNicknameSerializer(many=True, source='person_nicknames')
+    documents_list = PersonDocumentSerializer(many=True, source='person_documents')
+    address_list = PersonAddressSerializer(many=True, source='person_address')
     
     class Meta:
         model = Person
-        fields = ('uuid', 'nicknames', 'documents', 'address')
+        fields = ('uuid', 'nicknames_list', 'documents_list', 'address_list')
         
         
         

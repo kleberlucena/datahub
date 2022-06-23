@@ -14,4 +14,5 @@ urlpatterns = [
     path('celery-progress/', include('celery_progress.urls')),
     path('person/', include('apps.person.urls'), name='person'),
     path('image/', include('apps.image.urls'), name='image'),
+    path('address/', include('apps.address.urls'), name='address'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
