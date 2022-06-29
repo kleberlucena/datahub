@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 
 from apps.address.models import Address
+from apps.image.models import Image
 
 
 class Base(models.Model):
@@ -26,7 +27,7 @@ class Person(Base):
 
 class PersonDocument(Base):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    person = models.ForeignKey(Person, related_name='person_documents', related_query_name='person_document', on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, related_name='person_document', related_query_name='person_document', on_delete=models.CASCADE)
     
     def __str__(self):
         return f"{self.uuid}"
@@ -38,7 +39,7 @@ class PersonDocument(Base):
 
 class PersonNickname(Base):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    person = models.ForeignKey(Person, related_name='person_nicknames', related_query_name='person_nickname', on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, related_name='person_nickname', related_query_name='person_nickname', on_delete=models.CASCADE)
     nickname = models.CharField("Alcunha", max_length=255)
     
     def __str__(self):
@@ -61,4 +62,30 @@ class PersonAddress(Base):
         verbose_name = "Endereço de Pessoa"
         verbose_name_plural = "Endereços de Pessoas"
         
+
+class PersonImage(Base):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    person = models.ForeignKey(Person, related_name='person_image', related_query_name='person_image', on_delete=models.CASCADE)
+    image = models.ForeignKey(Image, related_name='image_person_image', related_query_name='image_person_image', on_delete=models.CASCADE)
+    description = models.CharField("Descrição", max_length=255)
+    
+    def __str__(self):
+        return f"{self.uuid}"
+
+    class Meta:
+        verbose_name = "Imagem de Pessoa"
+        verbose_name_plural = "Imagens de Pessoas"
+        
+    
+class PersonImageFace(Base):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    person = models.ForeignKey(Person, related_name='person_image_face', related_query_name='person_image_face', on_delete=models.CASCADE)
+    image = models.ForeignKey(Image, related_name='image_person_image_face', related_query_name='image_person_image_face', on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.uuid}"
+
+    class Meta:
+        verbose_name = "Imagem de Face de Pessoa"
+        verbose_name_plural = "Imagens de Face de Pessoas"
         

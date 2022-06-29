@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from apps.person.models import *
 from apps.address.api.serializers import AddressSerializer, AddressListSerializer
+from apps.image.api.serializers import ImageSerializer
 
 
 class PersonNicknameSerializer(serializers.ModelSerializer):
@@ -26,16 +27,35 @@ class PersonAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = PersonAddress
         fields = ('uuid', 'address')
+        
+        
+class PersonImageSerializer(serializers.ModelSerializer):
+    image = ImageSerializer()
+    
+    class Meta:
+        model = PersonImage
+        fields = ('uuid', 'image', 'description')
+        
+        
+class PersonImageFaceSerializer(serializers.ModelSerializer):
+    image = ImageSerializer()
+    
+    class Meta:
+        model = PersonImageFace
+        fields = ('uuid', 'image')
 
 
 class PersonListSerializer(serializers.ModelSerializer):
-    nicknames_list = PersonNicknameSerializer(many=True, source='person_nicknames')
-    documents_list = PersonDocumentSerializer(many=True, source='person_documents')
+    nickname_list = PersonNicknameSerializer(many=True, source='person_nickname')
+    document_list = PersonDocumentSerializer(many=True, source='person_document')
     address_list = PersonAddressSerializer(many=True, source='person_address')
+    image_list = PersonImageSerializer(many=True, source='person_image')
+    face_list = PersonImageFaceSerializer(many=True, source='person_image_face')
     
     class Meta:
         model = Person
-        fields = ('uuid', 'nicknames_list', 'documents_list', 'address_list')
+        fields = (
+            'uuid', 'nickname_list', 'document_list', 'address_list','image_list', 'face_list')
         
         
         

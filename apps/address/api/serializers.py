@@ -6,14 +6,14 @@ from apps.address.models import Address
 class AddressSerializer(geo_serializers.GeoFeatureModelSerializer):
     class Meta:
         model = Address
-        fields = ["uuid", "street", "number", "complement", "neighborhood", "city", "state", "region", "country", "zipcode"]
+        fields = ("uuid", "street", "number", "complement", "neighborhood", "city", "state", "region", "country", "zipcode")
         geo_field = "place"
         
 
 class AddressListSerializer(geo_serializers.GeoFeatureModelSerializer):
     class Meta:
         model = Address
-        fields = ["uuid", "street", "number", "complement", "neighborhood", "city", "state", "region", "country", "zipcode"]
+        fields = ("uuid", "street", "number", "complement", "neighborhood", "city", "state", "region", "country", "zipcode")
         geo_field = "place"
 
 
