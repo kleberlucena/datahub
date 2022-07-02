@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'auth_oidc',  # O APP auth must come before allauth to load templates
+    'oauth2', # Include authenticate token
 
     # Necessary to allauth
     'django.contrib.sites',
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
 
     # Libraries
     'rest_framework',
+    'rest_framework.authtoken',  # if you use the same token auth system as the example
+    'social_django',  # python social auth
     'django_minio_backend.apps.DjangoMinioBackendConfig',
     'stdimage',
     'crispy_forms',
@@ -67,6 +70,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'project.urls'
 
 AUTHENTICATION_BACKENDS = [
+    'social_core.backends.keycloak.KeycloakOAuth2',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
@@ -136,7 +140,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
-    ]
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 }
 
 # Allauth
@@ -162,6 +169,29 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+# Python Social Auth https://github.com/coriolinus/oauth2-article 
+SOCIAL_AUTH_KEYCLOAK_KEY = 'sasp'
+SOCIAL_AUTH_KEYCLOAK_SECRET = 'rJwp4zAC9ZBaGGdtRHpPK0yhZieLDzpz'
+SOCIAL_AUTH_KEYCLOAK_PUBLIC_KEY = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyRm1k7QB4OkB3f5BSGKQDhm5i9nJ9B3OMZYH8KbL2DDGKYyWVZiahqnfQEjzIO9A8sf9Kt0co9+LjfIDiH0KRbFbAoUa+LC/qHHf0nO3OkihhzoyhGQ2Cont+4relBY5FpyUFENUlnZyituY56SABt7Zl93OLhA/TGO+ZDUI/EwEGJw+wTFcCGH2wKcLRhPzQ45TJXH8yfGLofI8cdG7TGKHkWM9BrZNiYZ1oskgKfisIZK4/U9u7bTDHk/cMe8CSbf2lB9zz1HFgSjs7VmZ1G4vwne4xfLOGhkl3+Zm+4cuW2pQglY69Lm6f67WLIG1zEJQKbxD2pDUf3CbuOLXQQIDAQAB'
+SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL = 'http://localhost:8080/auth/realms/sasp/protocol/openid-connect/auth'
+SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL = 'http://localhost:8080/auth/realms/sasp/protocol/openid-connect/token'
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
+SOCIAL_AUTH_KEYCLOAK_SCOPE = ['email', 'openid']
+SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',  # <- this line not included by default
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
 
 # Minio
 MINIO_CONSISTENCY_CHECK_ON_START = True
@@ -188,6 +218,7 @@ PUBLIC_VIEWS = [
 PUBLIC_PATHS = [
     r'^/accounts/.*',  # allow public access to all django-allauth views
     r'^/health_check',
+    r'^/*',
 ]
 
 if DEBUG:
