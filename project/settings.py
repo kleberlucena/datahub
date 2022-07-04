@@ -25,9 +25,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.gis',
 
     'auth_oidc',  # O APP auth must come before allauth to load templates
+    'oauth2', # Include authenticate token
 
     # Necessary to allauth
     'django.contrib.sites',
@@ -40,6 +40,8 @@ INSTALLED_APPS = [
 
     # Libraries
     'rest_framework',
+    'rest_framework.authtoken',  # if you use the same token auth system as the example
+    'social_django',  # python social auth
     'django_minio_backend.apps.DjangoMinioBackendConfig',
     'stdimage',
     'crispy_forms',
@@ -54,6 +56,7 @@ INSTALLED_APPS = [
     'apps.person',
     'apps.image',
     'apps.address',
+
 ]
 
 MIDDLEWARE = [
@@ -71,6 +74,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'project.urls'
 
 AUTHENTICATION_BACKENDS = [
+    'social_core.backends.keycloak.KeycloakOAuth2',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
@@ -95,7 +99,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
@@ -141,8 +145,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CursorPagination',
-    'PAGE_SIZE': 2
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 }
 
 # Allauth
@@ -168,6 +173,29 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+# Python Social Auth https://github.com/coriolinus/oauth2-article 
+SOCIAL_AUTH_KEYCLOAK_KEY = 'bacinf'
+SOCIAL_AUTH_KEYCLOAK_SECRET = 'wBXAnvJ6PxODrn8Mlpl0fExeu52uKTve'
+SOCIAL_AUTH_KEYCLOAK_PUBLIC_KEY = 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmZZUZFmly8empxGo5ja7ANKEumelftJuPOZfdggIAYAaOO0ziLumecXJRIXQjYnUVvkXKeKFdnZpMfsDnloMHz2xYcxFlbLnPAQ6fsYCo/HonIjkiheo6+QVUM4o2ntfsQVn5/HMEsTY3lJzVtzWqCVGrZQMRxJ/RFOo3DJNnT4YZk9r1gjqeIenRGtmLkVVsseWSk9pzu3PEdUAmMxuRANy2zcxEEb01Vez/NFwyohWpNWukQHZVat6+QORj8ZeFRPS9ONwtagmrDoP2CRZIh9luxeSXdjB0cEoo9lhDQrbNhjQSNTvCQPPaPKtW8KyAkN1Hq+4GbVEN1NrMJmVCQIDAQAB'
+SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL = 'http://localhost:8080/auth/realms/pmpb/protocol/openid-connect/auth'
+SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL = 'http://localhost:8080/auth/realms/pmpb/protocol/openid-connect/token'
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
+SOCIAL_AUTH_KEYCLOAK_SCOPE = ['email', 'openid']
+SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',  # <- this line not included by default
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
 
 # Minio
 MINIO_CONSISTENCY_CHECK_ON_START = True
@@ -194,6 +222,7 @@ PUBLIC_VIEWS = [
 PUBLIC_PATHS = [
     r'^/accounts/.*',  # allow public access to all django-allauth views
     r'^/health_check',
+    r'^/*',
 ]
 
 if DEBUG:
@@ -203,6 +232,7 @@ if DEBUG:
     MINIO_CONSISTENCY_CHECK_ON_START = False
     MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = False
     MINIO_USE_HTTPS = False
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append('rest_framework.authentication.SessionAuthentication')
 
 
 # Celery Configuration Options
@@ -218,5 +248,3 @@ CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND')
 
 # Graylog
 GRAYLOG_ENDPOINT = env('GRAYLOG_HTTP_ENDPOINT')
-
-
