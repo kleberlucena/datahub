@@ -6,7 +6,11 @@ FROM python:3.8-slim
 ENV PYTHONUNBUFFERED=1
 RUN apt update -y \
   && apt install gdal-bin -y \
-  && apt install geos -y \
+  && apt install libgeos-3.8.0 -y \
+  && apt install libgeos-dev -y \
+  && apt install libgeos++-dev -y \
+  && apt install libgeos-c1v5 -y \
+  && apt install libgeos-doc -y \
   && apt install proj6 -y \
   && apt install build-essential -y
 RUN mkdir /code
