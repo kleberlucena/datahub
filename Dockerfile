@@ -5,6 +5,9 @@ FROM python:3.8-slim
 # ou seja, os logs da nossa aplicação Django podem ser vistos em tempo real sem delay.
 ENV PYTHONUNBUFFERED=1
 RUN apt-get update -y \
+  && apt-get install gdal \
+  && apt-get install geos \
+  && apt-get install proj6 \
   && apt-get install build-essential -y
 RUN mkdir /code
 WORKDIR /code
