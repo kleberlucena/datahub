@@ -4,12 +4,12 @@ FROM python:3.8-slim
 # evitando o buffer. Isso nos ajuda a ver os logs direto no container imediatamente.
 # ou seja, os logs da nossa aplicação Django podem ser vistos em tempo real sem delay.
 ENV PYTHONUNBUFFERED=1
-RUN apt update -y \
-  && apt install -y binutils \
-  && apt install -y \
-  && apt install -y libproj-dev \
-  && apt install -y gdal-bin \
-  && apt install -y build-essential
+RUN apt-get update -y \
+  && apt-get install -y binutils \
+  && apt-get install -y \
+  && apt-get install -y libproj-dev \
+  && apt-get install -y gdal-bin \
+  && apt-get install -y build-essential
 RUN mkdir /code
 WORKDIR /code
 COPY requirements.txt /code/
