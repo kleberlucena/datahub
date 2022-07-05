@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
-from django.contrib.auth.decorators import login_required
 from oauth2.views import exchange_token
 
 
@@ -18,16 +17,3 @@ urlpatterns = [
     path('address/', include('apps.address.urls'), name='address'),
     path('celery-progress/', include('celery_progress.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
-
-
-'''
-curl -X POST http://localhost:8080/auth/realms/pmpb/protocol/openid-connect/token \
--d 'username=06082658450' \
--d 'password=toor' \
--d 'grant_type=password' \
--d 'client_id=bacinf' \
--d 'client_secret=wBXAnvJ6PxODrn8Mlpl0fExeu52uKTve'
-
-'''
