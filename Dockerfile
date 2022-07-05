@@ -9,8 +9,6 @@ RUN apt update -y \
   && apt install -y \
   && apt install -y libproj-dev \
   && apt install -y gdal-bin \
-  && apt install -y geos-3.8.0 \
-  && apt install -y proj6 \
   && apt install -y build-essential
 RUN mkdir /code
 WORKDIR /code
