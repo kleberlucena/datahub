@@ -183,8 +183,8 @@ SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL = env('SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_U
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 SOCIAL_AUTH_KEYCLOAK_SCOPE = ['email', 'openid']
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
-LOGIN_URL = env('KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL')
-LOGIN_REDIRECT_URL = env('KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL')
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
