@@ -8,7 +8,9 @@ RUN apt-get update -y \
   && apt-get install -y binutils \
   && apt-get install -y gdal-bin \
   && apt-get install -y libproj-dev \
-  && apt-get install -y postgis postgresql-13-postgis-3 \
+  && apt-get install -y postgis \
+  && apt-get install -y postgresql-13-postgis-3 \
+  && apt-get install -y postgresql-13-postgis-3-scripts \
   && apt-get install -y build-essential
 RUN mkdir /code
 WORKDIR /code
