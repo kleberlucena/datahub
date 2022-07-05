@@ -5,14 +5,13 @@ FROM python:3.8-slim
 # ou seja, os logs da nossa aplicação Django podem ser vistos em tempo real sem delay.
 ENV PYTHONUNBUFFERED=1
 RUN apt update -y \
-  && apt install gdal-bin -y \
-  && apt install libgeos-3.8.0 -y \
-  && apt install libgeos-dev -y \
-  && apt install libgeos++-dev -y \
-  && apt install libgeos-c1v5 -y \
-  && apt install libgeos-doc -y \
-  && apt install proj6 -y \
-  && apt install build-essential -y
+  && apt install binutils \
+  && apt install -y \
+  libproj-dev \
+  gdal-bin \
+  geos-3.8.0 \
+  proj6 \
+  build-essential
 RUN mkdir /code
 WORKDIR /code
 COPY requirements.txt /code/
