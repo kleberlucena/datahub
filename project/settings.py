@@ -222,7 +222,8 @@ PUBLIC_VIEWS = [
 ]
 PUBLIC_PATHS = [
     r'^/accounts/.*',  # allow public access to all django-allauth views
-    r'^/health_check'
+    r'^/health_check',
+    r'^/login/keycloak/'
 ]
 
 if DEBUG:
