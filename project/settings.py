@@ -10,7 +10,7 @@ environ.Env.read_env()
 
 # Variable default of Django
 SECRET_KEY = env('DJANGO_SECRET_KEY')
-DEBUG = True # env('DEBUG', default=False)
+DEBUG = env('DEBUG', default=False)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 ALLOWED_HOSTS = list(
@@ -226,14 +226,14 @@ PUBLIC_PATHS = [
     r'^/login/keycloak/'
 ]
 
-# if DEBUG:
-#    PUBLIC_PATHS.append(r'^/admin/.*', )  # allow access to admin views
-#    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
-#    AUTHENTICATION_BACKENDS.append('django.contrib.auth.backends.ModelBackend')
-#    MINIO_CONSISTENCY_CHECK_ON_START = False
-#    MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = False
-#    MINIO_USE_HTTPS = False
-#    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append('rest_framework.authentication.SessionAuthentication')
+if DEBUG:
+    PUBLIC_PATHS.append(r'^/admin/.*', )  # allow access to admin views
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
+    AUTHENTICATION_BACKENDS.append('django.contrib.auth.backends.ModelBackend')
+    MINIO_CONSISTENCY_CHECK_ON_START = False
+    MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = False
+    MINIO_USE_HTTPS = False
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append('rest_framework.authentication.SessionAuthentication')
 
 
 # Celery Configuration Options
