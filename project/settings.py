@@ -10,7 +10,7 @@ environ.Env.read_env()
 
 # Variable default of Django
 SECRET_KEY = env('DJANGO_SECRET_KEY')
-DEBUG = env('DEBUG', default=False)
+DEBUG = True # env('DEBUG', default=False)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 ALLOWED_HOSTS = list(
