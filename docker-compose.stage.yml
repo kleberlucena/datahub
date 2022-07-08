@@ -32,7 +32,7 @@ services:
       - GRAYLOG_HTTP_ENDPOINT=$STAGE_GRAYLOG_HTTP_ENDPOINT
     command: bash -c "python manage.py migrate
       && python manage.py collectstatic --noinput
-      && gunicorn --bind 0.0.0.0:8000 --workers 3 project.wsgi:application""
+      && gunicorn --bind 0.0.0.0:8000 --workers 5 project.wsgi:application"
     volumes:
       - ./logs:/code/logs
     ports:
