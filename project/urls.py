@@ -9,7 +9,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('login/<str:backend>/', exchange_token),
+    path('auth/validate/<str:backend>/', exchange_token),
     path('', include('auth_oidc.urls'), name='auth_oidc'),
     path('', include('base.urls'), name='base'),
     path('person/', include('apps.person.urls'), name='person'),

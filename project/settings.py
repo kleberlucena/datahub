@@ -147,6 +147,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
@@ -183,8 +184,10 @@ SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL = env('SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_U
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 SOCIAL_AUTH_KEYCLOAK_SCOPE = ['email', 'openid']
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
-LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'
+# SOCIAL_AUTH_STRATEGY = 'social_django.strategy.DjangoStrategy'
+# LOGIN_URL = '/accounts/login/'
+# LOGIN_REDIRECT_URL = '/'
+# NEW_USER_REDIRECT_URL = '/' # Remover
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
@@ -197,6 +200,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
+
 
 # Minio
 MINIO_CONSISTENCY_CHECK_ON_START = True
@@ -223,7 +227,7 @@ PUBLIC_VIEWS = [
 PUBLIC_PATHS = [
     r'^/accounts/.*',  # allow public access to all django-allauth views
     r'^/health_check',
-    r'^/login/keycloak/'
+    r'^/auth/validate/*/'
 ]
 
 if DEBUG:
@@ -233,7 +237,7 @@ if DEBUG:
     MINIO_CONSISTENCY_CHECK_ON_START = False
     MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = False
     MINIO_USE_HTTPS = False
-    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append('rest_framework.authentication.SessionAuthentication')
+    # REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append()
 
 
 # Celery Configuration Options
