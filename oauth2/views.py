@@ -7,9 +7,13 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+import logging
+
 from requests.exceptions import HTTPError
 
 from social_django.utils import psa
+
+logger = logging.getLogger(__name__)
 
 
 class SocialSerializer(serializers.Serializer):
@@ -46,27 +50,27 @@ def exchange_token(request, backend):
     - `access_token`: The OAuth2 access token provided by the provider
     """
     serializer = SocialSerializer(data=request.data)
-    print("Ai dento 1")
+    logger.error("Ai dento 1")
     if serializer.is_valid(raise_exception=True):
         # set up non-field errors key
         # http://www.django-rest-framework.org/api-guide/exceptions/#exception-handling-in-rest-framework-views
-        print("Ai dento 2")
+        logger.error("Ai dento 2")
         try:
             nfe = settings.NON_FIELD_ERRORS_KEY
         except AttributeError:
             nfe = 'non_field_errors'
-            print("Ai dento 3")
+            logger.error("Ai dento 3")
         try:
             # this line, plus the psa decorator above, are all that's necessary to
             # get and populate a user object for any properly enabled/configured backend
             # which python-social-auth can handle.
-            print("Ai dento 4")
+            logger.error("Ai dento 4")
             user = request.backend.do_auth(serializer.validated_data['access_token'])
         except HTTPError as e:
             # An HTTPError bubbled up from the request to the social auth provider.
             # This happens, at least in Google's case, every time you send a malformed
             # or incorrect access key.
-            print("Ai dento 5")
+            logger.error("Ai dento 5")
             return Response(
                 {'errors': {
                     'token': 'Invalid token',
@@ -76,24 +80,24 @@ def exchange_token(request, backend):
             )
 
         if user:
-            print("Ai dento 6")
+            logger.error("Ai dento 6")
             if user.is_active:
-                print("Ai dento 7")
+                logger.error("Ai dento 7")
                 token, _ = Token.objects.get_or_create(user=user)
-                print("Ai dento 8")
+                logger.error("Ai dento 8")
                 return Response({'token': token.key})
             else:
                 # user is not active; at some point they deleted their account,
                 # or were banned by a superuser. They can't just log in with their
                 # normal credentials anymore, so they can't log in with social
                 # credentials either.
-                print("Ai dento 9")
+                logger.error("Ai dento 9")
                 return Response(
                     {'errors': {nfe: 'This user account is inactive'}},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         else:
-            print("Ai dento 10")
+            logger.error("Ai dento 10")
             # Unfortunately, PSA swallows any information the backend provider
             # generated as to why specifically the authentication failed;
             # this makes it tough to debug except by examining the server logs.
