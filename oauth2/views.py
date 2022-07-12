@@ -49,6 +49,7 @@ def exchange_token(request, backend):
     Requests must include the following field
     - `access_token`: The OAuth2 access token provided by the provider
     """
+    logger.error("Ai dento 0")
     serializer = SocialSerializer(data=request.data)
     logger.error("Ai dento 1")
     if serializer.is_valid(raise_exception=True):
