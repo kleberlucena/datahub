@@ -67,7 +67,8 @@ def exchange_token(request, backend):
             # which python-social-auth can handle.
             logger.error("Ai dento 4")
             user = request.backend.do_auth(serializer.validated_data['access_token'])
-        except HTTPError as e:
+        # except HTTPError as e:
+        except Exception as e:
             # An HTTPError bubbled up from the request to the social auth provider.
             # This happens, at least in Google's case, every time you send a malformed
             # or incorrect access key.
