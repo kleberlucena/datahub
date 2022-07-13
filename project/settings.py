@@ -13,9 +13,7 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 DEBUG = env('DEBUG', default=False)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ALLOWED_HOSTS = list(
-    filter(lambda h: h != '', env('ALLOWED_HOSTS', default='*').split(','))
-)
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
