@@ -9,6 +9,7 @@ services:
     environment:
       - DJANGO_SECRET_KEY=$STAGE_DJANGO_SECRET_KEY
       - DJANGO_SITE_ID=$STAGE_DJANGO_SITE_ID
+      - ALLOWED_HOSTS=172.16.150.140,.stage.pm.pb.gov.br,localhost,127.0.0.1
       - DB_NAME=$STAGE_DB_NAME
       - DB_USER=$STAGE_DB_USER
       - DB_PASSWORD=$STAGE_DB_PASSWORD
