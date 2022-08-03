@@ -1,13 +1,17 @@
 import uuid
 from django.db import models
+from django.conf import settings
+from stdimage.models import StdImageField
+from django_minio_backend import MinioBackend
 
 from apps.address.models import Address
 from apps.image.models import Image
+from apps.document.models import Document
 
 
 class Base(models.Model):
-    created = models.DateTimeField('Criado', auto_now_add=True)
-    updated = models.DateTimeField('Atualizado', auto_now=True)
+    created_at = models.DateTimeField('Criado', auto_now_add=True)
+    updated_at = models.DateTimeField('Atualizado', auto_now=True)
 
     class Meta:
         abstract = True
@@ -15,7 +19,10 @@ class Base(models.Model):
 
 class Person(Base):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    
+    addresses = models.ManyToManyField(Address)
+    images = models.ManyToManyField(Image)
+    documents = models.ManyToManyField(Document)
+
     def __str__(self):
         return f"{self.uuid}"
     
@@ -23,69 +30,37 @@ class Person(Base):
         verbose_name = "Pessoa"
         verbose_name_plural = "Pessoas"
 
-    
 
-class PersonDocument(Base):
+class Nickname(Base):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    person = models.ForeignKey(Person, related_name='person_document', related_query_name='person_document', on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return f"{self.uuid}"
-    
-    class Meta:
-        verbose_name = "Documento de Pessoa"
-        verbose_name_plural = "Documentos de Pessoas"
-    
-
-class PersonNickname(Base):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    person = models.ForeignKey(Person, related_name='person_nickname', related_query_name='person_nickname', on_delete=models.CASCADE)
     nickname = models.CharField("Alcunha", max_length=255)
-    
-    def __str__(self):
-        return f"{self.nickname}"
+    person = models.ForeignKey(Person, related_name='nicknames', on_delete=models.CASCADE)
 
-    class Meta:
-        verbose_name = "Alcunha de Pessoa"
-        verbose_name_plural = "Alcunhas de Pessoas"
-        
-        
-class PersonAddress(Base):
+
+class Tatoo(Base):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    person = models.ForeignKey(Person, related_name='person_address', related_query_name='person_address', on_delete=models.CASCADE)
-    address = models.ForeignKey(Address, related_name='address_person_address', related_query_name='address_person_address', on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return f"{self.uuid}"
-    
-    class Meta:
-        verbose_name = "Endereço de Pessoa"
-        verbose_name_plural = "Endereços de Pessoas"
-        
+    label = models.CharField("descrição", max_length=255)
+    person = models.ForeignKey(Person, related_name='tatoos', on_delete=models.CASCADE)
+    file = StdImageField(
+        'Arquivo',
+        storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
+        upload_to='tatoo_images',
+        variations={
+            'large': {'width': 720, 'height': 720, 'crop': True},
+            'medium': {'width': 480, 'height': 480, 'crop': True},
+            'thumbnail': {'width': 64, 'height': 64, 'crop': True},
+        }, delete_orphans=True, null=True, blank=True)
 
-class PersonImage(Base):
+
+class Physical(Base):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    person = models.ForeignKey(Person, related_name='person_image', related_query_name='person_image', on_delete=models.CASCADE)
-    image = models.ForeignKey(Image, related_name='image_person_image', related_query_name='image_person_image', on_delete=models.CASCADE)
-    description = models.CharField("Descrição", max_length=255)
-    
-    def __str__(self):
-        return f"{self.uuid}"
+    label = models.CharField("descrição", max_length=255)
+    value = models.CharField("valor", max_length=255)
+    person = models.ForeignKey(Person, related_name='physicals', on_delete=models.CASCADE)
 
-    class Meta:
-        verbose_name = "Imagem de Pessoa"
-        verbose_name_plural = "Imagens de Pessoas"
-        
-    
-class PersonImageFace(Base):
+
+class Face(Base):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    person = models.ForeignKey(Person, related_name='person_image_face', related_query_name='person_image_face', on_delete=models.CASCADE)
-    image = models.ForeignKey(Image, related_name='image_person_image_face', related_query_name='image_person_image_face', on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return f"{self.uuid}"
+    image = models.ForeignKey(Image, related_name="faces", on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, related_name='faces', on_delete=models.CASCADE)
 
-    class Meta:
-        verbose_name = "Imagem de Face de Pessoa"
-        verbose_name_plural = "Imagens de Face de Pessoas"
-        

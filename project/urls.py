@@ -3,6 +3,22 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from oauth2.views import exchange_token
+from rest_framework import permissions
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Snippets API",
+      default_version='v1',
+      description="Test description",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="contact@snippets.local"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=[permissions.AllowAny],
+)
 
 
 urlpatterns = [
@@ -12,8 +28,14 @@ urlpatterns = [
     path('auth/validate/<str:backend>/', exchange_token),
     path('', include('auth_oidc.urls'), name='auth_oidc'),
     path('', include('base.urls'), name='base'),
+    path('document/', include('apps.document.urls'), name='person'),
     path('person/', include('apps.person.urls'), name='person'),
     path('image/', include('apps.image.urls'), name='image'),
     path('address/', include('apps.address.urls'), name='address'),
     path('celery-progress/', include('celery_progress.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# swagger
+urlpatterns += [
+   path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),  # noqa E501
+]

@@ -1,0 +1,106 @@
+import uuid
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.db import models
+from stdimage.models import StdImageField
+from django_minio_backend import MinioBackend
+from safedelete import SOFT_DELETE_CASCADE
+from safedelete.models import SafeDeleteModel
+
+
+class Base(models.Model):
+    created_at = models.DateTimeField('Criado', auto_now_add=True)
+    updated_at = models.DateTimeField('Atualizado', auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class SoftDelete(SafeDeleteModel):
+    _safedelete_policy = SOFT_DELETE_CASCADE
+    deleted_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Document(Base, SoftDelete):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    number = models.CharField(max_length=255, null=True, blank=True)
+    label = models.CharField(max_length=255, null=True, blank=True)
+    updated_by = models.ForeignKey(
+        User,
+        related_name='document_updater',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    created_by = models.ForeignKey(
+        User,
+        related_name='document_creator',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    def soft_delete_policy_action(self, user, **kwargs):
+        # Insert here custom pre delete logic
+        # print(kwargs['user'])
+        # user = User.objects.get(username=kwargs['user'])
+        print(user)
+        self.deleted_by = user
+        super().soft_delete_policy_action(**kwargs)
+        # Insert here custom post delete logic
+
+    def __str__(self):
+        return f"{self.number} {self.label}"
+
+    class Meta:
+        verbose_name = "Documento"
+        verbose_name_plural = "Documentos"
+
+
+class DocumentImage(SoftDelete):
+    file = StdImageField(
+        'Arquivo',
+        storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
+        upload_to='document_images',
+        variations={
+            'large': {'width': 720, 'height': 720, 'crop': True},
+            'medium': {'width': 480, 'height': 480, 'crop': True},
+            'thumbnail': {'width': 64, 'height': 64, 'crop': True},
+        }, delete_orphans=True, null=True, blank=True)
+    document = models.ForeignKey(Document, related_name='images', on_delete=models.CASCADE, null=True)
+    created_by = models.ForeignKey(
+        User,
+        related_name='document_image_creator',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    updated_by = models.ForeignKey(
+        User,
+        related_name='document_image_updater',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    def soft_delete_policy_action(self, user, **kwargs):
+        # Insert here custom pre delete logic
+        self.deleted_by = user
+        super().soft_delete_policy_action(**kwargs)
+        # Insert here custom post delete logic
+
+    def __str__(self):
+        return f"{self.file.url}"
+
+    class Meta:
+        verbose_name = "Imagem"
+        verbose_name_plural = "Imagens"
+

@@ -1,0 +1,17 @@
+<!-- todo_detail.html -->
+{% extends "base/base.html" %}
+
+{% block content %}
+  <h1>Detalhes</h1>
+
+  <ul>
+    <li><b>Arquivo:</b> {{ object.file }}</li>
+    <li><b>Criado Por</b>
+      {{ object.created_by }}
+    </li>
+    <li><b>Preview:</b>
+      <b class=d-block><a href="{{ object.file.url }}"><img alt="" src="{{ object.file.thumbnail.url }}"/></a></b>
+    </li>
+    <li><b>Criado em:</b> {{ object.created_at|date:'d/m/Y'|default:'---' }}</li>
+  </ul>
+{% endblock content %}

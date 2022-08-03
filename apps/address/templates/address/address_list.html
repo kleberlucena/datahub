@@ -1,0 +1,60 @@
+<!-- todo_list.html -->
+{% extends "base/base.html" %}
+
+{% block content %}
+  <h1>
+    Lista
+    <a class="btn btn-primary" href="{% url 'address:address_create' %}">Adicionar</a>
+  </h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Logradouro</th>
+        <th>Nº</th>
+        <th>Bairro</th>
+        <th>CEP</th>
+        <th>Cidade</th>
+        <th>UF</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for object in object_list %}
+        <tr>
+          <td>
+            <a href="{{ object.get_absolute_url }}">{{ object.street }}</a>
+          </td>
+          <td>
+            {{ object.number }}
+          </td>
+          <td>
+            {{ object.complement }}
+          </td>
+          <td>
+            {{ object.neighborhood }}
+          </td>
+          <td>
+            {{ object.zipcode }}
+          </td>
+          <td>
+            {{ object.city }}
+          </td>
+          <td>
+            {{ object.state }}
+          </td>
+          <td>
+            {{ object.created_by }}
+          </td>
+          <td>
+            <a href="{% url 'address:address_update' object.pk %}">
+              <i class="fa fa-edit"></i>
+            </a>
+            <a href="{% url 'address:address_delete' object.pk %}" style="padding-left: 7px">
+              <i class="fa fa-close no"></i>
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock content %}
