@@ -101,6 +101,6 @@ class DocumentImage(SoftDelete):
         return f"{self.file.url}"
 
     class Meta:
-        verbose_name = "Imagem"
-        verbose_name_plural = "Imagens"
+        verbose_name = "Imagem de documento"
+        verbose_name_plural = "Imagens de documento"
 

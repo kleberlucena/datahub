@@ -11,6 +11,16 @@ class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
+
+    def perform_destroy(self, instance):
+        user = self.request.user
+        instance.soft_delete_policy_action(user)
+
 
 class PersonList(generics.ListAPIView):
     queryset = Person.objects.all()
@@ -33,7 +43,7 @@ class PersonAddFaceView(CreateModelMixin, generics.GenericAPIView):
 
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.request.kwargs['uuid'])
-        return serializer.save(person=person)
+        return serializer.save(person=person, created_by=self.request.user)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -45,7 +55,7 @@ class PersonAddTatooView(CreateModelMixin, generics.GenericAPIView):
 
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.request.kwargs['uuid'])
-        return serializer.save(person=person)
+        return serializer.save(person=person, created_by=self.request.user)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -57,7 +67,7 @@ class PersonAddNicknameView(CreateModelMixin, generics.GenericAPIView):
 
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.request.kwargs['uuid'])
-        return serializer.save(person=person)
+        return serializer.save(person=person, created_by=self.request.user)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -69,7 +79,7 @@ class PersonAddPhysicalView(CreateModelMixin, generics.GenericAPIView):
 
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.request.kwargs['uuid'])
-        return serializer.save(person=person)
+        return serializer.save(person=person, created_by=self.request.user)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -81,7 +91,7 @@ class PersonAddDocumentView(CreateModelMixin, generics.GenericAPIView):
 
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.request.kwargs['uuid'])
-        return serializer.save(person=person)
+        return serializer.save(person=person, created_by=self.request.user)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -93,7 +103,7 @@ class PersonAddAddressView(CreateModelMixin, generics.GenericAPIView):
 
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.request.kwargs['uuid'])
-        return serializer.save(person=person)
+        return serializer.save(person=person, created_by=self.request.user)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
