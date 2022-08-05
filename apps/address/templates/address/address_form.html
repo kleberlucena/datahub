@@ -1,0 +1,145 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+<!-- browser title -->
+{% block title %} Endereço {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+{% endblock %}
+
+<!-- context title -->
+{% block title-header %} Cadastro de Endereço {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item "><a href="{% url 'base:index' %}">Início</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'address:address_list' %}">Lista de Endereços</a></li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+<div class="card card-primary card-outline">
+  <div class="card-header">
+    <h3 class="card-title">Dados do novo endereço</h3>
+  </div>
+  <div class="card-body">
+    <div class="form-group">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-12 col-md-12 col-lg-8 order-1 order-md-1">
+            <h5>Endreço</h5>
+            {{ form.as_p }}
+          </div>
+          <div class="col-12 col-md-12 col-lg-4 order-2 order-md-2">
+            <hr class="mt-4">
+            <button type="submit" class="btn btn-primary float-right mt-4"> Salvar </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<hr>
+<div class="card card-info">
+  <div class="card-header">
+    <h3 class="card-title">Orientações</h3>
+  </div>
+  <div class="card-body">
+    <ul>
+      <li> Adicionar todos os dados do endereço, inclusive os de fora da Paraíba também devem ser cadastrados o endereço.</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+<!-- javascripts -->
+{% block js %}
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.full.min.js' %}"></script>
+  <script>
+      $(function () {
+        $('.select2bs4').select2({
+          placeholder: 'Selecione um item',
+          theme: 'bootstrap4',
+          width: '100%'
+        }),
+        $('.dateinput').inputmask('99/99/9999');
+      });
+
+      function limpa_formulário_cep() {
+            //Limpa valores do formulário de cep.
+            document.getElementById('id_street').value=("");
+            document.getElementById('id_neighborhood').value=("");
+            document.getElementById('id_city').value=("");
+            document.getElementById('id_state').value=("");
+            //document.getElementById('ibge').value=("");
+      }
+
+      function meu_callback(conteudo) {
+        if (!("erro" in conteudo)) {
+            //Atualiza os campos com os valores.
+            document.getElementById('id_street').value=(conteudo.logradouro);
+            document.getElementById('id_neighborhood').value=(conteudo.bairro);
+            document.getElementById('id_city').value=(conteudo.localidade);
+            document.getElementById('id_state').value=(conteudo.uf);
+            //document.getElementById('ibge').value=(conteudo.ibge);
+        } //end if.
+        else {
+            //CEP não Encontrado.
+            limpa_formulário_cep();
+            alert("CEP não encontrado.");
+        }
+      }
+
+      function pesquisacep(valor) {
+
+        //Nova variável "cep" somente com dígitos.
+        var cep = valor.replace(/\D/g, '');
+
+        //Verifica se campo cep possui valor informado.
+        if (cep != "") {
+
+            //Expressão regular para validar o CEP.
+            var validacep = /^[0-9]{8}$/;
+
+            //Valida o formato do CEP.
+            if(validacep.test(cep)) {
+
+                //Preenche os campos com "..." enquanto consulta webservice.
+                document.getElementById('id_street').value="...";
+                document.getElementById('id_neighborhood').value="...";
+                document.getElementById('id_city').value="...";
+                document.getElementById('id_state').value="...";
+                //document.getElementById('ibge').value="...";
+
+                //Cria um elemento javascript.
+                var script = document.createElement('script');
+
+                //Sincroniza com o callback.
+                script.src = 'https://viacep.com.br/ws/'+ cep + '/json/?callback=meu_callback';
+
+                //Insere script no documento e carrega o conteúdo.
+                document.body.appendChild(script);
+
+            } //end if.
+            else {
+                //cep é inválido.
+                limpa_formulário_cep();
+                alert("Formato de CEP inválido.");
+            }
+        } //end if.
+        else {
+            //cep sem valor, limpa formulário.
+            limpa_formulário_cep();
+        }
+    };
+    </script>
+{% endblock %}
+
+

@@ -9,8 +9,8 @@ import uuid
 
 
 class Base(models.Model):
-    created = models.DateTimeField('Criado', auto_now_add=True)
-    updated = models.DateTimeField('Atualizado', auto_now=True)
+    created_at = models.DateTimeField('Criado', auto_now_add=True)
+    updated_at = models.DateTimeField('Atualizado', auto_now=True)
 
     class Meta:
         abstract = True
@@ -49,7 +49,7 @@ class Address(Base, SoftDelete):
     region = models.CharField('Região', max_length=2, choices=REGION, default='NE', null=True, blank=True)
     country = models.CharField('País', max_length=155, default='Brasil', null=True, blank=True)
     zipcode = BRPostalCodeField('CEP', null=True, blank=True)
-    place = geo_models.PointField(max_length=255, null=True, blank=True)
+    place = geo_models.PointField(srid=4326, null=True, blank=True)
     updated_by = models.ForeignKey(
         User,
         related_name='address_updater',

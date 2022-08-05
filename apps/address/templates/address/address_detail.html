@@ -1,0 +1,25 @@
+<!-- todo_detail.html -->
+{% extends "base/base.html" %}
+
+{% block content %}
+  <h1>Detalhes</h1>
+
+  <ul>
+    <li><b>Logradouro:</b> {{ object.street }}</li>
+    <li><b>Nº:</b> {{ object.number }}</li>
+    <li><b>Complemento:</b> {{ object.complement }}</li>
+    <li><b>Bairro:</b> {{ object.neighborhood }}</li>
+    <li><b>CEP:</b> {{ object.zipcode }}</li>
+    <li><b>Cidade:</b> {{ object.city }}</li>
+    <li><b>Estado:</b> {{ object.state }}</li>
+    <li><b>Região:</b> {{ object.region }}</li>
+    <li><b>País:</b> {{ object.country }}</li>
+    <li><b>Criado Por</b>
+      {{ object.created_by }}
+    </li>
+    <li><b>Preview:</b>
+      <b class=d-block><a href="{{ object.file.url }}"><img alt="" src="{{ object.file.thumbnail.url }}"/></a></b>
+    </li>
+    <li><b>Criado em:</b> {{ object.created_at|date:'d/m/Y'|default:'---' }}</li>
+  </ul>
+{% endblock content %}

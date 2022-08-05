@@ -18,6 +18,7 @@ ALLOWED_HOSTS = list(
 )
 
 # Application definition
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
 
     # Libraries
     'rest_framework',
+    'drf_yasg',
     'rest_framework.authtoken',  # if you use the same token auth system as the example
     'social_django',  # python social auth
     'django_minio_backend.apps.DjangoMinioBackendConfig',
@@ -57,9 +59,9 @@ INSTALLED_APPS = [
     'apps.person',
     'apps.image',
     'apps.address',
+    'apps.document',
 
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -150,6 +152,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
 }
 
 # Allauth

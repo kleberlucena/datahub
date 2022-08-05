@@ -1,0 +1,43 @@
+<!-- todo_list.html -->
+{% extends "base/base.html" %}
+
+{% block content %}
+  <h1>
+    Lista
+    <a class="btn btn-primary" href="{% url 'image:image_create' %}">Adicionar</a>
+  </h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Arquivo</th>
+        <th>Criado Por</th>
+        <th>Preview</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for object in object_list %}
+        <tr>
+          <td>
+            <a href="{{ object.get_absolute_url }}">{{ object.file }}</a>
+          </td>
+          <td>
+            {{ object.created_by }}
+          </td>
+          <td>
+            <b class=d-block><a href="{{ object.file.url }}"><img alt="" src="{{ object.file.thumbnail.url }}"/></a></b>
+          </td>
+          <td>
+            <a href="{% url 'image:image_update' object.pk %}">
+              <i class="fa fa-edit"></i>
+            </a>
+            <a href="{% url 'image:image_delete' object.pk %}" style="padding-left: 7px">
+              <i class="fa fa-close no"></i>
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock content %}
