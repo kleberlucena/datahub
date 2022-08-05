@@ -30,6 +30,7 @@ class NicknameSerializer(serializers.ModelSerializer):
 class TatooSerializer(serializers.ModelSerializer):
     uuid = serializers.UUIDField()
     label = serializers.CharField()
+    file = serializers.FileField()
 
     class Meta:
         model = Tatoo

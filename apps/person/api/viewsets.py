@@ -42,7 +42,7 @@ class PersonAddFaceView(CreateModelMixin, generics.GenericAPIView):
     serializer_class = FaceSerializer
 
     def perform_create(self, serializer):
-        person = get_object_or_404(Person, uuid=self.request.kwargs['uuid'])
+        person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         return serializer.save(person=person, created_by=self.request.user)
 
     def post(self, request, *args, **kwargs):
@@ -54,7 +54,7 @@ class PersonAddTatooView(CreateModelMixin, generics.GenericAPIView):
     serializer_class = TatooSerializer
 
     def perform_create(self, serializer):
-        person = get_object_or_404(Person, uuid=self.request.kwargs['uuid'])
+        person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         return serializer.save(person=person, created_by=self.request.user)
 
     def post(self, request, *args, **kwargs):
@@ -66,7 +66,7 @@ class PersonAddNicknameView(CreateModelMixin, generics.GenericAPIView):
     serializer_class = NicknameSerializer
 
     def perform_create(self, serializer):
-        person = get_object_or_404(Person, uuid=self.request.kwargs['uuid'])
+        person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         return serializer.save(person=person, created_by=self.request.user)
 
     def post(self, request, *args, **kwargs):
@@ -78,7 +78,7 @@ class PersonAddPhysicalView(CreateModelMixin, generics.GenericAPIView):
     serializer_class = PhysicalSerializer
 
     def perform_create(self, serializer):
-        person = get_object_or_404(Person, uuid=self.request.kwargs['uuid'])
+        person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         return serializer.save(person=person, created_by=self.request.user)
 
     def post(self, request, *args, **kwargs):
@@ -90,7 +90,7 @@ class PersonAddDocumentView(CreateModelMixin, generics.GenericAPIView):
     serializer_class = DocumentSerializer
 
     def perform_create(self, serializer):
-        person = get_object_or_404(Person, uuid=self.request.kwargs['uuid'])
+        person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         return serializer.save(person=person, created_by=self.request.user)
 
     def post(self, request, *args, **kwargs):
@@ -102,7 +102,7 @@ class PersonAddAddressView(CreateModelMixin, generics.GenericAPIView):
     serializer_class = AddressSerializer
 
     def perform_create(self, serializer):
-        person = get_object_or_404(Person, uuid=self.request.kwargs['uuid'])
+        person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         return serializer.save(person=person, created_by=self.request.user)
 
     def post(self, request, *args, **kwargs):
