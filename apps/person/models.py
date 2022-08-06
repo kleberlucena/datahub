@@ -35,9 +35,9 @@ class SoftDelete(SafeDeleteModel):
 
 class Person(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    addresses = models.ManyToManyField(Address)
-    images = models.ManyToManyField(Image)
-    documents = models.ManyToManyField(Document)
+    addresses = models.ManyToManyField(Address, blank=True)
+    images = models.ManyToManyField(Image, blank=True)
+    documents = models.ManyToManyField(Document, blank=True)
     updated_by = models.ForeignKey(
         User,
         related_name='person_updater',
