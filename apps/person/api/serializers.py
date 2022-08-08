@@ -1,6 +1,7 @@
 from dataclasses import fields
 from numpy import source
 from rest_framework import serializers
+from drf_extra_fields.fields import Base64ImageField
 from drf_writable_nested import WritableNestedModelSerializer
 
 from apps.person.models import *
@@ -30,11 +31,19 @@ class NicknameSerializer(serializers.ModelSerializer):
 class TatooSerializer(serializers.ModelSerializer):
     uuid = serializers.UUIDField()
     label = serializers.CharField()
-    file = serializers.FileField()
+    file = Base64ImageField()
 
     class Meta:
         model = Tatoo
         fields = ('uuid', 'label', 'file')
+
+    def create(self, validated_data):
+        file=validated_data.pop('file')
+        label=validated_data.pop('label')
+        uuid=validated_data.pop('uuid')
+        person=validated_data.pop('person')
+        return Tatoo.objects.create(uuid=uuid, person=person, label=label, file=file)
+
 
 
 class PhysicalSerializer(serializers.ModelSerializer):

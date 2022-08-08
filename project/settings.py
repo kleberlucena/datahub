@@ -230,8 +230,10 @@ PUBLIC_VIEWS = [
 PUBLIC_PATHS = [
     r'^/accounts/.*',  # allow public access to all django-allauth views
     r'^/health_check',
-    r'^/auth/validate/*/'
+    r'^/auth/validate/*/',
+    r'^/person/api/v1/*',
 ]
+
 PUBLIC_PATHS.append(r'^/admin/.*', ) 
 if DEBUG:
     PUBLIC_PATHS.append(r'^/admin/.*', )  # allow access to admin views

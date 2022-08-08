@@ -10,10 +10,16 @@ class DocumentViewSet(viewsets.ModelViewSet):
     serializer_class = DocumentSerializer
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        if serializer.is_valid():
+            serializer.save(created_by=self.request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
     def perform_update(self, serializer):
-        serializer.save(updated_by=self.request.user)
+        if serializer.is_valid():
+            serializer.save(updated_by=self.request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
     def perform_destroy(self, instance):
         user = self.request.user

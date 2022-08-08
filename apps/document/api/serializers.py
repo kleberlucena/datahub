@@ -1,10 +1,12 @@
 from rest_framework import serializers
 
 from apps.document.models import Document, DocumentImage
+from drf_extra_fields.fields import Base64ImageField
 from drf_writable_nested import WritableNestedModelSerializer
 
 
 class DocumentImageSerializer(serializers.ModelSerializer):
+    file = Base64ImageField()
 
     class Meta:
         model = DocumentImage
