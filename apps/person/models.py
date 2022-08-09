@@ -178,7 +178,16 @@ class Physical(Base, SoftDelete):
 
 class Face(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    image = models.ForeignKey(Image, related_name="faces", on_delete=models.CASCADE)
+    file = StdImageField(
+        'Imagem',
+        storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
+        upload_to='faces_imagens',
+        variations={
+            'large': {'width': 720, 'height': 720, 'crop': True},
+            'medium': {'width': 480, 'height': 480, 'crop': True},
+            'thumbnail': {'width': 128, 'height': 128, 'crop': True},
+        }, delete_orphans=True, blank=True
+    )
     person = models.ForeignKey(Person, related_name='faces', on_delete=models.CASCADE)
     updated_by = models.ForeignKey(
         User,

@@ -43,7 +43,10 @@ class PersonAddFaceView(CreateModelMixin, generics.GenericAPIView):
 
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
-        return serializer.save(person=person, created_by=self.request.user)
+        if serializer.is_valid():
+            serializer.save(person=person, created_by=self.request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)

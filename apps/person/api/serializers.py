@@ -12,11 +12,17 @@ from apps.document.api.serializers import DocumentSerializer
 
 class FaceSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
     uuid = serializers.UUIDField()
-    image = ImageSerializer()
+    file = Base64ImageField()
 
     class Meta:
         model = Face
-        fields = ('uuid', 'image',)
+        fields = ('uuid', 'file',)
+
+    def create(self, validated_data):
+        file=validated_data.pop('file')
+        uuid=validated_data.pop('uuid')
+        person=validated_data.pop('person')
+        return Face.objects.create(uuid=uuid, person=person, file=file)
 
 
 class NicknameSerializer(serializers.ModelSerializer):
