@@ -1,11 +1,12 @@
 from django.contrib import admin
+from guardian.admin import GuardedModelAdmin
 from django.utils.html import format_html
 
 from .models import Image
 
 
 @admin.register(Image)
-class ImageAdmin(admin.ModelAdmin):
+class ImageAdmin(GuardedModelAdmin):
     list_display = ('uuid', 'created_by', 'foto_preview', 'created_at', 'updated_at')
     readonly_fields = ['foto_preview']
 

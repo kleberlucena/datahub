@@ -37,5 +37,4 @@ class ImageViewSet(viewsets.ModelViewSet):
         serializer.save(updated_by=self.request.user)
 
     def perform_destroy(self, instance):
-        user = self.request.user
-        instance.soft_delete_policy_action(user)
+        instance.soft_delete_policy_action(self.request.user)

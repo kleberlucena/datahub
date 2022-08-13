@@ -30,7 +30,7 @@ class Image(models.Model):
     updated_at = models.DateTimeField('Atualizado', auto_now=True)
     
     def __str__(self):
-        return f"{self.file.url}"
+        return f"{self.id}"
 
 
     def get_absolute_url(self):
