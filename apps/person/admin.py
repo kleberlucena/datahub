@@ -1,14 +1,15 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from guardian.admin import GuardedModelAdmin
 from safedelete.admin import SafeDeleteAdmin, SafeDeleteAdminFilter, highlight_deleted
 
 from apps.person.models import *
 
 
 @admin.register(Person)
-class PersonAdmin(SafeDeleteAdmin):
+class PersonAdmin(SafeDeleteAdmin, GuardedModelAdmin):
     list_display = (highlight_deleted, "highlight_deleted_field", 'uuid', 'created_at', 'updated_at',
-                    "deleted_by") + SafeDeleteAdmin.list_display
+                    "created_by", "deleted_by") + SafeDeleteAdmin.list_display
     list_filter = ("created_by", SafeDeleteAdminFilter,) + SafeDeleteAdmin.list_filter
     search_fields = ('uuid',)
     exclude = ()
@@ -17,6 +18,18 @@ class PersonAdmin(SafeDeleteAdmin):
 
 PersonAdmin.highlight_deleted_field.short_description = PersonAdmin.field_to_highlight
 
+
+@admin.register(Face)
+class FaceAdmin(SafeDeleteAdmin, GuardedModelAdmin):
+    list_display = (highlight_deleted, "highlight_deleted_field", 'uuid', 'created_at',
+                    'updated_at', "created_by", "deleted_by") + SafeDeleteAdmin.list_display
+    list_filter = ("created_by", SafeDeleteAdminFilter,) + SafeDeleteAdmin.list_filter
+    search_fields = ('uuid',)
+    exclude = ()
+    field_to_highlight = "id"
+
+
+PersonAdmin.highlight_deleted_field.short_description = PersonAdmin.field_to_highlight
 
 # @admin.register(PersonDocument)
 # class PersonDocumentAdmin(admin.ModelAdmin):

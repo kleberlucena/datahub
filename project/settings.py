@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'django_celery_beat',
     'celery_progress',
+    'guardian',
 
     # Apps
     'base',
@@ -79,6 +80,7 @@ ROOT_URLCONF = 'project.urls'
 AUTHENTICATION_BACKENDS = [
     'social_core.backends.keycloak.KeycloakOAuth2',
     'allauth.account.auth_backends.AuthenticationBackend',
+    'guardian.backends.ObjectPermissionBackend',
 ]
 
 TEMPLATES = [
@@ -231,7 +233,7 @@ PUBLIC_PATHS = [
     r'^/accounts/.*',  # allow public access to all django-allauth views
     r'^/health_check',
     r'^/auth/validate/*/',
-    r'^/person/api/v1/*',
+    r'^/api/v1/person/*',
 ]
 
 PUBLIC_PATHS.append(r'^/admin/.*', ) 

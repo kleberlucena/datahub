@@ -12,5 +12,5 @@ router.register(r'', DocumentViewSet)
 # router.register(r'images', ImageViewSet)
 
 urlpatterns = [
-    path("api/v1/", include(router.urls)),
+    path("", include(router.urls)),
 ]
