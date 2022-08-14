@@ -71,6 +71,7 @@ services:
     command: bash -c "celery -A project worker -l info"
     volumes:
       - ./logs:/code/logs
+    restart: always
     depends_on:
       - app
 
@@ -106,5 +107,6 @@ services:
     command: bash -c "celery -A project beat -l info"
     volumes:
       - ./logs:/code/logs
+    restart: always
     depends_on:
       - app
