@@ -31,7 +31,7 @@ class SoftDelete(SafeDeleteModel):
 
 class DocumentType(Base, SoftDelete):
     emitter_department = models.CharField(max_length=255, null=True, blank=True)
-    label = models.CharField(max_length=255, null=True, blank=True)
+    label = models.CharField(max_length=255)
     updated_by = models.ForeignKey(
         User,
         related_name='document_type_updater',

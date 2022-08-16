@@ -11,5 +11,9 @@ class ImageAdmin(GuardedModelAdmin):
     readonly_fields = ['foto_preview']
 
     def foto_preview(self, obj):
-        return format_html(
-            f"<img src='{obj}' width='120' height='120' style='border-radius: 50% 50%;'/>")
+        try:
+            return format_html(
+                f"<img src='{obj.file.url}' width='120' height='120' style='border-radius: 50% 50%;'/>")
+        except:
+            return format_html(
+                f"<div width='120' height='120' style='border-radius: 50% 50%;'></div>")

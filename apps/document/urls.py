@@ -13,6 +13,6 @@ router.register(r'', DocumentViewSet)
 # router.register(r'images', ImageViewSet)
 
 urlpatterns = [
-    path('document-types/', login_not_required(DocumentTypeListViewSet.as_view()), name='document_type_json'),
+    path('document-types/', DocumentTypeListViewSet.as_view(), name='document_type_json'),
     path("", include(router.urls)),
 ]

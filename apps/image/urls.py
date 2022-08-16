@@ -7,5 +7,5 @@ from .api import viewsets
 app_name = 'apps.image'
 
 urlpatterns = [
-    path('api-v1/list_image/', login_not_required(viewsets.ImageList.as_view()), name='image_list_json'),
+    path('api-v1/list_image/', viewsets.ImageList.as_view(), name='image_list_json'),
 ]
