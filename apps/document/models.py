@@ -29,10 +29,38 @@ class SoftDelete(SafeDeleteModel):
         abstract = True
 
 
+class DocumentType(Base, SoftDelete):
+    emitter_department = models.CharField(max_length=255, null=True, blank=True)
+    label = models.CharField(max_length=255, null=True, blank=True)
+    updated_by = models.ForeignKey(
+        User,
+        related_name='document_type_updater',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    created_by = models.ForeignKey(
+        User,
+        related_name='document_type_creator',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    def soft_delete_policy_action(self, user, **kwargs):
+        # Insert here custom pre delete logic
+        # print(kwargs['user'])
+        # user = User.objects.get(username=kwargs['user'])
+        print(user)
+        self.deleted_by = user
+        super().soft_delete_policy_action(**kwargs)
+        # Insert here custom post delete logic
+
+
 class Document(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     number = models.CharField(max_length=255, null=True, blank=True)
-    label = models.CharField(max_length=255, null=True, blank=True)
+    type = models.ForeignKey(DocumentType, related_name='emitidos', on_delete=models.CASCADE, null=True, blank=True)
     updated_by = models.ForeignKey(
         User,
         related_name='document_updater',
@@ -58,14 +86,14 @@ class Document(Base, SoftDelete):
         # Insert here custom post delete logic
 
     def __str__(self):
-        return f"{self.number} {self.label}"
+        return f"{self.number}"
 
     class Meta:
         verbose_name = "Documento"
         verbose_name_plural = "Documentos"
 
 
-class DocumentImage(SoftDelete):
+class DocumentImage(Base, SoftDelete):
     file = StdImageField(
         'Arquivo',
         storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
