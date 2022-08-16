@@ -1,8 +1,13 @@
-from rest_framework import mixins, permissions, viewsets
+from rest_framework import generics, mixins, permissions, viewsets
 from rest_framework.response import Response
 
-from apps.document.models import Document, DocumentImage
-from apps.document.api.serializers import DocumentSerializer, DocumentImageSerializer
+from apps.document.models import Document, DocumentImage, DocumentType
+from apps.document.api.serializers import DocumentSerializer, DocumentImageSerializer, DocumentTypeSerializer
+
+
+class DocumentTypeListViewSet(generics.ListAPIView):
+    queryset = DocumentType.objects.all()
+    serializer_class = DocumentTypeSerializer
 
 
 class DocumentViewSet(viewsets.ModelViewSet):

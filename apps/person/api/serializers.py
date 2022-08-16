@@ -17,21 +17,15 @@ class FaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Face
         fields = ('uuid', 'file',)
-    #
-    # def create(self, validated_data):
-    #     file=validated_data.pop('file')
-    #     uuid=validated_data.pop('uuid')
-    #     person=validated_data.pop('person')
-    #     return Face.objects.create(uuid=uuid, person=person, file=file)
 
 
 class NicknameSerializer(serializers.ModelSerializer):
     uuid = serializers.UUIDField()
-    nickname = serializers.CharField()
+    label = serializers.CharField()
 
     class Meta:
         model = Nickname
-        fields = ('uuid', 'nickname',)
+        fields = ('uuid', 'label',)
 
 
 class TatooSerializer(serializers.ModelSerializer):

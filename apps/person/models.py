@@ -69,7 +69,7 @@ class Person(Base, SoftDelete):
 
 class Nickname(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    nickname = models.CharField("Alcunha", max_length=255)
+    label = models.CharField("Alcunha", max_length=255)
     person = models.ForeignKey(Person, related_name='nicknames', on_delete=models.CASCADE)
     updated_by = models.ForeignKey(
         User,
