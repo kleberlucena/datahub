@@ -30,8 +30,8 @@ urlpatterns = [
     path('', include('base.urls'), name='base'),
     path('api/v1/document/', include('apps.document.urls'), name='person'),
     path('api/v1/person/', include('apps.person.urls'), name='person'),
-    path('image/', include('apps.image.urls'), name='image'),
-    path('address/', include('apps.address.urls'), name='address'),
+    path('api/v1/image/', include('apps.image.urls'), name='image'),
+    path('api/v1/address/', include('apps.address.urls'), name='address'),
     path('celery-progress/', include('celery_progress.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
