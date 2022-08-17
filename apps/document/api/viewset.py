@@ -31,6 +31,16 @@ class DocumentViewSet(viewsets.ModelViewSet):
         instance.soft_delete_policy_action(user)
 
 
+class DocumentRetrieve(generics.RetrieveAPIView):
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = Document.objects.get(uuid=kwargs['uuid'])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = DocumentImage.objects.all()
     serializer_class = DocumentImageSerializer

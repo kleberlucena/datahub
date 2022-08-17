@@ -29,7 +29,6 @@ class SoftDelete(SafeDeleteModel):
         abstract = True
 
 
-
 class Address(Base, SoftDelete):
     REGION = (
         ('CO', 'Centro-Oeste'),
