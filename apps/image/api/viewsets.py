@@ -5,7 +5,7 @@ from apps.image.api.serializers import *
 from apps.image.models import *
 
 
-class ImageList(generics.ListAPIView):
+class ImageList(generics.ListCreateAPIView):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     permission_classes = [permissions.IsAuthenticated]
