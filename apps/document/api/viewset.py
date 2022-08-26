@@ -14,6 +14,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
 
+    # def list(self, request, *args, **kwargs):
+    #     documents = Document.objects.all()
+    #     serializer = self.get_serializer(documents)
+
     def perform_create(self, serializer):
         if serializer.is_valid():
             serializer.save(created_by=self.request.user)

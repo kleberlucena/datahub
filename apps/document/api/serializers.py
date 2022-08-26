@@ -3,6 +3,7 @@ from rest_framework import serializers
 from apps.document.models import Document, DocumentImage, DocumentType
 from drf_extra_fields.fields import Base64ImageField
 from drf_writable_nested import WritableNestedModelSerializer
+from guardian.shortcuts import get_perms
 
 
 class DocumentImageSerializer(serializers.ModelSerializer):
@@ -14,19 +15,33 @@ class DocumentImageSerializer(serializers.ModelSerializer):
 
 
 class DocumentTypeSerializer(serializers.ModelSerializer):
+    permissions = serializers.SerializerMethodField('_get_permissions')
+
+    def _get_permissions(self, document_object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, document_object)
+            return perms
 
     class Meta:
         model = DocumentType
-        fields = ['label', 'emitter_department']
+        fields = ['label', 'emitter_department', 'permissions']
 
 
 class DocumentSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
+    permissions = serializers.SerializerMethodField('_get_permissions')
     images = DocumentImageSerializer(many=True)
     # type = DocumentTypeSerializer(many=False, required=False)
 
+    def _get_permissions(self, document_object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, document_object)
+            return perms
+
     class Meta:
         model = Document
-        fields = ['uuid', 'number', 'type', 'images']
+        fields = ['uuid', 'number', 'type', 'images', 'permissions']
 
     def create(self, validated_data):
         images_data = validated_data.pop('images')
