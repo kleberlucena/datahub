@@ -66,10 +66,10 @@ class PersonViewSet(viewsets.ModelViewSet):
 
 class PersonList(generics.ListAPIView):
     queryset = Person.objects.all()
-    serializer_class = PersonListSerializer
+    serializer_class = PersonSerializer
 
 
-class AddPersonView(generics.ListCreateAPIView):
+class AddPersonListView(generics.ListCreateAPIView):
     permission_classes = [DjangoObjectPermissions]
 
     queryset = Person.objects.all()
@@ -126,9 +126,9 @@ class AddPersonView(generics.ListCreateAPIView):
     #     return self.list(request, *args, **kwargs)
 
 
-class PersonRetrieve(generics.RetrieveAPIView):
+class PersonRetrieveView(generics.RetrieveAPIView):
     queryset = Person.objects.all()
-    serializer_class = PersonListSerializer
+    serializer_class = PersonSerializer
 
     def retrieve(self, request, *args, **kwargs):
         instance = Person.objects.get(uuid=kwargs['uuid'])
