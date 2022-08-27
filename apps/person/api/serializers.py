@@ -92,11 +92,18 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
     tatoos = TatooSerializer(many=True, required=False)
     physicals = PhysicalSerializer(many=True, required=False)
     documents = DocumentSerializer(many=True, required=False)
+    permissions = serializers.SerializerMethodField('_get_permissions')
+    
+    def _get_permissions(self, object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, object)
+            return perms
 
     class Meta:
         model = Person
         fields = (
-            'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tatoos', 'physicals')
+            'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tatoos', 'physicals', 'permissions')
 
 
 class PersonListSerializer(serializers.ModelSerializer):
