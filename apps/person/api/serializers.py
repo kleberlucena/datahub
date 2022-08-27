@@ -106,18 +106,25 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
             'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tatoos', 'physicals', 'permissions')
 
 
-class PersonListSerializer(serializers.ModelSerializer):
-    nicknames = NicknameSerializer(many=True)
-    faces = FaceSerializer(many=True)
-    addresses = AddressSerializer(many=True)
-    images = ImageSerializer(many=True)
-    tatoos = TatooSerializer(many=True)
-    physicals = PhysicalSerializer(many=True)
-    documents = DocumentSerializer(many=True)
+# class PersonListSerializer(serializers.ModelSerializer):
+#     nicknames = NicknameSerializer(many=True)
+#     faces = FaceSerializer(many=True)
+#     addresses = AddressSerializer(many=True)
+#     images = ImageSerializer(many=True)
+#     tatoos = TatooSerializer(many=True)
+#     physicals = PhysicalSerializer(many=True)
+#     documents = DocumentSerializer(many=True)
+#     permissions = serializers.SerializerMethodField('_get_permissions')
+    
+#     def _get_permissions(self, object):
+#         request = self.context.get('request', None)
+#         if request:
+#             perms = get_perms(request.user, object)
+#             return perms
 
-    class Meta:
-        model = Person
-        fields = (
-            'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tatoos', 'physicals')
+#     class Meta:
+#         model = Person
+#         fields = (
+#             'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tatoos', 'physicals', 'permissions')
         
     

@@ -6,8 +6,8 @@ from . import viewsets
 app_name = 'apps.person'
 
 urlpatterns = [
-    path('', viewsets.AddPersonView.as_view(), name='add_person_json'),
-    path('<uuid:uuid>/', viewsets.PersonRetrieve.as_view(), name='retrieve_json'),
+    path('', viewsets.AddPersonListView.as_view(), name='add_list_person_json'),
+    path('<uuid:uuid>/', viewsets.PersonRetrieveView.as_view(), name='retrieve_json'),
     path('<uuid:uuid>/face/', viewsets.PersonAddFaceView.as_view(), name='add_face_json'),
     path('<uuid:uuid>/tatoo/', viewsets.PersonAddTatooView.as_view(), name='add_tatoo_json'),
     path('<uuid:uuid>/nickname/', viewsets.PersonAddNicknameView.as_view(), name='add_nickname_json'),
