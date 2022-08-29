@@ -23,11 +23,11 @@ class PersonViewSet(viewsets.ModelViewSet):
             nickname.save()
             assign_perm("change_nickname", self.request.user, nickname)
             assign_perm("delete_nickname", self.request.user, nickname)
-        for tatoo in instance.tatoos.all():
-            tatoo.created_by = self.request.user
-            tatoo.save()
-            assign_perm("change_tatoo", self.request.user, tatoo)
-            assign_perm("delete_tatoo", self.request.user, tatoo)
+        for tattoo in instance.tattoos.all():
+            tattoo.created_by = self.request.user
+            tattoo.save()
+            assign_perm("change_tattoo", self.request.user, tattoo)
+            assign_perm("delete_tattoo", self.request.user, tattoo)
         for address in instance.addresses.all():
             address.created_by = self.request.user
             address.save()
@@ -84,11 +84,11 @@ class AddPersonListView(generics.ListCreateAPIView):
                 nickname.save()
                 assign_perm("change_nickname", self.request.user, nickname)
                 assign_perm("delete_nickname", self.request.user, nickname)
-            for tatoo in instance.tatoos.all():
-                tatoo.created_by = self.request.user
-                tatoo.save()
-                assign_perm("change_tatoo", self.request.user, tatoo)
-                assign_perm("delete_tatoo", self.request.user, tatoo)
+            for tattoo in instance.tattoos.all():
+                tattoo.created_by = self.request.user
+                tattoo.save()
+                assign_perm("change_tattoo", self.request.user, tattoo)
+                assign_perm("delete_tattoo", self.request.user, tattoo)
             for address in instance.addresses.all():
                 address.created_by = self.request.user
                 address.save()
@@ -154,17 +154,17 @@ class PersonAddFaceView(CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class PersonAddTatooView(CreateModelMixin, generics.GenericAPIView):
-    queryset = Tatoo.objects.all()
-    serializer_class = TatooSerializer
+class PersonAddTattooView(CreateModelMixin, generics.GenericAPIView):
+    queryset = Tattoo.objects.all()
+    serializer_class = TattooSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
             instance = serializer.save(person=person, created_by=self.request.user)
-            assign_perm("change_tatoo", self.request.user, instance)
-            assign_perm("delete_tatoo", self.request.user, instance)
+            assign_perm("change_tattoo", self.request.user, instance)
+            assign_perm("delete_tattoo", self.request.user, instance)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -280,13 +280,13 @@ class FaceUpdateView(generics.UpdateAPIView):
             return Response(serializer.errors, status=400)
 
 
-class TatooUpdateView(generics.UpdateAPIView):
-    queryset = Tatoo.objects.all()
-    serializer_class = TatooSerializer
+class TattooUpdateView(generics.UpdateAPIView):
+    queryset = Tattoo.objects.all()
+    serializer_class = TattooSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def update(self, request, *args, **kwargs):
-        instance = get_object_or_404(Tatoo, uuid=kwargs['uuid'])
+        instance = get_object_or_404(Tattoo, uuid=kwargs['uuid'])
 
         serializer = self.serializer_class(instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
