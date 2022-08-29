@@ -100,14 +100,14 @@ class Nickname(Base, SoftDelete):
         verbose_name_plural = "Alcunhas"
 
 
-class Tatoo(Base, SoftDelete):
+class Tattoo(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     label = models.CharField("descrição", max_length=255)
-    person = models.ForeignKey(Person, related_name='tatoos', on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, related_name='tattoos', on_delete=models.CASCADE)
     file = StdImageField(
         'Arquivo',
         storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
-        upload_to='tatoo_images',
+        upload_to='tattoo_images',
         variations={
             'large': {'width': 720, 'height': 720, 'crop': True},
             'medium': {'width': 480, 'height': 480, 'crop': True},
@@ -115,14 +115,14 @@ class Tatoo(Base, SoftDelete):
         }, delete_orphans=True, null=True, blank=True)
     updated_by = models.ForeignKey(
         User,
-        related_name='tatoo_updater',
+        related_name='tattoo_updater',
         on_delete=models.SET_NULL,
         null=True,
         blank=True
     )
     created_by = models.ForeignKey(
         User,
-        related_name='tatoo_creator',
+        related_name='tattoo_creator',
         on_delete=models.SET_NULL,
         null=True,
         blank=True

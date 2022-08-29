@@ -40,8 +40,8 @@ class FaceAdmin(SafeDeleteAdmin, GuardedModelAdmin):
 PersonAdmin.highlight_deleted_field.short_description = PersonAdmin.field_to_highlight
 
 
-@admin.register(Tatoo)
-class TatooAdmin(SafeDeleteAdmin, GuardedModelAdmin):
+@admin.register(Tattoo)
+class TattooAdmin(SafeDeleteAdmin, GuardedModelAdmin):
     list_display = (highlight_deleted, "highlight_deleted_field", "uuid", "label", "foto_preview", "created_at",
                     "deleted_by") + SafeDeleteAdmin.list_display
     readonly_fields = ['foto_preview']
@@ -58,7 +58,7 @@ class TatooAdmin(SafeDeleteAdmin, GuardedModelAdmin):
             f"<div width='120' height='120' style='border-radius: 50% 50%;'></div>")
 
 
-TatooAdmin.highlight_deleted_field.short_description = TatooAdmin.field_to_highlight
+TattooAdmin.highlight_deleted_field.short_description = TattooAdmin.field_to_highlight
 
 
 @admin.register(Nickname)

@@ -43,7 +43,7 @@ class NicknameSerializer(serializers.ModelSerializer):
         fields = ('uuid', 'label', 'permissions')
 
 
-class TatooSerializer(serializers.ModelSerializer):
+class TattooSerializer(serializers.ModelSerializer):
     uuid = serializers.UUIDField()
     label = serializers.CharField()
     file = Base64ImageField()
@@ -56,7 +56,7 @@ class TatooSerializer(serializers.ModelSerializer):
             return perms
 
     class Meta:
-        model = Tatoo
+        model = Tattoo
         fields = ('uuid', 'label', 'file', 'permissions')
 
     def create(self, validated_data):
@@ -64,7 +64,7 @@ class TatooSerializer(serializers.ModelSerializer):
         label=validated_data.pop('label')
         uuid=validated_data.pop('uuid')
         person=validated_data.pop('person')
-        return Tatoo.objects.create(uuid=uuid, person=person, label=label, file=file)
+        return Tattoo.objects.create(uuid=uuid, person=person, label=label, file=file)
 
 
 class PhysicalSerializer(serializers.ModelSerializer):
@@ -89,7 +89,7 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
     faces = FaceSerializer(many=True, required=False)
     addresses = AddressSerializer(many=True, required=False)
     images = ImageSerializer(many=True, required=False)
-    tatoos = TatooSerializer(many=True, required=False)
+    tattoos = TattooSerializer(many=True, required=False)
     physicals = PhysicalSerializer(many=True, required=False)
     documents = DocumentSerializer(many=True, required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
@@ -103,7 +103,7 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
     class Meta:
         model = Person
         fields = (
-            'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tatoos', 'physicals', 'permissions')
+            'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals', 'permissions')
 
 
 # class PersonListSerializer(serializers.ModelSerializer):
@@ -111,7 +111,7 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
 #     faces = FaceSerializer(many=True)
 #     addresses = AddressSerializer(many=True)
 #     images = ImageSerializer(many=True)
-#     tatoos = TatooSerializer(many=True)
+#     tattoos = TattooSerializer(many=True)
 #     physicals = PhysicalSerializer(many=True)
 #     documents = DocumentSerializer(many=True)
 #     permissions = serializers.SerializerMethodField('_get_permissions')
@@ -125,6 +125,6 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
 #     class Meta:
 #         model = Person
 #         fields = (
-#             'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tatoos', 'physicals', 'permissions')
+#             'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals', 'permissions')
         
     
