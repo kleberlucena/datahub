@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
-from oauth2.views import exchange_token
+from oauth2.views import exchange_token, expire_token
 from rest_framework import permissions
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('auth/validate/<str:backend>/', exchange_token),
+    path('auth/logout/', expire_token),
     path('', include('auth_oidc.urls'), name='auth_oidc'),
     path('', include('base.urls'), name='base'),
     path('api/v1/document/', include('apps.document.api.urls'), name='person'),
