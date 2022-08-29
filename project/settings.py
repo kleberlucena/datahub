@@ -146,6 +146,10 @@ DEFAULT_FILE_STORAGE = 'django_minio_backend.models.MinioBackend'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Expiration Cookie
+SESSION_COOKIE_AGE = 1800
+SESSION_SAVE_EVERY_REQUEST = True
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
@@ -155,6 +159,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100
 }
 
 # Allauth
@@ -233,6 +238,7 @@ PUBLIC_PATHS = [
     r'^/accounts/.*',  # allow public access to all django-allauth views
     r'^/health_check',
     r'^/auth/validate/*/',
+    r'^/auth/logout/',
     r'^/api/v1/*',
 ]
 
@@ -244,7 +250,6 @@ if DEBUG:
     MINIO_CONSISTENCY_CHECK_ON_START = False
     MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = False
     MINIO_USE_HTTPS = False
-    # REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append()
 
 
 # Celery Configuration Options

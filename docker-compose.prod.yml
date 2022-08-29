@@ -9,7 +9,7 @@ services:
     environment:
       - DJANGO_SECRET_KEY=$PROD_DJANGO_SECRET_KEY
       - DJANGO_SITE_ID=$PROD_DJANGO_SITE_ID
-      - ALLOWED_HOSTS=10.0.1.56,.apps.pm.pb.gov.br
+      - ALLOWED_HOSTS=10.0.1.40,.apps.pm.pb.gov.br
       - DB_NAME=$PROD_DB_NAME
       - DB_USER=$PROD_DB_USER
       - DB_PASSWORD=$PROD_DB_PASSWORD

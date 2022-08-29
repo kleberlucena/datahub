@@ -1,14 +1,17 @@
 from django.conf import settings
-
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+import logging
 
 from social_django.utils import psa
 
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 
 class SocialSerializer(serializers.Serializer):
@@ -73,3 +76,26 @@ def exchange_token(request, backend):
                 {'errors': {nfe: "Authentication Failed"}},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+      
+ 
+@api_view(['POST'])     
+@permission_classes([IsAuthenticated])       
+def expire_token(request):
+    '''
+    Remove o token de acesso quando chamada a url de expiração do token.
+    '''
+    try:
+        user = request.user
+        user.auth_token.delete()
+        return Response(
+            {'msg': {
+                'token': 'Invalid token',
+                'detail': 'O token foi invalidado com sucesso',
+            }},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    except Exception as e:
+        raise logger.error('Error while remove auth_token from user - {}'.format(e))
+        
+    
+        
