@@ -24,7 +24,7 @@ class FaceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Face
-        fields = ('uuid', 'file', 'permissions')
+        fields = ('uuid', 'file', 'created_at', 'updated_at', 'permissions')
 
 
 class NicknameSerializer(serializers.ModelSerializer):
@@ -40,7 +40,7 @@ class NicknameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Nickname
-        fields = ('uuid', 'label', 'permissions')
+        fields = ('uuid', 'label', 'created_at', 'updated_at', 'permissions')
 
 
 class TattooSerializer(serializers.ModelSerializer):
@@ -57,7 +57,7 @@ class TattooSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tattoo
-        fields = ('uuid', 'label', 'file', 'permissions')
+        fields = ('uuid', 'label', 'file', 'created_at', 'updated_at', 'permissions')
 
     def create(self, validated_data):
         file=validated_data.pop('file')
@@ -81,7 +81,7 @@ class PhysicalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Physical
-        fields = ('uuid', 'label', 'value', 'permissions')
+        fields = ('uuid', 'label', 'value', 'created_at', 'updated_at', 'permissions')
 
 
 class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
@@ -103,7 +103,8 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
     class Meta:
         model = Person
         fields = (
-            'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals', 'permissions')
+            'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals',
+            'created_at', 'updated_at', 'permissions')
 
 
 # class PersonListSerializer(serializers.ModelSerializer):

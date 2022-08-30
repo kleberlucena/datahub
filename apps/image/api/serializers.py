@@ -18,4 +18,4 @@ class ImageSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Image
-        fields = ['uuid', 'file', 'permissions']
+        fields = ['uuid', 'file', 'created_at', 'updated_at', 'permissions']

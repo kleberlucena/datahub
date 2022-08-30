@@ -25,7 +25,7 @@ class DocumentTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DocumentType
-        fields = ['label', 'emitter_department', 'permissions']
+        fields = ['label', 'emitter_department', 'created_at', 'updated_at', 'permissions']
 
 
 class DocumentSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
