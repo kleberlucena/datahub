@@ -1,11 +1,12 @@
 from rest_framework import serializers
-from rest_framework_gis import serializers as geo_serializers
 from guardian.shortcuts import get_perms
+from drf_extra_fields.geo_fields import PointField
 
 from apps.address.models import Address
 
 
-class AddressSerializer(geo_serializers.GeoFeatureModelSerializer):
+class AddressSerializer(serializers.ModelSerializer):
+    place = PointField()
     permissions = serializers.SerializerMethodField('_get_permissions')
 
     def _get_permissions(self, object):
@@ -16,19 +17,4 @@ class AddressSerializer(geo_serializers.GeoFeatureModelSerializer):
 
     class Meta:
         model = Address
-        fields = ("uuid", "street", "number", "complement", "neighborhood", "city", "state", "region", "country", "zipcode", "permissions")
-        geo_field = "place"
-        
-
-class AddressListSerializer(geo_serializers.GeoFeatureModelSerializer):
-    class Meta:
-        model = Address
-        fields = ("uuid", "street", "number", "complement", "neighborhood", "city", "state", "region", "country", "zipcode")
-        geo_field = "place"
-
-
-# class VisitSerializer(geo_serializers.GeoFeatureModelSerializer):
-#     class Meta:
-#         model = Visit
-#         fields = ["id", "label", "datetime", "updated_by", "updated_at", "created_by", "created_at"]
-#         geo_field = "place"
+        fields = ("uuid", "street", "number", "complement", "neighborhood", "city", "state", "region", "country", "zipcode", "place", "permissions")
