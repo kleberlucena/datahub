@@ -6,7 +6,7 @@ from apps.address.models import *
 
 
 @admin.register(Address)
-class AddressAdmin(SafeDeleteAdmin, geo_admin.ModelAdmin):
+class AddressAdmin(SafeDeleteAdmin, geo_admin.OSMGeoAdmin):
     list_display = ('uuid', highlight_deleted, "highlight_deleted_field", "created_at",
                     "deleted_by") + SafeDeleteAdmin.list_display
     list_filter = ("created_by", SafeDeleteAdminFilter,) + SafeDeleteAdmin.list_filter

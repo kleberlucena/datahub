@@ -6,7 +6,7 @@ from drf_writable_nested import WritableNestedModelSerializer
 from guardian.shortcuts import get_perms
 
 from apps.person.models import *
-from apps.address.api.serializers import AddressSerializer, AddressListSerializer
+from apps.address.api.serializers import AddressSerializer
 from apps.image.api.serializers import ImageSerializer
 from apps.document.api.serializers import DocumentSerializer
 

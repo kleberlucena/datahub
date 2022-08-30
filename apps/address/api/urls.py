@@ -8,5 +8,5 @@ app_name = 'apps.address'
 
 urlpatterns = [
     path('', viewsets.AddressList.as_view(), name='list_json'),
-    path('<uuid:uuid>/', viewsets.AddressList.as_view(), name='address_detail'),
+    path('<uuid:uuid>/', viewsets.AddressRetrieve.as_view(), name='address_detail'),
 ]
