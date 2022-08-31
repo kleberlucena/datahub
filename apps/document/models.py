@@ -60,6 +60,7 @@ class DocumentType(Base, SoftDelete):
 class Document(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     number = models.CharField(max_length=255, null=True, blank=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
     type = models.ForeignKey(DocumentType, related_name='emitidos', on_delete=models.CASCADE, null=True, blank=True)
     updated_by = models.ForeignKey(
         User,
@@ -86,7 +87,7 @@ class Document(Base, SoftDelete):
         # Insert here custom post delete logic
 
     def __str__(self):
-        return f"{self.number}"
+        return f"{self.uuid}"
 
     class Meta:
         verbose_name = "Documento"

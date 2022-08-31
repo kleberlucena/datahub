@@ -2,7 +2,7 @@ from rest_framework import generics, viewsets, permissions
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 from guardian.shortcuts import assign_perm
 
 from apps.person.api.serializers import *
@@ -71,9 +71,28 @@ class PersonList(generics.ListAPIView):
 
 class AddPersonListView(generics.ListCreateAPIView):
     permission_classes = [DjangoObjectPermissions]
+    serializer_class = PersonSerializer
 
     queryset = Person.objects.all()
-    serializer_class = PersonSerializer
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned person_list to a given user,
+        by filtering against a `username` query parameter in the URL.
+        Optionally restricts the returned list_person to a given document,
+        by filtering against a `document_name` or a `document_number` query parameter in the URL.
+        """
+        queryset = Person.objects.all()
+        my = self.request.query_params.get('my')
+        document_name = self.request.query_params.get('document_name')
+        document_number = self.request.query_params.get('document_number')
+        if document_number is not None:
+            queryset = queryset.filter(documents__number__startswith=document_number)
+        if document_name is not None:
+            queryset = queryset.filter(documents__name__startswith=document_name)
+        if my is not None:
+            queryset = queryset.filter(created_by=self.request.user)
+        return queryset
 
     def perform_create(self, serializer):
         if serializer.is_valid():
@@ -118,6 +137,12 @@ class AddPersonListView(generics.ListCreateAPIView):
             assign_perm("delete_person", self.request.user, instance)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+
+    def perform_update(self, serializer):
+        serializer.save(updated_by=self.request.user)
+
+    def perform_destroy(self, instance):
+        instance.soft_delete_policy_action(self.request.user)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -216,7 +241,8 @@ class PersonAddDocumentView(CreateModelMixin, generics.GenericAPIView):
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(person=person, created_by=self.request.user)
+            instance = serializer.save(created_by=self.request.user)
+            person.documents.add(instance)
             assign_perm("change_document", self.request.user, instance)
             assign_perm("delete_document", self.request.user, instance)
             return Response(serializer.data, status=201)
@@ -234,7 +260,8 @@ class PersonAddAddressView(CreateModelMixin, generics.GenericAPIView):
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(person=person, created_by=self.request.user)
+            instance = serializer.save(created_by=self.request.user)
+            person.addresses.add(instance)
             assign_perm("change_address", self.request.user, instance)
             assign_perm("delete_address", self.request.user, instance)
             return Response(serializer.data, status=201)
@@ -252,7 +279,8 @@ class PersonAddImageView(CreateModelMixin, generics.GenericAPIView):
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(person=person, created_by=self.request.user)
+            instance = serializer.save(created_by=self.request.user)
+            person.images.add(instance)
             assign_perm("change_image", self.request.user, instance)
             assign_perm("delete_image", self.request.user, instance)
             return Response(serializer.data, status=201)

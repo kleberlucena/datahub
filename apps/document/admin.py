@@ -36,7 +36,7 @@ DocumentImageAdmin.highlight_deleted_field.short_description = DocumentImageAdmi
 
 @admin.register(Document)
 class DocumentAdmin(SafeDeleteAdmin, GuardedModelAdmin):
-    list_display = (highlight_deleted, "highlight_deleted_field", "uuid", "number", "created_at",
+    list_display = (highlight_deleted, "highlight_deleted_field", "name", "number", "created_at",
                     "deleted_by") + SafeDeleteAdmin.list_display
     list_filter = ("created_by", SafeDeleteAdminFilter,) + SafeDeleteAdmin.list_filter
     exclude = ()

@@ -3,6 +3,7 @@ from rest_framework import serializers
 from apps.document.models import Document, DocumentImage, DocumentType
 from drf_extra_fields.fields import Base64ImageField
 from drf_writable_nested import WritableNestedModelSerializer
+from django.shortcuts import get_object_or_404
 from guardian.shortcuts import get_perms
 
 
@@ -41,11 +42,11 @@ class DocumentSerializer(WritableNestedModelSerializer, serializers.ModelSeriali
 
     class Meta:
         model = Document
-        fields = ['uuid', 'number', 'type', 'images', 'permissions']
+        fields = ['uuid', 'number', 'name', 'type', 'images', 'created_at', 'updated_at', 'permissions']
 
     def create(self, validated_data):
         images_data = validated_data.pop('images')
-        type_data = validated_data.pop('type')
+        # type_data = validated_data.pop('type')
         document = Document.objects.create(**validated_data)
         for image_data in images_data:
             DocumentImage.objects.create(document=document, **image_data)
