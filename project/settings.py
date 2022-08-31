@@ -24,7 +24,9 @@ if DEBUG:
 else:
     CORS_ALLOWED_ORIGINS = [
         "https://sasp.stage.pm.pb.gov.br",
-        "https://sasp.apps.pm.pb.gov.br"
+        "https://s3.stage.pm.pb.gov.br",
+        "https://sasp.apps.pm.pb.gov.br",
+        "https://s3.apps.pm.pb.gov.br",
     ]
 
 
