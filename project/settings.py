@@ -17,6 +17,17 @@ ALLOWED_HOSTS = list(
     filter(lambda h: h != '', env('ALLOWED_HOSTS', default='*').split(','))
 )
 
+# Configurações de CORS.
+CORS_URLS_REGEX = r'^/api/v1/.*$'
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOWED_ORIGINS = [
+        "https://sasp.stage.pm.pb.gov.br",
+        "https://sasp.apps.pm.pb.gov.br"
+    ]
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,7 +58,6 @@ INSTALLED_APPS = [
     'social_django',  # python social auth
     'django_minio_backend.apps.DjangoMinioBackendConfig',
     'stdimage',
-    'corsheaders',
     'crispy_forms',
     'widget_tweaks',
     'localflavor',
@@ -55,6 +65,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'celery_progress',
     'guardian',
+    'corsheaders',
 
     # Apps
     'base',
@@ -67,6 +78,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django_graylog.GraylogMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -74,8 +86,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'global_login_required.GlobalLoginRequiredMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -149,12 +159,10 @@ DEFAULT_FILE_STORAGE = 'django_minio_backend.models.MinioBackend'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 # Expiration Cookie
 SESSION_COOKIE_AGE = 1800
 SESSION_SAVE_EVERY_REQUEST = True
-
-CORS_URLS_REGEX = r'^/api/v1/.*$'
-CORS_ORIGIN_ALLOW_ALL = True
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -165,7 +173,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 100
+    'PAGE_SIZE': 100,
 }
 
 # Allauth
