@@ -4,10 +4,33 @@ from django.urls import reverse_lazy
 from django.db import models
 from stdimage.models import StdImageField
 from django_minio_backend import MinioBackend
+from safedelete import SOFT_DELETE_CASCADE
+from safedelete.models import SafeDeleteModel
 import uuid
 
 
-class Image(models.Model):
+class Base(models.Model):
+    created_at = models.DateTimeField('Criado', auto_now_add=True)
+    updated_at = models.DateTimeField('Atualizado', auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class SoftDelete(SafeDeleteModel):
+    _safedelete_policy = SOFT_DELETE_CASCADE
+    deleted_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Image(Base, SafeDeleteModel):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     file = StdImageField(
         'Imagem', 
@@ -19,6 +42,13 @@ class Image(models.Model):
             'thumbnail': {'width': 128, 'height': 128, 'crop': True},
         }, delete_orphans=True
     )
+    updated_by = models.ForeignKey(
+        User,
+        related_name='image_updater',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     created_by = models.ForeignKey(
         User,
         related_name='image_creator',
@@ -26,14 +56,20 @@ class Image(models.Model):
         null=True,
         blank=True
     )
-    created_at = models.DateTimeField('Criado', auto_now_add=True)
-    updated_at = models.DateTimeField('Atualizado', auto_now=True)
+
+    def soft_delete_cascade_policy_action(self, **kwargs):
+        # Insert here custom pre delete logic
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action()
+        # Insert here custom post delete logic
     
     def __str__(self):
-        return f"{self.id}"
+        return f"{self.uuid}"
 
     def get_absolute_url(self):
-        return reverse_lazy('image:image_detail', kwargs={'pk': self.pk})
+        return reverse_lazy('image:image_detail', kwargs={'uuid': self.uuid})
 
     class Meta:
         verbose_name = "Imagem"

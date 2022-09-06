@@ -35,9 +35,21 @@ class SoftDelete(SafeDeleteModel):
 
 class Person(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    addresses = models.ManyToManyField(Address, blank=True)
-    images = models.ManyToManyField(Image, blank=True)
-    documents = models.ManyToManyField(Document, blank=True)
+    addresses = models.ManyToManyField(
+        Address,
+        through='PersonAddresses',
+        through_fields=('person', 'address'),
+    )
+    images = models.ManyToManyField(
+        Image,
+        through='PersonImages',
+        through_fields=('person', 'image'),
+    )
+    documents = models.ManyToManyField(
+        Document,
+        through='PersonDocuments',
+        through_fields=('person', 'document'),
+    )
     updated_by = models.ForeignKey(
         User,
         related_name='person_updater',
@@ -53,11 +65,19 @@ class Person(Base, SoftDelete):
         blank=True
     )
 
-    def soft_delete_policy_action(self, user, **kwargs):
+    def soft_delete_cascade_policy_action(self, **kwargs):
         # Insert here custom pre delete logic
-        self.deleted_by = user
-        super().soft_delete_policy_action(**kwargs)
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action()
         # Insert here custom post delete logic
+
+    # def soft_delete_policy_action(self, user, **kwargs):
+    #     # Insert here custom pre delete logic
+    #     self.deleted_by = user
+    #     super().soft_delete_policy_action(**kwargs)
+    #     # Insert here custom post delete logic
 
     def __str__(self):
         return f"{self.uuid}"
@@ -65,6 +85,22 @@ class Person(Base, SoftDelete):
     class Meta:
         verbose_name = "Pessoa"
         verbose_name_plural = "Pessoas"
+
+
+class PersonAddresses(models.Model):
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    type = models.CharField(max_length=64, null=True, blank=True)
+
+
+class PersonDocuments(models.Model):
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+
+
+class PersonImages(models.Model):
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    image = models.ForeignKey(Image, on_delete=models.CASCADE)
 
 
 class Nickname(Base, SoftDelete):
@@ -86,11 +122,19 @@ class Nickname(Base, SoftDelete):
         blank=True
     )
 
-    def soft_delete_policy_action(self, user, **kwargs):
+    def soft_delete_cascade_policy_action(self, **kwargs):
         # Insert here custom pre delete logic
-        self.deleted_by = user
-        super().soft_delete_policy_action(**kwargs)
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action(**kwargs)
         # Insert here custom post delete logic
+
+    # def soft_delete_policy_action(self, user, **kwargs):
+    #     # Insert here custom pre delete logic
+    #     self.deleted_by = user
+    #     super().soft_delete_policy_action(**kwargs)
+    #     # Insert here custom post delete logic
 
     def __str__(self):
         return f"{self.uuid}"
@@ -128,11 +172,19 @@ class Tattoo(Base, SoftDelete):
         blank=True
     )
 
-    def soft_delete_policy_action(self, user, **kwargs):
+    def soft_delete_cascade_policy_action(self, **kwargs):
         # Insert here custom pre delete logic
-        self.deleted_by = user
-        super().soft_delete_policy_action(**kwargs)
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action(**kwargs)
         # Insert here custom post delete logic
+
+    # def soft_delete_policy_action(self, user, **kwargs):
+    #     # Insert here custom pre delete logic
+    #     self.deleted_by = user
+    #     super().soft_delete_policy_action(**kwargs)
+    #     # Insert here custom post delete logic
 
     def __str__(self):
         return f"{self.uuid}"
@@ -162,11 +214,19 @@ class Physical(Base, SoftDelete):
         blank=True
     )
 
-    def soft_delete_policy_action(self, user, **kwargs):
+    def soft_delete_cascade_policy_action(self, **kwargs):
         # Insert here custom pre delete logic
-        self.deleted_by = user
-        super().soft_delete_policy_action(**kwargs)
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action(**kwargs)
         # Insert here custom post delete logic
+
+    # def soft_delete_policy_action(self, user, **kwargs):
+    #     # Insert here custom pre delete logic
+    #     self.deleted_by = user
+    #     super().soft_delete_policy_action(**kwargs)
+    #     # Insert here custom post delete logic
 
     def __str__(self):
         return f"{self.uuid}"
@@ -204,11 +264,19 @@ class Face(Base, SoftDelete):
         blank=True
     )
 
-    def soft_delete_policy_action(self, user, **kwargs):
+    def soft_delete_cascade_policy_action(self, **kwargs):
         # Insert here custom pre delete logic
-        self.deleted_by = user
-        super().soft_delete_policy_action(**kwargs)
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action(**kwargs)
         # Insert here custom post delete logic
+
+    # def soft_delete_policy_action(self, user, **kwargs):
+    #     # Insert here custom pre delete logic
+    #     self.deleted_by = user
+    #     super().soft_delete_policy_action(**kwargs)
+    #     # Insert here custom post delete logic
 
     def __str__(self):
         return f"{self.uuid}"

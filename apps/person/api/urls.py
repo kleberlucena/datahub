@@ -7,7 +7,7 @@ app_name = 'apps.person'
 
 urlpatterns = [
     path('', viewsets.AddPersonListView.as_view(), name='add_list_person_json'),
-    path('<uuid:uuid>/', viewsets.PersonRetrieveView.as_view(), name='retrieve_json'),
+    path('<uuid:uuid>/', viewsets.PersonRetrieveDestroyView.as_view(), name='retrieve_json'),
     path('<uuid:uuid>/face/', viewsets.PersonAddFaceView.as_view(), name='add_face_json'),
     path('<uuid:uuid>/tattoo/', viewsets.PersonAddTattooView.as_view(), name='add_tattoo_json'),
     path('<uuid:uuid>/nickname/', viewsets.PersonAddNicknameView.as_view(), name='add_nickname_json'),
