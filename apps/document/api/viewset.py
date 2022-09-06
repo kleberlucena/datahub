@@ -35,7 +35,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     def perform_destroy(self, instance):
         user = self.request.user
-        instance.soft_delete_policy_action(user)
+        instance.soft_delete_cascade_policy_action(deleted_by=user)
 
 
 class DocumentRetrieve(generics.RetrieveAPIView):

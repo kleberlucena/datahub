@@ -247,16 +247,20 @@ class PersonAddImageView(CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-# view to Update attributes of person
+# view to Update or Delete attributes of person
 
-class FaceUpdateView(generics.UpdateAPIView):
+class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Face.objects.all()
     serializer_class = FaceSerializer
     permission_classes = [DjangoObjectPermissions]
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = get_object_or_404(Face, uuid=kwargs['uuid'])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
     def update(self, request, *args, **kwargs):
         instance = get_object_or_404(Face, uuid=kwargs['uuid'])
-
         serializer = self.serializer_class(instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save(updated_by=self.request.user)
@@ -264,15 +268,28 @@ class FaceUpdateView(generics.UpdateAPIView):
         else:
             return Response(serializer.errors, status=400)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = get_object_or_404(Face, uuid=kwargs['uuid'])
+        user = self.request.user
+        if user.has_perm('person.delete_face', instance):
+            instance.soft_delete_cascade_policy_action(deleted_by=user)
+            return Response('Success', status=204)
+        else:
+            return Response('Unauthorized', status=401)
 
-class TattooUpdateView(generics.UpdateAPIView):
+
+class TattooUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Tattoo.objects.all()
     serializer_class = TattooSerializer
     permission_classes = [DjangoObjectPermissions]
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = get_object_or_404(Tattoo, uuid=kwargs['uuid'])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
     def update(self, request, *args, **kwargs):
         instance = get_object_or_404(Tattoo, uuid=kwargs['uuid'])
-
         serializer = self.serializer_class(instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save(updated_by=self.request.user)
@@ -280,15 +297,28 @@ class TattooUpdateView(generics.UpdateAPIView):
         else:
             return Response(serializer.errors, status=400)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = get_object_or_404(Tattoo, uuid=kwargs['uuid'])
+        user = self.request.user
+        if user.has_perm('person.delete_tattoo', instance):
+            instance.soft_delete_cascade_policy_action(deleted_by=user)
+            return Response('Success', status=204)
+        else:
+            return Response('Unauthorized', status=401)
 
-class NicknameUpdateView(generics.UpdateAPIView):
+
+class NicknameUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Nickname.objects.all()
     serializer_class = NicknameSerializer
     permission_classes = [DjangoObjectPermissions]
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = get_object_or_404(Nickname, uuid=kwargs['uuid'])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
     def update(self, request, *args, **kwargs):
         instance = get_object_or_404(Nickname, uuid=kwargs['uuid'])
-
         serializer = self.serializer_class(instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save(updated_by=self.request.user)
@@ -296,15 +326,28 @@ class NicknameUpdateView(generics.UpdateAPIView):
         else:
             return Response(serializer.errors, status=400)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = get_object_or_404(Nickname, uuid=kwargs['uuid'])
+        user = self.request.user
+        if user.has_perm('person.delete_nickname', instance):
+            instance.soft_delete_cascade_policy_action(deleted_by=user)
+            return Response('Success', status=204)
+        else:
+            return Response('Unauthorized', status=401)
 
-class PhysicalUpdateView(generics.UpdateAPIView):
+
+class PhysicalUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Physical.objects.all()
     serializer_class = PhysicalSerializer
     permission_classes = [DjangoObjectPermissions]
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = get_object_or_404(Physical, uuid=kwargs['uuid'])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
     def update(self, request, *args, **kwargs):
         instance = get_object_or_404(Physical, uuid=kwargs['uuid'])
-
         serializer = self.serializer_class(instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save(updated_by=self.request.user)
@@ -312,15 +355,28 @@ class PhysicalUpdateView(generics.UpdateAPIView):
         else:
             return Response(serializer.errors, status=400)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = get_object_or_404(Physical, uuid=kwargs['uuid'])
+        user = self.request.user
+        if user.has_perm('person.delete_physical', instance):
+            instance.soft_delete_cascade_policy_action(deleted_by=user)
+            return Response('Success', status=204)
+        else:
+            return Response('Unauthorized', status=401)
 
-class DocumentUpdateView(generics.UpdateAPIView):
+
+class DocumentUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     permission_classes = [DjangoObjectPermissions]
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = get_object_or_404(Document, uuid=kwargs['uuid'])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
     def update(self, request, *args, **kwargs):
         instance = get_object_or_404(Document, uuid=kwargs['uuid'])
-
         serializer = self.serializer_class(instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save(updated_by=self.request.user)
@@ -328,11 +384,25 @@ class DocumentUpdateView(generics.UpdateAPIView):
         else:
             return Response(serializer.errors, status=400)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = get_object_or_404(Document, uuid=kwargs['uuid'])
+        user = self.request.user
+        if user.has_perm('document.delete_document', instance):
+            instance.soft_delete_cascade_policy_action(deleted_by=user)
+            return Response('Success', status=204)
+        else:
+            return Response('Unauthorized', status=401)
 
-class AddressUpdateView(generics.UpdateAPIView):
+
+class AddressUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
     permission_classes = [DjangoObjectPermissions]
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = get_object_or_404(Address, uuid=kwargs['uuid'])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
         instance = get_object_or_404(Address, uuid=kwargs['uuid'])
@@ -344,11 +414,25 @@ class AddressUpdateView(generics.UpdateAPIView):
         else:
             return Response(serializer.errors, status=400)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = get_object_or_404(Address, uuid=kwargs['uuid'])
+        user = self.request.user
+        if user.has_perm('address.delete_address', instance):
+            instance.soft_delete_cascade_policy_action(deleted_by=user)
+            return Response('Success', status=204)
+        else:
+            return Response('Unauthorized', status=401)
 
-class ImageUpdateView(generics.UpdateAPIView):
+
+class ImageUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     permission_classes = [DjangoObjectPermissions]
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = get_object_or_404(Image, uuid=kwargs['uuid'])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
         instance = get_object_or_404(Image, uuid=kwargs['uuid'])
@@ -360,6 +444,11 @@ class ImageUpdateView(generics.UpdateAPIView):
         else:
             return Response(serializer.errors, status=400)
 
-
-
-
+    def destroy(self, request, *args, **kwargs):
+        instance = get_object_or_404(Image, uuid=kwargs['uuid'])
+        user = self.request.user
+        if user.has_perm('image.delete_image', instance):
+            instance.soft_delete_cascade_policy_action(deleted_by=user)
+            return Response('Success', status=204)
+        else:
+            return Response('Unauthorized', status=401)
