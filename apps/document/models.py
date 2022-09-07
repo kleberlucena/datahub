@@ -47,13 +47,12 @@ class DocumentType(Base, SoftDelete):
         blank=True
     )
 
-    def soft_delete_policy_action(self, user, **kwargs):
+    def soft_delete_cascade_policy_action(self, **kwargs):
         # Insert here custom pre delete logic
-        # print(kwargs['user'])
-        # user = User.objects.get(username=kwargs['user'])
-        print(user)
-        self.deleted_by = user
-        super().soft_delete_policy_action(**kwargs)
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action()
         # Insert here custom post delete logic
 
 
@@ -77,13 +76,12 @@ class Document(Base, SoftDelete):
         blank=True
     )
 
-    def soft_delete_policy_action(self, user, **kwargs):
+    def soft_delete_cascade_policy_action(self, **kwargs):
         # Insert here custom pre delete logic
-        # print(kwargs['user'])
-        # user = User.objects.get(username=kwargs['user'])
-        print(user)
-        self.deleted_by = user
-        super().soft_delete_policy_action(**kwargs)
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action()
         # Insert here custom post delete logic
 
     def __str__(self):
@@ -120,10 +118,12 @@ class DocumentImage(Base, SoftDelete):
         blank=True
     )
 
-    def soft_delete_policy_action(self, user, **kwargs):
+    def soft_delete_cascade_policy_action(self, **kwargs):
         # Insert here custom pre delete logic
-        self.deleted_by = user
-        super().soft_delete_policy_action(**kwargs)
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action()
         # Insert here custom post delete logic
 
     def __str__(self):

@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from localflavor.br.models import BRStateField, BRPostalCodeField
 from django.contrib.gis.db import models as geo_models
 from safedelete.models import SafeDeleteModel
-from safedelete.models import SOFT_DELETE
+from safedelete.models import SOFT_DELETE_CASCADE
 import uuid
 
 
@@ -17,7 +17,7 @@ class Base(models.Model):
         
 
 class SoftDelete(SafeDeleteModel):
-    _safedelete_policy = SOFT_DELETE
+    _safedelete_policy = SOFT_DELETE_CASCADE
     deleted_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -65,15 +65,14 @@ class Address(Base, SoftDelete):
     )
 
     def get_absolute_url(self):
-        return reverse_lazy('address:address_detail', kwargs={'pk': self.pk})
+        return reverse_lazy('address:address_detail', kwargs={'uuid': self.uuid})
 
-    def soft_delete_policy_action(self, user, **kwargs):
+    def soft_delete_cascade_policy_action(self, **kwargs):
         # Insert here custom pre delete logic
-        # print(kwargs['user'])
-        # user = User.objects.get(username=kwargs['user'])
-        print(user)
-        self.deleted_by = user
-        super().soft_delete_policy_action(**kwargs)
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action()
         # Insert here custom post delete logic
 
     def __str__(self):
@@ -82,40 +81,3 @@ class Address(Base, SoftDelete):
     class Meta:
         verbose_name = "Endereço"
         verbose_name_plural = "Endereços"
-
-
-
-# class Visit(Base):
-#     label = models.CharField(max_length=255, null=True, blank=True)
-#     place = geo_models.PointField(max_length=255, null=True, blank=True)
-#     datetime = models.DateTimeField('Quando')
-#     updated_by = models.ForeignKey(
-#         User,
-#         related_name='visit_updater',
-#         on_delete=models.SET_NULL,
-#         null=True,
-#         blank=True
-#     )
-#     created_by = models.ForeignKey(
-#         User,
-#         related_name='visit_creator',
-#         on_delete=models.SET_NULL,
-#         null=True,
-#         blank=True
-#     )
-
-#     def get_absolute_url(self):
-#         return reverse_lazy('address:visit_detail', kwargs={'pk': self.pk})
-
-#     def soft_delete_policy_action(self, user, **kwargs):
-#         # Insert here custom pre delete logic
-#         self.deleted_by = user
-#         super().soft_delete_policy_action(**kwargs)
-#         # Insert here custom post delete logic
-
-#     def __str__(self):
-#         return f"{self.label} {self.place} {self.datetime}"
-
-#     class Meta:
-#         verbose_name = "Visita"
-#         verbose_name_plural = "Visitas"
