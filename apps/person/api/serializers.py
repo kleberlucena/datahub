@@ -12,7 +12,6 @@ from apps.document.api.serializers import DocumentSerializer
 
 
 class FaceSerializer(serializers.ModelSerializer):
-    uuid = serializers.UUIDField()
     file = Base64ImageField()
     permissions = serializers.SerializerMethodField('_get_permissions')
 
@@ -28,7 +27,6 @@ class FaceSerializer(serializers.ModelSerializer):
 
 
 class NicknameSerializer(serializers.ModelSerializer):
-    uuid = serializers.UUIDField()
     label = serializers.CharField()
     permissions = serializers.SerializerMethodField('_get_permissions')
 
@@ -44,7 +42,6 @@ class NicknameSerializer(serializers.ModelSerializer):
 
 
 class TattooSerializer(serializers.ModelSerializer):
-    uuid = serializers.UUIDField()
     label = serializers.CharField()
     file = Base64ImageField()
     permissions = serializers.SerializerMethodField('_get_permissions')
@@ -62,13 +59,11 @@ class TattooSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         file=validated_data.pop('file')
         label=validated_data.pop('label')
-        uuid=validated_data.pop('uuid')
         person=validated_data.pop('person')
-        return Tattoo.objects.create(uuid=uuid, person=person, label=label, file=file)
+        return Tattoo.objects.create(person=person, label=label, file=file)
 
 
 class PhysicalSerializer(serializers.ModelSerializer):
-    uuid = serializers.UUIDField()
     label = serializers.CharField()
     value = serializers.CharField()
     permissions = serializers.SerializerMethodField('_get_permissions')
@@ -105,27 +100,3 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
         fields = (
             'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals',
             'created_at', 'updated_at', 'permissions')
-
-
-# class PersonListSerializer(serializers.ModelSerializer):
-#     nicknames = NicknameSerializer(many=True)
-#     faces = FaceSerializer(many=True)
-#     addresses = AddressSerializer(many=True)
-#     images = ImageSerializer(many=True)
-#     tattoos = TattooSerializer(many=True)
-#     physicals = PhysicalSerializer(many=True)
-#     documents = DocumentSerializer(many=True)
-#     permissions = serializers.SerializerMethodField('_get_permissions')
-    
-#     def _get_permissions(self, object):
-#         request = self.context.get('request', None)
-#         if request:
-#             perms = get_perms(request.user, object)
-#             return perms
-
-#     class Meta:
-#         model = Person
-#         fields = (
-#             'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals', 'permissions')
-        
-    

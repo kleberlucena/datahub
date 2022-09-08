@@ -6,7 +6,6 @@ from apps.image.models import *
 
 
 class ImageSerializer(serializers.ModelSerializer):
-    uuid = serializers.UUIDField()
     file = Base64ImageField()
     permissions = serializers.SerializerMethodField('_get_permissions')
 
