@@ -32,7 +32,6 @@ class DocumentTypeSerializer(serializers.ModelSerializer):
 class DocumentSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
     permissions = serializers.SerializerMethodField('_get_permissions')
     images = DocumentImageSerializer(many=True)
-    # type = DocumentTypeSerializer(many=False, required=False)
 
     def _get_permissions(self, document_object):
         request = self.context.get('request', None)

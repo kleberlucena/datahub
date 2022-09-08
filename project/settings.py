@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
 
     'auth_oidc',  # O APP auth must come before allauth to load templates
-    'oauth2', # Include authenticate token
+    'oauth2',  # Include authenticate token
 
     # Necessary to allauth
     'django.contrib.sites',
@@ -179,14 +179,14 @@ REST_FRAMEWORK = {
 }
 
 # Allauth
-SITE_ID = 2  # int(env('DJANGO_SITE_ID'))  # Verify the site id in django admin"
+SITE_ID = 2  # int(env('DJANGO_SITE_ID'))  # Verify the site id in django admin
 
 ACCOUNT_EMAIL_REQUIRED = False
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_AUTO_SIGNUP = True
-ACCOUNT_DEFAULT_HTTP_PROTOCOL='https'
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 ACCOUNT_LOGOUT_REDIRECT_URL = env('KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL')
 LOGIN_REDIRECT_URL = '/'
 KEYCLOAK_URL = env('KEYCLOAK_URL')
