@@ -6,7 +6,7 @@ from apps.address.models import Address
 
 
 class AddressSerializer(serializers.ModelSerializer):
-    place = PointField()
+    place = PointField(required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
 
     def _get_permissions(self, object):
