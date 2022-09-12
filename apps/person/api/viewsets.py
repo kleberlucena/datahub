@@ -1,10 +1,12 @@
 from django.http import HttpResponse
 from rest_framework import generics, viewsets, permissions
+from rest_framework import filters
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from guardian.shortcuts import assign_perm
+from datetime import datetime
 
 from apps.person.api.serializers import *
 from apps.person.models import *
@@ -13,6 +15,8 @@ from apps.person.models import *
 class AddPersonListView(generics.ListCreateAPIView):
     permission_classes = [DjangoObjectPermissions]
     serializer_class = PersonSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['created_at', 'updated_at']
 
     queryset = Person.objects.all()
 
@@ -93,27 +97,29 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         user = self.request.user
-        unauthrized = HttpResponse("Unauthorized")
-        unauthrized.status_code = 401
+        unauthorized = HttpResponse("Unauthorized", status=401)
         if user.has_perm('person.delete_person', instance):
             for address in instance.addresses.all():
                 if not user.has_perm('address.delete_address', address):
                     print(address.uuid)
-                    return unauthrized
+                    return unauthorized
             for document in instance.documents.all():
                 if not user.has_perm('document.delete_document', document):
                     print(document.uuid)
-                    return unauthrized
+                    return unauthorized
             for image in instance.images.all():
                 if not user.has_perm('image.delete_image', image):
                     print(image.uuid)
-                    return unauthrized
-            return instance.soft_delete_cascade_policy_action(deleted_by=user)
+                    return unauthorized
+            if instance.soft_delete_cascade_policy_action(deleted_by=user):
+                return HttpResponse("Deleted", status=204)
+            else:
+                return HttpResponse("Deleting", status=202)
         else:
-            return unauthrized
+            return unauthorized
 
     def retrieve(self, request, *args, **kwargs):
-        instance = Person.objects.get(uuid=kwargs['uuid'])
+        instance = get_object_or_404(Person, uuid=kwargs['uuid'])
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
@@ -129,6 +135,7 @@ class PersonAddFaceView(CreateModelMixin, generics.GenericAPIView):
             instance = serializer.save(person=person, created_by=self.request.user)
             assign_perm("change_face", self.request.user, instance)
             assign_perm("delete_face", self.request.user, instance)
+            person.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -147,6 +154,7 @@ class PersonAddTattooView(CreateModelMixin, generics.GenericAPIView):
             instance = serializer.save(person=person, created_by=self.request.user)
             assign_perm("change_tattoo", self.request.user, instance)
             assign_perm("delete_tattoo", self.request.user, instance)
+            person.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -165,6 +173,7 @@ class PersonAddNicknameView(CreateModelMixin, generics.GenericAPIView):
             instance = serializer.save(person=person, created_by=self.request.user)
             assign_perm("change_nickname", self.request.user, instance)
             assign_perm("delete_nickname", self.request.user, instance)
+            person.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -183,6 +192,7 @@ class PersonAddPhysicalView(CreateModelMixin, generics.GenericAPIView):
             instance = serializer.save(person=person, created_by=self.request.user)
             assign_perm("change_physical", self.request.user, instance)
             assign_perm("delete_physical", self.request.user, instance)
+            person.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -202,6 +212,7 @@ class PersonAddDocumentView(CreateModelMixin, generics.GenericAPIView):
             person.documents.add(instance)
             assign_perm("change_document", self.request.user, instance)
             assign_perm("delete_document", self.request.user, instance)
+            person.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -240,6 +251,7 @@ class PersonAddImageView(CreateModelMixin, generics.GenericAPIView):
             person.images.add(instance)
             assign_perm("change_image", self.request.user, instance)
             assign_perm("delete_image", self.request.user, instance)
+            person.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
