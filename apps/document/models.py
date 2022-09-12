@@ -55,6 +55,13 @@ class DocumentType(Base, SoftDelete):
         super().soft_delete_cascade_policy_action()
         # Insert here custom post delete logic
 
+    def __str__(self):
+        return f"{self.uuid}"
+
+    class Meta:
+        verbose_name = "Tipo de Documento"
+        verbose_name_plural = "Tipos de Documento"
+
 
 class Document(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)

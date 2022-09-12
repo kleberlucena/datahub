@@ -1,6 +1,7 @@
 from rest_framework import generics, mixins, permissions, viewsets
 from rest_framework.response import Response
 from guardian.shortcuts import assign_perm
+from django.shortcuts import get_object_or_404
 
 from apps.document.models import Document, DocumentImage, DocumentType
 from apps.document.api.serializers import DocumentSerializer, DocumentImageSerializer, DocumentTypeSerializer
@@ -21,7 +22,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
             assign_perm("change_document", self.request.user, instance)
             assign_perm("delete_document", self.request.user, instance)
             return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        else:
+            return Response(serializer.errors, status=400)
 
     def perform_update(self, serializer):
         if serializer.is_valid():
