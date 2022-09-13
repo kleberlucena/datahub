@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.gis.db import models as geo_models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from stdimage.models import StdImageField
@@ -159,6 +160,7 @@ class Tattoo(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     label = models.CharField("descrição", max_length=255)
     person = models.ForeignKey(Person, related_name='tattoos', on_delete=models.CASCADE)
+    point = geo_models.PointField(null=True, blank=True)
     file = StdImageField(
         'Arquivo',
         storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),

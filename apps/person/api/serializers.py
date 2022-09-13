@@ -2,6 +2,7 @@ from dataclasses import fields
 from numpy import source
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
+from drf_extra_fields.geo_fields import PointField
 from drf_writable_nested import WritableNestedModelSerializer
 from guardian.shortcuts import get_perms
 
@@ -43,6 +44,7 @@ class NicknameSerializer(serializers.ModelSerializer):
 
 class TattooSerializer(serializers.ModelSerializer):
     label = serializers.CharField()
+    point = PointField(required=False)
     file = Base64ImageField()
     permissions = serializers.SerializerMethodField('_get_permissions')
 
@@ -54,13 +56,14 @@ class TattooSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tattoo
-        fields = ('uuid', 'label', 'file', 'created_at', 'updated_at', 'permissions')
+        fields = ('uuid', 'label', 'point', 'file', 'created_at', 'updated_at', 'permissions')
 
     def create(self, validated_data):
         file=validated_data.pop('file')
         label=validated_data.pop('label')
+        point=validated_data.pop('point')
         person=validated_data.pop('person')
-        return Tattoo.objects.create(person=person, label=label, file=file)
+        return Tattoo.objects.create(person=person, label=label, point=point, file=file)
 
 
 class PhysicalSerializer(serializers.ModelSerializer):

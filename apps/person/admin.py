@@ -6,12 +6,40 @@ from safedelete.admin import SafeDeleteAdmin, SafeDeleteAdminFilter, highlight_d
 from apps.person.models import *
 
 
+class FacesAdminInLine(admin.TabularInline):
+    model = Face
+
+
+class TattoosAdminInLine(admin.TabularInline):
+    model = Tattoo
+
+
+class NicknamesAdminInLine(admin.TabularInline):
+    model = Nickname
+
+
+class AddressesAdminInLine(admin.TabularInline):
+    model = Person.addresses.through
+
+
+class DocumentsAdminInLine(admin.TabularInline):
+    model = Person.documents.through
+
+
+class ImagesAdminInLine(admin.TabularInline):
+    model = Person.images.through
+
+
 @admin.register(Person)
 class PersonAdmin(SafeDeleteAdmin, GuardedModelAdmin):
     list_display = (highlight_deleted, "highlight_deleted_field", 'uuid', 'created_at', 'updated_at',
                     "created_by", "deleted_by") + SafeDeleteAdmin.list_display
+    inlines = [
+        AddressesAdminInLine, DocumentsAdminInLine, ImagesAdminInLine,
+        FacesAdminInLine, NicknamesAdminInLine, TattoosAdminInLine
+    ]
     list_filter = ("created_by", SafeDeleteAdminFilter,) + SafeDeleteAdmin.list_filter
-    search_fields = ('uuid',)
+    search_fields = ('uuid', 'created_at', 'updated_at')
     exclude = ()
     field_to_highlight = "id"
 
@@ -21,8 +49,8 @@ PersonAdmin.highlight_deleted_field.short_description = PersonAdmin.field_to_hig
 
 @admin.register(Face)
 class FaceAdmin(SafeDeleteAdmin, GuardedModelAdmin):
-    list_display = (highlight_deleted, "highlight_deleted_field", 'uuid', 'foto_preview', 'created_at',
-                    'updated_at', "created_by", "deleted_by") + SafeDeleteAdmin.list_display
+    list_display = (highlight_deleted, 'highlight_deleted_field', 'uuid', 'foto_preview', 'created_at',
+                    'updated_at', 'created_by', 'deleted_by', 'person') + SafeDeleteAdmin.list_display
     list_filter = ("created_by", SafeDeleteAdminFilter,) + SafeDeleteAdmin.list_filter
     search_fields = ('uuid',)
     exclude = ()
@@ -42,10 +70,10 @@ PersonAdmin.highlight_deleted_field.short_description = PersonAdmin.field_to_hig
 
 @admin.register(Tattoo)
 class TattooAdmin(SafeDeleteAdmin, GuardedModelAdmin):
-    list_display = (highlight_deleted, "highlight_deleted_field", "uuid", "label", "foto_preview", "created_at",
-                    "deleted_by") + SafeDeleteAdmin.list_display
+    list_display = (highlight_deleted, 'highlight_deleted_field', 'uuid', 'label', 'point',  'foto_preview',
+                    'person', 'created_at', 'created_by', 'deleted_by') + SafeDeleteAdmin.list_display
     readonly_fields = ['foto_preview']
-    list_filter = ("created_by", SafeDeleteAdminFilter,) + SafeDeleteAdmin.list_filter
+    list_filter = ('created_by', 'created_at', SafeDeleteAdminFilter,) + SafeDeleteAdmin.list_filter
     exclude = ()
     field_to_highlight = "id"
 
