@@ -29,6 +29,11 @@ else:
         "https://s3.apps.pm.pb.gov.br",
     ]
 
+CORS_ALLOW_HEADERS = [
+    "authorization",
+    "content-type",
+]
+
 
 # Application definition
 

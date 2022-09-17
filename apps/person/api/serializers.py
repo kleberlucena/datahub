@@ -86,7 +86,6 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
     nicknames = NicknameSerializer(many=True, required=False)
     faces = FaceSerializer(many=True, required=False)
     addresses = AddressSerializer(many=True, required=False)
-    # addresses = AddressSerializer(many=True, required=False)
     images = ImageSerializer(many=True, required=False)
     tattoos = TattooSerializer(many=True, required=False)
     physicals = PhysicalSerializer(many=True, required=False)

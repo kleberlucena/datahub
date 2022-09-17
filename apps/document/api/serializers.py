@@ -41,8 +41,8 @@ class DocumentSerializer(WritableNestedModelSerializer, serializers.ModelSeriali
         type_uuid = None
         try:
             images_data = validated_data.pop('images')
-        except:
-            print('Error images')
+        except Exception as e:
+            print(f'Error images; {e}')
 
         document = Document.objects.create(**validated_data)
 

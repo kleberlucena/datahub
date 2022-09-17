@@ -33,6 +33,7 @@ urlpatterns = [
     path('api/v1/person/', include('apps.person.api.urls'), name='person'),
     path('api/v1/image/', include('apps.image.api.urls'), name='image'),
     path('api/v1/address/', include('apps.address.api.urls'), name='address'),
+    path('api/v1/legacy/', include('apps.person.api.legacy.urls'), name='legacy'),
     path('celery-progress/', include('celery_progress.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
