@@ -4,13 +4,19 @@ from rest_framework import filters
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from guardian.shortcuts import assign_perm
-from datetime import datetime
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from apps.person.api.serializers import *
 from apps.person.models import *
 
+
+document_name = openapi.Parameter('document_name', openapi.IN_QUERY, description="param nome do documento da pessoa", type=openapi.TYPE_STRING)
+document_number = openapi.Parameter('document_number', openapi.IN_QUERY, description="param número do documento da pessoa", type=openapi.TYPE_STRING)
+nickname_label = openapi.Parameter('nickname_label', openapi.IN_QUERY, description="param alcunha da pessoa", type=openapi.TYPE_STRING)
 
 class AddPersonListView(generics.ListCreateAPIView):
     permission_classes = [DjangoObjectPermissions]
@@ -31,10 +37,13 @@ class AddPersonListView(generics.ListCreateAPIView):
         my = self.request.query_params.get('my')
         document_name = self.request.query_params.get('document_name')
         document_number = self.request.query_params.get('document_number')
+        nickname_label = self.request.query_params.get('nickname_label')
         if document_number is not None:
             queryset = queryset.filter(documents__number__startswith=document_number)
         if document_name is not None:
             queryset = queryset.filter(documents__name__startswith=document_name)
+        if nickname_label is not None:
+            queryset = queryset.filter(nicknames__label__startswith=nickname_label)
         if my is not None:
             queryset = queryset.filter(created_by=self.request.user)
         return queryset
@@ -85,6 +94,14 @@ class AddPersonListView(generics.ListCreateAPIView):
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+    @swagger_auto_schema(method='get', manual_parameters=[document_name, document_number, nickname_label])
+    @action(detail=True, methods=['GET'])
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    #     list_object = Person.objects.all()
+    #     serialized = self.get_serializer(list_object)
+    #     return Response({"data": serialized.data})
 
 
 class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
