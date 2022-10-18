@@ -56,7 +56,7 @@ class DocumentType(Base, SoftDelete):
         # Insert here custom post delete logic
 
     def __str__(self):
-        return f"{self.uuid}"
+        return f"{self.id}"
 
     class Meta:
         verbose_name = "Tipo de Documento"

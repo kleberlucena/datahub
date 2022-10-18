@@ -1,16 +1,23 @@
 from django.http import HttpResponse
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, viewsets, permissions
 from rest_framework import filters
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from rest_framework.decorators import action
 from guardian.shortcuts import assign_perm
-from datetime import datetime
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from apps.person.api.serializers import *
 from apps.person.models import *
 
+
+document_name = openapi.Parameter('document_name', openapi.IN_QUERY, description="param nome do documento da pessoa", type=openapi.TYPE_STRING)
+document_number = openapi.Parameter('document_number', openapi.IN_QUERY, description="param número do documento da pessoa", type=openapi.TYPE_STRING)
+nickname_label = openapi.Parameter('nickname_label', openapi.IN_QUERY, description="param alcunha da pessoa", type=openapi.TYPE_STRING)
 
 class AddPersonListView(generics.ListCreateAPIView):
     permission_classes = [DjangoObjectPermissions]
@@ -29,15 +36,22 @@ class AddPersonListView(generics.ListCreateAPIView):
         """
         queryset = Person.objects.all()
         my = self.request.query_params.get('my')
+        has_my = Q()
         document_name = self.request.query_params.get('document_name')
+        has_name = Q()
         document_number = self.request.query_params.get('document_number')
+        has_number = Q()
+        nickname_label = self.request.query_params.get('nickname_label')
+        has_nickname = Q()
         if document_number is not None:
-            queryset = queryset.filter(documents__number__startswith=document_number)
+            has_name = Q(documents__number__icontains=document_number)
         if document_name is not None:
-            queryset = queryset.filter(documents__name__startswith=document_name)
+            has_number = Q(documents__name__icontains=document_name)
+        if nickname_label is not None:
+            has_nickname = Q(nicknames__label__icontains=nickname_label)
         if my is not None:
-            queryset = queryset.filter(created_by=self.request.user)
-        return queryset
+            has_my = Q(created_by=self.request.user)
+        return queryset.filter(has_my & has_nickname & has_number & has_name)
 
     def perform_create(self, serializer):
         if serializer.is_valid():
@@ -85,6 +99,14 @@ class AddPersonListView(generics.ListCreateAPIView):
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+    @swagger_auto_schema(method='get', manual_parameters=[document_name, document_number, nickname_label])
+    @action(detail=True, methods=['GET'])
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    #     list_object = Person.objects.all()
+    #     serialized = self.get_serializer(list_object)
+    #     return Response({"data": serialized.data})
 
 
 class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
