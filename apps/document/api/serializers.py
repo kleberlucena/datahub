@@ -12,7 +12,7 @@ class DocumentImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DocumentImage
-        fields = ['file']
+        fields = ['uuid', 'file', 'created_at', 'updated_at']
 
 
 class DocumentTypeSerializer(serializers.ModelSerializer):
