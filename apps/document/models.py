@@ -100,6 +100,7 @@ class Document(Base, SoftDelete):
 
 
 class DocumentImage(Base, SoftDelete):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     file = StdImageField(
         'Arquivo',
         storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
