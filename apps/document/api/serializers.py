@@ -9,10 +9,17 @@ from guardian.shortcuts import get_perms
 
 class DocumentImageSerializer(serializers.ModelSerializer):
     file = Base64ImageField()
+    permissions = serializers.SerializerMethodField('_get_permissions')
+
+    def _get_permissions(self, document_image_object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, document_image_object)
+            return perms
 
     class Meta:
         model = DocumentImage
-        fields = ['uuid', 'file', 'created_at', 'updated_at']
+        fields = ['uuid', 'file', 'created_at', 'updated_at', 'permissions']
 
 
 class DocumentTypeSerializer(serializers.ModelSerializer):
