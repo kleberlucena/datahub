@@ -1,8 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.contrib import auth
-import urllib.parse as encode
-from django.urls import reverse_lazy
 
 
 def logout(request):
@@ -12,7 +10,7 @@ def logout(request):
     :return HttpResponseRedirect:
     """
     url = settings.OIDC_OP_LOGOUT_ENDPOINT
-    uri = encode.quote(settings.ACCOUNT_LOGOUT_REDIRECT_URL)
+    uri = settings.ACCOUNT_LOGOUT_REDIRECT_URL
     keycloak_redirect = url + "?redirect_uri=" + uri
 
     if request.user.is_authenticated:
