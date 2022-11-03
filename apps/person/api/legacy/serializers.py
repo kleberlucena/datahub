@@ -134,6 +134,7 @@ class NicknameLegacySerializer(serializers.ModelSerializer):
 
 class TattooLegacySerializer(serializers.ModelSerializer):
     label = serializers.CharField()
+    point = PointField(required=False)
     file = Base64ImageField()
     permissions = serializers.SerializerMethodField('_get_permissions')
     uuid = serializers.UUIDField()
@@ -148,15 +149,16 @@ class TattooLegacySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tattoo
-        fields = ('uuid', 'label', 'file', 'created_at', 'updated_at', 'permissions')
+        fields = ('uuid', 'label', 'point', 'file', 'created_at', 'updated_at', 'permissions')
 
     def create(self, validated_data):
         file=validated_data.pop('file')
+        point = validated_data.pop('point')
         label=validated_data.pop('label')
         person=validated_data.pop('person')
         created_at = validated_data.pop('created_at')
         updated_at = validated_data.pop('updated_at')
-        return Tattoo.objects.create(person=person, label=label, file=file, created_at=created_at, updated_at=updated_at)
+        return Tattoo.objects.create(person=person, label=label, point=point, file=file, created_at=created_at, updated_at=updated_at)
 
 
 class PhysicalLegacySerializer(serializers.ModelSerializer):
