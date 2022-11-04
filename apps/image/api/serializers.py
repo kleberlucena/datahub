@@ -6,6 +6,9 @@ from apps.image.models import *
 
 
 class ImageSerializer(serializers.ModelSerializer):
+    '''
+    Serializador de imagens de Pessoas e genéricas
+    '''
     file = Base64ImageField()
     permissions = serializers.SerializerMethodField('_get_permissions')
 
@@ -17,4 +20,4 @@ class ImageSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Image
-        fields = ['uuid', 'file', 'created_at', 'updated_at', 'permissions']
+        fields = ['uuid', 'file', 'label', 'created_at', 'updated_at', 'permissions']

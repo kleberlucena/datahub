@@ -66,7 +66,7 @@ class ImageLegacySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Image
-        fields = ['uuid', 'file', 'created_at', 'updated_at', 'permissions']
+        fields = ['uuid', 'file', 'label', 'created_at', 'updated_at', 'permissions']
 
 
 class AddressLegacySerializer(serializers.ModelSerializer):

@@ -67,6 +67,8 @@ class Document(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     number = models.CharField(max_length=255, null=True, blank=True)
     name = models.CharField(max_length=255, null=True, blank=True)
+    mother = models.CharField("mãe", max_length=255, blank=True, null=True)
+    father = models.CharField("pai", max_length=255, blank=True, null=True)
     type = models.ForeignKey(DocumentType, related_name='emitidos', on_delete=models.CASCADE, null=True, blank=True)
     updated_by = models.ForeignKey(
         User,
@@ -101,6 +103,7 @@ class Document(Base, SoftDelete):
 
 class DocumentImage(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    label = models.CharField("descrição", max_length=255, blank=True, null=True)
     file = StdImageField(
         'Arquivo',
         storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
