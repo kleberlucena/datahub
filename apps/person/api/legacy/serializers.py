@@ -52,6 +52,7 @@ class DocumentLegacySerializer(WritableNestedModelSerializer, serializers.ModelS
 
 
 class ImageLegacySerializer(serializers.ModelSerializer):
+    label = serializers.CharField()
     file = Base64ImageField()
     uuid = serializers.UUIDField()
     created_at = serializers.DateTimeField()
