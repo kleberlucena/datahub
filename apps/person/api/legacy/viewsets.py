@@ -223,7 +223,7 @@ class PersonAddImageView(CreateModelMixin, generics.GenericAPIView):
 
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
-        user = get_object_or_404(User, uuid=self.kwargs['username'])
+        user = get_object_or_404(User, username=self.kwargs['username'])
         created_at = str(self.request.data['created_at'])
         updated_at = str(self.request.data['updated_at'])
         if serializer.is_valid():
