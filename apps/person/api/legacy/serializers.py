@@ -9,7 +9,7 @@ from guardian.shortcuts import get_perms
 from apps.person.models import *
 from apps.document.models import Document, DocumentImage
 from apps.document.api.serializers import DocumentImageSerializer
-
+from apps.image.models import Image
 
 class DocumentLegacySerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
     permissions = serializers.SerializerMethodField('_get_permissions')
@@ -150,16 +150,6 @@ class TattooLegacySerializer(serializers.ModelSerializer):
     class Meta:
         model = Tattoo
         fields = ('uuid', 'label', 'point', 'file', 'created_at', 'updated_at', 'permissions')
-
-    # def create(self, validated_data):
-        
-    #     file=validated_data.pop('file')
-    #     point = validated_data.pop('point')
-    #     label=validated_data.pop('label')
-    #     person=validated_data.pop('person')
-    #     created_at = validated_data.pop('created_at')
-    #     updated_at = validated_data.pop('updated_at')
-    #     return Tattoo.objects.create(person=person, label=label, point=point, file=file, created_at=created_at, updated_at=updated_at)
 
 
 class PhysicalLegacySerializer(serializers.ModelSerializer):
