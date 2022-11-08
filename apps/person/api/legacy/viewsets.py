@@ -182,9 +182,9 @@ class PersonAddDocumentView(CreateModelMixin, generics.GenericAPIView):
             instance.created_at = created_at
             instance.updated_at = updated_at
             instance.save()
-            person.documents.add(instance)
             assign_perm("change_document", user, instance)
             assign_perm("delete_document", user, instance)
+            person.documents.add(instance)
             person.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
@@ -204,11 +204,10 @@ class PersonAddAddressView(CreateModelMixin, generics.GenericAPIView):
         created_at = str(self.request.data['created_at'])
         updated_at = str(self.request.data['updated_at'])
         if serializer.is_valid():
-            instance = serializer.save(created_by=user)
+            instance = serializer.save(person=person, created_by=user)
             instance.created_at = created_at
             instance.updated_at = updated_at
             instance.save()
-            person.addresses.add(instance)
             assign_perm("change_address", user, instance)
             assign_perm("delete_address", user, instance)
             return Response(serializer.data, status=201)
@@ -225,7 +224,7 @@ class PersonAddImageView(CreateModelMixin, generics.GenericAPIView):
 
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
-        user = get_object_or_404(User, uuid=self.kwargs['username'])
+        user = get_object_or_404(User, username=self.kwargs['username'])
         created_at = str(self.request.data['created_at'])
         updated_at = str(self.request.data['updated_at'])
         if serializer.is_valid():
@@ -233,9 +232,9 @@ class PersonAddImageView(CreateModelMixin, generics.GenericAPIView):
             instance.created_at = created_at
             instance.updated_at = updated_at
             instance.save()
-            person.images.add(instance)
             assign_perm("change_image", user, instance)
             assign_perm("delete_image", user, instance)
+            person.images.add(instance)
             person.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)

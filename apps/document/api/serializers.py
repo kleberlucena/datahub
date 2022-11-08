@@ -19,7 +19,7 @@ class DocumentImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DocumentImage
-        fields = ['uuid', 'file', 'created_at', 'updated_at', 'permissions']
+        fields = ['uuid', 'file', 'label', 'created_at', 'updated_at', 'permissions']
 
 
 class DocumentTypeSerializer(serializers.ModelSerializer):
@@ -41,7 +41,7 @@ class DocumentSerializer(WritableNestedModelSerializer, serializers.ModelSeriali
 
     class Meta:
         model = Document
-        fields = ['uuid', 'number', 'name', 'type', 'images', 'created_at', 'updated_at', 'permissions']
+        fields = ['uuid', 'number', 'name', 'mother', 'father', 'type', 'images', 'created_at', 'updated_at', 'permissions']
 
     def create(self, validated_data):
         images_data = None

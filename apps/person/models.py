@@ -158,7 +158,7 @@ class Nickname(Base, SoftDelete):
 
 class Tattoo(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    label = models.CharField("descrição", max_length=255)
+    label = models.CharField("descrição", max_length=255, blank=True, null=True)
     person = models.ForeignKey(Person, related_name='tattoos', on_delete=models.CASCADE)
     point = geo_models.PointField(null=True, blank=True)
     file = StdImageField(

@@ -30,8 +30,9 @@ class SoftDelete(SafeDeleteModel):
         abstract = True
 
 
-class Image(Base, SafeDeleteModel):
+class Image(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    label = models.CharField("descrição", max_length=255, blank=True, null=True)
     file = StdImageField(
         'Imagem', 
         storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
