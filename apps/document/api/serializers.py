@@ -41,7 +41,7 @@ class DocumentSerializer(WritableNestedModelSerializer, serializers.ModelSeriali
 
     class Meta:
         model = Document
-        fields = ['uuid', 'number', 'name', 'mother', 'father', 'type', 'images', 'created_at', 'updated_at', 'permissions']
+        fields = ['uuid', 'number', 'name', 'birth_date', 'mother', 'father', 'type', 'images', 'created_at', 'updated_at', 'permissions']
 
     def create(self, validated_data):
         images_data = None
