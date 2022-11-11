@@ -10,6 +10,7 @@ class ImageSerializer(serializers.ModelSerializer):
     Serializador de imagens de Pessoas e genéricas
     '''
     file = Base64ImageField()
+    label = serializers.CharField(required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
 
     def _get_permissions(self, object):
