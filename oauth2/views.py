@@ -89,10 +89,10 @@ def expire_token(request):
         user.auth_token.delete()
         return Response(
             {'msg': {
-                'token': 'Invalid token',
+                'token': 'Invalided token',
                 'detail': 'O token foi invalidado com sucesso',
             }},
-            status=status.HTTP_400_BAD_REQUEST,
+            status=status.HTTP_302_FOUND,
         )
     except Exception as e:
         raise logger.error('Error while remove auth_token from user - {}'.format(e))
