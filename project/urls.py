@@ -26,7 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('api/v1/auth/validate/<str:backend>/', exchange_token),
-    path('auth/logout/', expire_token),
+    path('api/v1/auth/logout/', expire_token),
     path('', include('auth_oidc.urls'), name='auth_oidc'),
     path('', include('base.urls'), name='base'),
     path('api/v1/document/', include('apps.document.api.urls'), name='person'),
