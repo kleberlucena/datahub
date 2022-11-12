@@ -70,7 +70,7 @@ class Document(Base, SoftDelete):
     birth_date = models.DateField(null=True, blank=True)
     mother = models.CharField("mãe", max_length=255, blank=True, null=True)
     father = models.CharField("pai", max_length=255, blank=True, null=True)
-    type = models.ForeignKey(DocumentType, related_name='emitidos', on_delete=models.CASCADE, null=True, blank=True)
+    type = models.ForeignKey(DocumentType, related_name='emitidos', on_delete=models.SET_NULL, null=True, blank=True)
     updated_by = models.ForeignKey(
         User,
         related_name='document_updater',

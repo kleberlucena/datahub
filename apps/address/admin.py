@@ -13,5 +13,10 @@ class AddressAdmin(SafeDeleteAdmin, geo_admin.OSMGeoAdmin):
     exclude = ()
     field_to_highlight = "id"
 
+    @admin.action(description='Add deleted_by on deleted objects')
+    def delete_model(self, request, obj):
+        user = request.user
+        obj.delete(deleted_by=user)
+
 
 AddressAdmin.highlight_deleted_field.short_description = AddressAdmin.field_to_highlight
