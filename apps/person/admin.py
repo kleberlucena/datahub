@@ -43,6 +43,11 @@ class PersonAdmin(SafeDeleteAdmin, GuardedModelAdmin):
     exclude = ()
     field_to_highlight = "id"
 
+    @admin.action(description='Add deleted_by on deleted objects')
+    def delete_model(self, request, obj):
+        user = request.user
+        obj.delete(deleted_by=user)
+
 
 PersonAdmin.highlight_deleted_field.short_description = PersonAdmin.field_to_highlight
 
@@ -55,6 +60,11 @@ class FaceAdmin(SafeDeleteAdmin, GuardedModelAdmin):
     search_fields = ('uuid',)
     exclude = ()
     field_to_highlight = "id"
+
+    @admin.action(description='Add deleted_by on deleted objects')
+    def delete_model(self, request, obj):
+        user = request.user
+        obj.delete(deleted_by=user)
 
     def foto_preview(self, obj):
         try:
@@ -77,6 +87,11 @@ class TattooAdmin(SafeDeleteAdmin, GuardedModelAdmin):
     exclude = ()
     field_to_highlight = "id"
 
+    @admin.action(description='Add deleted_by on deleted objects')
+    def delete_model(self, request, obj):
+        user = request.user
+        obj.delete(deleted_by=user)
+
     def foto_preview(self, obj):
         try:
             return format_html(
@@ -97,6 +112,11 @@ class NicknameAdmin(SafeDeleteAdmin, GuardedModelAdmin):
     exclude = ()
     field_to_highlight = "id"
 
+    @admin.action(description='Add deleted_by on deleted objects')
+    def delete_model(self, request, obj):
+        user = request.user
+        obj.delete(deleted_by=user)
+
 
 NicknameAdmin.highlight_deleted_field.short_description = NicknameAdmin.field_to_highlight
 
@@ -108,6 +128,11 @@ class PhysicalAdmin(SafeDeleteAdmin, GuardedModelAdmin):
     list_filter = ("created_by", SafeDeleteAdminFilter,) + SafeDeleteAdmin.list_filter
     exclude = ()
     field_to_highlight = "id"
+
+    @admin.action(description='Add deleted_by on deleted objects')
+    def delete_model(self, request, obj):
+        user = request.user
+        obj.delete(deleted_by=user)
 
 
 PhysicalAdmin.highlight_deleted_field.short_description = PhysicalAdmin.field_to_highlight
