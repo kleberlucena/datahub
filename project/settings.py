@@ -262,7 +262,6 @@ PUBLIC_PATHS = [
     r'^/api/v1/.*',
 ]
 
-PUBLIC_PATHS.append(r'^/admin/.*', ) 
 if DEBUG:
     PUBLIC_PATHS.append(r'^/admin/.*', )  # allow access to admin views
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
