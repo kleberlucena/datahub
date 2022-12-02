@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, viewsets, permissions
+from rest_framework import generics
 from rest_framework import filters
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import DjangoObjectPermissions
@@ -11,13 +11,14 @@ from guardian.shortcuts import assign_perm
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from apps.person.api.serializers import *
+from apps.person.api.v1.serializers import *
 from apps.person.models import *
 
 
 document_name = openapi.Parameter('document_name', openapi.IN_QUERY, description="param nome do documento da pessoa", type=openapi.TYPE_STRING)
 document_number = openapi.Parameter('document_number', openapi.IN_QUERY, description="param número do documento da pessoa", type=openapi.TYPE_STRING)
 nickname_label = openapi.Parameter('nickname_label', openapi.IN_QUERY, description="param alcunha da pessoa", type=openapi.TYPE_STRING)
+
 
 class AddPersonListView(generics.ListCreateAPIView):
     permission_classes = [DjangoObjectPermissions]

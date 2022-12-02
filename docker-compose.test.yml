@@ -30,6 +30,8 @@ services:
       - CELERY_BROKER_URL=$STAGE_CELERY_BROKER_URL
       - CELERY_RESULT_BACKEND=$STAGE_CELERY_RESULT_BACKEND
       - GRAYLOG_HTTP_ENDPOINT=$STAGE_GRAYLOG_HTTP_ENDPOINT
+      - PORTAL_TOKEN=$STAGE_PORTAL_TOKEN
+      - PORTAL_URL_BASE=$STAGE_PORTAL_URL_BASE
 
     command: bash -c -o pipefail "python manage.py migrate 
       && python manage.py collectstatic --noinput

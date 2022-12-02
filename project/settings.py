@@ -76,6 +76,7 @@ INSTALLED_APPS = [
 
     # Apps
     'base',
+    'apps.cortex',
     'apps.person',
     'apps.image',
     'apps.address',
@@ -231,6 +232,10 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
+
+# Portal
+PORTAL_TOKEN = env('PORTAL_TOKEN')
+PORTAL_URL_BASE = env('PORTAL_URL_BASE')
 
 
 # Minio

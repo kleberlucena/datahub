@@ -18,4 +18,4 @@ class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
         fields = ("uuid", "street", "number", "complement", "neighborhood", "city", "state", "region", "country",
-                  "zipcode", "place", 'created_at', 'updated_at', "permissions")
+                  "zipcode", "place", "created_at", "updated_at", "permissions")
