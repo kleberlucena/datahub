@@ -30,6 +30,8 @@ services:
       - CELERY_BROKER_URL=$STAGE_CELERY_BROKER_URL
       - CELERY_RESULT_BACKEND=$STAGE_CELERY_RESULT_BACKEND
       - GRAYLOG_HTTP_ENDPOINT=$STAGE_GRAYLOG_HTTP_ENDPOINT
+      - PORTAL_TOKEN=$STAGE_PORTAL_TOKEN
+      - PORTAL_URL_BASE=$STAGE_PORTAL_URL_BASE
     command: bash -c "python manage.py migrate
       && python manage.py collectstatic --noinput
       && gunicorn --bind 0.0.0.0:8000 --workers 5 project.wsgi:application"
@@ -68,6 +70,8 @@ services:
       - CELERY_BROKER_URL=$STAGE_CELERY_BROKER_URL
       - CELERY_RESULT_BACKEND=$STAGE_CELERY_RESULT_BACKEND
       - GRAYLOG_HTTP_ENDPOINT=$STAGE_GRAYLOG_HTTP_ENDPOINT
+      - PORTAL_TOKEN=$STAGE_PORTAL_TOKEN
+      - PORTAL_URL_BASE=$STAGE_PORTAL_URL_BASE
     command: bash -c "celery -A project worker -l info"
     volumes:
       - ./logs:/code/logs
@@ -104,6 +108,8 @@ services:
       - CELERY_BROKER_URL=$STAGE_CELERY_BROKER_URL
       - CELERY_RESULT_BACKEND=$STAGE_CELERY_RESULT_BACKEND
       - GRAYLOG_HTTP_ENDPOINT=$STAGE_GRAYLOG_HTTP_ENDPOINT
+      - PORTAL_TOKEN=$STAGE_PORTAL_TOKEN
+      - PORTAL_URL_BASE=$STAGE_PORTAL_URL_BASE
     command: bash -c "celery -A project beat -l info"
     volumes:
       - ./logs:/code/logs

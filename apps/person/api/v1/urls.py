@@ -1,7 +1,6 @@
-from django.urls import include, path
-from global_login_required import login_not_required
+from django.urls import path
 
-from . import viewsets
+from apps.person.api.v1 import viewsets
 
 app_name = 'apps.person'
 
