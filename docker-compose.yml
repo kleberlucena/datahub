@@ -10,6 +10,8 @@ services:
       && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
+    networks:
+      - default
     ports:
       - "8000:8000"
 
@@ -35,5 +37,5 @@ services:
 
 networks:
   default:
-    external:
-      name: nginx-proxy
+    name: nginx-proxy
+    external: true

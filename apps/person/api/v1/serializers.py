@@ -7,14 +7,22 @@ from drf_writable_nested import WritableNestedModelSerializer
 from guardian.shortcuts import get_perms
 
 from apps.person.models import *
+from base import helpers
 from apps.address.api.serializers import AddressSerializer
 from apps.image.api.serializers import ImageSerializer
 from apps.document.api.serializers import DocumentSerializer
 
-
 class FaceSerializer(serializers.ModelSerializer):
-    file = Base64ImageField()
+    file = Base64ImageField(write_only=True)
+    path_image = serializers.SerializerMethodField('_get_image_path', read_only=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
+
+    def _get_image_path(self, object):
+        request = self.context.get('request', None)
+        if request:
+            img_name = object.file.name
+            old_url = object.file.storage.url(img_name)
+            return helpers.get_watermark_url(old_url, request.user.username)
 
     def _get_permissions(self, object):
         request = self.context.get('request', None)
@@ -24,7 +32,7 @@ class FaceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Face
-        fields = ('uuid', 'file', 'created_at', 'updated_at', 'permissions')
+        fields = ('uuid', 'file', 'path_image', 'created_at', 'updated_at', 'permissions')
 
 
 class NicknameSerializer(serializers.ModelSerializer):
@@ -45,8 +53,16 @@ class NicknameSerializer(serializers.ModelSerializer):
 class TattooSerializer(serializers.ModelSerializer):
     label = serializers.CharField()
     point = PointField(required=False)
-    file = Base64ImageField()
+    file = Base64ImageField(write_only=True)
+    path_image = serializers.SerializerMethodField('_get_image_path', read_only=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
+
+    def _get_image_path(self, object):
+        request = self.context.get('request', None)
+        if request:
+            img_name = object.file.name
+            old_url = object.file.storage.url(img_name)
+            return helpers.get_watermark_url(old_url, request.user.username)
 
     def _get_permissions(self, object):
         request = self.context.get('request', None)
@@ -56,7 +72,7 @@ class TattooSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tattoo
-        fields = ('uuid', 'label', 'point', 'file', 'created_at', 'updated_at', 'permissions')
+        fields = ('uuid', 'label', 'point', 'file', 'path_image', 'created_at', 'updated_at', 'permissions')
 
     def create(self, validated_data):
         file=validated_data.pop('file')
