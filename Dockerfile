@@ -11,7 +11,9 @@ RUN apt-get update -y \
   && apt-get install -y postgis \
   && apt-get install -y postgresql-13-postgis-3 \
   && apt-get install -y postgresql-13-postgis-3-scripts \
-  && apt-get install -y build-essential
+  && apt-get install -y build-essential \
+  && apt-get install -y cgroup-tools \
+  && apt-get install -y python3-pip
 RUN mkdir /code
 WORKDIR /code
 COPY requirements.txt /code/
