@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     'celery_progress',
     'guardian',
     'corsheaders',
+    'easyaudit',
 
     # Apps
     'base',
@@ -94,6 +95,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'global_login_required.GlobalLoginRequiredMiddleware',
+    'easyaudit.middleware.easyaudit.EasyAuditMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
