@@ -5,11 +5,20 @@ from drf_extra_fields.fields import Base64ImageField
 from drf_writable_nested import WritableNestedModelSerializer
 from django.shortcuts import get_object_or_404
 from guardian.shortcuts import get_perms
+from base import helpers
 
 
 class DocumentImageSerializer(serializers.ModelSerializer):
-    file = Base64ImageField()
+    file = Base64ImageField(write_only=True)
+    path_image = serializers.SerializerMethodField('_get_image_path', read_only=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
+
+    def _get_image_path(self, object):
+        request = self.context.get('request', None)
+        if request:
+            img_name = object.file.name
+            old_url = object.file.storage.url(img_name)
+            return helpers.get_watermark_url(old_url, request.user.username)
 
     def _get_permissions(self, document_image_object):
         request = self.context.get('request', None)
@@ -19,7 +28,7 @@ class DocumentImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DocumentImage
-        fields = ['uuid', 'file', 'label', 'created_at', 'updated_at', 'permissions']
+        fields = ['uuid', 'file', 'path_image', 'label', 'created_at', 'updated_at', 'permissions']
 
 
 class DocumentTypeSerializer(serializers.ModelSerializer):

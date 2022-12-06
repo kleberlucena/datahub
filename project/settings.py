@@ -258,6 +258,10 @@ MINIO_URL_EXPIRY_HOURS = timedelta(days=1)
 MINIO_POLICY_HOOKS: List[Tuple[str, dict]] = []
 MINIO_BUCKET_CHECK_ON_SAVE = True
 
+#Watermark
+WATERMARK_HOST = env('WATERMARK_HOST')
+WATERMARK_SECRET = env('WATERMARK_SECRET')
+
 # Global login required middleware
 PUBLIC_VIEWS = [
     'auth_oidc.views.logout'
@@ -267,6 +271,7 @@ PUBLIC_PATHS = [
     r'^/health_check',
     r'^/auth/logout/',
     r'^/api/v1/.*',
+    r'^/admin/.*',
 ]
 
 if DEBUG:
