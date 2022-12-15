@@ -5,6 +5,10 @@ from numpy import base_repr
 
 
 def get_watermark_url(old_url, user_number):
+
+    if settings.DEBUG:
+        return old_url
+
     num = base_repr(int(user_number), 36)
     body = { 
         "waterMarkId": num, 

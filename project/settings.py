@@ -218,10 +218,6 @@ SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL = env('SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_U
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 SOCIAL_AUTH_KEYCLOAK_SCOPE = ['email', 'openid']
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
-# SOCIAL_AUTH_STRATEGY = 'social_django.strategy.DjangoStrategy'
-# LOGIN_URL = '/accounts/login/'
-# LOGIN_REDIRECT_URL = '/'
-# NEW_USER_REDIRECT_URL = '/' # Remover
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
@@ -238,7 +234,6 @@ SOCIAL_AUTH_PIPELINE = (
 # Portal
 PORTAL_TOKEN = env('PORTAL_TOKEN')
 PORTAL_URL_BASE = env('PORTAL_URL_BASE')
-
 
 # Minio
 MINIO_CONSISTENCY_CHECK_ON_START = True
@@ -258,7 +253,10 @@ MINIO_URL_EXPIRY_HOURS = timedelta(days=1)
 MINIO_POLICY_HOOKS: List[Tuple[str, dict]] = []
 MINIO_BUCKET_CHECK_ON_SAVE = True
 
-#Watermark
+# Config debug toolbar
+INTERNAL_IPS = ["127.0.0.1",]
+
+# Watermark
 WATERMARK_HOST = env('WATERMARK_HOST')
 WATERMARK_SECRET = env('WATERMARK_SECRET')
 
@@ -271,17 +269,7 @@ PUBLIC_PATHS = [
     r'^/health_check',
     r'^/auth/logout/',
     r'^/api/v1/.*',
-    r'^/admin/.*',
 ]
-
-if DEBUG:
-    PUBLIC_PATHS.append(r'^/admin/.*', )  # allow access to admin views
-    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
-    AUTHENTICATION_BACKENDS.append('django.contrib.auth.backends.ModelBackend')
-    MINIO_CONSISTENCY_CHECK_ON_START = False
-    MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = False
-    MINIO_USE_HTTPS = False
-
 
 # Celery Configuration Options
 CELERY_TIMEZONE = TIME_ZONE
@@ -300,3 +288,14 @@ WATERMARK_SECRET = env('WATERMARK_SECRET')
 
 # Graylog
 GRAYLOG_ENDPOINT = env('GRAYLOG_HTTP_ENDPOINT')
+
+# Config to run in localhost
+if DEBUG:
+    PUBLIC_PATHS.append(r'^/admin/.*', )  # allow access to admin views
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
+    AUTHENTICATION_BACKENDS.append('django.contrib.auth.backends.ModelBackend')
+    MINIO_CONSISTENCY_CHECK_ON_START = False
+    MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = False
+    MINIO_USE_HTTPS = False
+    INSTALLED_APPS.append('debug_toolbar')  # module to debug
+    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
