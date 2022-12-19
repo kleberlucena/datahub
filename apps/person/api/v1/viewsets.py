@@ -13,6 +13,7 @@ from drf_yasg import openapi
 
 from apps.person.api.v1.serializers import *
 from apps.person.models import *
+from apps.person import helpers
 
 
 document_name = openapi.Parameter('document_name', openapi.IN_QUERY, description="param nome do documento da pessoa", type=openapi.TYPE_STRING)
@@ -81,6 +82,8 @@ class AddPersonListView(generics.ListCreateAPIView):
             for document in instance.documents.all():
                 document.created_by = self.request.user
                 document.save()
+                if document.type.label == 'cpf':
+                    helpers.process_external_consult(username=self.request.user, cpf=document.type.label)
                 assign_perm("change_document", self.request.user, document)
                 assign_perm("delete_document", self.request.user, document)
             for face in instance.faces.all():
@@ -144,6 +147,8 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = get_object_or_404(Person, uuid=kwargs['uuid'])
         serializer = self.get_serializer(instance)
+
+        helpers.process_external_consult(instance)
         return Response(serializer.data)
 
 

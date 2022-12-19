@@ -153,3 +153,9 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# ASDF file
+.tool-versions
+
+# bash script to run django
+runserver

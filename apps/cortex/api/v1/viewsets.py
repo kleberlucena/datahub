@@ -36,6 +36,7 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
             if person_cortex is None or person_cortex.updated_at.date() < date.today():
                 person_json = portalCortexService.get_person_by_cpf(username=username, cpf=cpf)
                 PersonCortex.objects.update_or_create(**person_json)
+                # TODO: Verificar se essa pessoa est[a na Bacinf, criando caso n'ao exista, vincular atraves do model reg
 
             instance = get_object_or_404(PersonCortex, numeroCPF=cpf)
             serializer = self.get_serializer(instance)
