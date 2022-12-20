@@ -82,8 +82,8 @@ class AddPersonListView(generics.ListCreateAPIView):
             for document in instance.documents.all():
                 document.created_by = self.request.user
                 document.save()
-                if document.type.label == 'cpf':
-                    helpers.process_external_consult(username=self.request.user, cpf=document.type.label)
+                if document.type.label == 'CPF':
+                    helpers.process_external_consult(person=instance, username=self.request.user.username, cpf=document.number)
                 assign_perm("change_document", self.request.user, document)
                 assign_perm("delete_document", self.request.user, document)
             for face in instance.faces.all():

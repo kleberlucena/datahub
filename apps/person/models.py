@@ -282,16 +282,9 @@ class Face(Base, SoftDelete):
 
 
 class Registry(Base):
-    REGISTRY_STATUS = (
-        (0, 'Inexistente'),
-        (1, 'Atualizado'),
-        (2, 'Atualizando'),
-        (3, 'Desatualizado'),
-    )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     system_label = models.CharField("Sistema", max_length=255)
     system_uuid = models.UUIDField()
-    status = models.IntegerField("Status do Registro", default=0, choices=REGISTRY_STATUS)
     person = models.ForeignKey(Person, related_name='registers', on_delete=models.CASCADE)
 
     def __str__(self):

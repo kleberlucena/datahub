@@ -103,7 +103,7 @@ class RegistrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Registry
-        fields = ('uuid', 'system_label', 'system_uuid', 'created_at', 'updated_at', 'status')
+        fields = ('uuid', 'system_label', 'system_uuid', 'created_at', 'updated_at')
 
 
 class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
