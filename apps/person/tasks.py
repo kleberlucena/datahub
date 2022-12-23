@@ -2,7 +2,6 @@ from celery import shared_task
 from django.conf import settings
 from celery_progress.backend import ProgressRecorder
 import logging
-import requests
 
 from apps.cortex import services
 from apps.cortex.models import PersonCortex
@@ -24,9 +23,7 @@ def cortex_consult(self, username, cpf=False, name=False, mother_name=False, bir
     print(data)
     if data:
         cortex_instance, created = PersonCortex.objects.update_or_create(**data)
-        print('---------------------------')
-        print(cortex_instance)
-        print('---------------------------')
+        logger.info('PersonCortex - {}'.format(cortex_instance.uuid))
         return cortex_instance
     else:
         return None

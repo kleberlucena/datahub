@@ -40,16 +40,6 @@ class PersonByCpfViewSet(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
-        # try:
-        #     person = Person.objects.filter(has_cpf)
-        #     serialized = self.get_serializer(person)
-        #     return Response(serialized.data, status=200)
-        # except Person.DoesNotExist:
-        #     return Response(status=404)
-        # except Exception as e:
-        #     print(e)
-        #     return Response(status=500)
-
 
 class AddPersonListView(generics.ListCreateAPIView):
     permission_classes = [DjangoObjectPermissions]
@@ -138,9 +128,6 @@ class AddPersonListView(generics.ListCreateAPIView):
     @action(detail=True, methods=['GET'])
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
-    #     list_object = Person.objects.all()
-    #     serialized = self.get_serializer(list_object)
-    #     return Response({"data": serialized.data})
 
 
 class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
@@ -177,8 +164,6 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = get_object_or_404(Person, uuid=kwargs['uuid'])
         serializer = self.get_serializer(instance)
-
-        # helpers.process_external_consult(person=instance, username=self.request.user.username, cpf=document.number)
         return Response(serializer.data)
 
 
