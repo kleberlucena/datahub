@@ -9,6 +9,8 @@ from django.shortcuts import get_object_or_404
 from apps.cortex.api.v1.serializers import PersonCortexSerializer
 from apps.cortex.models import PersonCortex
 from apps.cortex.services import PortalCortexService
+from apps.person.models import Person, Registry
+from apps.document.models import Document, DocumentType
 
 portalCortexService = PortalCortexService()
 
@@ -36,6 +38,10 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
             if person_cortex is None or person_cortex.updated_at.date() < date.today():
                 person_json = portalCortexService.get_person_by_cpf(username=username, cpf=cpf)
                 PersonCortex.objects.update_or_create(**person_json)
+                document = Document.objects.update_or_create(number=person_cortex.numeroCPF, name=person_cortex.nomeCompleto, birth_date=person_cortex.dataNascimento, mother=person_cortex.nomeMae, type=DocumentType.objects.get(label="CPF"))
+            if person_cortex:
+                person = Person.objects.update_or_create(document=document)
+                Registry.objects.update_or_create(system_label="CORTEX", system_uuid=person_cortex.uuid, person=person)
                 # TODO: Verificar se essa pessoa est[a na Bacinf, criando caso n'ao exista, vincular atraves do model reg
 
             instance = get_object_or_404(PersonCortex, numeroCPF=cpf)

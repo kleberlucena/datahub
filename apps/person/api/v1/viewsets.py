@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework import filters
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import DjangoObjectPermissions
@@ -18,7 +18,37 @@ from apps.person import helpers
 
 document_name = openapi.Parameter('document_name', openapi.IN_QUERY, description="param nome do documento da pessoa", type=openapi.TYPE_STRING)
 document_number = openapi.Parameter('document_number', openapi.IN_QUERY, description="param número do documento da pessoa", type=openapi.TYPE_STRING)
+cpf = openapi.Parameter('cpf', openapi.IN_QUERY, description="param número do CPF da pessoa", type=openapi.TYPE_STRING)
 nickname_label = openapi.Parameter('nickname_label', openapi.IN_QUERY, description="param alcunha da pessoa", type=openapi.TYPE_STRING)
+
+
+class PersonByCpfViewSet(generics.ListAPIView):
+    queryset = Person.objects.all()
+    serializer_class = PersonSerializer
+
+    def get_queryset(self):
+        queryset = Person.objects.get_queryset()
+        document_number = self.request.query_params.get('cpf')
+        person = None
+        has_cpf = Q()
+        if document_number is not None:
+            has_cpf = Q(documents__number__icontains=document_number)
+        return queryset.filter(has_cpf)
+
+    @swagger_auto_schema(method='get', manual_parameters=[cpf])
+    @action(detail=True, methods=['GET'])
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+        # try:
+        #     person = Person.objects.filter(has_cpf)
+        #     serialized = self.get_serializer(person)
+        #     return Response(serialized.data, status=200)
+        # except Person.DoesNotExist:
+        #     return Response(status=404)
+        # except Exception as e:
+        #     print(e)
+        #     return Response(status=500)
 
 
 class AddPersonListView(generics.ListCreateAPIView):
@@ -45,10 +75,10 @@ class AddPersonListView(generics.ListCreateAPIView):
         has_number = Q()
         nickname_label = self.request.query_params.get('nickname_label')
         has_nickname = Q()
-        if document_number is not None:
-            has_name = Q(documents__number__icontains=document_number)
         if document_name is not None:
-            has_number = Q(documents__name__icontains=document_name)
+            has_name = Q(documents__name__icontains=document_name)
+        if document_number is not None:
+            has_number = Q(documents__number__icontains=document_number)
         if nickname_label is not None:
             has_nickname = Q(nicknames__label__icontains=nickname_label)
         if my is not None:
@@ -148,7 +178,7 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
         instance = get_object_or_404(Person, uuid=kwargs['uuid'])
         serializer = self.get_serializer(instance)
 
-        helpers.process_external_consult(instance)
+        # helpers.process_external_consult(person=instance, username=self.request.user.username, cpf=document.number)
         return Response(serializer.data)
 
 

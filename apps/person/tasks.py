@@ -23,9 +23,10 @@ def cortex_consult(self, username, cpf=False, name=False, mother_name=False, bir
     data = portalCortexService.get_person_by_cpf(cpf=cpf, username=username)
     print(data)
     if data:
-        cortex_instance = PersonCortex.objects.update_or_create(**data)
+        cortex_instance, created = PersonCortex.objects.update_or_create(**data)
         print('---------------------------')
-        print(cortex_instance.uuid)
+        print(cortex_instance)
+        print('---------------------------')
         return cortex_instance
     else:
         return None
