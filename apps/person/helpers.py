@@ -1,6 +1,8 @@
+import logging
+
+from apps.document.models import Document
 from . import tasks
 from . import models
-import logging
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -14,14 +16,16 @@ def process_external_consult(person, username, cpf=None):
             models.Registry.objects.update_or_create(system_label="CORTEX", system_uuid=retorno.uuid, person=person)
         except Exception as e:
             raise logger.error('Error while getting registry in cortex - {}'.format(e))
-            print("N'ao encontrado registro no cortex")
     else:
         logger.info('CPF not informed or invalid - {}'.format(cpf))
 
 
 def validate_document(number):
     try:
-        instance = models.Document.objects.filter(number=number)
-        return instance
-    except:
+        document = Document.objects.get(number=number)
+        return document
+    except Document.DoesNotExist:
+        return None
+    except Exception as e:
+        raise logger.error('Error while getting document in bacinf - {}'.format(e))
         return None

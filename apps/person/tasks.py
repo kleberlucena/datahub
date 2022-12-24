@@ -6,8 +6,6 @@ import logging
 from apps.cortex import services
 from apps.cortex.models import PersonCortex
 
-self_url_base = settings.SELF_URL_BASE
-
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
