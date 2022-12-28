@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -27,6 +28,7 @@ class SoftDelete(SafeDeleteModel):
 
 
 class PersonCortex(Base, SoftDelete):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     numeroCPF = models.CharField(max_length=11, unique=True)
     nomeCompleto = models.CharField(max_length=255, null=True, blank=True)
     nomeMae = models.CharField(max_length=255, null=True, blank=True)

@@ -43,7 +43,6 @@ class DocumentRetrieve(generics.RetrieveAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         instance = Document.objects.get(uuid=kwargs['uuid'])
-        print(f"aqui {kwargs['uuid']}")
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
