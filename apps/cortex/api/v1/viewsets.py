@@ -4,11 +4,17 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
+import logging
+
 from apps.cortex.api.v1.serializers import PersonCortexSerializer
 from apps.cortex.models import PersonCortex
 from apps.cortex.services import PortalCortexService
+from apps.person.models import Person, Registry
+from apps.document.models import Document, DocumentType
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 portalCortexService = PortalCortexService()
 
@@ -31,19 +37,45 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
         except PersonCortex.DoesNotExist:
             person_cortex = None
         except Exception as e:
-            print('%s (%s)' % (e, type(e)))
+            raise logger.error('Error while getting personcortex local - {}'.format(e))
         try:
-            if person_cortex is None or person_cortex.updated_at.date() < date.today():
+            if person_cortex is None:
                 person_json = portalCortexService.get_person_by_cpf(username=username, cpf=cpf)
-                PersonCortex.objects.update_or_create(**person_json)
+                value = person_json['numeroCPF']
+                person_cortex, created = PersonCortex.objects.update_or_create(
+                        numeroCPF=value, defaults={**person_json},
+                    )
+            elif person_cortex.updated_at.date() < date.today():
+                person_json = portalCortexService.get_person_by_cpf(username=username, cpf=cpf)
+                person_cortex.save(person_json)
+        except Exception as e:
+            raise logger.error('Error while getting personcortex on cortex repository - {}'.format(e))
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
+        try:
+            registry = Registry.objects.get(system_uuid=person_cortex.uuid)
+        except Registry.DoesNotExist:
+            person = Person.objects.create()
+            document = Document(number=person_cortex.numeroCPF,
+                                name=person_cortex.nomeCompleto,
+                                birth_date=person_cortex.dataNascimento,
+                                mother=person_cortex.nomeMae,
+                                type=DocumentType.objects.get(label="CPF"))
+            document.save()
+            person.documents.add(document)
+            person.save()
+            registry = Registry.objects.create(system_label="CORTEX", system_uuid=person_cortex.uuid, person=person)
+        except Exception as e:
+            raise logger.error('Error while getting person and add Registry - {}'.format(e))
+            return Response(status=500)
+
+        try:
             instance = get_object_or_404(PersonCortex, numeroCPF=cpf)
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
         except Exception as e:
-            print('%s (%s)' % (e, type(e)))
-
-        return Response(status=status.HTTP_404_NOT_FOUND)
+            raise logger.error('Error while serialize person_cortex - {}'.format(e))
+            return Response(status=500)
 
     def get_queryset(self):
         return PersonCortex.objects.all()
@@ -65,7 +97,7 @@ class PessoaByBirthdateViewSet(generics.ListAPIView):
                                                                    birthdate=birthdate)
             return Response(people_json)
         except Exception as e:
-            print('%s (%s)' % (e, type(e)))
+            raise logger.error('Error while getting personcortex by birthdate - {}'.format(e))
 
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -88,7 +120,7 @@ class PessoaByMotherViewSet(generics.ListAPIView):
             people_json = portalCortexService.get_person_by_mother(username=username, name=name, mother_name=mother_name)
             return Response(people_json)
         except Exception as e:
-            print('%s (%s)' % (e, type(e)))
+            raise logger.error('Error while getting personcortex mother - {}'.format(e))
 
         return Response(status=status.HTTP_404_NOT_FOUND)
 

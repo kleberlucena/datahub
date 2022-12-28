@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework import filters
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import DjangoObjectPermissions
@@ -13,11 +13,32 @@ from drf_yasg import openapi
 
 from apps.person.api.v1.serializers import *
 from apps.person.models import *
+from apps.person import helpers
 
 
 document_name = openapi.Parameter('document_name', openapi.IN_QUERY, description="param nome do documento da pessoa", type=openapi.TYPE_STRING)
 document_number = openapi.Parameter('document_number', openapi.IN_QUERY, description="param número do documento da pessoa", type=openapi.TYPE_STRING)
+cpf = openapi.Parameter('cpf', openapi.IN_QUERY, description="param número do CPF da pessoa", type=openapi.TYPE_STRING)
 nickname_label = openapi.Parameter('nickname_label', openapi.IN_QUERY, description="param alcunha da pessoa", type=openapi.TYPE_STRING)
+
+
+class PersonByCpfViewSet(generics.ListAPIView):
+    queryset = Person.objects.all()
+    serializer_class = PersonSerializer
+
+    def get_queryset(self):
+        queryset = Person.objects.get_queryset()
+        document_number = self.request.query_params.get('cpf')
+        person = None
+        has_cpf = Q()
+        if document_number is not None:
+            has_cpf = Q(documents__number__icontains=document_number)
+        return queryset.filter(has_cpf)
+
+    @swagger_auto_schema(method='get', manual_parameters=[cpf])
+    @action(detail=True, methods=['GET'])
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 
 class AddPersonListView(generics.ListCreateAPIView):
@@ -44,10 +65,10 @@ class AddPersonListView(generics.ListCreateAPIView):
         has_number = Q()
         nickname_label = self.request.query_params.get('nickname_label')
         has_nickname = Q()
-        if document_number is not None:
-            has_name = Q(documents__number__icontains=document_number)
         if document_name is not None:
-            has_number = Q(documents__name__icontains=document_name)
+            has_name = Q(documents__name__icontains=document_name)
+        if document_number is not None:
+            has_number = Q(documents__number__icontains=document_number)
         if nickname_label is not None:
             has_nickname = Q(nicknames__label__icontains=nickname_label)
         if my is not None:
@@ -81,6 +102,8 @@ class AddPersonListView(generics.ListCreateAPIView):
             for document in instance.documents.all():
                 document.created_by = self.request.user
                 document.save()
+                if document.type.label == 'CPF':
+                    helpers.process_external_consult(person=instance, username=self.request.user.username, cpf=document.number)
                 assign_perm("change_document", self.request.user, document)
                 assign_perm("delete_document", self.request.user, document)
             for face in instance.faces.all():
@@ -105,9 +128,6 @@ class AddPersonListView(generics.ListCreateAPIView):
     @action(detail=True, methods=['GET'])
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
-    #     list_object = Person.objects.all()
-    #     serialized = self.get_serializer(list_object)
-    #     return Response({"data": serialized.data})
 
 
 class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
@@ -124,15 +144,12 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
         if user.has_perm('person.delete_person', instance):
             for address in instance.addresses.all():
                 if not user.has_perm('address.delete_address', address):
-                    print(address.uuid)
                     return unauthorized
             for document in instance.documents.all():
                 if not user.has_perm('document.delete_document', document):
-                    print(document.uuid)
                     return unauthorized
             for image in instance.images.all():
                 if not user.has_perm('image.delete_image', image):
-                    print(image.uuid)
                     return unauthorized
             if instance.soft_delete_cascade_policy_action(deleted_by=user):
                 return HttpResponse("Deleted", status=204)

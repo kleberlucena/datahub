@@ -12,6 +12,7 @@ from apps.address.api.serializers import AddressSerializer
 from apps.image.api.serializers import ImageSerializer
 from apps.document.api.serializers import DocumentSerializer
 
+
 class FaceSerializer(serializers.ModelSerializer):
     file = Base64ImageField(write_only=True)
     path_image = serializers.SerializerMethodField('_get_image_path', read_only=True)
@@ -98,6 +99,13 @@ class PhysicalSerializer(serializers.ModelSerializer):
         fields = ('uuid', 'label', 'value', 'created_at', 'updated_at', 'permissions')
 
 
+class RegistrySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Registry
+        fields = ('uuid', 'system_label', 'system_uuid', 'created_at', 'updated_at')
+
+
 class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
     nicknames = NicknameSerializer(many=True, required=False)
     faces = FaceSerializer(many=True, required=False)
@@ -106,6 +114,7 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
     tattoos = TattooSerializer(many=True, required=False)
     physicals = PhysicalSerializer(many=True, required=False)
     documents = DocumentSerializer(many=True, required=False)
+    registers = RegistrySerializer(many=True, read_only=True, required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
     
     def _get_permissions(self, object):
@@ -118,4 +127,4 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
         model = Person
         fields = (
             'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals',
-            'created_at', 'updated_at', 'permissions')
+            'created_at', 'updated_at', 'registers', 'permissions')
