@@ -41,11 +41,13 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
         try:
             if person_cortex is None:
                 person_json = portalCortexService.get_person_by_cpf(username=username, cpf=cpf)
-                person_cortex = PersonCortex.objects.create(**person_json)
+                value = person_json['numeroCPF']
+                person_cortex, created = PersonCortex.objects.update_or_create(
+                        numeroCPF=value, defaults={**person_json},
+                    )
             elif person_cortex.updated_at.date() < date.today():
                 person_json = portalCortexService.get_person_by_cpf(username=username, cpf=cpf)
-                print(person_json)
-                PersonCortex.objects.update_or_create(**person_json, uuid=person_cortex.uuid)
+                person_cortex.save(person_json)
         except Exception as e:
             raise logger.error('Error while getting personcortex on cortex repository - {}'.format(e))
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -95,7 +97,7 @@ class PessoaByBirthdateViewSet(generics.ListAPIView):
                                                                    birthdate=birthdate)
             return Response(people_json)
         except Exception as e:
-            print('%s (%s)' % (e, type(e)))
+            raise logger.error('Error while getting personcortex by birthdate - {}'.format(e))
 
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -118,7 +120,7 @@ class PessoaByMotherViewSet(generics.ListAPIView):
             people_json = portalCortexService.get_person_by_mother(username=username, name=name, mother_name=mother_name)
             return Response(people_json)
         except Exception as e:
-            print('%s (%s)' % (e, type(e)))
+            raise logger.error('Error while getting personcortex mother - {}'.format(e))
 
         return Response(status=status.HTTP_404_NOT_FOUND)
 

@@ -15,7 +15,6 @@ class AddressList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         new_address = get_address_by_zipcode(self.request.data['zipcode'])
-        print(new_address)
         if serializer.is_valid():
             instance = serializer.save(created_by=self.request.user)
             assign_perm("change_address", self.request.user, instance)

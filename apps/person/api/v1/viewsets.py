@@ -144,15 +144,12 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
         if user.has_perm('person.delete_person', instance):
             for address in instance.addresses.all():
                 if not user.has_perm('address.delete_address', address):
-                    print(address.uuid)
                     return unauthorized
             for document in instance.documents.all():
                 if not user.has_perm('document.delete_document', document):
-                    print(document.uuid)
                     return unauthorized
             for image in instance.images.all():
                 if not user.has_perm('image.delete_image', image):
-                    print(image.uuid)
                     return unauthorized
             if instance.soft_delete_cascade_policy_action(deleted_by=user):
                 return HttpResponse("Deleted", status=204)
