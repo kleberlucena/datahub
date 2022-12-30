@@ -1,9 +1,9 @@
-image: docker:19.03.7
+image: docker:20.10.17
 
 
 # Enable docker-in-docker communication
 services:
-  - docker:19.03.7-dind
+  - docker:20.10.7-dind
 
 
 variables:
@@ -28,8 +28,7 @@ stages:
 build image:
   stage: build
   tags:
-    - docker
-    - pmpb
+    - stage
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker pull $CACHE_IMAGE_TAG || true
@@ -43,8 +42,7 @@ run tests:
   stage: test
   needs: ["build image"]
   tags:
-    - docker
-    - pmpb
+    - stage
   environment:
     name: test
     url: https://bacinf.stage.pm.pb.gov.br
@@ -84,6 +82,13 @@ run tests:
         export STAGE_SOCIAL_AUTH_KEYCLOAK_PUBLIC_KEY=${STAGE_SOCIAL_AUTH_KEYCLOAK_PUBLIC_KEY}
         export STAGE_SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL=${STAGE_SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL}
         export STAGE_SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL=${STAGE_SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL}
+        export STAGE_CELERY_BROKER_URL=${STAGE_CELERY_BROKER_URL}
+        export STAGE_CELERY_RESULT_BACKEND=${STAGE_CELERY_RESULT_BACKEND}
+        export STAGE_GRAYLOG_HTTP_ENDPOINT=${STAGE_GRAYLOG_HTTP_ENDPOINT}
+        export STAGE_PORTAL_TOKEN=${STAGE_PORTAL_TOKEN}
+        export STAGE_PORTAL_URL_BASE=${STAGE_PORTAL_URL_BASE}
+        export STAGE_WATERMARK_HOST=${STAGE_WATERMARK_HOST}
+        export STAGE_WATERMARK_SECRET=${STAGE_WATERMARK_SECRET}
 
         docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
         docker-compose down
@@ -98,8 +103,7 @@ deploy stage:
   extends: .deploy_template
   needs: [ "run tests" ]
   tags:
-    - docker
-    - pmpb
+    - stage
   environment:
     name: stage
     url: https://bacinf.stage.pm.pb.gov.br
@@ -180,8 +184,7 @@ undeploy stage:
 .deploy_template:
   extends: .server_access_granted
   tags:
-    - docker
-    - pmpb
+    - stage
   script:
     - ssh root@$SERVER_IP "mkdir -p $APP_FOLDER"
     - scp -r ./$COMPOSE_FILE root@$SERVER_IP:~/$APP_FOLDER/docker-compose.yml
@@ -213,6 +216,10 @@ undeploy stage:
         export PROD_CELERY_BROKER_URL=${PROD_CELERY_BROKER_URL}
         export PROD_CELERY_RESULT_BACKEND=${PROD_CELERY_RESULT_BACKEND}
         export PROD_GRAYLOG_HTTP_ENDPOINT=${PROD_GRAYLOG_HTTP_ENDPOINT}
+        export PROD_PORTAL_TOKEN=${PROD_PORTAL_TOKEN}
+        export PROD_PORTAL_URL_BASE=${PROD_PORTAL_URL_BASE}
+        export PROD_WATERMARK_HOST=${PROD_WATERMARK_HOST}
+        export PROD_WATERMARK_SECRET=${PROD_WATERMARK_SECRET}
         export STAGE_DJANGO_SECRET_KEY=${STAGE_DJANGO_SECRET_KEY}
         export STAGE_DJANGO_SITE_ID=${STAGE_DJANGO_SITE_ID}
         export STAGE_DB_NAME=${STAGE_DB_NAME}
@@ -235,6 +242,10 @@ undeploy stage:
         export STAGE_CELERY_BROKER_URL=${STAGE_CELERY_BROKER_URL}
         export STAGE_CELERY_RESULT_BACKEND=${STAGE_CELERY_RESULT_BACKEND}
         export STAGE_GRAYLOG_HTTP_ENDPOINT=${STAGE_GRAYLOG_HTTP_ENDPOINT}
+        export STAGE_PORTAL_TOKEN=${STAGE_PORTAL_TOKEN}
+        export STAGE_PORTAL_URL_BASE=${STAGE_PORTAL_URL_BASE}
+        export STAGE_WATERMARK_HOST=${STAGE_WATERMARK_HOST}
+        export STAGE_WATERMARK_SECRET=${STAGE_WATERMARK_SECRET}
 
         docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
         docker-compose down

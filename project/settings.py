@@ -38,6 +38,7 @@ CORS_ALLOW_HEADERS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'polymorphic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -73,19 +74,22 @@ INSTALLED_APPS = [
     'celery_progress',
     'guardian',
     'corsheaders',
+    'easyaudit',
 
     # Apps
     'base',
+    'apps.cortex',
     'apps.person',
     'apps.image',
     'apps.address',
     'apps.document',
+    'apps.alert',
 
 ]
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django_graylog.GraylogMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -93,6 +97,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'global_login_required.GlobalLoginRequiredMiddleware',
+    'easyaudit.middleware.easyaudit.EasyAuditMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -215,10 +220,6 @@ SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL = env('SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_U
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 SOCIAL_AUTH_KEYCLOAK_SCOPE = ['email', 'openid']
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
-# SOCIAL_AUTH_STRATEGY = 'social_django.strategy.DjangoStrategy'
-# LOGIN_URL = '/accounts/login/'
-# LOGIN_REDIRECT_URL = '/'
-# NEW_USER_REDIRECT_URL = '/' # Remover
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
@@ -232,6 +233,9 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.user_details',
 )
 
+# Portal
+PORTAL_TOKEN = env('PORTAL_TOKEN')
+PORTAL_URL_BASE = env('PORTAL_URL_BASE')
 
 # Minio
 MINIO_CONSISTENCY_CHECK_ON_START = True
@@ -251,6 +255,13 @@ MINIO_URL_EXPIRY_HOURS = timedelta(days=1)
 MINIO_POLICY_HOOKS: List[Tuple[str, dict]] = []
 MINIO_BUCKET_CHECK_ON_SAVE = True
 
+# Config debug toolbar
+INTERNAL_IPS = ["127.0.0.1",]
+
+# Watermark
+SERVICES_HOST = env('SERVICES_HOST')
+SERVICES_SECRET = env('SERVICES_SECRET')
+
 # Global login required middleware
 PUBLIC_VIEWS = [
     'auth_oidc.views.logout'
@@ -258,20 +269,9 @@ PUBLIC_VIEWS = [
 PUBLIC_PATHS = [
     r'^/accounts/.*',  # allow public access to all django-allauth views
     r'^/health_check',
-    r'^/auth/validate/*/',
     r'^/auth/logout/',
-    r'^/api/v1/*',
+    r'^/api/v1/.*',
 ]
-
-PUBLIC_PATHS.append(r'^/admin/.*', ) 
-if DEBUG:
-    PUBLIC_PATHS.append(r'^/admin/.*', )  # allow access to admin views
-    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
-    AUTHENTICATION_BACKENDS.append('django.contrib.auth.backends.ModelBackend')
-    MINIO_CONSISTENCY_CHECK_ON_START = False
-    MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = False
-    MINIO_USE_HTTPS = False
-
 
 # Celery Configuration Options
 CELERY_TIMEZONE = TIME_ZONE
@@ -286,3 +286,14 @@ CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND')
 
 # Graylog
 GRAYLOG_ENDPOINT = env('GRAYLOG_HTTP_ENDPOINT')
+
+# Config to run in localhost
+if DEBUG:
+    PUBLIC_PATHS.append(r'^/admin/.*', )  # allow access to admin views
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
+    AUTHENTICATION_BACKENDS.append('django.contrib.auth.backends.ModelBackend')
+    MINIO_CONSISTENCY_CHECK_ON_START = False
+    MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = False
+    MINIO_USE_HTTPS = False
+    INSTALLED_APPS.append('debug_toolbar')  # module to debug
+    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')

@@ -4,7 +4,9 @@ FROM python:3.8-slim
 # evitando o buffer. Isso nos ajuda a ver os logs direto no container imediatamente.
 # ou seja, os logs da nossa aplicação Django podem ser vistos em tempo real sem delay.
 ENV PYTHONUNBUFFERED=1
-RUN apt-get update -y \
+
+# Instalação de bibliotecas necessárias para funcionamento do Postgis
+RUN apt-get update \
   && apt-get install -y binutils \
   && apt-get install -y gdal-bin \
   && apt-get install -y libproj-dev \
@@ -12,9 +14,11 @@ RUN apt-get update -y \
   && apt-get install -y postgresql-13-postgis-3 \
   && apt-get install -y postgresql-13-postgis-3-scripts \
   && apt-get install -y build-essential
+
 RUN mkdir /code
 WORKDIR /code
-COPY requirements.txt /code/
+COPY requirements_prod.txt /code/
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install -r requirements_prod.txt
 COPY . /code/
+

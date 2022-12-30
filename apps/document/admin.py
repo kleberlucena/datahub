@@ -13,6 +13,11 @@ class DocumentTypeAdmin(SafeDeleteAdmin, GuardedModelAdmin):
     exclude = ()
     field_to_highlight = "id"
 
+    @admin.action(description='Add deleted_by on deleted objects')
+    def delete_model(self, request, obj):
+        user = request.user
+        obj.delete(deleted_by=user)
+
 
 DocumentTypeAdmin.highlight_deleted_field.short_description = DocumentTypeAdmin.field_to_highlight
 
@@ -25,6 +30,11 @@ class DocumentImageAdmin(SafeDeleteAdmin, GuardedModelAdmin):
     list_filter = ("created_by", SafeDeleteAdminFilter,) + SafeDeleteAdmin.list_filter
     exclude = ()
     field_to_highlight = "id"
+
+    @admin.action(description='Add deleted_by on deleted objects')
+    def delete_model(self, request, obj):
+        user = request.user
+        obj.delete(deleted_by=user)
 
     def foto_preview(self, obj):
         return format_html(
@@ -41,6 +51,11 @@ class DocumentAdmin(SafeDeleteAdmin, GuardedModelAdmin):
     list_filter = ("created_by", SafeDeleteAdminFilter,) + SafeDeleteAdmin.list_filter
     exclude = ()
     field_to_highlight = "id"
+
+    @admin.action(description='Add deleted_by on deleted objects')
+    def delete_model(self, request, obj):
+        user = request.user
+        obj.delete(deleted_by=user)
 
 
 DocumentAdmin.highlight_deleted_field.short_description = DocumentAdmin.field_to_highlight

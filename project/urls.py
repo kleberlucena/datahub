@@ -26,16 +26,24 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('api/v1/auth/validate/<str:backend>/', exchange_token),
-    path('auth/logout/', expire_token),
+    path('api/v1/auth/logout/', expire_token),
     path('', include('auth_oidc.urls'), name='auth_oidc'),
     path('', include('base.urls'), name='base'),
+    path('api/v1/alert/', include('apps.alert.api.v1.urls'), name='alert'),
+    path('api/v1/cortex/', include('apps.cortex.api.v1.urls'), name='cortex'),
     path('api/v1/document/', include('apps.document.api.urls'), name='person'),
-    path('api/v1/person/', include('apps.person.api.urls'), name='person'),
+    path('api/v1/person/', include('apps.person.api.v1.urls'), name='person'),
     path('api/v1/image/', include('apps.image.api.urls'), name='image'),
     path('api/v1/address/', include('apps.address.api.urls'), name='address'),
     path('api/v1/legacy/', include('apps.person.api.legacy.urls'), name='legacy'),
     path('celery-progress/', include('celery_progress.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
 
 # swagger
 urlpatterns += [
