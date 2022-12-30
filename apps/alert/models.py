@@ -1,58 +1,76 @@
+import uuid
 from django.db import models
 from polymorphic.models import PolymorphicModel
 
-class Alert(PolymorphicModel):
+from apps.person.models import Person
 
 
-
-class VehicleAlert(Alert):
-	car_id = models.AutoField(primary_key=True)
-	latitudeocorrencia = models.CharField(max_length=100)
-	imagem = models.CharField(max_length=100)
-	datapassagem = models.CharField(max_length=100)
-	unidaderegistrobo = models.CharField(max_length=100)
-	nomedeclarante = models.CharField(max_length=100)
-	sitocrid = models.CharField(max_length=100)
-	dataocorrencia = models.CharField(max_length=100)
-	longitudepassagem = models.CharField(max_length=100)
-	municipioplaca = models.CharField(max_length=100)
-	municipiolocal = models.CharField(max_length=100)
-	longitudeocorrencia = models.CharField(max_length=100)
-	latitudepassagem = models.CharField(max_length=100)
-	telefonecontato = models.CharField(max_length=100)
-	ufplaca = models.CharField(max_length=100)
-	numerobo = models.CharField(max_length=100)
-	uflocal = models.CharField(max_length=100)
-	localpassagem = models.CharField(max_length=100)
-	dddcontato = models.CharField(max_length=100)
-	sisid = models.IntegerField()
-	historicoocorrencia = models.CharField(max_length=100)
-	idmovimento = models.CharField(max_length=100)
-	placa = models.CharField(max_length=100)
+class AlertCortex(PolymorphicModel):
+	uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+	person = models.ForeignKey(Person, related_name='alerts', null=True, blank=True, on_delete=models.SET_NULL)
+	dados = models.JSONField(null=True, blank=True)
 
 
-class PersonAlert(Alert):
-	person_id = models.AutoField(primary_key=True)
-	estado = models.CharField(max_length=100)
-	situacao = models.CharField(max_length=100)
-	anobo = models.IntegerField()
-	sistema = models.CharField(max_length=100)
-	municipio = models.CharField(max_length=100)
-	historico = models.CharField(max_length=100)
-	nome = models.CharField(max_length=100)
-	datahora = models.CharField(max_length=100)
-	datanascimento = models.CharField(max_length=100)
-	long = models.CharField(max_length=100)
-	local = models.CharField(max_length=100)
-	numeroocorrencia = models.CharField(max_length=100)
-	uf = models.CharField(max_length=100)
-	datahoraocorrencia = models.CharField(max_length=100)
-	municipioocorrencia = models.CharField(max_length=100)
-	foto = models.CharField(max_length=100)
-	cpf = models.CharField(max_length=100)
-	ufocorrencia = models.CharField(max_length=100)
-	unidadeocorrencia = models.CharField(max_length=100)
-	lat = models.CharField(max_length=100)
-	sisid = models.CharField(max_length=100)
-	nomemae = models.CharField(max_length=100)
-	sitid = models.IntegerField()
+class VehicleAlertCortex(AlertCortex):
+	latitudeOcorrencia = models.CharField(max_length=100, null=True, blank=True)
+	longitudeOcorrencia = models.CharField(max_length=100, null=True, blank=True)
+	latitudePassagem = models.CharField(max_length=100, null=True, blank=True)
+	longitudePassagem = models.CharField(max_length=100, null=True, blank=True)
+	imagem = models.CharField(max_length=100, null=True, blank=True)
+	dataPassagem = models.DateTimeField(max_length=100, null=True, blank=True)
+	unidadeRegistroBo = models.CharField(max_length=100, null=True, blank=True)
+	nomeDeclarante = models.CharField(max_length=100, null=True, blank=True)
+	sitOcrId = models.CharField(max_length=100, null=True, blank=True)
+	dataOcorrencia = models.DateTimeField(max_length=100, null=True, blank=True)
+	municipioPlaca = models.CharField(max_length=100, null=True, blank=True)
+	municipioLocal = models.CharField(max_length=100, null=True, blank=True)
+	telefoneContato = models.CharField(max_length=100, null=True, blank=True)
+	ufPlaca = models.CharField(max_length=100, null=True, blank=True)
+	numeroBo = models.CharField(max_length=100, null=True, blank=True)
+	ufLocal = models.CharField(max_length=100, null=True, blank=True)
+	localPassagem = models.CharField(max_length=100, null=True, blank=True)
+	dddContato = models.CharField(max_length=100, null=True, blank=True)
+	sisId = models.IntegerField(null=True, blank=True)
+	historicoOcorrencia = models.TextField(null=True, blank=True)
+	idMovimento = models.CharField(max_length=100, null=True, blank=True)
+	placa = models.CharField(max_length=100, null=True, blank=True)
+
+	def __str__(self):
+		return f"{self.uuid}"
+
+	class Meta:
+		verbose_name = "Alerta Veículo"
+		verbose_name_plural = "Alerta Veículos"
+
+
+class PersonAlertCortex(AlertCortex):
+	uf = models.CharField(max_length=100, null=True, blank=True)
+	cpf = models.CharField(max_length=100, null=True, blank=True)
+	nome = models.CharField(max_length=100, null=True, blank=True)
+	nomeMae = models.CharField(max_length=100, null=True, blank=True)
+	foto = models.CharField(max_length=100, null=True, blank=True)
+	lat = models.CharField(max_length=100, null=True, blank=True)
+	long = models.CharField(max_length=100, null=True, blank=True)
+	estado = models.CharField(max_length=100, null=True, blank=True)
+	situacao = models.CharField(max_length=100, null=True, blank=True)
+	sistema = models.CharField(max_length=100, null=True, blank=True)
+	municipio = models.CharField(max_length=100, null=True, blank=True)
+	historico = models.TextField(null=True, blank=True)
+	datahora = models.DateTimeField(max_length=100, null=True, blank=True)
+	dataNascimento = models.DateField(max_length=100, null=True, blank=True)
+	local = models.CharField(max_length=100, null=True, blank=True)
+	anoBo = models.IntegerField(null=True, blank=True)
+	numeroOcorrencia = models.CharField(max_length=100, null=True, blank=True)
+	dataHoraOcorrencia = models.DateTimeField(max_length=100, null=True, blank=True)
+	municipioOcorrencia = models.CharField(max_length=100, null=True, blank=True)
+	ufOcorrencia = models.CharField(max_length=100, null=True, blank=True)
+	unidadeOcorrencia = models.CharField(max_length=100, null=True, blank=True)
+	sisId = models.CharField(max_length=100, null=True, blank=True)
+	sitId = models.IntegerField(null=True, blank=True)
+
+	def __str__(self):
+		return f"{self.uuid}"
+
+	class Meta:
+		verbose_name = "Alerta Pessoa"
+		verbose_name_plural = "Alerta Pessoas"

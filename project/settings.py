@@ -38,6 +38,7 @@ CORS_ALLOW_HEADERS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'polymorphic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -82,6 +83,7 @@ INSTALLED_APPS = [
     'apps.image',
     'apps.address',
     'apps.document',
+    'apps.alert',
 
 ]
 MIDDLEWARE = [
