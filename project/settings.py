@@ -38,6 +38,7 @@ CORS_ALLOW_HEADERS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'polymorphic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -82,6 +83,7 @@ INSTALLED_APPS = [
     'apps.image',
     'apps.address',
     'apps.document',
+    'apps.alert',
 
 ]
 MIDDLEWARE = [
@@ -257,8 +259,8 @@ MINIO_BUCKET_CHECK_ON_SAVE = True
 INTERNAL_IPS = ["127.0.0.1",]
 
 # Watermark
-WATERMARK_HOST = env('WATERMARK_HOST')
-WATERMARK_SECRET = env('WATERMARK_SECRET')
+SERVICES_HOST = env('SERVICES_HOST')
+SERVICES_SECRET = env('SERVICES_SECRET')
 
 # Global login required middleware
 PUBLIC_VIEWS = [
