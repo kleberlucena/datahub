@@ -11,6 +11,7 @@ from apps.cortex.api.v1.serializers import PersonCortexSerializer
 from apps.cortex.models import PersonCortex
 from apps.cortex.services import PortalCortexService
 from apps.person.models import Person, Registry
+from apps.person.api.v1.serializers import PersonSerializer
 from apps.document.models import Document, DocumentType
 
 # Get an instance of a logger
@@ -72,7 +73,8 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
         try:
             instance = get_object_or_404(PersonCortex, numeroCPF=cpf)
             serializer = self.get_serializer(instance)
-            return Response(serializer.data)
+            personSerialized = serializer.data['registry']['person']
+            return Response({'person': personSerialized, 'cortex': serializer.data})
         except Exception as e:
             raise logger.error('Error while serialize person_cortex - {}'.format(e))
             return Response(status=500)
