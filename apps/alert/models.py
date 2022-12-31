@@ -56,17 +56,17 @@ class PersonAlertCortex(AlertCortex):
 	sistema = models.CharField(max_length=100, null=True, blank=True)
 	municipio = models.CharField(max_length=100, null=True, blank=True)
 	historico = models.TextField(null=True, blank=True)
-	datahora = models.DateTimeField(max_length=100, null=True, blank=True)
-	dataNascimento = models.DateField(max_length=100, null=True, blank=True)
+	dataHora = models.DateTimeField(null=True, blank=True)
+	dataNascimento = models.DateTimeField(null=True, blank=True)
 	local = models.CharField(max_length=100, null=True, blank=True)
-	anoBo = models.IntegerField(null=True, blank=True)
+	anoBO = models.IntegerField(null=True, blank=True)
 	numeroOcorrencia = models.CharField(max_length=100, null=True, blank=True)
 	dataHoraOcorrencia = models.DateTimeField(max_length=100, null=True, blank=True)
 	municipioOcorrencia = models.CharField(max_length=100, null=True, blank=True)
 	ufOcorrencia = models.CharField(max_length=100, null=True, blank=True)
 	unidadeOcorrencia = models.CharField(max_length=100, null=True, blank=True)
-	sisId = models.CharField(max_length=100, null=True, blank=True)
-	sitId = models.IntegerField(null=True, blank=True)
+	sisID = models.CharField(max_length=100, null=True, blank=True)
+	sitID = models.IntegerField(null=True, blank=True)
 
 	def __str__(self):
 		return f"{self.uuid}"
