@@ -24,6 +24,18 @@ mother_name = openapi.Parameter('mother_name', openapi.IN_QUERY, description="pa
 birthdate = openapi.Parameter('birthdate', openapi.IN_QUERY, description="param birthdate", type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE)
 
 
+class PersonRetrieveView(generics.RetrieveAPIView):
+    queryset = PersonCortex.objects.all()
+    serializer_class = PersonCortexSerializer
+    # for key
+    lookup_field = 'uuid'
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = get_object_or_404(PersonCortex, uuid=kwargs['uuid'])
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
 class PessoaByCpfViewSet(generics.GenericAPIView):
     queryset = PersonCortex.objects.all()
     serializer_class = PersonCortexSerializer
@@ -73,8 +85,8 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
         try:
             instance = get_object_or_404(PersonCortex, numeroCPF=cpf)
             serializer = self.get_serializer(instance)
-            personSerialized = serializer.data['registry']['person']
-            return Response({'person': personSerialized, 'cortex': serializer.data})
+            # personSerialized = serializer.data['registry']['person']
+            return Response(serializer)
         except Exception as e:
             raise logger.error('Error while serialize person_cortex - {}'.format(e))
             return Response(status=500)
