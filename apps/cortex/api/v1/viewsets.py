@@ -86,7 +86,7 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
             instance = get_object_or_404(PersonCortex, numeroCPF=cpf)
             serializer = self.get_serializer(instance)
             # personSerialized = serializer.data['registry']['person']
-            return Response(serializer)
+            return Response(serializer.data)
         except Exception as e:
             raise logger.error('Error while serialize person_cortex - {}'.format(e))
             return Response(status=500)
