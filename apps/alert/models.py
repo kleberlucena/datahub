@@ -1,6 +1,9 @@
 import uuid
 from django.db import models
+from django.conf import settings
 from polymorphic.models import PolymorphicModel
+from stdimage.models import StdImageField
+from django_minio_backend import MinioBackend
 
 from apps.person.models import Person
 
@@ -16,7 +19,11 @@ class VehicleAlertCortex(AlertCortex):
 	longitudeOcorrencia = models.CharField(max_length=100, null=True, blank=True)
 	latitudePassagem = models.CharField(max_length=100, null=True, blank=True)
 	longitudePassagem = models.CharField(max_length=100, null=True, blank=True)
-	imagem = models.CharField(max_length=100, null=True, blank=True)
+	imagem = StdImageField(
+		'imagem',
+		storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
+		upload_to='alerta_veiculo_imagens', null=True, blank=True
+	)
 	dataPassagem = models.DateTimeField(max_length=100, null=True, blank=True)
 	unidadeRegistroBo = models.CharField(max_length=100, null=True, blank=True)
 	nomeDeclarante = models.CharField(max_length=100, null=True, blank=True)
@@ -48,7 +55,11 @@ class PersonAlertCortex(AlertCortex):
 	cpf = models.CharField(max_length=100, null=True, blank=True)
 	nome = models.CharField(max_length=100, null=True, blank=True)
 	nomeMae = models.CharField(max_length=100, null=True, blank=True)
-	foto = models.CharField(max_length=100, null=True, blank=True)
+	foto = StdImageField(
+		'foto',
+		storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
+		upload_to='alerta_pessoa_imagens', null=True, blank=True
+	)
 	lat = models.CharField(max_length=100, null=True, blank=True)
 	long = models.CharField(max_length=100, null=True, blank=True)
 	estado = models.CharField(max_length=100, null=True, blank=True)

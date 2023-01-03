@@ -15,6 +15,9 @@ from . import serializers
 placa = openapi.Parameter('placa', openapi.IN_QUERY, description="param placa", type=openapi.TYPE_STRING)
 cpf = openapi.Parameter('cpf', openapi.IN_QUERY, description="param cpf", type=openapi.TYPE_STRING)
 
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
 
 class AddAlertCortexListView(generics.ListCreateAPIView):
     queryset = AlertCortex.objects.all()
@@ -45,7 +48,7 @@ class AddAlertCortexListView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         data = self.request.data
         if serializer.is_valid():
-            serializer.save(**data)
+            serializer.save(dados=data)
             return Response(status=201)
         else:
             return Response(serializer.errors, status=400)
@@ -116,22 +119,40 @@ class AddPersonAlertCortexListView(generics.ListCreateAPIView):
             has_cpf = Q(cpf__icontains=cpf)
         return queryset.filter(has_cpf)
 
-    def perform_create(self, serializer):
-        data = self.request.data
-        if serializer.is_valid():
-            instance_alert = serializer.save(**data)
-            # print('$$$$$$$$$$$$$$$$$$$$')
-            # print(data)
-            # instance_person = PessoaByCpfViewSet.as_view()(self.request._request).data
-            # print('************')
-            # print(instance_person)
-            # instance_alert.person = instance_person
-            # instance_alert.save()
-            # {'detail': ErrorDetail(string='CSRF Failed: CSRF cookie not set.', code='permission_denied')}
-            # Internal
-            # Server
-            # Error: / api / v1 / alert / cortex / person /
-
+    def create(self, request, *args,**kwargs):
+        try:
+            print('aquiiiiiiiii')
+            data = self.request.data
+            print(data)
+            instance = PersonAlertCortex.objects.create(**data)
             return Response(status=201)
-        else:
-            return Response(serializer.errors, status=400)
+        except Exception as e:
+            raise logger.error('Error while save Person alert - {}'.format(e))
+            return Response(status=500)
+
+    def perform_create(self, serializer):
+        print('aquiiiiiiiii')
+        data = self.request.data
+        print(data)
+        try:
+            if serializer.is_valid():
+                instance_alert = serializer.save(**data)
+                # print('$$$$$$$$$$$$$$$$$$$$')
+                # print(data)
+                # instance_person = PessoaByCpfViewSet.as_view()(self.request._request).data
+                # print('************')
+                # print(instance_person)
+                # instance_alert.person = instance_person
+                # instance_alert.save()
+                # {'detail': ErrorDetail(string='CSRF Failed: CSRF cookie not set.', code='permission_denied')}
+                # Internal
+                # Server
+                # Error: / api / v1 / alert / cortex / person /
+
+                return Response(status=201)
+            else:
+                logger.warning('Warn while save person alert - {}'.format(serializer))
+                return Response(serializer.errors, status=400)
+        except Exception as e:
+            raise logger.error('Error while save person alert - {}'.format(e))
+            return Response(status=500)
