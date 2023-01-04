@@ -34,6 +34,8 @@ services:
       - GRAYLOG_HTTP_ENDPOINT=$STAGE_GRAYLOG_HTTP_ENDPOINT
       - PORTAL_TOKEN=$STAGE_PORTAL_TOKEN
       - PORTAL_URL_BASE=$STAGE_PORTAL_URL_BASE
+      - SERVICES_HOST=$STAGE_SERVICES_HOST
+      - SERVICES_SECRET=$STAGE_SERVICES_SECRET
 
     command: bash -c -o pipefail "python manage.py migrate 
       && python manage.py collectstatic --noinput

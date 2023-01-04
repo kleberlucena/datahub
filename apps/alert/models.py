@@ -13,17 +13,20 @@ class AlertCortex(PolymorphicModel):
 	person = models.ForeignKey(Person, related_name='alerts', null=True, blank=True, on_delete=models.SET_NULL)
 	dados = models.JSONField(null=True, blank=True)
 
+	def __str__(self):
+		return f"{self.uuid}"
+
+	class Meta:
+		verbose_name = "Alerta"
+		verbose_name_plural = "Alertas"
+
 
 class VehicleAlertCortex(AlertCortex):
 	latitudeOcorrencia = models.CharField(max_length=100, null=True, blank=True)
 	longitudeOcorrencia = models.CharField(max_length=100, null=True, blank=True)
 	latitudePassagem = models.CharField(max_length=100, null=True, blank=True)
 	longitudePassagem = models.CharField(max_length=100, null=True, blank=True)
-	imagem = StdImageField(
-		'imagem',
-		storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
-		upload_to='alerta_veiculo_imagens', null=True, blank=True
-	)
+	imagem = models.TextField(null=True, blank=True)
 	dataPassagem = models.DateTimeField(max_length=100, null=True, blank=True)
 	unidadeRegistroBo = models.CharField(max_length=100, null=True, blank=True)
 	nomeDeclarante = models.CharField(max_length=100, null=True, blank=True)
@@ -55,11 +58,7 @@ class PersonAlertCortex(AlertCortex):
 	cpf = models.CharField(max_length=100, null=True, blank=True)
 	nome = models.CharField(max_length=100, null=True, blank=True)
 	nomeMae = models.CharField(max_length=100, null=True, blank=True)
-	foto = StdImageField(
-		'foto',
-		storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
-		upload_to='alerta_pessoa_imagens', null=True, blank=True
-	)
+	foto = models.TextField(null=True, blank=True)
 	lat = models.CharField(max_length=100, null=True, blank=True)
 	long = models.CharField(max_length=100, null=True, blank=True)
 	estado = models.CharField(max_length=100, null=True, blank=True)
