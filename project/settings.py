@@ -23,8 +23,10 @@ if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
     CORS_ALLOWED_ORIGINS = [
+        "https://portal.stage.pm.pb.gov.br",
         "https://sasp.stage.pm.pb.gov.br",
         "https://s3.stage.pm.pb.gov.br",
+        "https://portal.apps.pm.pb.gov.br",
         "https://sasp.apps.pm.pb.gov.br",
         "https://s3.apps.pm.pb.gov.br",
     ]
