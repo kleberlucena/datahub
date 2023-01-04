@@ -10,4 +10,5 @@ urlpatterns = [
     path('pessoas/cpf/<str:cpf>/', PessoaByCpfViewSet.as_view(), name='pessoa_cpf'),
     path('pessoas/mae/', PessoaByMotherViewSet.as_view(), name='pessoa_mae'),
     path('pessoas/nascimento/', PessoaByBirthdateViewSet.as_view(), name='pessoa_nascimento'),
+    path('pessoas/<uuid:uuid>/', PersonRetrieveView.as_view(), name='pessoa_cpf'),
 ]
