@@ -1,5 +1,6 @@
 import logging
 from rest_framework import serializers
+from drf_extra_fields.fields import Base64ImageField
 from apps.cortex.models import PersonCortex
 from apps.alert.models import AlertCortex, VehicleAlertCortex, PersonAlertCortex
 from apps.person.api.v1.serializers import PersonSerializer
@@ -18,6 +19,7 @@ class AlertCortexSerializer(serializers.ModelSerializer):
 
 class VehicleAlertCortexSerializer(serializers.ModelSerializer):
     person = PersonSerializer(required=False, read_only=True)
+    # imagem = Base64ImageField(required=False)
 
     class Meta:
         model = VehicleAlertCortex
@@ -29,6 +31,7 @@ class VehicleAlertCortexSerializer(serializers.ModelSerializer):
 
 class PersonAlertCortexSerializer(serializers.ModelSerializer):
     person = PersonSerializer(required=False, read_only=True)
+    # foto = Base64ImageField(required=False)
 
     class Meta:
         model = PersonAlertCortex
