@@ -114,7 +114,7 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
     tattoos = TattooSerializer(many=True, required=False)
     physicals = PhysicalSerializer(many=True, required=False)
     documents = DocumentSerializer(many=True, required=False)
-    registers = RegistrySerializer(many=True, read_only=True, required=False)
+    registers = RegistrySerializer(many=True, read_only=True, required=False, allow_null=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
     
     def _get_permissions(self, object):
