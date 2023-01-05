@@ -273,6 +273,7 @@ PUBLIC_PATHS = [
     r'^/health_check',
     r'^/auth/logout/',
     r'^/api/v1/.*',
+    r'^/admin/.*',  # Descomentar para expor rota adminitrativa (só para ajustes de configurações do keycloak)
 ]
 
 # Celery Configuration Options
