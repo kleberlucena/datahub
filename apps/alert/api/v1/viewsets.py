@@ -4,6 +4,7 @@ from django.db.models import Q
 from drf_yasg import openapi
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
+from rest_framework import filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
@@ -41,6 +42,9 @@ class AddAlertCortexListView(generics.ListCreateAPIView):
 class AddVehicleAlertCortexListView(generics.ListCreateAPIView):
     queryset = VehicleAlertCortex.objects.all()
     serializer_class = serializers.VehicleAlertCortexSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['created_at', 'dataPassagem', 'municipioLocal', 'dataOcorrencia']
+    ordering = ['-created_at']
 
     @swagger_auto_schema(method='get', manual_parameters=[placa])
     @action(detail=True, methods=['GET'])
@@ -59,6 +63,9 @@ class AddVehicleAlertCortexListView(generics.ListCreateAPIView):
 class AddPersonAlertCortexListView(generics.ListCreateAPIView):
     queryset = PersonAlertCortex.objects.all()
     serializer_class = serializers.PersonAlertCortexSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['created_at', 'nome', 'municipio', 'dataNascimento']
+    ordering = ['-created_at']
 
     @swagger_auto_schema(method='get', manual_parameters=[cpf])
     @action(detail=True, methods=['GET'])

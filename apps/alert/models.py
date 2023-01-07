@@ -1,4 +1,5 @@
 import uuid
+import datetime
 from django.db import models
 from django.conf import settings
 from polymorphic.models import PolymorphicModel
@@ -12,6 +13,7 @@ class AlertCortex(PolymorphicModel):
 	uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 	person = models.ForeignKey(Person, related_name='alerts', null=True, blank=True, on_delete=models.SET_NULL)
 	dados = models.JSONField(null=True, blank=True)
+	created_at = models.DateTimeField('Criado', default=datetime.datetime.now)
 
 	def __str__(self):
 		return f"{self.uuid}"
