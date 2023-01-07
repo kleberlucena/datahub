@@ -27,7 +27,7 @@ class PortalCortexService(object):
         }
 
         try:
-            response = requests.get(f"{portal_url_base}/api/v1/cortex/pessoas/cpf/{cpf}/", headers=headers, timeout=(15, 180))
+            response = requests.get(f"{portal_url_base}/api/v1/cortex/pessoas/cpf/{cpf}/", headers=headers, timeout=(5))
             data = json.loads(response.content)
         except requests.exceptions.ReadTimeout:
             logger.warning('Timeout while getting person in get_person_by_cpf')
@@ -49,7 +49,7 @@ class PortalCortexService(object):
         }
 
         try:
-            response = requests.get(f"{portal_url_base}/api/v1/cortex/pessoas/nascimento/?name={name}&birthdate={birthdate}", headers=headers, timeout=(15, 180))
+            response = requests.get(f"{portal_url_base}/api/v1/cortex/pessoas/nascimento/?name={name}&birthdate={birthdate}", headers=headers, timeout=(5))
             data = json.loads(response.content)
         except requests.exceptions.ReadTimeout:
             logger.warning('Timeout while getting person in get_person_by_cpf')
@@ -71,7 +71,7 @@ class PortalCortexService(object):
         }
 
         try:
-            response = requests.get(f"{portal_url_base}/api/v1/cortex/pessoas/mae/?name={name}&mother_name={mother_name}", headers=headers, timeout=(15, 180))
+            response = requests.get(f"{portal_url_base}/api/v1/cortex/pessoas/mae/?name={name}&mother_name={mother_name}", headers=headers, timeout=(5))
             data = json.loads(response.content)
         except requests.exceptions.ReadTimeout:
             logger.warning('Timeout while getting person in get_person_by_cpf')

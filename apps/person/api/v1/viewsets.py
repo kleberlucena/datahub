@@ -76,50 +76,52 @@ class AddPersonListView(generics.ListCreateAPIView):
         return queryset.filter(has_my & has_nickname & has_number & has_name)
 
     def perform_create(self, serializer):
-        if serializer.is_valid():
-            instance = serializer.save(created_by=self.request.user)
-            nicknames = instance.nicknames.all()
-            for nickname in nicknames:
-                nickname.created_by = self.request.user
-                nickname.save()
-                assign_perm("change_nickname", self.request.user, nickname)
-                assign_perm("delete_nickname", self.request.user, nickname)
-            for tattoo in instance.tattoos.all():
-                tattoo.created_by = self.request.user
-                tattoo.save()
-                assign_perm("change_tattoo", self.request.user, tattoo)
-                assign_perm("delete_tattoo", self.request.user, tattoo)
-            for address in instance.addresses.all():
-                address.created_by = self.request.user
-                address.save()
-                assign_perm("change_address", self.request.user, address)
-                assign_perm("delete_address", self.request.user, address)
-            for physical in instance.physicals.all():
-                physical.created_by = self.request.user
-                physical.save()
-                assign_perm("change_physical", self.request.user, physical)
-                assign_perm("delete_physical", self.request.user, physical)
-            for document in instance.documents.all():
-                document.created_by = self.request.user
-                document.save()
-                if document.type.label == 'CPF':
-                    helpers.process_external_consult(person=instance, username=self.request.user.username, cpf=document.number)
-                assign_perm("change_document", self.request.user, document)
-                assign_perm("delete_document", self.request.user, document)
-            for face in instance.faces.all():
-                face.created_by = self.request.user
-                face.save()
-                assign_perm("change_face", self.request.user, face)
-                assign_perm("delete_face", self.request.user, face)
-            for image in instance.images.all():
-                image.created_by = self.request.user
-                image.save()
-                assign_perm("change_image", self.request.user, image)
-                assign_perm("delete_image", self.request.user, image)
-            assign_perm("change_person", self.request.user, instance)
-            assign_perm("delete_person", self.request.user, instance)
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        try:
+            if serializer.is_valid():
+                instance = serializer.save(created_by=self.request.user)
+                nicknames = instance.nicknames.all()
+                for nickname in nicknames:
+                    nickname.created_by = self.request.user
+                    nickname.save()
+                    assign_perm("change_nickname", self.request.user, nickname)
+                    assign_perm("delete_nickname", self.request.user, nickname)
+                for tattoo in instance.tattoos.all():
+                    tattoo.created_by = self.request.user
+                    tattoo.save()
+                    assign_perm("change_tattoo", self.request.user, tattoo)
+                    assign_perm("delete_tattoo", self.request.user, tattoo)
+                for address in instance.addresses.all():
+                    address.created_by = self.request.user
+                    address.save()
+                    assign_perm("change_address", self.request.user, address)
+                    assign_perm("delete_address", self.request.user, address)
+                for physical in instance.physicals.all():
+                    physical.created_by = self.request.user
+                    physical.save()
+                    assign_perm("change_physical", self.request.user, physical)
+                    assign_perm("delete_physical", self.request.user, physical)
+                for document in instance.documents.all():
+                    document.created_by = self.request.user
+                    document.save()
+                    if document.type.label == 'CPF':
+                        helpers.process_external_consult(person=instance, username=self.request.user.username, cpf=document.number)
+                    assign_perm("change_document", self.request.user, document)
+                    assign_perm("delete_document", self.request.user, document)
+                for face in instance.faces.all():
+                    face.created_by = self.request.user
+                    face.save()
+                    assign_perm("change_face", self.request.user, face)
+                    assign_perm("delete_face", self.request.user, face)
+                for image in instance.images.all():
+                    image.created_by = self.request.user
+                    image.save()
+                    assign_perm("change_image", self.request.user, image)
+                    assign_perm("delete_image", self.request.user, image)
+                assign_perm("change_person", self.request.user, instance)
+                assign_perm("delete_person", self.request.user, instance)
+                return Response(serializer.data, status=201)
+        except Exception as e:
+            return Response(serializer.errors, status=400)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
