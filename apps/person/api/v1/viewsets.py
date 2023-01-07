@@ -104,7 +104,9 @@ class AddPersonListView(generics.ListCreateAPIView):
                     document.created_by = self.request.user
                     document.save()
                     if document.type.label == 'CPF':
-                        helpers.process_external_consult(person=instance, username=self.request.user.username, cpf=document.number)
+                        print('Viewset person')
+                        print(instance.id)
+                        helpers.process_external_consult(id_person=instance.id, username=self.request.user.username, cpf=document.number)
                     assign_perm("change_document", self.request.user, document)
                     assign_perm("delete_document", self.request.user, document)
                 for face in instance.faces.all():
