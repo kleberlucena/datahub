@@ -28,7 +28,7 @@ class VehicleAlertCortexSerializer(serializers.ModelSerializer):
         fields = ('uuid', 'latitudeOcorrencia', 'longitudeOcorrencia', 'latitudePassagem', 'longitudePassagem',
                   'imagem', 'dataPassagem', 'unidadeRegistroBo', 'nomeDeclarante', 'sitOcrId', 'dataOcorrencia',
                   'municipioPlaca',	'municipioLocal', 'telefoneContato', 'ufPlaca', 'numeroBo', 'ufLocal',
-                  'localPassagem', 'dddContato', 'sisId', 'historicoOcorrencia', 'idMovimento', 'placa', 'person')
+                  'localPassagem', 'dddContato', 'sisId', 'historicoOcorrencia', 'idMovimento', 'placa', 'person', 'created_at')
         
         def create(self, validated_data):
             try:
@@ -49,7 +49,7 @@ class PersonAlertCortexSerializer(serializers.ModelSerializer):
         model = PersonAlertCortex
         fields = ('uuid', 'uf',	'cpf', 'nome', 'nomeMae', 'foto', 'lat', 'long', 'estado', 'situacao', 'sistema',
                   'municipio', 'historico', 'dataHora', 'dataNascimento', 'local', 'anoBO', 'numeroOcorrencia',
-                  'dataHoraOcorrencia', 'municipioOcorrencia', 'ufOcorrencia', 'unidadeOcorrencia', 'sisID', 'sitID', 'person')
+                  'dataHoraOcorrencia', 'municipioOcorrencia', 'ufOcorrencia', 'unidadeOcorrencia', 'sisID', 'sitID', 'person', 'created_at')
 
     def create(self, validated_data):
         try:
