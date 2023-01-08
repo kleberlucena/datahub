@@ -25,7 +25,7 @@ class PortalCortexService(object):
             'Authorization': f'Token {authorization}',
             'username': username
         }
-
+        data = None
         try:
             response = requests.get(f"{portal_url_base}/api/v1/cortex/pessoas/cpf/{cpf}/", headers=headers, timeout=(5))
             data = json.loads(response.content)
@@ -33,7 +33,7 @@ class PortalCortexService(object):
             logger.warning('Timeout while getting person in get_person_by_cpf')
         except Exception as e:
             data = None
-            raise logger.error('Error while getting person in get_person_by_cpf - {}'.format(e))
+            logger.error('Error while getting person in get_person_by_cpf - {}'.format(e))
         finally:
             return data
 
@@ -47,7 +47,7 @@ class PortalCortexService(object):
             'Authorization': f'Token {authorization}',
             'username': username
         }
-
+        data = None
         try:
             response = requests.get(f"{portal_url_base}/api/v1/cortex/pessoas/nascimento/?name={name}&birthdate={birthdate}", headers=headers, timeout=(5))
             data = json.loads(response.content)
@@ -55,7 +55,7 @@ class PortalCortexService(object):
             logger.warning('Timeout while getting person in get_person_by_cpf')
         except Exception as e:
             data = None
-            raise logger.error('Error while getting person in get_person_by_cpf - {}'.format(e))
+            logger.error('Error while getting person in get_person_by_cpf - {}'.format(e))
         finally:
             return data
 
@@ -69,7 +69,7 @@ class PortalCortexService(object):
             'Authorization': f'Token {authorization}',
             'username': username
         }
-
+        data = None
         try:
             response = requests.get(f"{portal_url_base}/api/v1/cortex/pessoas/mae/?name={name}&mother_name={mother_name}", headers=headers, timeout=(5))
             data = json.loads(response.content)
@@ -77,6 +77,6 @@ class PortalCortexService(object):
             logger.warning('Timeout while getting person in get_person_by_cpf')
         except Exception as e:
             data = None
-            raise logger.error('Error while getting person in get_person_by_cpf - {}'.format(e))
+            logger.error('Error while getting person in get_person_by_cpf - {}'.format(e))
         finally:
             return data
