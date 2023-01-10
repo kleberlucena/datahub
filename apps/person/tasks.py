@@ -19,7 +19,7 @@ def cortex_consult(self, username, person, cpf=False, name=False, mother_name=Fa
     Get service and consult person on cortex by params
     """
     try:
-        print('TASKS person')
+        logger.info('Task cortex_consult processing')
         data = portalCortexService.get_person_by_cpf(cpf=cpf, username=username)
 
         if data:
@@ -32,3 +32,25 @@ def cortex_consult(self, username, person, cpf=False, name=False, mother_name=Fa
             logger.warn('Data not valid - {}'.format(data))
     except Exception as e:
         logger.error('Error while getting registry in cortex - {}'.format(e))
+
+
+@shared_task(bind=True)
+def cortex_registry_list(self, username, person_list, cpf):
+    person_cortex = None
+    try:
+        person_cortex = PersonCortex.objects.get(numeroCPF=cpf)
+    except PersonCortex.DoesNotExist:
+            logger.warn('Warn, local not exist any person_cortex with this CPF {}'.format(cpf))
+            data = portalCortexService.get_person_by_cpf(cpf=cpf, username=username)
+            if data:
+                person_cortex = PersonCortex.objects.update_or_create(**data)
+            else:
+                logger.warn('Warn, cortex not return any person_cortex')
+    try:              
+        if(person_cortex):
+            for item in person_list:
+                models.Registry.objects.create(person=item, system_uuid=person_cortex.uuid)
+    except Exception as e:
+        logger.error('Error while getting person in cortex - {}'.format(e))
+    
+    
