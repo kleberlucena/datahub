@@ -12,6 +12,18 @@ class DocumentImageSerializer(serializers.ModelSerializer):
     file = Base64ImageField(write_only=True)
     path_image = serializers.SerializerMethodField('_get_image_path', read_only=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
+    thumbnail = serializers.SerializerMethodField('_get_thumbnail', read_only=True)
+    medium = serializers.SerializerMethodField('_get_medium', read_only=True)
+    large = serializers.SerializerMethodField('_get_large', read_only=True)
+
+    def _get_medium(self, object):
+        return helpers.get_image_variation(self, object, 'medium')
+
+    def _get_large(self, object):
+        return helpers.get_image_variation(self, object, 'large')
+
+    def _get_thumbnail(self, object):
+        return helpers.get_image_variation(self, object, 'thumbnail')
 
     def _get_image_path(self, object):
         request = self.context.get('request', None)
@@ -28,7 +40,7 @@ class DocumentImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DocumentImage
-        fields = ['uuid', 'file', 'path_image', 'label', 'created_at', 'updated_at', 'permissions']
+        fields = ['uuid', 'file', 'path_image', 'large', 'medium', 'thumbnail', 'label', 'created_at', 'updated_at', 'permissions']
 
 
 class DocumentTypeSerializer(serializers.ModelSerializer):
