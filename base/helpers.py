@@ -24,3 +24,15 @@ def get_watermark_url(old_url, user_number):
     )
 
     return json.loads(response.text)['signed_url_marked']
+
+
+
+def get_image_variation(self, object, variation):
+        request = self.context.get('request', None)
+        if request:
+            img_name = object.file.name
+            parts = img_name.split('.')
+            img_thumb_name = str(parts[0]) + '.' + variation + '.' + str(parts[1])
+            print(img_thumb_name)            
+            url = object.file.storage.url(img_thumb_name)
+            return get_watermark_url(url, request.user.username)
