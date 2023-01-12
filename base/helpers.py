@@ -8,17 +8,18 @@ def get_watermark_url(old_url, user_number):
 
     if settings.DEBUG:
         return old_url
-    elif settings.WATERMARK_FLUX == 'IMGPROXY':
+    #elif settings.WATERMARK_FLUX == 'IMGPROXY':
+    elif 1 == 1:
         num = base_repr(int(user_number), 36)
         body = { 
             "waterMarkId": num,
             "imagePath": old_url,
         }
         headers = {
-            "Authorization": settings.WATERMARK_SECRET,
+            "Authorization": '9F4FE54F2555AD0AAA09E213977DAEE31A5DBAEBBB498822ECDCE5FBFF11F28B',
             "Content-Type": "application/json",
         }
-        response = requests.post(f"{settings.WATERMARK_HOST}/get-signed-url",
+        response = requests.post("http://10.0.1.57:9005/get-signed-url",
             json = body,
             headers = headers,
         )
