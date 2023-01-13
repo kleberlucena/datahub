@@ -1,6 +1,4 @@
 import re
-import requests
-import json
 import urllib.parse
 import base64
 from hashlib import sha1
