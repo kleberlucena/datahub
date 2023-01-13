@@ -23,7 +23,7 @@ Essa URL assinada NÃO faz requisição para o imgproxy.
 """
 def get_watermark_url(old_url, user_number):
 
-    if settings.DEBUG == True:
+    if settings.DEBUG == True or ~hasattr(settings, 'WATERMARK_ACTIVE') or settings.WATERMARK_ACTIVE == False:
         return old_url
     else:
         """"
@@ -36,7 +36,7 @@ def get_watermark_url(old_url, user_number):
         exp = int((datetime.now() + timedelta(minutes = 10)).timestamp())
         encoded_img_path = urllib.parse.quote_plus(old_url)
         img_path_64 = base64.b64encode(bytes(encoded_img_path, 'utf-8')).decode("utf-8")
-        check = get_verified_check("{}{}{}".format(key, exp, img_path_64))
+        check = get_verified_check(str(key) + str(exp) + img_path_64)
         signed_url = "{}/image?check={}&key={}&exp={}&imagePath={}".format(settings.WATERMARK_HOST, check, key, exp, img_path_64)
         return signed_url
 
