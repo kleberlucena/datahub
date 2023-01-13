@@ -265,9 +265,6 @@ MINIO_BUCKET_CHECK_ON_SAVE = True
 # Config debug toolbar
 INTERNAL_IPS = ["127.0.0.1",]
 
-# Watermark flux
-WATERMARK_FLUX = env('WATERMARK_FLUX')
-
 # Watermark from imgproxy
 WATERMARK_HOST = env('WATERMARK_HOST')
 WATERMARK_SECRET = env('WATERMARK_SECRET')
