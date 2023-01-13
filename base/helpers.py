@@ -8,7 +8,6 @@ def get_watermark_url(old_url, user_number):
 
     if settings.DEBUG:
         return old_url
-    #elif settings.WATERMARK_FLUX == 'IMGPROXY':
     elif 1 == 1:
         num = base_repr(int(user_number), 36)
         body = { 
