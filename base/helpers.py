@@ -10,10 +10,19 @@ from django.conf import settings
 from numpy import base_repr
 
 
+"""
+Função para gerar uma string check para servir como
+validação na hora de baixar a imagem através do link fornecido
+pela URL assinada do imgproxy.
+"""
 def get_verified_check(sum):
     return hmac(bytes(settings.WATERMARK_SECRET, "utf-8"), sum.encode("utf-8"), sha1).hexdigest() 
 
 
+"""
+Função para obter a URL assinada da imagem com a marca dágua.
+Essa URL assinada NÃO faz requisição para o imgproxy.
+"""
 def get_watermark_url(old_url, user_number):
 
     if settings.DEBUG == True:
