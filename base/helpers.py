@@ -38,7 +38,6 @@ def get_watermark_url(old_url, user_number):
         img_path_64 = base64.b64encode(bytes(encoded_img_path, 'utf-8')).decode("utf-8")
         check = get_verified_check("{}{}{}".format(key, exp, img_path_64))
         signed_url = "{}/image?check={}&key={}&exp={}&imagePath={}".format(settings.WATERMARK_HOST, check, key, exp, img_path_64)
-        print(signed_url)
         return signed_url
 
 
