@@ -1,9 +1,7 @@
 from django.http import HttpResponse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, status
-from rest_framework import filters
-from rest_framework.mixins import CreateModelMixin
+from rest_framework import generics, filters, mixins, status
 from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -11,7 +9,10 @@ from guardian.shortcuts import assign_perm
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from apps.person.api.v1.serializers import *
+from apps.person.api.v1 import serializers, list_serializers
+from apps.address.api.serializers import AddressSerializer
+from apps.image.api.serializers import ImageSerializer
+from apps.document.api.serializers import DocumentSerializer
 from apps.person.models import *
 from apps.person import helpers, tasks
 from apps.cortex.models import PersonCortex
@@ -25,7 +26,7 @@ nickname_label = openapi.Parameter('nickname_label', openapi.IN_QUERY, descripti
 
 class PersonByCpfViewSet(generics.ListAPIView):
     queryset = Person.objects.all()
-    serializer_class = PersonSerializer
+    serializer_class = serializers.PersonSerializer
 
     def get_queryset(self):
         queryset = Person.objects.get_queryset()
@@ -54,11 +55,37 @@ class PersonByCpfViewSet(generics.ListAPIView):
 
 class AddPersonListView(generics.ListCreateAPIView):
     permission_classes = [DjangoObjectPermissions]
-    serializer_class = PersonSerializer
+    serializer_class = serializers.PersonSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at', 'updated_at']
 
     queryset = Person.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method in ['GET']:
+            return list_serializers.PersonListSerializer
+        if self.request.method in ['POST']:
+            return serializers.PersonSerializer
+        return serializers.Default
+
+    @action(detail=True, methods=['GET'])
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_queryset(self):
         """
@@ -146,7 +173,7 @@ class AddPersonListView(generics.ListCreateAPIView):
 class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     queryset = Person.objects.all()
     permission_classes = [DjangoObjectPermissions]
-    serializer_class = PersonSerializer
+    serializer_class = serializers.PersonSerializer
     # for key
     lookup_field = 'uuid'
 
@@ -177,9 +204,9 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
         return Response(serializer.data)
 
 
-class PersonAddFaceView(CreateModelMixin, generics.GenericAPIView):
+class PersonAddFaceView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Face.objects.all()
-    serializer_class = FaceSerializer
+    serializer_class = serializers.FaceSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def perform_create(self, serializer):
@@ -196,9 +223,9 @@ class PersonAddFaceView(CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class PersonAddTattooView(CreateModelMixin, generics.GenericAPIView):
+class PersonAddTattooView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Tattoo.objects.all()
-    serializer_class = TattooSerializer
+    serializer_class = serializers.TattooSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def perform_create(self, serializer):
@@ -215,9 +242,9 @@ class PersonAddTattooView(CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class PersonAddNicknameView(CreateModelMixin, generics.GenericAPIView):
+class PersonAddNicknameView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Nickname.objects.all()
-    serializer_class = NicknameSerializer
+    serializer_class = serializers.NicknameSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def perform_create(self, serializer):
@@ -234,9 +261,9 @@ class PersonAddNicknameView(CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class PersonAddPhysicalView(CreateModelMixin, generics.GenericAPIView):
+class PersonAddPhysicalView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Physical.objects.all()
-    serializer_class = PhysicalSerializer
+    serializer_class = serializers.PhysicalSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def perform_create(self, serializer):
@@ -253,7 +280,7 @@ class PersonAddPhysicalView(CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class PersonAddDocumentView(CreateModelMixin, generics.GenericAPIView):
+class PersonAddDocumentView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     permission_classes = [DjangoObjectPermissions]
@@ -273,7 +300,7 @@ class PersonAddDocumentView(CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class PersonAddAddressView(CreateModelMixin, generics.GenericAPIView):
+class PersonAddAddressView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
     permission_classes = [DjangoObjectPermissions]
@@ -292,7 +319,7 @@ class PersonAddAddressView(CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class PersonAddImageView(CreateModelMixin, generics.GenericAPIView):
+class PersonAddImageView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     permission_classes = [DjangoObjectPermissions]
@@ -316,7 +343,7 @@ class PersonAddImageView(CreateModelMixin, generics.GenericAPIView):
 
 class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Face.objects.all()
-    serializer_class = FaceSerializer
+    serializer_class = serializers.FaceSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def retrieve(self, request, *args, **kwargs):
@@ -345,7 +372,7 @@ class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 class TattooUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Tattoo.objects.all()
-    serializer_class = TattooSerializer
+    serializer_class = serializers.TattooSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def retrieve(self, request, *args, **kwargs):
@@ -374,7 +401,7 @@ class TattooUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 class NicknameUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Nickname.objects.all()
-    serializer_class = NicknameSerializer
+    serializer_class = serializers.NicknameSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def retrieve(self, request, *args, **kwargs):
@@ -403,7 +430,7 @@ class NicknameUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 class PhysicalUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Physical.objects.all()
-    serializer_class = PhysicalSerializer
+    serializer_class = serializers.PhysicalSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def retrieve(self, request, *args, **kwargs):
