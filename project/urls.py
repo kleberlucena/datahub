@@ -30,6 +30,7 @@ urlpatterns = [
     path('', include('auth_oidc.urls'), name='auth_oidc'),
     path('', include('base.urls'), name='base'),
     path('api/v1/alert/', include('apps.alert.api.v1.urls'), name='alert'),
+    path('api/v1/bnmp/', include('apps.bnmp.api.v1.urls'), name='bnmp'),
     path('api/v1/cortex/', include('apps.cortex.api.v1.urls'), name='cortex'),
     path('api/v1/document/', include('apps.document.api.urls'), name='person'),
     path('api/v1/person/', include('apps.person.api.v1.urls'), name='person'),

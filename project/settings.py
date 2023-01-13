@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     'apps.address',
     'apps.document',
     'apps.alert',
+    'apps.bnmp',
 
 ]
 MIDDLEWARE = [
