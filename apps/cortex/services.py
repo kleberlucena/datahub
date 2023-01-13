@@ -102,3 +102,25 @@ class PortalCortexService(object):
             logger.error('Error while getting person in get_person_by_cpf - {}'.format(e))
         finally:
             return data
+
+    def get_bnmp_by_idpessoa(self, username, idpessoa):
+        """
+        Get person bnmp register from API on CORTEX
+        :return: json with person data
+        """
+        headers = {
+            'Content-Type': content_type,
+            'Authorization': f'Token {authorization}',
+            'username': username
+        }
+        data = None
+        try:
+            response = requests.get(f"{portal_url_base}/api/v1/cortex/bnmp/{idpessoa}", headers=headers, timeout=(5))
+            data = json.loads(response.content)
+        except requests.exceptions.ReadTimeout:
+            logger.warning('Timeout while getting person in get_person_by_cpf')
+        except Exception as e:
+            data = None
+            logger.error('Error while getting person in get_person_by_cpf - {}'.format(e))
+        finally:
+            return data

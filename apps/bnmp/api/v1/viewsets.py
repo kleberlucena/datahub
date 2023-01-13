@@ -32,41 +32,48 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
     queryset = PersonBNMP.objects.all()
     serializer_class = PersonBNMPSerializer
 
-    def get_queryset(self):
-        print('no queryset')
-        cpf = self.request.query_params.get('cpf')
-        print(cpf)
-        username = self.request.user.username
-        print(username)
-        person_bnmp = None
+    def _get_bnmp_person(self, username, cpf):
         try:
-            person_bnmp = PersonBNMP.objects.get(numeroCPF=cpf)
-            print(person_bnmp)
-        except PersonBNMP.DoesNotExist:
-            try:
-                print('não encontrado localmente')
-                person_bnmp = None
-                person_json = portalCortexService.get_person_bnmp_by_cpf(username, cpf)
-                print( person_json)
-                person_bnmp = PersonBNMP.objects.create(**person_json)  
-            except Exception as e:
-                logger.error('Error while getting person bnmp remote - {}'.format(e))          
-            """ if person_bnmp: 
-                bnmp = portalCortexService.get_bnmp_by_idpessoa(username=username, idpessoa=person_bnmp.idpessoa)
-                return bnmp """
+            person_json = portalCortexService.get_person_bnmp_by_cpf(username, cpf)
+            if person_json:
+                for person in person_json:
+                    person["numeroCPF"] = cpf
+                    PersonBNMP.objects.create(**person)            
+                return True
+            else:
+                return False
+        except Exception as e:
+            logger.error('Error while getting person bnmp remote - {}'.format(e))
+            return None
+
+    def get_queryset(self):
+        cpf = self.request.query_params.get('cpf')
+        username = self.request.user.username
+        bnmp = None
+        person_bnmp = []
+        try:
+            person_bnmp = PersonBNMP.objects.filter(numeroCPF=cpf)            
+            if person_bnmp is None or len(person_bnmp) == 0:
+                find = self._get_bnmp_person(username, cpf)
+                if find:
+                    person_bnmp = PersonBNMP.objects.filter(numeroCPF=cpf)
         except Exception as e:
             logger.error('Error while getting person bnmp - {}'.format(e))
         finally:
             return person_bnmp
+        """ try:                 
+            if person_bnmp:
+                for person in person_bnmp:
+                    print(person.idpessoa)
+                    bnmp = portalCortexService.get_bnmp_by_idpessoa(username=username, idpessoa=person_bnmp.idpessoa)
+                   print(bnmp)  """        
 
     @swagger_auto_schema(method='get', manual_parameters=[cpf])
     @action(detail=True, methods=['GET'])
     def get(self, request, *args, **kwargs):
-        print('no get')
         return self.list(request, *args, **kwargs)
     
     def list(self, request):
-        print('no list')
         # obtenha a lista de resultados usando o queryset do viewset
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
