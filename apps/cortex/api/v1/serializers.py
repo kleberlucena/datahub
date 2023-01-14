@@ -34,8 +34,8 @@ class PersonCortexSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PersonCortex
-        fields = ("numeroCPF", "nomeCompleto", "nomeMae", "dataNascimento", "situacaoCadastral", "identificadorResidenteExterior",
-                  "paisResidencia", "sexo", "naturezaOcupacao", "ocupacaoPrincipal", "anoExercicioOcupacao", "tipoLogradouro",
+        fields = ("numeroCPF", "nomeCompleto", "nomeMae", "dataNascimento", "municipioNaturalidade", "ufNaturalidade", "paisNascimento", "situacaoCadastral", "identificadorResidenteExterior",
+                  "paisResidencia", "sexo", "nomeSocial", "naturezaOcupacao", "ocupacaoPrincipal", "anoExercicioOcupacao", "tipoLogradouro",
                   "logradouro", "numeroLogradouro", "complementoLogradouro", "bairro", "cep", "uf", "municipio", "ddd",
-                  "telefone", "regiaoFiscal", "anoObito", "indicadorEstrangeiro", "dataAtualizacao", "tituloEleitor",
-                  "registers", "created_at", "updated_at")
+                  "telefone", "regiaoFiscal", "anoObito", "indicadorEstrangeiro", "indicadorMoradorEstrangeiro", "dataAtualizacao", "tituloEleitor",
+                  "latitudeAproximadaLocal", "longitudeAproximadaLocal", "registers", "created_at", "updated_at")

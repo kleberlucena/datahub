@@ -72,7 +72,11 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
                     Registry.objects.create(system_label="CORTEX PESSOA", system_uuid=person_cortex.uuid, person=person)
             elif person_cortex.updated_at.date() < date.today():
                 person_json = portalCortexService.get_person_by_cpf(username=username, cpf=cpf)
-                person_cortex.save(person_json)
+                id = person_cortex.id
+                value = person_json['numeroCPF']
+                person_cortex, created = PersonCortex.objects.update_or_create(
+                        numeroCPF=value, id=id, defaults={**person_json},
+                    )
         except Exception as e:
             logger.error('Error while getting personcortex on cortex repository - {}'.format(e))
             return Response(status=status.HTTP_404_NOT_FOUND)

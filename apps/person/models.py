@@ -168,7 +168,7 @@ class Tattoo(Base, SoftDelete):
         variations={
             'large': {'width': 720, 'height': 720, 'crop': True},
             'medium': {'width': 480, 'height': 480, 'crop': True},
-            'thumbnail': {'width': 64, 'height': 64, 'crop': True},
+            'thumbnail': {'width': 128, 'height': 128, 'crop': True},
         }, delete_orphans=True, null=True, blank=True)
     updated_by = models.ForeignKey(
         User,
