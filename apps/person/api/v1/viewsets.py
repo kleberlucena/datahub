@@ -1,9 +1,7 @@
 from django.http import HttpResponse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, status
-from rest_framework import filters
-from rest_framework.mixins import CreateModelMixin
+from rest_framework import generics, filters, mixins, status
 from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -11,9 +9,13 @@ from guardian.shortcuts import assign_perm
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from apps.person.api.v1.serializers import *
+from apps.person.api.v1 import serializers, list_serializers
+from apps.address.api.serializers import AddressSerializer
+from apps.image.api.serializers import ImageSerializer
+from apps.document.api.serializers import DocumentSerializer
 from apps.person.models import *
-from apps.person import helpers
+from apps.person import helpers, tasks
+from apps.cortex.models import PersonCortex
 
 
 document_name = openapi.Parameter('document_name', openapi.IN_QUERY, description="param nome do documento da pessoa", type=openapi.TYPE_STRING)
@@ -24,7 +26,7 @@ nickname_label = openapi.Parameter('nickname_label', openapi.IN_QUERY, descripti
 
 class PersonByCpfViewSet(generics.ListAPIView):
     queryset = Person.objects.all()
-    serializer_class = PersonSerializer
+    serializer_class = serializers.PersonSerializer
 
     def get_queryset(self):
         queryset = Person.objects.get_queryset()
@@ -39,15 +41,51 @@ class PersonByCpfViewSet(generics.ListAPIView):
     @action(detail=True, methods=['GET'])
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+    
+    def list(self, request):
+        # obtenha a lista de resultados usando o queryset do viewset
+        queryset = self.get_queryset()
+        unregistered_people_condition = ~Q(registers__system_label__contains='CORTEX PESSOA')
+        unregistered_people = queryset.filter(unregistered_people_condition)
+        if unregistered_people.exists():
+            tasks.cortex_registry_list(username=request.user.username, person_list=unregistered_people, cpf=request.query_params.get('cpf'))
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class AddPersonListView(generics.ListCreateAPIView):
     permission_classes = [DjangoObjectPermissions]
-    serializer_class = PersonSerializer
+    serializer_class = serializers.PersonSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at', 'updated_at']
 
     queryset = Person.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method in ['GET']:
+            return list_serializers.PersonListSerializer
+        if self.request.method in ['POST']:
+            return serializers.PersonSerializer
+        return serializers.Default
+
+    @action(detail=True, methods=['GET'])
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_queryset(self):
         """
@@ -76,50 +114,52 @@ class AddPersonListView(generics.ListCreateAPIView):
         return queryset.filter(has_my & has_nickname & has_number & has_name)
 
     def perform_create(self, serializer):
-        if serializer.is_valid():
-            instance = serializer.save(created_by=self.request.user)
-            nicknames = instance.nicknames.all()
-            for nickname in nicknames:
-                nickname.created_by = self.request.user
-                nickname.save()
-                assign_perm("change_nickname", self.request.user, nickname)
-                assign_perm("delete_nickname", self.request.user, nickname)
-            for tattoo in instance.tattoos.all():
-                tattoo.created_by = self.request.user
-                tattoo.save()
-                assign_perm("change_tattoo", self.request.user, tattoo)
-                assign_perm("delete_tattoo", self.request.user, tattoo)
-            for address in instance.addresses.all():
-                address.created_by = self.request.user
-                address.save()
-                assign_perm("change_address", self.request.user, address)
-                assign_perm("delete_address", self.request.user, address)
-            for physical in instance.physicals.all():
-                physical.created_by = self.request.user
-                physical.save()
-                assign_perm("change_physical", self.request.user, physical)
-                assign_perm("delete_physical", self.request.user, physical)
-            for document in instance.documents.all():
-                document.created_by = self.request.user
-                document.save()
-                if document.type.label == 'CPF':
-                    helpers.process_external_consult(person=instance, username=self.request.user.username, cpf=document.number)
-                assign_perm("change_document", self.request.user, document)
-                assign_perm("delete_document", self.request.user, document)
-            for face in instance.faces.all():
-                face.created_by = self.request.user
-                face.save()
-                assign_perm("change_face", self.request.user, face)
-                assign_perm("delete_face", self.request.user, face)
-            for image in instance.images.all():
-                image.created_by = self.request.user
-                image.save()
-                assign_perm("change_image", self.request.user, image)
-                assign_perm("delete_image", self.request.user, image)
-            assign_perm("change_person", self.request.user, instance)
-            assign_perm("delete_person", self.request.user, instance)
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        try:
+            if serializer.is_valid():
+                instance = serializer.save(created_by=self.request.user)
+                nicknames = instance.nicknames.all()
+                for nickname in nicknames:
+                    nickname.created_by = self.request.user
+                    nickname.save()
+                    assign_perm("change_nickname", self.request.user, nickname)
+                    assign_perm("delete_nickname", self.request.user, nickname)
+                for tattoo in instance.tattoos.all():
+                    tattoo.created_by = self.request.user
+                    tattoo.save()
+                    assign_perm("change_tattoo", self.request.user, tattoo)
+                    assign_perm("delete_tattoo", self.request.user, tattoo)
+                for address in instance.addresses.all():
+                    address.created_by = self.request.user
+                    address.save()
+                    assign_perm("change_address", self.request.user, address)
+                    assign_perm("delete_address", self.request.user, address)
+                for physical in instance.physicals.all():
+                    physical.created_by = self.request.user
+                    physical.save()
+                    assign_perm("change_physical", self.request.user, physical)
+                    assign_perm("delete_physical", self.request.user, physical)
+                for document in instance.documents.all():
+                    document.created_by = self.request.user
+                    document.save()
+                    if document.type.label == 'CPF':
+                        helpers.process_external_consult(id_person=instance.id, username=self.request.user.username, cpf=document.number)
+                    assign_perm("change_document", self.request.user, document)
+                    assign_perm("delete_document", self.request.user, document)
+                for face in instance.faces.all():
+                    face.created_by = self.request.user
+                    face.save()
+                    assign_perm("change_face", self.request.user, face)
+                    assign_perm("delete_face", self.request.user, face)
+                for image in instance.images.all():
+                    image.created_by = self.request.user
+                    image.save()
+                    assign_perm("change_image", self.request.user, image)
+                    assign_perm("delete_image", self.request.user, image)
+                assign_perm("change_person", self.request.user, instance)
+                assign_perm("delete_person", self.request.user, instance)
+                return Response(serializer.data, status=201)
+        except Exception as e:
+            return Response(serializer.errors, status=400)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -133,7 +173,7 @@ class AddPersonListView(generics.ListCreateAPIView):
 class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     queryset = Person.objects.all()
     permission_classes = [DjangoObjectPermissions]
-    serializer_class = PersonSerializer
+    serializer_class = serializers.PersonSerializer
     # for key
     lookup_field = 'uuid'
 
@@ -164,9 +204,9 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
         return Response(serializer.data)
 
 
-class PersonAddFaceView(CreateModelMixin, generics.GenericAPIView):
+class PersonAddFaceView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Face.objects.all()
-    serializer_class = FaceSerializer
+    serializer_class = serializers.FaceSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def perform_create(self, serializer):
@@ -183,9 +223,9 @@ class PersonAddFaceView(CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class PersonAddTattooView(CreateModelMixin, generics.GenericAPIView):
+class PersonAddTattooView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Tattoo.objects.all()
-    serializer_class = TattooSerializer
+    serializer_class = serializers.TattooSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def perform_create(self, serializer):
@@ -202,9 +242,9 @@ class PersonAddTattooView(CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class PersonAddNicknameView(CreateModelMixin, generics.GenericAPIView):
+class PersonAddNicknameView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Nickname.objects.all()
-    serializer_class = NicknameSerializer
+    serializer_class = serializers.NicknameSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def perform_create(self, serializer):
@@ -221,9 +261,9 @@ class PersonAddNicknameView(CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class PersonAddPhysicalView(CreateModelMixin, generics.GenericAPIView):
+class PersonAddPhysicalView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Physical.objects.all()
-    serializer_class = PhysicalSerializer
+    serializer_class = serializers.PhysicalSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def perform_create(self, serializer):
@@ -240,7 +280,7 @@ class PersonAddPhysicalView(CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class PersonAddDocumentView(CreateModelMixin, generics.GenericAPIView):
+class PersonAddDocumentView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     permission_classes = [DjangoObjectPermissions]
@@ -260,7 +300,7 @@ class PersonAddDocumentView(CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class PersonAddAddressView(CreateModelMixin, generics.GenericAPIView):
+class PersonAddAddressView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
     permission_classes = [DjangoObjectPermissions]
@@ -279,7 +319,7 @@ class PersonAddAddressView(CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class PersonAddImageView(CreateModelMixin, generics.GenericAPIView):
+class PersonAddImageView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     permission_classes = [DjangoObjectPermissions]
@@ -303,7 +343,7 @@ class PersonAddImageView(CreateModelMixin, generics.GenericAPIView):
 
 class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Face.objects.all()
-    serializer_class = FaceSerializer
+    serializer_class = serializers.FaceSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def retrieve(self, request, *args, **kwargs):
@@ -332,7 +372,7 @@ class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 class TattooUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Tattoo.objects.all()
-    serializer_class = TattooSerializer
+    serializer_class = serializers.TattooSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def retrieve(self, request, *args, **kwargs):
@@ -361,7 +401,7 @@ class TattooUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 class NicknameUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Nickname.objects.all()
-    serializer_class = NicknameSerializer
+    serializer_class = serializers.NicknameSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def retrieve(self, request, *args, **kwargs):
@@ -390,7 +430,7 @@ class NicknameUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 class PhysicalUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Physical.objects.all()
-    serializer_class = PhysicalSerializer
+    serializer_class = serializers.PhysicalSerializer
     permission_classes = [DjangoObjectPermissions]
 
     def retrieve(self, request, *args, **kwargs):

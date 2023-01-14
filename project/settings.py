@@ -23,9 +23,15 @@ if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
     CORS_ALLOWED_ORIGINS = [
+        "https://portal.stage.pm.pb.gov.br",
         "https://sasp.stage.pm.pb.gov.br",
+        "https://sai.stage.pm.pb.gov.br",
+        "https://services.stage.pm.pb.gov.br",
         "https://s3.stage.pm.pb.gov.br",
+        "https://portal.apps.pm.pb.gov.br",
         "https://sasp.apps.pm.pb.gov.br",
+        "https://sai.apps.pm.pb.gov.br",
+        "https://services.apps.pm.pb.gov.br",
         "https://s3.apps.pm.pb.gov.br",
     ]
 
@@ -84,6 +90,7 @@ INSTALLED_APPS = [
     'apps.address',
     'apps.document',
     'apps.alert',
+    'apps.bnmp',
 
 ]
 MIDDLEWARE = [
@@ -258,7 +265,12 @@ MINIO_BUCKET_CHECK_ON_SAVE = True
 # Config debug toolbar
 INTERNAL_IPS = ["127.0.0.1",]
 
-# Watermark
+# Watermark from imgproxy
+WATERMARK_ACTIVE = env('WATERMARK_ACTIVE')
+WATERMARK_HOST = env('WATERMARK_HOST')
+WATERMARK_SECRET = env('WATERMARK_SECRET')
+
+# Watermark from services -> imgproxy
 SERVICES_HOST = env('SERVICES_HOST')
 SERVICES_SECRET = env('SERVICES_SECRET')
 
@@ -271,6 +283,7 @@ PUBLIC_PATHS = [
     r'^/health_check',
     r'^/auth/logout/',
     r'^/api/v1/.*',
+    r'^/admin/.*',  # Descomentar para expor rota adminitrativa (só para ajustes de configurações do keycloak)
 ]
 
 # Celery Configuration Options

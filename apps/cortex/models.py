@@ -54,5 +54,27 @@ class PersonCortex(Base, SoftDelete):
     regiaoFiscal = models.CharField(max_length=50, null=True, blank=True)
     anoObito = models.CharField(max_length=4, null=True, blank=True)
     indicadorEstrangeiro = models.CharField(max_length=50, null=True, blank=True)
-    dataAtualizacao = models.DateField(null=True, blank=True)
+    dataAtualizacao = models.DateTimeField(null=True, blank=True)
     tituloEleitor = models.CharField(max_length=17, null=True, blank=True)
+    indicadorMoradorEstrangeiro = models.BooleanField(null=True, blank=True)
+    latitudeAproximadaLocal = models.FloatField(null=True, blank=True)
+    longitudeAproximadaLocal = models.FloatField(null=True, blank=True)
+    municipioNaturalidade = models.CharField(max_length=255, null=True, blank=True)
+    nomeSocial = models.CharField(max_length=255, null=True, blank=True)
+    paisNascimento = models.CharField(max_length=255, null=True, blank=True)
+    ufNaturalidade = models.CharField(max_length=255, null=True, blank=True)
+
+    def soft_delete_cascade_policy_action(self, **kwargs):
+        # Insert here custom pre delete logic
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action()
+        # Insert here custom post delete logic
+
+    def __str__(self):
+        return f"{self.uuid}"
+
+    class Meta:
+        verbose_name = "Pessoa Cortex"
+        verbose_name_plural = "Pessoas Cortex"

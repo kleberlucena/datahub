@@ -17,24 +17,25 @@ class RegistrySerializer(serializers.ModelSerializer):
 
 
 class PersonCortexSerializer(serializers.ModelSerializer):
-    registry = serializers.SerializerMethodField('_get_registry')
+    registers = serializers.SerializerMethodField('_get_registry')
 
     def _get_registry(self, object):
         try:
-            registry = Registry.objects.get(system_uuid=object.uuid)
+            registry = Registry.objects.filter(system_uuid=object.uuid)
             if registry:
-                serialized = RegistrySerializer(registry)
+                serialized = RegistrySerializer(registry, many=True)
                 return serialized.data
         except Registry.DoesNotExist:
-            raise logger.warning('Warning while getting registry unavailable')
-            return {}
+            logger.warning('Warning while getting registry unavailable')
+            return None
         except Exception as e:
-            raise logger.error('Error while getting registry local - {}'.format(e))
+            logger.error('Error while getting registry local - {}'.format(e))
+            return None
 
     class Meta:
         model = PersonCortex
-        fields = ("numeroCPF", "nomeCompleto", "nomeMae", "dataNascimento", "situacaoCadastral", "identificadorResidenteExterior",
-                  "paisResidencia", "sexo", "naturezaOcupacao", "ocupacaoPrincipal", "anoExercicioOcupacao", "tipoLogradouro",
+        fields = ("numeroCPF", "nomeCompleto", "nomeMae", "dataNascimento", "municipioNaturalidade", "ufNaturalidade", "paisNascimento", "situacaoCadastral", "identificadorResidenteExterior",
+                  "paisResidencia", "sexo", "nomeSocial", "naturezaOcupacao", "ocupacaoPrincipal", "anoExercicioOcupacao", "tipoLogradouro",
                   "logradouro", "numeroLogradouro", "complementoLogradouro", "bairro", "cep", "uf", "municipio", "ddd",
-                  "telefone", "regiaoFiscal", "anoObito", "indicadorEstrangeiro", "dataAtualizacao", "tituloEleitor",
-                  "registry", "created_at", "updated_at")
+                  "telefone", "regiaoFiscal", "anoObito", "indicadorEstrangeiro", "indicadorMoradorEstrangeiro", "dataAtualizacao", "tituloEleitor",
+                  "latitudeAproximadaLocal", "longitudeAproximadaLocal", "registers", "created_at", "updated_at")
