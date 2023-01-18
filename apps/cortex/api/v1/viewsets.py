@@ -9,6 +9,7 @@ import logging
 
 from apps.cortex.api.v1.serializers import PersonCortexSerializer
 from apps.cortex.models import PersonCortex
+from apps.cortex import helpers, tasks
 from apps.cortex.services import PortalCortexService
 from apps.person.models import Person, Registry
 from apps.person.api.v1.serializers import PersonSerializer
@@ -45,7 +46,27 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
     def get(self, request, cpf):
         username = request.user.username
         person_cortex = None
+
         try:
+            person_cortex = helpers.process_cortex_consult(username=username, cpf=cpf)
+            documents = helpers.validate_document(number=cpf)
+            if documents is None:
+                helpers.create_person_and_document(person_cortex)
+                print('sem documentos')
+            else:
+                helpers.update_registers(documents, person_cortex)
+            registers = Registry.objects.filter(system_uuid=person_cortex.uuid)
+            print(registers)
+            for registry in registers:
+                print(registry)
+            instance = get_object_or_404(PersonCortex, numeroCPF=cpf)
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except Exception as e:
+            logger.error('Error while serialize person_cortex - {}'.format(e))
+            return Response(status=500)
+
+        """ try:
             person_cortex = PersonCortex.objects.get(numeroCPF=cpf)
         except PersonCortex.DoesNotExist:
             person_cortex = None
@@ -103,7 +124,7 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
             return Response(serializer.data)
         except Exception as e:
             logger.error('Error while serialize person_cortex - {}'.format(e))
-            return Response(status=500)
+            return Response(status=500) """
 
     def get_queryset(self):
         return PersonCortex.objects.all()
