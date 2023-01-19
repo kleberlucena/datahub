@@ -3,7 +3,6 @@ from rest_framework import serializers
 from rest_polymorphic.serializers import PolymorphicSerializer
 from drf_extra_fields.fields import Base64ImageField
 
-from apps.cortex.models import PersonCortex
 from apps.alert.models import AlertCortex, VehicleAlertCortex, PersonAlertCortex
 from apps.person.api.v1.serializers import PersonSerializer
 
@@ -55,6 +54,7 @@ class PersonAlertCortexSerializer(serializers.ModelSerializer):
         try:
             foto = validated_data.pop('foto')            
             created_item = PersonAlertCortex.objects.create(**validated_data)
+            # TODO validate and insert foto do object
             created_item.save()
             return True
         except Exception as e:

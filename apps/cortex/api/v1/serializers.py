@@ -1,36 +1,54 @@
 import logging
+from guardian.shortcuts import get_perms
 from rest_framework import serializers
 from apps.cortex.models import PersonCortex
-from apps.person.models import Registry
-from apps.person.api.v1.serializers import PersonSerializer
+from base.models import Registry
+from apps.cortex.models import RegistryCortex
+from apps.person.models import Person
+from apps.person.api.v1.serializers import NicknameSerializer, FaceSerializer, AddressSerializer, ImageSerializer, TattooSerializer, PhysicalSerializer, DocumentSerializer
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
 
+class PersonToSerializer(serializers.ModelSerializer):
+    nicknames = NicknameSerializer(many=True, required=False)
+    faces = FaceSerializer(many=True, required=False)
+    addresses = AddressSerializer(many=True, required=False)
+    images = ImageSerializer(many=True, required=False)
+    tattoos = TattooSerializer(many=True, required=False)
+    physicals = PhysicalSerializer(many=True, required=False)
+    documents = DocumentSerializer(many=True, required=False)
+    permissions = serializers.SerializerMethodField('_get_permissions')
+    
+    def _get_permissions(self, object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, object)
+            return perms
+
+    class Meta:
+        model = Person
+        fields = (
+            'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals',
+            'created_at', 'updated_at', 'permissions')
+
+
 class RegistrySerializer(serializers.ModelSerializer):
-    person = PersonSerializer(required=False)
+    person = PersonToSerializer(read_only=True)
+    # person_cortex = PersonToCortexSerializer(read_only=True, required=False, allow_null=True)
 
     class Meta:
         model = Registry
-        fields = ('uuid', 'system_label', 'system_uuid', 'person', 'created_at', 'updated_at')
+        fields =  ('uuid', 'created_at', 'updated_at', 'person')
+
+        
+
 
 
 class PersonCortexSerializer(serializers.ModelSerializer):
-    registers = serializers.SerializerMethodField('_get_registry')
-
-    def _get_registry(self, object):
-        try:
-            registry = Registry.objects.filter(system_uuid=object.uuid)
-            if registry:
-                serialized = RegistrySerializer(registry, many=True)
-                return serialized.data
-        except Registry.DoesNotExist:
-            logger.warning('Warning while getting registry unavailable')
-            return None
-        except Exception as e:
-            logger.error('Error while getting registry local - {}'.format(e))
-            return None
+    dataAtualizacao = serializers.DateTimeField(format=None)
+    registers = RegistrySerializer(many=True, read_only=True)
 
     class Meta:
         model = PersonCortex

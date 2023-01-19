@@ -135,10 +135,10 @@ class PhysicalAdmin(SafeDeleteAdmin, GuardedModelAdmin):
         obj.delete(deleted_by=user)
 
 
-@admin.register(Registry)
+""" @admin.register(Registry)
 class RegistryAdmin(admin.ModelAdmin):
     list_display = ('uuid', 'system_label', 'person')
-    search_fields = ('system_label',)
+    search_fields = ('system_label',) """
 
 
 PhysicalAdmin.highlight_deleted_field.short_description = PhysicalAdmin.field_to_highlight

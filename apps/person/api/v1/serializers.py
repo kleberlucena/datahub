@@ -1,16 +1,52 @@
 from dataclasses import fields
 from numpy import source
 from rest_framework import serializers
+from rest_polymorphic.serializers import PolymorphicSerializer
 from drf_extra_fields.fields import Base64ImageField
 from drf_extra_fields.geo_fields import PointField
 from drf_writable_nested import WritableNestedModelSerializer
 from guardian.shortcuts import get_perms
 
 from apps.person.models import *
+from apps.cortex.models import RegistryCortex, PersonCortex
 from base import helpers
+from base.models import Registry
 from apps.address.api.serializers import AddressSerializer
 from apps.image.api.serializers import ImageSerializer
 from apps.document.api.serializers import DocumentSerializer
+
+
+class PersonToCortexSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PersonCortex
+        fields = ("numeroCPF", "nomeCompleto", "nomeMae", "dataNascimento", "municipioNaturalidade", "ufNaturalidade", "paisNascimento", "situacaoCadastral", "identificadorResidenteExterior",
+                  "paisResidencia", "sexo", "nomeSocial", "naturezaOcupacao", "ocupacaoPrincipal", "anoExercicioOcupacao", "tipoLogradouro",
+                  "logradouro", "numeroLogradouro", "complementoLogradouro", "bairro", "cep", "uf", "municipio", "ddd",
+                  "telefone", "regiaoFiscal", "anoObito", "indicadorEstrangeiro", "indicadorMoradorEstrangeiro", "dataAtualizacao", "tituloEleitor",
+                  "latitudeAproximadaLocal", "longitudeAproximadaLocal", "created_at", "updated_at")
+
+
+class RegistryCortexSerializer(serializers.ModelSerializer):
+    person_cortex = PersonToCortexSerializer(read_only=True, required=False, allow_null=True)
+
+    class Meta:
+        model = RegistryCortex
+        fields =  ('uuid', 'created_at', 'updated_at', 'person', 'person_cortex')
+
+
+class RegistryPersonSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Registry
+        fields =  ('uuid', 'created_at', 'updated_at', 'person')
+
+
+class RegistryPolymorphicSerializer(PolymorphicSerializer):
+    model_serializer_mapping = {
+        Registry: RegistryPersonSerializer,
+        RegistryCortex: RegistryCortexSerializer
+    } 
 
 
 class FaceSerializer(serializers.ModelSerializer):
@@ -123,13 +159,6 @@ class PhysicalSerializer(serializers.ModelSerializer):
         fields = ('uuid', 'label', 'value', 'created_at', 'updated_at', 'permissions')
 
 
-class RegistrySerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Registry
-        fields = ('uuid', 'system_label', 'system_uuid', 'created_at', 'updated_at')
-
-
 class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
     nicknames = NicknameSerializer(many=True, required=False)
     faces = FaceSerializer(many=True, required=False)
@@ -138,7 +167,7 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
     tattoos = TattooSerializer(many=True, required=False)
     physicals = PhysicalSerializer(many=True, required=False)
     documents = DocumentSerializer(many=True, required=False)
-    registers = RegistrySerializer(many=True, read_only=True, required=False, allow_null=True)
+    registers = RegistryPolymorphicSerializer(many=True, read_only=True, required=False, allow_null=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
     
     def _get_permissions(self, object):

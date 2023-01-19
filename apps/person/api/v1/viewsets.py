@@ -45,10 +45,10 @@ class PersonByCpfViewSet(generics.ListAPIView):
     def list(self, request):
         # obtenha a lista de resultados usando o queryset do viewset
         queryset = self.get_queryset()
-        unregistered_people_condition = ~Q(registers__system_label__contains='CORTEX PESSOA')
+        """ unregistered_people_condition = ~Q(registers__system_label__contains='CORTEX PESSOA')
         unregistered_people = queryset.filter(unregistered_people_condition)
         if unregistered_people.exists():
-            tasks.cortex_registry_list(username=request.user.username, person_list=unregistered_people, cpf=request.query_params.get('cpf'))
+            tasks.cortex_registry_list(username=request.user.username, person_list=unregistered_people, cpf=request.query_params.get('cpf')) """
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 

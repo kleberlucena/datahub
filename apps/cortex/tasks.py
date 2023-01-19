@@ -13,24 +13,49 @@ portalCortexService = services.PortalCortexService()
 
 
 @shared_task(bind=True)
-def cortex_consult(self, username, person, cpf=False, name=False, mother_name=False, birthdate=False, nickname=False):
+def cortex_consult(self, username, cpf=False, name=False, mother_name=False, birthdate=False, nickname=False):
     """
     Get service and consult person on cortex by params
     """
+    retorno = None
     try:
         logger.info('Task cortex_consult processing')
         data = portalCortexService.get_person_by_cpf(cpf=cpf, username=username)
 
         if data:
             cortex_instance, created = PersonCortex.objects.update_or_create(**data)
-            if cortex_instance:
-                RegistryCortex.objects.update_or_create(person_cortex=cortex_instance, person=person)
+            retorno = cortex_instance
+            if created:
+                logger.info('Created cortex_instance')
             else:
-                logger.warn('Cortex instance not valid - {}'.format(cortex_instance))            
+                logger.info('Updated cortex_instance')          
         else:
-            logger.warn('Data not valid - {}'.format(data))
+            logger.warn('Not found person in cortex in cortex - {}'.format(cpf))
+            retorno = None
     except Exception as e:
         logger.error('Error while getting registry in cortex - {}'.format(e))
+        retorno = None
+    finally:
+        return retorno
+
+@shared_task(bind=True)
+def cortex_update(username, person_cortex):
+    try:
+        person_json = portalCortexService.get_person_by_cpf(username=username, cpf=person_cortex.numeroCPF)
+        id = person_cortex.id
+        value = person_json['numeroCPF']
+        person_cortex_updated, created = PersonCortex.objects.update_or_create(
+                    numeroCPF=value, id=id, defaults={**person_json},
+                )
+        if person_cortex:
+            logger.info('Person cortex updated - {}'.format(cpf))
+            return person_cortex_updated
+        else:
+            return None
+    except Exception as e:
+        logger.error('Error while getting person in cortex - {}'.format(e))
+        return None
+
 
 
 @shared_task(bind=True)
