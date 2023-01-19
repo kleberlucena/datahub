@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from safedelete import SOFT_DELETE_CASCADE
 from safedelete.models import SafeDeleteModel
 
+from base.models import Registry
+
 
 class Base(models.Model):
     created_at = models.DateTimeField('Criado', auto_now_add=True)
@@ -78,3 +80,15 @@ class PersonCortex(Base, SoftDelete):
     class Meta:
         verbose_name = "Pessoa Cortex"
         verbose_name_plural = "Pessoas Cortex"
+
+
+class RegistryCortex(Registry):
+    person_cortex = models.ForeignKey(PersonCortex, related_name='registers', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.uuid}"
+
+
+    class Meta:
+        verbose_name = "Registro Cortex"
+        verbose_name_plural = "Registros Cortex"

@@ -4,8 +4,7 @@ from celery_progress.backend import ProgressRecorder
 import logging
 
 from apps.cortex import services
-from apps.cortex.models import PersonCortex
-from apps.person.models import Registry
+from apps.cortex.models import PersonCortex, RegistryCortex
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -32,8 +31,10 @@ def cortex_consult(self, username, cpf=False, name=False, mother_name=False, bir
                 logger.info('Updated cortex_instance')          
         else:
             logger.warn('Not found person in cortex in cortex - {}'.format(cpf))
+            retorno = None
     except Exception as e:
         logger.error('Error while getting registry in cortex - {}'.format(e))
+        retorno = None
     finally:
         return retorno
 
@@ -72,7 +73,7 @@ def cortex_registry_list(self, username, person_list, cpf):
     try:              
         if(person_cortex):
             for item in person_list:
-                Registry.objects.create(person=item, system_uuid=person_cortex.uuid)
+                RegistryCortex.objects.create(person=item, person_cortex=person_cortex)
     except Exception as e:
         logger.error('Error while getting person in cortex - {}'.format(e))
     

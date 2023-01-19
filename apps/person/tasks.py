@@ -4,8 +4,7 @@ from celery_progress.backend import ProgressRecorder
 import logging
 
 from apps.cortex import services
-from apps.cortex.models import PersonCortex
-from . import models
+from apps.cortex.models import PersonCortex, RegistryCortex
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -25,7 +24,7 @@ def cortex_consult(self, username, person, cpf=False, name=False, mother_name=Fa
         if data:
             cortex_instance, created = PersonCortex.objects.update_or_create(**data)
             if cortex_instance:
-                models.Registry.objects.update_or_create(system_label="CORTEX PESSOA", system_uuid=cortex_instance.uuid, person=person)
+                RegistryCortex.objects.update_or_create(person_cortex=cortex_instance, person=person)
             else:
                 logger.warn('Cortex instance not valid - {}'.format(cortex_instance))            
         else:
@@ -49,7 +48,7 @@ def cortex_registry_list(self, username, person_list, cpf):
     try:              
         if(person_cortex):
             for item in person_list:
-                models.Registry.objects.create(person=item, system_uuid=person_cortex.uuid)
+                RegistryCortex.objects.create(person=item, person_cortex=person_cortex)
     except Exception as e:
         logger.error('Error while getting person in cortex - {}'.format(e))
     

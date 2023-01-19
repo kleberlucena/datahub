@@ -279,18 +279,3 @@ class Face(Base, SoftDelete):
     class Meta:
         verbose_name = "Face"
         verbose_name_plural = "Faces"
-
-
-class Registry(Base):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    system_label = models.CharField("Sistema", max_length=255)
-    system_uuid = models.UUIDField()
-    person = models.ForeignKey(Person, related_name='registers', on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.uuid}"
-
-
-    class Meta:
-        verbose_name = "Registro"
-        verbose_name_plural = "Registros"

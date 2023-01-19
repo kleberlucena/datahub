@@ -7,7 +7,7 @@ from guardian.shortcuts import get_perms
 
 from apps.person.models import *
 from base import helpers
-from .serializers import RegistrySerializer, PhysicalSerializer
+from .serializers import RegistryCortexSerializer, PhysicalSerializer
 from apps.address.api.serializers import AddressSerializer
 from apps.image.api.serializers import ImageListSerializer
 from apps.document.api.serializers import DocumentListSerializer
@@ -74,7 +74,7 @@ class PersonListSerializer(serializers.ModelSerializer):
     tattoos = TattooListSerializer(many=True, required=False)
     physicals = PhysicalSerializer(many=True, required=False)
     documents = DocumentListSerializer(many=True, required=False)
-    registers = RegistrySerializer(many=True, read_only=True, required=False, allow_null=True)
+    registers = RegistryCortexSerializer(many=True, read_only=True, required=False, allow_null=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
     
     def _get_permissions(self, object):

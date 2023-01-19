@@ -10,7 +10,6 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 import logging
 
-from apps.cortex.api.v1.viewsets import PessoaByCpfViewSet
 from apps.alert.models import AlertCortex, PersonAlertCortex, VehicleAlertCortex
 from . import serializers
 

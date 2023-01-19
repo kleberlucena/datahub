@@ -8,10 +8,10 @@ from django.shortcuts import get_object_or_404
 import logging
 
 from apps.cortex.api.v1.serializers import PersonCortexSerializer
-from apps.cortex.models import PersonCortex
+from apps.cortex.models import PersonCortex, RegistryCortex
 from apps.cortex import helpers, tasks
 from apps.cortex.services import PortalCortexService
-from apps.person.models import Person, Registry
+from apps.person.models import Person
 from apps.person.api.v1.serializers import PersonSerializer
 from apps.document.models import Document, DocumentType
 
@@ -50,15 +50,12 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
         try:
             person_cortex = helpers.process_cortex_consult(username=username, cpf=cpf)
             documents = helpers.validate_document(number=cpf)
-            if documents is None:
-                helpers.create_person_and_document(person_cortex)
+            if documents is None or len(documents) == 0:
                 print('sem documentos')
+                helpers.create_person_and_document(person_cortex)
             else:
+                print('Com documentos')
                 helpers.update_registers(documents, person_cortex)
-            registers = Registry.objects.filter(system_uuid=person_cortex.uuid)
-            print(registers)
-            for registry in registers:
-                print(registry)
             instance = get_object_or_404(PersonCortex, numeroCPF=cpf)
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
