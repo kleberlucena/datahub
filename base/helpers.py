@@ -23,7 +23,7 @@ Essa URL assinada NÃO faz requisição para o imgproxy.
 """
 def get_watermark_url(old_url, user_number):
 
-    if settings.DEBUG == True or ~hasattr(settings, 'WATERMARK_ACTIVE') or settings.WATERMARK_ACTIVE == False:
+    if not hasattr(settings, 'DEBUG') or settings.DEBUG == False or not hasattr(settings, 'WATERMARK_ACTIVE') or settings.WATERMARK_ACTIVE == False:
         return old_url
     else:
         """"
