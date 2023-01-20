@@ -6,7 +6,7 @@ from hmac import new as hmac
 from datetime import datetime, timedelta
 from django.conf import settings
 from numpy import base_repr
-
+import calendar
 
 """
 Função para gerar uma string check para servir como
@@ -23,7 +23,7 @@ Essa URL assinada NÃO faz requisição para o imgproxy.
 """
 def get_watermark_url(old_url, user_number):
 
-    if settings.DEBUG == True or not hasattr(settings, 'WATERMARK_ACTIVE') or settings.WATERMARK_ACTIVE == 'off':
+    if settings.DEBUG == True or not hasattr(settings, 'WATERMARK_ACTIVE') or settings.WATERMARK_ACTIVE == 'on':
         return old_url
     else:
         """"
@@ -33,7 +33,7 @@ def get_watermark_url(old_url, user_number):
         """
         num = re.sub(r"[^0-9]", "", user_number)
         key = base_repr(int(num), 36)
-        exp = int((datetime.now() + timedelta(minutes = 10)).timestamp())
+        exp = calendar.timegm((datetime.now() + timedelta(minutes = 10)).timetuple())
         encoded_img_path = urllib.parse.quote_plus(old_url)
         img_path_64 = base64.b64encode(bytes(encoded_img_path, 'utf-8')).decode("utf-8")
         check = get_verified_check(str(key) + str(exp) + img_path_64)
