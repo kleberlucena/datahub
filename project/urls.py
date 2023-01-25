@@ -34,6 +34,7 @@ urlpatterns = [
     path('api/v1/cortex/', include('apps.cortex.api.v1.urls'), name='cortex'),
     path('api/v1/document/', include('apps.document.api.urls'), name='person'),
     path('api/v1/person/', include('apps.person.api.v1.urls'), name='person'),
+    path('api/v1/vehicle/', include('apps.vehicle.api.v1.urls'), name='person'),
     path('api/v1/image/', include('apps.image.api.urls'), name='image'),
     path('api/v1/address/', include('apps.address.api.urls'), name='address'),
     path('api/v1/legacy/', include('apps.person.api.legacy.urls'), name='legacy'),

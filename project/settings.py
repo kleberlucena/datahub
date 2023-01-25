@@ -91,6 +91,7 @@ INSTALLED_APPS = [
     'apps.document',
     'apps.alert',
     'apps.bnmp',
+    'apps.vehicle',
 
 ]
 MIDDLEWARE = [

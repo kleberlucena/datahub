@@ -124,3 +124,157 @@ class PortalCortexService(object):
             logger.error('Error while getting person in get_person_by_cpf - {}'.format(e))
         finally:
             return data
+
+    def get_city_by_placa(self, placa, username):
+        """
+        Get vehicle register from API on CORTEX
+        :return: json with vehicle data
+        """
+        headers = {
+            'Content-Type': content_type,
+            'Authorization': f'Token {authorization}',
+            'username': username
+        }
+        data = None
+        try:
+            response = requests.get(f"{portal_url_base}/api/v1/cortex/veiculos/municipios/{placa}/", headers=headers, timeout=(5))
+            data = json.loads(response.content)
+        except requests.exceptions.ReadTimeout:
+            logger.warning('Timeout while request cities from get_city_by_placa')
+        except Exception as e:
+            data = None
+            logger.error('Error while request cities from get_city_by_placa - {}'.format(e))
+        finally:
+            return data
+
+    def get_vehicle_by_placa(self, placa, username):
+        """
+        Get vehicle register from API on CORTEX
+        :return: json with vehicle data
+        """
+        headers = {
+            'Content-Type': content_type,
+            'Authorization': f'Token {authorization}',
+            'username': username
+        }
+        data = None
+        try:
+            response = requests.get(f"{portal_url_base}/api/v1/cortex/veiculos/placa/{placa}/", headers=headers, timeout=(5))
+            data = json.loads(response.content)
+        except requests.exceptions.ReadTimeout:
+            logger.warning('Timeout while request vehicle from get_vehicle_by_placa')
+        except Exception as e:
+            data = None
+            logger.error('Error while request vehicle from get_vehicle_by_placa - {}'.format(e))
+        finally:
+            return data
+        
+    def get_vehicle_by_renavam(self, renavam, username):
+        """
+        Get vehicle register from API on CORTEX
+        :return: json with vehicle data
+        """
+        headers = {
+            'Content-Type': content_type,
+            'Authorization': f'Token {authorization}',
+            'username': username
+        }
+        data = None
+        try:
+            response = requests.get(f"{portal_url_base}/api/v1/cortex/veiculos/renavam/{renavam}/", headers=headers, timeout=(5))
+            data = json.loads(response.content)
+        except requests.exceptions.ReadTimeout:
+            logger.warning('Timeout while request vehicle from get_vehicle_by_renavam')
+        except Exception as e:
+            data = None
+            logger.error('Error while request vehicle from get_vehicle_by_renavam - {}'.format(e))
+        finally:
+            return data
+        
+    def get_vehicle_by_proprietario(self, cpf, username):
+        """
+        Get vehicle register from API on CORTEX
+        :return: json with vehicle data
+        """
+        headers = {
+            'Content-Type': content_type,
+            'Authorization': f'Token {authorization}',
+            'username': username
+        }
+        data = None
+        try:
+            response = requests.get(f"{portal_url_base}/api/v1/cortex/veiculos/proprietario/{cpf}/", headers=headers, timeout=(5))
+            data = json.loads(response.content)
+        except requests.exceptions.ReadTimeout:
+            logger.warning('Timeout while request vehicle from get_vehicle_by_proprietario')
+        except Exception as e:
+            data = None
+            logger.error('Error while request vehicle from get_vehicle_by_proprietario - {}'.format(e))
+        finally:
+            return data
+        
+    def get_vehicle_by_possuidor(self, cpf, username):
+        """
+        Get vehicle register from API on CORTEX
+        :return: json with vehicle data
+        """
+        headers = {
+            'Content-Type': content_type,
+            'Authorization': f'Token {authorization}',
+            'username': username
+        }
+        data = None
+        try:
+            response = requests.get(f"{portal_url_base}/api/v1/cortex/veiculos/possuidor/{cpf}/", headers=headers, timeout=(5))
+            data = json.loads(response.content)
+        except requests.exceptions.ReadTimeout:
+            logger.warning('Timeout while request vehicle from get_vehicle_by_possuidor')
+        except Exception as e:
+            data = None
+            logger.error('Error while request vehicle from get_vehicle_by_possuidor - {}'.format(e))
+        finally:
+            return data
+        
+    def get_vehicle_by_motor(self, motor, username):
+        """
+        Get vehicle register from API on CORTEX
+        :return: json with vehicle data
+        """
+        headers = {
+            'Content-Type': content_type,
+            'Authorization': f'Token {authorization}',
+            'username': username
+        }
+        data = None
+        try:
+            response = requests.get(f"{portal_url_base}/api/v1/cortex/veiculos/motor/{motor}/", headers=headers, timeout=(5))
+            data = json.loads(response.content)
+        except requests.exceptions.ReadTimeout:
+            logger.warning('Timeout while request vehicle from get_vehicle_by_motor')
+        except Exception as e:
+            data = None
+            logger.error('Error while request vehicle from get_vehicle_by_motor - {}'.format(e))
+        finally:
+            return data
+        
+    def get_vehicle_by_chassi(self, chassi, username):
+        """
+        Get vehicle register from API on CORTEX
+        :return: json with vehicle data
+        """
+        headers = {
+            'Content-Type': content_type,
+            'Authorization': f'Token {authorization}',
+            'username': username
+        }
+        data = None
+        try:
+            response = requests.get(f"{portal_url_base}/api/v1/cortex/veiculos/chassi/{chassi}/", headers=headers, timeout=(5))
+            data = json.loads(response.content)
+        except requests.exceptions.ReadTimeout:
+            logger.warning('Timeout while request vehicle from get_vehicle_by_chassi')
+        except Exception as e:
+            data = None
+            logger.error('Error while request vehicle from get_vehicle_by_chassi - {}'.format(e))
+        finally:
+            return data

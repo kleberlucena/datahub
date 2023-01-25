@@ -3,7 +3,6 @@ from guardian.shortcuts import get_perms
 from rest_framework import serializers
 from apps.cortex.models import PersonCortex
 from base.models import Registry
-from apps.cortex.models import RegistryCortex
 from apps.person.models import Person
 from apps.person.api.v1.serializers import NicknameSerializer, FaceSerializer, AddressSerializer, ImageSerializer, TattooSerializer, PhysicalSerializer, DocumentSerializer
 
