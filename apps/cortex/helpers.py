@@ -28,6 +28,7 @@ def process_cortex_consult(username, cpf=None):
         return retorno
 
 def update_registers(documents, person_cortex):
+    print(documents)
     for document in documents:
         print('Document - {}'.format( document))
         people = document.person_set.all()

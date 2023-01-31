@@ -309,5 +309,6 @@ if DEBUG:
     MINIO_CONSISTENCY_CHECK_ON_START = False
     MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = False
     MINIO_USE_HTTPS = False
-    INSTALLED_APPS.append('debug_toolbar')  # module to debug
-    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+    # INSTALLED_APPS.append('debug_toolbar')  # module to debug
+    # MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append('rest_framework.authentication.SessionAuthentication')

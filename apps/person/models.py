@@ -101,6 +101,7 @@ class Person(Base, SoftDelete):
         return f"{self.uuid}"
     
     class Meta:
+        permissions = (("person.view_person", "Can view person"),)
         verbose_name = "Pessoa"
         verbose_name_plural = "Pessoas"
 

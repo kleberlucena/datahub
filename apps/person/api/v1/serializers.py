@@ -29,10 +29,11 @@ class PersonToCortexSerializer(serializers.ModelSerializer):
 
 class RegistryCortexSerializer(serializers.ModelSerializer):
     person_cortex = PersonToCortexSerializer(read_only=True, required=False, allow_null=True)
+    person_uuid = serializers.CharField(source="person")
 
     class Meta:
         model = RegistryCortex
-        fields =  ('uuid', 'created_at', 'updated_at', 'person', 'person_cortex')
+        fields =  ('uuid', 'created_at', 'updated_at', 'person_uuid', 'person_cortex')
 
 
 class RegistryPersonSerializer(serializers.ModelSerializer):
@@ -181,3 +182,46 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
         fields = (
             'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals',
             'created_at', 'updated_at', 'registers', 'permissions')
+        
+        
+class IntermediatePersonSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
+    nicknames = NicknameSerializer(many=True, required=False)
+    faces = FaceSerializer(many=True, required=False)
+    addresses = AddressSerializer(many=True, required=False)
+    images = ImageSerializer(many=True, required=False)
+    tattoos = TattooSerializer(many=True, required=False)
+    physicals = PhysicalSerializer(many=True, required=False)
+    documents = DocumentSerializer(many=True, required=False)
+    permissions = serializers.SerializerMethodField('_get_permissions')
+    
+    def _get_permissions(self, object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, object)
+            return perms
+
+    class Meta:
+        model = Person
+        fields = (
+            'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals',
+            'created_at', 'updated_at', 'permissions')
+        
+        
+class BasicPersonSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
+    nicknames = NicknameSerializer(many=True, required=False)
+    faces = FaceSerializer(many=True, required=False)
+    images = ImageSerializer(many=True, required=False)
+    documents = DocumentSerializer(many=True, required=False)
+    permissions = serializers.SerializerMethodField('_get_permissions')
+    
+    def _get_permissions(self, object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, object)
+            return perms
+
+    class Meta:
+        model = Person
+        fields = (
+            'uuid', 'nicknames', 'images', 'faces', 'documents',
+            'created_at', 'updated_at', 'permissions')

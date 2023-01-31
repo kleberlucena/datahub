@@ -82,12 +82,47 @@ class ArrendatarioRenavamCortexSerializer(serializers.ModelSerializer):
         fields = ("uuid", "tipoDocumentoArrendatario", "numeroDocumentoArrendatario", "nomeArrendatario", "enderecoArrendatario", "registers")
 
 
+class ProprietarioBasicRenavamCortexSerializer(serializers.ModelSerializer):
+    nomeProprietario = serializers.CharField(source="nome")
+
+    class Meta:
+        model = PersonRenavamCortex
+        fields = ("nomeProprietario",)
+
+
+class ProprietarioIntermediateRenavamCortexSerializer(serializers.ModelSerializer):
+    tipoDocumentoProprietario = serializers.CharField(source="tipoDocumento")
+    numeroDocumentoProprietario = serializers.CharField(source="numeroDocumento")
+    nomeProprietario = serializers.CharField(source="nome")
+
+    class Meta:
+        model = PersonRenavamCortex
+        fields = ("tipoDocumentoProprietario", "numeroDocumentoProprietario", "nomeProprietario")
+
+
+class PossuidorIntermediateRenavamCortexSerializer(serializers.ModelSerializer):
+    tipoDocumentoPossuidor = serializers.CharField(source="tipoDocumento")
+    numeroDocumentoPossuidor = serializers.CharField(source="numeroDocumento")
+    nomePossuidor = serializers.CharField(source="nome")
+
+    class Meta:
+        model = PersonRenavamCortex
+        fields = ("tipoDocumentoPossuidor", "numeroDocumentoPossuidor", "nomePossuidor")
+
+
+class ArrendatarioIntermediateRenavamCortexSerializer(serializers.ModelSerializer):
+    tipoDocumentoArrendatario = serializers.CharField(source="tipoDocumento")
+    numeroDocumentoArrendatario = serializers.CharField(source="numeroDocumento")
+    nomeArrendatario = serializers.CharField(source="nome")
+
+    class Meta:
+        model = PersonRenavamCortex
+        fields = ("tipoDocumentoArrendatario", "numeroDocumentoArrendatario", "nomeArrendatario")
+
+
 class VehicleCortexSerializer(serializers.ModelSerializer):    
     dataDeclaracaoImportacao = serializers.DateTimeField(format=None)
     dataEmplacamento = serializers.DateTimeField(format=None)
-    """ nomeProprietario= serializers.CharField(required=False)
-    nomePossuidor= serializers.CharField(required=False)
-    nomeArrendatario= serializers.CharField(required=False) """
     proprietario = ProprietarioRenavamCortexSerializer(read_only=True, required=False)
     possuidor = PossuidorRenavamCortexSerializer(read_only=True, required=False)
     arrendatario = ArrendatarioRenavamCortexSerializer(read_only=True, required=False)
@@ -108,3 +143,43 @@ class VehicleCortexSerializer(serializers.ModelSerializer):
                   "origemPossuidor", "quaantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
                   "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao", 
                   "proprietario", "possuidor", "arrendatario",)
+
+
+class VehicleIntermediateCortexSerializer(serializers.ModelSerializer):
+    dataEmplacamento = serializers.DateTimeField(format=None)
+    proprietario = ProprietarioIntermediateRenavamCortexSerializer(read_only=True, required=False)
+    possuidor = PossuidorIntermediateRenavamCortexSerializer(read_only=True, required=False)
+    arrendatario = ArrendatarioIntermediateRenavamCortexSerializer(read_only=True, required=False)
+
+    class Meta:
+        model = VehicleCortex
+        fields = ("uuid", "placa", "dataEmplacamento", "chassi", "ufEmplacamento", "municipioPlaca", "anoFabricacao", "anoModelo", 
+                  "marcaModelo", "grupoVeiculo", "tipoVeiculo", "especie", "cor", 
+                  "combustivel", "potencia", "cilindrada", "lotacao", "capacidadeMaximaCarga", "pesoBrutoTotal", 
+                  "capacidadeMaximaTracao", "indicadorRemarcacaoChassi", "numeroCaixaCambio", "quantidadeEixo", "numeroEixoTraseiro",
+                  "numeroEixoAuxiliar", "numeroMotor", "tipoMontagem", "restricaoVeiculo1", "restricaoVeiculo2", 
+                  "restricaoVeiculo3", "restricaoVeiculo4", "dataLimiteRestricaoTributaria", "indicadorVeiculoLicenciadoCirculacao", 
+                  "renavam", "codigoMunicipioEmplacamento", "dataAtualizacaoRouboFurto", "dataAtualizacaoAlarme", 
+                  "indicadorVeiculoNacional", "numeroLicencaUsoConfiguracaoVeiculosMotor", "categoria", "codigoCategoria", 
+                  "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo", 
+                  "origemPossuidor", "quaantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
+                  "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao", 
+                  "proprietario", "possuidor", "arrendatario",)
+
+
+class VehicleBasicCortexSerializer(serializers.ModelSerializer):
+    dataEmplacamento = serializers.DateTimeField(format=None)
+    proprietario = ProprietarioBasicRenavamCortexSerializer(read_only=True, required=False)
+
+    class Meta:
+        model = VehicleCortex
+        fields = ("uuid", "placa", "dataEmplacamento", "chassi", "ufEmplacamento", "municipioPlaca", "anoFabricacao", "anoModelo", 
+                  "marcaModelo", "grupoVeiculo", "tipoVeiculo", "especie", "cor", "combustivel", "potencia", "cilindrada", "lotacao", 
+                  "capacidadeMaximaCarga", "pesoBrutoTotal", "capacidadeMaximaTracao", "indicadorRemarcacaoChassi", "numeroCaixaCambio", 
+                  "quantidadeEixo", "numeroEixoTraseiro", "numeroEixoAuxiliar", "numeroMotor", "tipoMontagem", "restricaoVeiculo1", 
+                  "restricaoVeiculo2", "restricaoVeiculo3", "restricaoVeiculo4", "dataLimiteRestricaoTributaria", 
+                  "indicadorVeiculoLicenciadoCirculacao", "renavam", "codigoMunicipioEmplacamento", "dataAtualizacaoRouboFurto", 
+                  "dataAtualizacaoAlarme", "indicadorVeiculoNacional", "numeroLicencaUsoConfiguracaoVeiculosMotor", "categoria", "codigoCategoria", 
+                  "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo", 
+                  "origemPossuidor", "quaantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
+                  "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao", "proprietario")

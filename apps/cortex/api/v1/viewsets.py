@@ -1,6 +1,7 @@
 from datetime import date
 from rest_framework import generics, status
 from rest_framework.decorators import action
+from rest_framework.permissions import DjangoObjectPermissions
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -27,6 +28,7 @@ birthdate = openapi.Parameter('birthdate', openapi.IN_QUERY, description="param 
 
 class PersonRetrieveView(generics.RetrieveAPIView):
     queryset = PersonCortex.objects.all()
+    permission_classes = [DjangoObjectPermissions]
     serializer_class = PersonCortexSerializer
     # for key
     lookup_field = 'uuid'
@@ -39,6 +41,7 @@ class PersonRetrieveView(generics.RetrieveAPIView):
 
 class PessoaByCpfViewSet(generics.GenericAPIView):
     queryset = PersonCortex.objects.all()
+    permission_classes = [DjangoObjectPermissions]
     serializer_class = PersonCortexSerializer
 
     @swagger_auto_schema()
@@ -70,6 +73,7 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
 
 class PessoaByBirthdateViewSet(generics.ListAPIView):
     queryset = PersonCortex.objects.all()
+    permission_classes = [DjangoObjectPermissions]
     serializer_class = PersonCortexSerializer
 
     @swagger_auto_schema(method='get', manual_parameters=[name, birthdate])
@@ -94,6 +98,7 @@ class PessoaByBirthdateViewSet(generics.ListAPIView):
 
 class PessoaByMotherViewSet(generics.ListAPIView):
     queryset = PersonCortex.objects.all()
+    permission_classes = [DjangoObjectPermissions]
     serializer_class = PersonCortexSerializer
 
     @swagger_auto_schema(method='get', manual_parameters=[name, mother_name])

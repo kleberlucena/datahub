@@ -88,3 +88,46 @@ class PersonListSerializer(serializers.ModelSerializer):
         fields = (
             'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals',
             'created_at', 'updated_at', 'registers', 'permissions')
+
+
+class IntermediatePersonListSerializer(serializers.ModelSerializer):
+    nicknames = NicknameListSerializer(many=True, required=False)
+    faces = FaceListSerializer(many=True, required=False)
+    addresses = AddressSerializer(many=True, required=False)
+    images = ImageListSerializer(many=True, required=False)
+    tattoos = TattooListSerializer(many=True, required=False)
+    physicals = PhysicalSerializer(many=True, required=False)
+    documents = DocumentListSerializer(many=True, required=False)
+    permissions = serializers.SerializerMethodField('_get_permissions')
+    
+    def _get_permissions(self, object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, object)
+            return perms
+
+    class Meta:
+        model = Person
+        fields = (
+            'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals',
+            'created_at', 'updated_at', 'permissions')
+        
+        
+class BasicPersonListSerializer(serializers.ModelSerializer):
+    nicknames = NicknameListSerializer(many=True, required=False)
+    faces = FaceListSerializer(many=True, required=False)
+    images = ImageListSerializer(many=True, required=False)
+    documents = DocumentListSerializer(many=True, required=False)
+    permissions = serializers.SerializerMethodField('_get_permissions')
+    
+    def _get_permissions(self, object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, object)
+            return perms
+
+    class Meta:
+        model = Person
+        fields = (
+            'uuid', 'nicknames', 'images', 'faces', 'documents',
+            'created_at', 'updated_at', 'permissions')

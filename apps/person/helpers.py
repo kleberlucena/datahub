@@ -29,7 +29,7 @@ def process_external_consult(id_person, username, cpf=None):
         logger.error('Error while processing helper in app person - {}'.format(e)) """
 
 
-def validate_document(number):
+""" def validate_document(number):
     try:
         document = Document.objects.get(number=number)
         return document
@@ -37,4 +37,4 @@ def validate_document(number):
         return None
     except Exception as e:
         logger.error('Error while getting document in bacinf - {}'.format(e))
-        return None
+        return None """
