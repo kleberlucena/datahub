@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework import filters
 from rest_framework.mixins import CreateModelMixin
-from rest_framework.permissions import DjangoObjectPermissions
+from rest_framework.permissions import DjangoObjectPermissions, DjangoModelPermissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from guardian.shortcuts import assign_perm
@@ -30,6 +30,7 @@ portalCortexService = PortalCortexService()
 
 class PessoaByCpfViewSet(generics.GenericAPIView):
     queryset = PersonBNMP.objects.all()
+    permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
     serializer_class = PersonBNMPSerializer
 
     def _get_bnmp_person(self, username, cpf):

@@ -4,6 +4,7 @@ from guardian.shortcuts import get_perms
 
 from base import helpers
 from apps.image.models import *
+from apps.watermark import helpers as watermark_helpers
 
 
 
@@ -20,20 +21,22 @@ class ImageSerializer(serializers.ModelSerializer):
     large = serializers.SerializerMethodField('_get_large', read_only=True)
 
     def _get_medium(self, object):
-        return helpers.get_image_variation(self, object, 'medium')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.medium.url, request.user.id)
 
     def _get_large(self, object):
-        return helpers.get_image_variation(self, object, 'large')
+        # return helpers.get_image_variation(self, object, 'large')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.large.url, request.user.id)
 
     def _get_thumbnail(self, object):
-        return helpers.get_image_variation(self, object, 'thumbnail')
+        # return helpers.get_image_variation(self, object, 'thumbnail')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.thumbnail.url, request.user.id)
 
     def _get_image_path(self, object):
         request = self.context.get('request', None)
-        if request:
-            img_name = object.file.name
-            old_url = object.file.storage.url(img_name)
-            return helpers.get_watermark_url(old_url, request.user.username)
+        return watermark_helpers.handle(object.file.url, request.user.id)
 
     def _get_permissions(self, object):
         request = self.context.get('request', None)
@@ -55,7 +58,8 @@ class ImageListSerializer(serializers.ModelSerializer):
     thumbnail = serializers.SerializerMethodField('_get_thumbnail', read_only=True)
 
     def _get_thumbnail(self, object):
-        return helpers.get_image_variation(self, object, 'thumbnail')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.thumbnail.url, request.user.id)
 
     def _get_permissions(self, object):
         request = self.context.get('request', None)

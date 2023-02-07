@@ -92,6 +92,7 @@ INSTALLED_APPS = [
     'apps.alert',
     'apps.bnmp',
     'apps.vehicle',
+    'apps.watermark',
 
 ]
 MIDDLEWARE = [
@@ -271,9 +272,10 @@ WATERMARK_ACTIVE = env('WATERMARK_ACTIVE')
 WATERMARK_HOST = env('WATERMARK_HOST')
 WATERMARK_SECRET = env('WATERMARK_SECRET')
 
-# Watermark from services -> imgproxy
-SERVICES_HOST = env('SERVICES_HOST')
-SERVICES_SECRET = env('SERVICES_SECRET')
+# Services 
+SERVICES_URL = env('SERVICES_URL')
+SERVICES_ENDPOINT_MARK = env('SERVICES_ENDPOINT_MARK')
+SERVICES_TOKEN = env('SERVICES_TOKEN')
 
 # Global login required middleware
 PUBLIC_VIEWS = [

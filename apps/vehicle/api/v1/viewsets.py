@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import generics, status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser, IsAuthenticated, DjangoObjectPermissions, DjangoModelPermissions
+from rest_framework.permissions import DjangoObjectPermissions, DjangoModelPermissions
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.shortcuts import get_object_or_404
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 class VehicleByPlacaViewSet(generics.GenericAPIView):
     queryset = VehicleCortex.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
 
     def get_serializer_class(self):
         if self.request.user.groups.filter(name='cortex_vehicle_advanced').exists():
@@ -29,7 +29,7 @@ class VehicleByPlacaViewSet(generics.GenericAPIView):
 
 
     @swagger_auto_schema()
-    @action(detail=True, methods=['GET'], permission_classes=IsAdminUser)
+    @action(detail=True, methods=['GET'], permission_classes=DjangoObjectPermissions)
     def get(self, request, placa):
         username = request.user.username
         vehicle_cortex = None

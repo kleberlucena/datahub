@@ -14,6 +14,7 @@ from base.models import Registry
 from apps.address.api.serializers import AddressSerializer
 from apps.image.api.serializers import ImageSerializer
 from apps.document.api.serializers import DocumentSerializer
+from apps.watermark import helpers as watermark_helpers
 
 
 class PersonToCortexSerializer(serializers.ModelSerializer):
@@ -59,20 +60,27 @@ class FaceSerializer(serializers.ModelSerializer):
     large = serializers.SerializerMethodField('_get_large', read_only=True)
 
     def _get_medium(self, object):
-        return helpers.get_image_variation(self, object, 'medium')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.medium.url, request.user.id)
 
     def _get_large(self, object):
-        return helpers.get_image_variation(self, object, 'large')
+        # return helpers.get_image_variation(self, object, 'large')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.large.url, request.user.id)
 
     def _get_thumbnail(self, object):
-        return helpers.get_image_variation(self, object, 'thumbnail')
+        # return helpers.get_image_variation(self, object, 'thumbnail')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.thumbnail.url, request.user.id)
 
     def _get_image_path(self, object):
         request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.url, request.user.id)
+        """ request = self.context.get('request', None)
         if request:
             img_name = object.file.name
             old_url = object.file.storage.url(img_name)
-            return helpers.get_watermark_url(old_url, request.user.username)
+            return helpers.get_watermark_url(old_url, request.user.username) """
 
     def _get_permissions(self, object):
         request = self.context.get('request', None)
@@ -111,20 +119,22 @@ class TattooSerializer(serializers.ModelSerializer):
     large = serializers.SerializerMethodField('_get_large', read_only=True)
 
     def _get_medium(self, object):
-        return helpers.get_image_variation(self, object, 'medium')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.medium.url, request.user.id)
 
     def _get_large(self, object):
-        return helpers.get_image_variation(self, object, 'large')
+        # return helpers.get_image_variation(self, object, 'large')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.large.url, request.user.id)
 
     def _get_thumbnail(self, object):
-        return helpers.get_image_variation(self, object, 'thumbnail')
+        # return helpers.get_image_variation(self, object, 'thumbnail')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.thumbnail.url, request.user.id)
 
     def _get_image_path(self, object):
         request = self.context.get('request', None)
-        if request:
-            img_name = object.file.name
-            old_url = object.file.storage.url(img_name)
-            return helpers.get_watermark_url(old_url, request.user.username)
+        return watermark_helpers.handle(object.file.url, request.user.id)
 
     def _get_permissions(self, object):
         request = self.context.get('request', None)

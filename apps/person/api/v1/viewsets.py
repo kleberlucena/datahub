@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, filters, mixins, status
-from rest_framework.permissions import IsAdminUser, DjangoModelPermissions, DjangoObjectPermissions
+from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from guardian.decorators import permission_required_or_403
@@ -101,7 +101,7 @@ class AddPersonListView(generics.ListCreateAPIView):
             return list_serializers.IntermediatePersonListSerializer
         return list_serializers.BasicPersonListSerializer 
 
-    @action(detail=True, methods=['GET'], permission_classes=IsAdminUser)
+    @action(detail=True, methods=['GET'], permission_classes=DjangoObjectPermissions)
     def list(self, request, *args, **kwargs):
         self.permission_classes = [DjangoModelPermissions]
         # queryset = self.filter_queryset(self.get_queryset())
