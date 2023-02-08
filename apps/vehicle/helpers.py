@@ -11,17 +11,18 @@ logger = logging.getLogger(__name__)
 def process_cortex_consult(username, placa=None):
     retorno = None
     try:
-        print('No helper')
         vehicle_cortex = VehicleCortex.objects.get(placa=placa)
         retorno = vehicle_cortex
         if vehicle_cortex.updated_at.date() < date.today():
-            print("tentando atualizar...")
-            eita = tasks.cortex_update(username=username, vehicle_cortex=vehicle_cortex)
-            print(eita)
-            retorno = eita
+            logger.info('Request update...')
+            vehicle_updated = tasks.cortex_update(username=username, vehicle_cortex=vehicle_cortex)
+            if vehicle_updated:
+                retorno = vehicle_updated
     except VehicleCortex.DoesNotExist:        
         try:          
-            retorno = tasks.cortex_consult(username=username, placa=placa)
+            vehicle_cortex = tasks.cortex_consult(username=username, placa=placa)
+            if vehicle_cortex:
+                retorno = vehicle_cortex
         except Exception as e:
             logger.error('Error while processing DoesnotExist in app vehicle - {}'.format(e))
             retorno = None

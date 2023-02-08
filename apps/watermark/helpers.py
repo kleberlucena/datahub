@@ -202,9 +202,9 @@ def get_mark_user(user_id):
             if models.UserMark.objects.all().count() > 0:
                 last_mark = models.UserMark.objects.latest('created_at')
                 new_mark_text = last_mark.mark_text[-5]
-                new_mark = "C" + new_mark_text
+                new_mark = "B" + new_mark_text
             else:
-                new_mark = "C00000"
+                new_mark = "B00000"
             
             return models.UserMark.objects.create(mark_text=new_mark, user=User.objects.get(id=user_id))
                 

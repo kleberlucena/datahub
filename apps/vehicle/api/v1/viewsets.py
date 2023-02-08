@@ -36,20 +36,12 @@ class VehicleByPlacaViewSet(generics.GenericAPIView):
 
         try:
             vehicle_cortex = helpers.process_cortex_consult(username=username, placa=placa.upper())
-            """ documents = helpers.validate_document(number=cpf)
-            if documents is None or len(documents) == 0:
-                print('sem documentos')
-                helpers.create_person_and_document(vehicle_cortex)
-            else:
-                print('Com documentos')
-                 helpers.update_registers(documents, vehicle_cortex) """
+            
         except Exception as e:
             logger.error('Error while process_cortex_consult vehicle_cortex - {}'.format(e))
         try:
             instance = get_object_or_404(VehicleCortex, placa=placa.upper())
             perms = get_groups_with_perms(VehicleCortex)
-            print(perms)
-            print("instance - {}".format(instance))
             serializer = self.get_serializer(instance)
             return Response(serializer.data)    
         except Exception as e:

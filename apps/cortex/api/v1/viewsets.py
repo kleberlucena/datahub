@@ -54,10 +54,8 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
             person_cortex = helpers.process_cortex_consult(username=username, cpf=cpf)
             documents = helpers.validate_document(number=cpf)
             if documents is None or len(documents) == 0:
-                print('sem documentos')
                 helpers.create_person_and_document(person_cortex)
             else:
-                print('Com documentos')
                 helpers.update_registers(documents, person_cortex)
             instance = get_object_or_404(PersonCortex, numeroCPF=cpf)
             serializer = self.get_serializer(instance)

@@ -47,6 +47,5 @@ def get_image_variation(self, object, variation):
             img_name = object.file.name
             parts = img_name.split('.')
             img_variation_name = str(parts[0]) + '.' + variation + '.' + str(parts[1])
-            print(img_variation_name)            
             url = object.file.storage.url(img_variation_name)
             return get_watermark_url(url, request.user.username)

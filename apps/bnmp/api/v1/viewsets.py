@@ -61,13 +61,7 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
         except Exception as e:
             logger.error('Error while getting person bnmp - {}'.format(e))
         finally:
-            return person_bnmp
-        """ try:                 
-            if person_bnmp:
-                for person in person_bnmp:
-                    print(person.idpessoa)
-                    bnmp = portalCortexService.get_bnmp_by_idpessoa(username=username, idpessoa=person_bnmp.idpessoa)
-                   print(bnmp)  """        
+            return person_bnmp      
 
     @swagger_auto_schema(method='get', manual_parameters=[cpf])
     @action(detail=True, methods=['GET'])

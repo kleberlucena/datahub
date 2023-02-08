@@ -1,12 +1,16 @@
+import logging 
 from rest_framework import serializers
-
-from apps.document.models import Document, DocumentImage, DocumentType
 from drf_extra_fields.fields import Base64ImageField
 from drf_writable_nested import WritableNestedModelSerializer
 from django.shortcuts import get_object_or_404
 from guardian.shortcuts import get_perms
+
 from base import helpers
+from apps.document.models import Document, DocumentImage, DocumentType
 from apps.watermark import helpers as watermark_helpers
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 
 class DocumentImageSerializer(serializers.ModelSerializer):
@@ -90,7 +94,7 @@ class DocumentSerializer(WritableNestedModelSerializer, serializers.ModelSeriali
         try:
             images_data = validated_data.pop('images')
         except Exception as e:
-            print(f'Error images; {e}')
+            logger.error('Error while validate images - {}'.format(e))
 
         document = Document.objects.create(**validated_data)
 

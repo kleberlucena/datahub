@@ -36,7 +36,6 @@ class PersonByCpfViewSet(generics.ListAPIView):
     permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
 
     def get_serializer_class(self):
-        print(self.request.user.groups)
         if self.request.user.groups.filter(name='profile:person_advanced').exists():
             return serializers.PersonSerializer
         elif self.request.user.groups.filter(name='profile:person_intermediate').exists():
@@ -61,15 +60,14 @@ class PersonByCpfViewSet(generics.ListAPIView):
         # obtenha a lista de resultados usando o queryset do viewset
         queryset = self.get_queryset()
         cpf = self.request.query_params.get('cpf')
-        print(cpf)
         try:
             person_cortex = helpers_cortex.process_cortex_consult(username=request.user.username, cpf=cpf)
             documents = helpers_cortex.validate_document(number=cpf)
             if documents is None or len(documents) == 0:
-                print('sem documentos')
+                logger.info('Without documents - {}'.format(documents))
                 helpers_cortex.create_person_and_document(person_cortex)
             else:
-                print('Com documentos')
+                logger.info('With documents - {}'.format(documents))
                 helpers_cortex.update_registers(documents, person_cortex)
         except Exception as e:
             logger.error('Error while serialize person_cortex - {}'.format(e))
@@ -92,7 +90,6 @@ class AddPersonListView(generics.ListCreateAPIView):
     queryset = Person.objects.all()
 
     def get_serializer_class(self):
-        print(self.request.user.groups)
         if self.request.method in ['POST']:
             return serializers.PersonSerializer
         elif self.request.user.groups.filter(name='profile:person_advanced').exists():

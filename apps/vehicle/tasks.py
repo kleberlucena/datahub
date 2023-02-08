@@ -62,7 +62,6 @@ def cortex_consult(self, username, placa=False, chassi=False, renavam=False, num
 
 @shared_task(bind=True)
 def cortex_update(self, username, vehicle_cortex):
-    print("No cortex_update")
     try:
         vehicle_json = portalCortexService.get_vehicle_by_placa(username=username, placa=vehicle_cortex.placa)
         id = vehicle_cortex.id
