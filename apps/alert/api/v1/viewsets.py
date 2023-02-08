@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpRequest
 from django.db.models import Q
 from drf_yasg import openapi
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
 from rest_framework import generics, status
 from rest_framework import filters
 from rest_framework.decorators import action
@@ -22,7 +23,17 @@ logger = logging.getLogger(__name__)
 
 class AddAlertCortexListView(generics.ListCreateAPIView):
     queryset = AlertCortex.objects.all()
-    serializer_class = serializers.AlertCortexPolymorphicSerializer
+    permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
+    # serializer_class = serializers.AlertCortexPolymorphicSerializer
+
+    def get_serializer_class(self):
+        if self.request.method in ['POST']:
+            return serializers.AlertCortexPolymorphicSerializer
+        elif self.request.user.groups.filter(name='profile:alert_advanced').exists():
+            return serializers.AlertCortexPolymorphicSerializer
+        elif self.request.user.groups.filter(name='profile:alert_intermediate').exists():
+            return serializers.BasicAlertCortexPolymorphicSerializer
+        return serializers.BasicAlertCortexPolymorphicSerializer
 
     @swagger_auto_schema(method='get')
     @action(detail=True, methods=['GET'])
@@ -40,10 +51,20 @@ class AddAlertCortexListView(generics.ListCreateAPIView):
 
 class AddVehicleAlertCortexListView(generics.ListCreateAPIView):
     queryset = VehicleAlertCortex.objects.all()
-    serializer_class = serializers.VehicleAlertCortexSerializer
+    permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
+    # serializer_class = serializers.VehicleAlertCortexSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at', 'dataPassagem', 'municipioLocal', 'dataOcorrencia']
     ordering = ['-created_at']
+
+    def get_serializer_class(self):
+        if self.request.method in ['POST']:
+            return serializers.VehicleAlertCortexSerializer
+        elif self.request.user.groups.filter(name='profile:alert_advanced').exists():
+            return serializers.VehicleAlertCortexSerializer
+        elif self.request.user.groups.filter(name='profile:alert_intermediate').exists():
+            return serializers.IntermediateVehicleAlertCortexSerializer
+        return serializers.BasicVehicleAlertCortexSerializer
 
     @swagger_auto_schema(method='get', manual_parameters=[placa])
     @action(detail=True, methods=['GET'])
@@ -61,10 +82,20 @@ class AddVehicleAlertCortexListView(generics.ListCreateAPIView):
 
 class AddPersonAlertCortexListView(generics.ListCreateAPIView):
     queryset = PersonAlertCortex.objects.all()
-    serializer_class = serializers.PersonAlertCortexSerializer
+    permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
+    # serializer_class = serializers.PersonAlertCortexSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at', 'nome', 'municipio', 'dataNascimento']
     ordering = ['-created_at']
+
+    def get_serializer_class(self):
+        if self.request.method in ['POST']:
+            return serializers.PersonAlertCortexSerializer
+        elif self.request.user.groups.filter(name='profile:alert_advanced').exists():
+            return serializers.PersonAlertCortexSerializer
+        elif self.request.user.groups.filter(name='profile:alert_intermediate').exists():
+            return serializers.IntermediatePersonAlertCortexSerializer
+        return serializers.BasicPersonAlertCortexSerializer
 
     @swagger_auto_schema(method='get', manual_parameters=[cpf])
     @action(detail=True, methods=['GET'])

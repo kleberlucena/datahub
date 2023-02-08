@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework import filters
 from rest_framework.mixins import CreateModelMixin
-from rest_framework.permissions import DjangoObjectPermissions
+from rest_framework.permissions import DjangoObjectPermissions, DjangoModelPermissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from guardian.shortcuts import assign_perm
@@ -30,6 +30,7 @@ portalCortexService = PortalCortexService()
 
 class PessoaByCpfViewSet(generics.GenericAPIView):
     queryset = PersonBNMP.objects.all()
+    permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
     serializer_class = PersonBNMPSerializer
 
     def _get_bnmp_person(self, username, cpf):
@@ -60,13 +61,7 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
         except Exception as e:
             logger.error('Error while getting person bnmp - {}'.format(e))
         finally:
-            return person_bnmp
-        """ try:                 
-            if person_bnmp:
-                for person in person_bnmp:
-                    print(person.idpessoa)
-                    bnmp = portalCortexService.get_bnmp_by_idpessoa(username=username, idpessoa=person_bnmp.idpessoa)
-                   print(bnmp)  """        
+            return person_bnmp      
 
     @swagger_auto_schema(method='get', manual_parameters=[cpf])
     @action(detail=True, methods=['GET'])

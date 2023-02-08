@@ -17,7 +17,7 @@ schema_view = get_schema_view(
       license=openapi.License(name="BSD License"),
    ),
    public=True,
-   permission_classes=[permissions.AllowAny],
+   permission_classes=[permissions.DjangoModelPermissions],
 )
 
 
@@ -34,9 +34,11 @@ urlpatterns = [
     path('api/v1/cortex/', include('apps.cortex.api.v1.urls'), name='cortex'),
     path('api/v1/document/', include('apps.document.api.urls'), name='person'),
     path('api/v1/person/', include('apps.person.api.v1.urls'), name='person'),
+    path('api/v1/vehicle/', include('apps.vehicle.api.v1.urls'), name='person'),
     path('api/v1/image/', include('apps.image.api.urls'), name='image'),
     path('api/v1/address/', include('apps.address.api.urls'), name='address'),
     path('api/v1/legacy/', include('apps.person.api.legacy.urls'), name='legacy'),
+    path('watermark/', include('apps.watermark.urls'), name='watermark'),
     path('celery-progress/', include('celery_progress.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

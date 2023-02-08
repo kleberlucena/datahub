@@ -2,10 +2,11 @@ from django.http import HttpResponse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, filters, mixins, status
-from rest_framework.permissions import DjangoObjectPermissions
+from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from guardian.shortcuts import assign_perm
+from guardian.decorators import permission_required_or_403
+from guardian.shortcuts import assign_perm, get_objects_for_user
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -15,7 +16,9 @@ from apps.image.api.serializers import ImageSerializer
 from apps.document.api.serializers import DocumentSerializer
 from apps.person.models import *
 from apps.person import helpers, tasks
+from apps.cortex import helpers as helpers_cortex
 from apps.cortex.models import PersonCortex
+import logging
 
 
 document_name = openapi.Parameter('document_name', openapi.IN_QUERY, description="param nome do documento da pessoa", type=openapi.TYPE_STRING)
@@ -23,10 +26,21 @@ document_number = openapi.Parameter('document_number', openapi.IN_QUERY, descrip
 cpf = openapi.Parameter('cpf', openapi.IN_QUERY, description="param número do CPF da pessoa", type=openapi.TYPE_STRING)
 nickname_label = openapi.Parameter('nickname_label', openapi.IN_QUERY, description="param alcunha da pessoa", type=openapi.TYPE_STRING)
 
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
 
 class PersonByCpfViewSet(generics.ListAPIView):
     queryset = Person.objects.all()
-    serializer_class = serializers.PersonSerializer
+    #serializer_class = serializers.PersonSerializer
+    permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
+
+    def get_serializer_class(self):
+        if self.request.user.groups.filter(name='profile:person_advanced').exists():
+            return serializers.PersonSerializer
+        elif self.request.user.groups.filter(name='profile:person_intermediate').exists():
+            return serializers.IntermediatePersonSerializer
+        return serializers.BasicPersonSerializer 
 
     def get_queryset(self):
         queryset = Person.objects.get_queryset()
@@ -45,16 +59,30 @@ class PersonByCpfViewSet(generics.ListAPIView):
     def list(self, request):
         # obtenha a lista de resultados usando o queryset do viewset
         queryset = self.get_queryset()
-        """ unregistered_people_condition = ~Q(registers__system_label__contains='CORTEX PESSOA')
-        unregistered_people = queryset.filter(unregistered_people_condition)
-        if unregistered_people.exists():
-            tasks.cortex_registry_list(username=request.user.username, person_list=unregistered_people, cpf=request.query_params.get('cpf')) """
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        cpf = self.request.query_params.get('cpf')
+        try:
+            person_cortex = helpers_cortex.process_cortex_consult(username=request.user.username, cpf=cpf)
+            documents = helpers_cortex.validate_document(number=cpf)
+            if documents is None or len(documents) == 0:
+                logger.info('Without documents - {}'.format(documents))
+                helpers_cortex.create_person_and_document(person_cortex)
+            else:
+                logger.info('With documents - {}'.format(documents))
+                helpers_cortex.update_registers(documents, person_cortex)
+        except Exception as e:
+            logger.error('Error while serialize person_cortex - {}'.format(e))
+            return Response(status=500)
+            """ unregistered_people_condition = ~Q(registers__system_label__contains='CORTEX PESSOA')
+            unregistered_people = queryset.filter(unregistered_people_condition)
+            if unregistered_people.exists():
+                tasks.cortex_registry_list(username=request.user.username, person_list=unregistered_people, cpf=request.query_params.get('cpf')) """
+        finally:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
 
 
 class AddPersonListView(generics.ListCreateAPIView):
-    permission_classes = [DjangoObjectPermissions]
+    permission_classes = [DjangoObjectPermissions, DjangoModelPermissions]
     serializer_class = serializers.PersonSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at', 'updated_at']
@@ -62,15 +90,19 @@ class AddPersonListView(generics.ListCreateAPIView):
     queryset = Person.objects.all()
 
     def get_serializer_class(self):
-        if self.request.method in ['GET']:
-            return list_serializers.PersonListSerializer
         if self.request.method in ['POST']:
             return serializers.PersonSerializer
-        return serializers.Default
+        elif self.request.user.groups.filter(name='profile:person_advanced').exists():
+            return list_serializers.PersonListSerializer
+        elif self.request.user.groups.filter(name='profile:person_intermediate').exists():
+            return list_serializers.IntermediatePersonListSerializer
+        return list_serializers.BasicPersonListSerializer 
 
-    @action(detail=True, methods=['GET'])
+    @action(detail=True, methods=['GET'], permission_classes=DjangoObjectPermissions)
     def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
+        self.permission_classes = [DjangoModelPermissions]
+        # queryset = self.filter_queryset(self.get_queryset())
+        queryset = get_objects_for_user(self.request.user, 'person.view_person')
 
         page = self.paginate_queryset(queryset)
         if page is not None:

@@ -29,27 +29,20 @@ def process_cortex_consult(username, cpf=None):
 
 def update_registers(documents, person_cortex):
     for document in documents:
-        print('Document - {}'.format( document))
         people = document.person_set.all()
         if people:
             for person in people:
-                print('pessoa')
-                print(person)
                 models.RegistryCortex.objects.update_or_create(person_cortex=person_cortex, person=person)
-        else:
-            print('Sem pessoas')
 
 def validate_document(number):
     try:
         documents = Document.objects.filter(number=number)
-        print('documents: {}'.format(len(documents)))
         return documents
     except Exception as e:
         logger.error('Error while getting document in bacinf - {}'.format(e))
         return None
 
 def create_person_and_document(person_cortex):
-    print('aqui')
     try:
         person = Person.objects.create()
         document = Document(number=person_cortex.numeroCPF,
@@ -60,10 +53,8 @@ def create_person_and_document(person_cortex):
         document.save()
         person.documents.add(document)
         person.save()
-        registry = models.RegistryCortex.objects.create(person_cortex=person_cortex, person=person)
-        print(registry.person_cortex)
-        for registry in person.registers.all():
-            print(registry.uuid)
+        models.RegistryCortex.objects.create(person_cortex=person_cortex, person=person)
+
     except Exception as e:
         logger.error('Error while create person and document on bacinf - {}'.format(e))
         return None

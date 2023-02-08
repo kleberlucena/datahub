@@ -1,6 +1,7 @@
 from datetime import date
 from rest_framework import generics, status
 from rest_framework.decorators import action
+from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -27,6 +28,7 @@ birthdate = openapi.Parameter('birthdate', openapi.IN_QUERY, description="param 
 
 class PersonRetrieveView(generics.RetrieveAPIView):
     queryset = PersonCortex.objects.all()
+    permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
     serializer_class = PersonCortexSerializer
     # for key
     lookup_field = 'uuid'
@@ -39,6 +41,7 @@ class PersonRetrieveView(generics.RetrieveAPIView):
 
 class PessoaByCpfViewSet(generics.GenericAPIView):
     queryset = PersonCortex.objects.all()
+    permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
     serializer_class = PersonCortexSerializer
 
     @swagger_auto_schema()
@@ -51,10 +54,8 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
             person_cortex = helpers.process_cortex_consult(username=username, cpf=cpf)
             documents = helpers.validate_document(number=cpf)
             if documents is None or len(documents) == 0:
-                print('sem documentos')
                 helpers.create_person_and_document(person_cortex)
             else:
-                print('Com documentos')
                 helpers.update_registers(documents, person_cortex)
             instance = get_object_or_404(PersonCortex, numeroCPF=cpf)
             serializer = self.get_serializer(instance)
@@ -63,65 +64,6 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
             logger.error('Error while serialize person_cortex - {}'.format(e))
             return Response(status=500)
 
-        """ try:
-            person_cortex = PersonCortex.objects.get(numeroCPF=cpf)
-        except PersonCortex.DoesNotExist:
-            person_cortex = None
-        except Exception as e:
-            logger.error('Error while getting personcortex local - {}'.format(e))
-        try:
-            if person_cortex is None:
-                person_json = portalCortexService.get_person_by_cpf(username=username, cpf=cpf)
-                value = person_json['numeroCPF']
-                person_cortex, created = PersonCortex.objects.update_or_create(
-                        numeroCPF=value, defaults={**person_json},
-                    )
-                if created:
-                    print('Criado')
-                    person = Person.objects.create()
-                    document = Document(number=person_cortex.numeroCPF,
-                                name=person_cortex.nomeCompleto,
-                                birth_date=person_cortex.dataNascimento,
-                                mother=person_cortex.nomeMae,
-                                type=DocumentType.objects.get(label="CPF"))
-                    document.save()
-                    person.documents.add(document)
-                    person.save()
-                    Registry.objects.create(system_label="CORTEX PESSOA", system_uuid=person_cortex.uuid, person=person)
-            elif person_cortex.updated_at.date() < date.today():
-                person_json = portalCortexService.get_person_by_cpf(username=username, cpf=cpf)
-                id = person_cortex.id
-                value = person_json['numeroCPF']
-                person_cortex, created = PersonCortex.objects.update_or_create(
-                        numeroCPF=value, id=id, defaults={**person_json},
-                    )
-        except Exception as e:
-            logger.error('Error while getting personcortex on cortex repository - {}'.format(e))
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        try:
-            lista = Registry.objects.filter(system_uuid=person_cortex.uuid)
-            if lista is None or len(lista) == 0:        
-                person = Person.objects.create()
-                document = Document(number=person_cortex.numeroCPF,
-                                    name=person_cortex.nomeCompleto,
-                                    birth_date=person_cortex.dataNascimento,
-                                    mother=person_cortex.nomeMae,
-                                    type=DocumentType.objects.get(label="CPF"))
-                document.save()
-                person.documents.add(document)
-                person.save()
-                Registry.objects.create(system_label="CORTEX PESSOA", system_uuid=person_cortex.uuid, person=person)
-        except Exception as e:
-            logger.error('Error while getting or add Registry - {}'.format(e))
-
-        try:
-            instance = get_object_or_404(PersonCortex, numeroCPF=cpf)
-            serializer = self.get_serializer(instance)
-            return Response(serializer.data)
-        except Exception as e:
-            logger.error('Error while serialize person_cortex - {}'.format(e))
-            return Response(status=500) """
 
     def get_queryset(self):
         return PersonCortex.objects.all()
@@ -129,6 +71,7 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
 
 class PessoaByBirthdateViewSet(generics.ListAPIView):
     queryset = PersonCortex.objects.all()
+    permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
     serializer_class = PersonCortexSerializer
 
     @swagger_auto_schema(method='get', manual_parameters=[name, birthdate])
@@ -153,6 +96,7 @@ class PessoaByBirthdateViewSet(generics.ListAPIView):
 
 class PessoaByMotherViewSet(generics.ListAPIView):
     queryset = PersonCortex.objects.all()
+    permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
     serializer_class = PersonCortexSerializer
 
     @swagger_auto_schema(method='get', manual_parameters=[name, mother_name])

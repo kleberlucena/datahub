@@ -1,3 +1,4 @@
+import logging
 from dataclasses import fields
 from numpy import source
 from rest_framework import serializers
@@ -10,6 +11,9 @@ from apps.person.models import *
 from apps.document.models import Document, DocumentImage
 from apps.document.api.serializers import DocumentImageSerializer
 from apps.image.models import Image
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 class DocumentLegacySerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
     permissions = serializers.SerializerMethodField('_get_permissions')
@@ -34,7 +38,7 @@ class DocumentLegacySerializer(WritableNestedModelSerializer, serializers.ModelS
         try:
             images_data = validated_data.pop('images')
         except Exception as e:
-            print(f'Error images; {e}')
+            logger.error('Error while validate images - {}'.format(e))
 
         document = Document.objects.create(**validated_data)
 
@@ -110,7 +114,6 @@ class FaceLegacySerializer(serializers.ModelSerializer):
 
         created_at = validated_data.pop('created_at')
         updated_at = validated_data.pop('updated_at')
-        print(created_at)
         instance = Face.objects.create(**validated_data, created_at=created_at, updated_at=updated_at)
         return instance
 

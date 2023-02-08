@@ -38,6 +38,27 @@ class VehicleAlertCortexSerializer(serializers.ModelSerializer):
                 return True
             except Exception as e:
                 return False
+            
+
+class IntermediateVehicleAlertCortexSerializer(serializers.ModelSerializer):
+    imagem = Base64ImageField(required=False, allow_null=True)
+
+    class Meta:
+        model = VehicleAlertCortex
+        fields = ('uuid', 'latitudeOcorrencia', 'longitudeOcorrencia', 'latitudePassagem', 'longitudePassagem',
+                  'imagem', 'dataPassagem', 'unidadeRegistroBo', 'nomeDeclarante', 'sitOcrId', 'dataOcorrencia',
+                  'municipioPlaca',	'municipioLocal', 'telefoneContato', 'ufPlaca', 'numeroBo', 'ufLocal',
+                  'localPassagem', 'dddContato', 'sisId', 'historicoOcorrencia', 'idMovimento', 'placa', 'created_at')         
+
+
+class BasicVehicleAlertCortexSerializer(serializers.ModelSerializer):
+    imagem = Base64ImageField(required=False, allow_null=True)
+
+    class Meta:
+        model = VehicleAlertCortex
+        fields = ('uuid', 'latitudePassagem', 'longitudePassagem', 'imagem', 'dataPassagem', 'sitOcrId', 'dataOcorrencia',
+                  'municipioPlaca',	'municipioLocal', 'telefoneContato', 'ufPlaca', 'numeroBo', 'ufLocal',
+                  'localPassagem', 'dddContato', 'sisId', 'historicoOcorrencia', 'idMovimento', 'placa', 'created_at')         
 
 
 class PersonAlertCortexSerializer(serializers.ModelSerializer):
@@ -61,9 +82,37 @@ class PersonAlertCortexSerializer(serializers.ModelSerializer):
             return False
 
 
+class IntermediatePersonAlertCortexSerializer(serializers.ModelSerializer):
+    foto = Base64ImageField(required=False, allow_null=True)
+
+    class Meta:
+        model = PersonAlertCortex
+        fields = ('uuid', 'uf',	'cpf', 'nome', 'nomeMae', 'foto', 'lat', 'long', 'estado', 'situacao', 'sistema',
+                  'municipio', 'historico', 'dataHora', 'dataNascimento', 'local', 'anoBO', 'numeroOcorrencia',
+                  'dataHoraOcorrencia', 'municipioOcorrencia', 'ufOcorrencia', 'unidadeOcorrencia', 'sisID', 'sitID', 'created_at')
+
+
+class BasicPersonAlertCortexSerializer(serializers.ModelSerializer):
+    foto = Base64ImageField(required=False, allow_null=True)
+
+    class Meta:
+        model = PersonAlertCortex
+        fields = ('uuid', 'uf',	'cpf', 'nome', 'nomeMae', 'foto', 'lat', 'long', 'estado', 'situacao', 'sistema',
+                  'municipio', 'historico', 'dataHora', 'dataNascimento', 'local', 'anoBO', 'numeroOcorrencia',
+                  'dataHoraOcorrencia', 'municipioOcorrencia', 'ufOcorrencia', 'unidadeOcorrencia', 'created_at')
+
+
 class AlertCortexPolymorphicSerializer(PolymorphicSerializer):
     model_serializer_mapping = {
         AlertCortex: AlertCortexSerializer,
         VehicleAlertCortex: VehicleAlertCortexSerializer,
         PersonAlertCortex: PersonAlertCortexSerializer
+    }
+
+
+class BasicAlertCortexPolymorphicSerializer(PolymorphicSerializer):
+    model_serializer_mapping = {
+        AlertCortex: AlertCortexSerializer,
+        VehicleAlertCortex: BasicVehicleAlertCortexSerializer,
+        PersonAlertCortex: BasicPersonAlertCortexSerializer
     }

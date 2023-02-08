@@ -91,6 +91,8 @@ INSTALLED_APPS = [
     'apps.document',
     'apps.alert',
     'apps.bnmp',
+    'apps.vehicle',
+    'apps.watermark',
 
 ]
 MIDDLEWARE = [
@@ -270,9 +272,10 @@ WATERMARK_ACTIVE = env('WATERMARK_ACTIVE')
 WATERMARK_HOST = env('WATERMARK_HOST')
 WATERMARK_SECRET = env('WATERMARK_SECRET')
 
-# Watermark from services -> imgproxy
-SERVICES_HOST = env('SERVICES_HOST')
-SERVICES_SECRET = env('SERVICES_SECRET')
+# Services 
+SERVICES_URL = env('SERVICES_URL')
+SERVICES_ENDPOINT_MARK = env('SERVICES_ENDPOINT_MARK')
+SERVICES_TOKEN = env('SERVICES_TOKEN')
 
 # Global login required middleware
 PUBLIC_VIEWS = [
@@ -308,5 +311,6 @@ if DEBUG:
     MINIO_CONSISTENCY_CHECK_ON_START = False
     MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = False
     MINIO_USE_HTTPS = False
-    INSTALLED_APPS.append('debug_toolbar')  # module to debug
-    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+    # INSTALLED_APPS.append('debug_toolbar')  # module to debug
+    # MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append('rest_framework.authentication.SessionAuthentication')

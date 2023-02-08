@@ -1,11 +1,16 @@
+import logging 
 from rest_framework import serializers
-
-from apps.document.models import Document, DocumentImage, DocumentType
 from drf_extra_fields.fields import Base64ImageField
 from drf_writable_nested import WritableNestedModelSerializer
 from django.shortcuts import get_object_or_404
 from guardian.shortcuts import get_perms
+
 from base import helpers
+from apps.document.models import Document, DocumentImage, DocumentType
+from apps.watermark import helpers as watermark_helpers
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 
 class DocumentImageSerializer(serializers.ModelSerializer):
@@ -17,20 +22,20 @@ class DocumentImageSerializer(serializers.ModelSerializer):
     large = serializers.SerializerMethodField('_get_large', read_only=True)
 
     def _get_medium(self, object):
-        return helpers.get_image_variation(self, object, 'medium')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.medium.url, request.user.id)
 
     def _get_large(self, object):
-        return helpers.get_image_variation(self, object, 'large')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.large.url, request.user.id)
 
     def _get_thumbnail(self, object):
-        return helpers.get_image_variation(self, object, 'thumbnail')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.thumbnail.url, request.user.id)
 
     def _get_image_path(self, object):
         request = self.context.get('request', None)
-        if request:
-            img_name = object.file.name
-            old_url = object.file.storage.url(img_name)
-            return helpers.get_watermark_url(old_url, request.user.username)
+        return watermark_helpers.handle(object.file.url, request.user.id)
 
     def _get_permissions(self, document_image_object):
         request = self.context.get('request', None)
@@ -48,7 +53,8 @@ class DocumentImageListSerializer(serializers.ModelSerializer):
     thumbnail = serializers.SerializerMethodField('_get_thumbnail', read_only=True)
 
     def _get_thumbnail(self, object):
-        return helpers.get_image_variation(self, object, 'thumbnail')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.thumbnail.url, request.user.id)
 
     def _get_permissions(self, document_image_object):
         request = self.context.get('request', None)
@@ -88,7 +94,7 @@ class DocumentSerializer(WritableNestedModelSerializer, serializers.ModelSeriali
         try:
             images_data = validated_data.pop('images')
         except Exception as e:
-            print(f'Error images; {e}')
+            logger.error('Error while validate images - {}'.format(e))
 
         document = Document.objects.create(**validated_data)
 
