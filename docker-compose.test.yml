@@ -38,6 +38,7 @@ services:
       - GRAYLOG_HTTP_ENDPOINT=$STAGE_GRAYLOG_HTTP_ENDPOINT
       - PORTAL_TOKEN=$STAGE_PORTAL_TOKEN
       - PORTAL_URL_BASE=$STAGE_PORTAL_URL_BASE
+      - SELF_URL_BASE=$STAGE_SELF_URL_BASE
 
     command: bash -c -o pipefail "python manage.py migrate 
       && python manage.py collectstatic --noinput
