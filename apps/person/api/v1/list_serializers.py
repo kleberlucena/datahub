@@ -11,6 +11,7 @@ from .serializers import RegistryCortexSerializer, PhysicalSerializer
 from apps.address.api.serializers import AddressSerializer
 from apps.image.api.serializers import ImageListSerializer
 from apps.document.api.serializers import DocumentListSerializer
+from apps.watermark import helpers as watermark_helpers
 
 
 class FaceListSerializer(serializers.ModelSerializer):
@@ -18,7 +19,8 @@ class FaceListSerializer(serializers.ModelSerializer):
     permissions = serializers.SerializerMethodField('_get_permissions')
 
     def _get_thumbnail(self, object):
-        return helpers.get_image_variation(self, object, 'thumbnail')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.thumbnail.url, request.user.id)
 
     def _get_permissions(self, object):
         request = self.context.get('request', None)
@@ -53,7 +55,8 @@ class TattooListSerializer(serializers.ModelSerializer):
     thumbnail = serializers.SerializerMethodField('_get_thumbnail', read_only=True)
 
     def _get_thumbnail(self, object):
-        return helpers.get_image_variation(self, object, 'thumbnail')
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.thumbnail.url, request.user.id)
 
     def _get_permissions(self, object):
         request = self.context.get('request', None)

@@ -157,7 +157,7 @@ def get_url_momentum(uuid):
 def create_temporary_url(user_id):
     '''Cria url temporária para a imagem a ser processada'''
     uuid_generated = uuid.uuid4()
-    url_temp = "/watermark/{}/{}/".format(user_id, uuid_generated)
+    url_temp = "{}/watermark/{}/{}/".format(settings.SELF_URL_BASE, user_id, uuid_generated)
     time_expiration = datetime.now() + timedelta(minutes=10)
     new_temporary_url = models.TemporaryURL.objects.create(uuid=uuid_generated, temporary_url=url_temp,
                                                            expiration_date=time_expiration)
