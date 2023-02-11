@@ -157,7 +157,7 @@ def get_url_momentum(uuid):
 def create_temporary_url(user_id):
     '''Cria url temporária para a imagem a ser processada'''
     uuid_generated = uuid.uuid4()
-    url_temp = "{}/watermark/{}/{}/".format(settings.SELF_URL_BASE, user_id, uuid_generated)
+    url_temp = "{}/api/v1/watermark/{}/{}/".format(settings.SELF_URL_BASE, user_id, uuid_generated)
     time_expiration = datetime.now() + timedelta(minutes=10)
     new_temporary_url = models.TemporaryURL.objects.create(uuid=uuid_generated, temporary_url=url_temp,
                                                            expiration_date=time_expiration)
@@ -201,7 +201,8 @@ def get_mark_user(user_id):
         except Exception as e:
             if models.UserMark.objects.all().count() > 0:
                 last_mark = models.UserMark.objects.latest('created_at')
-                new_mark_text = last_mark.mark_text[-5]
+                mark_int = int(last_mark.mark_text[-5]) + 1
+                new_mark_text = str(mark_int).zfill(5)
                 new_mark = "B" + new_mark_text
             else:
                 new_mark = "B00000"
