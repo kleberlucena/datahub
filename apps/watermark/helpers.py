@@ -201,7 +201,7 @@ def get_mark_user(user_id):
         except Exception as e:
             if models.UserMark.objects.all().count() > 0:
                 last_mark = models.UserMark.objects.latest('created_at')
-                mark_int = int(last_mark.mark_text[-5]) + 1
+                mark_int = int(last_mark.mark_text[-5:]) + 1
                 new_mark_text = str(mark_int).zfill(5)
                 new_mark = "B" + new_mark_text
             else:
