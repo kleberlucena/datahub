@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, filters, mixins, status
@@ -40,7 +40,9 @@ class PersonByCpfViewSet(generics.ListAPIView):
             return serializers.PersonSerializer
         elif self.request.user.groups.filter(name='profile:person_intermediate').exists():
             return serializers.IntermediatePersonSerializer
-        return serializers.BasicPersonSerializer 
+        elif self.request.user.groups.filter(name='profile:person_basic').exists():
+            return serializers.BasicPersonSerializer
+        raise Http404 
 
     def get_queryset(self):
         queryset = Person.objects.get_queryset()
@@ -96,13 +98,15 @@ class AddPersonListView(generics.ListCreateAPIView):
             return list_serializers.PersonListSerializer
         elif self.request.user.groups.filter(name='profile:person_intermediate').exists():
             return list_serializers.IntermediatePersonListSerializer
-        return list_serializers.BasicPersonListSerializer 
+        elif self.request.user.groups.filter(name='profile:person_basic').exists():
+            return list_serializers.BasicPersonListSerializer
+        raise Http404  
 
     @action(detail=True, methods=['GET'], permission_classes=DjangoObjectPermissions)
     def list(self, request, *args, **kwargs):
         self.permission_classes = [DjangoModelPermissions]
-        # queryset = self.filter_queryset(self.get_queryset())
-        queryset = get_objects_for_user(self.request.user, 'person.view_person')
+        queryset = self.filter_queryset(self.get_queryset())
+        # queryset = get_objects_for_user(self.request.user, 'person.view_person')
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -205,9 +209,18 @@ class AddPersonListView(generics.ListCreateAPIView):
 class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     queryset = Person.objects.all()
     permission_classes = [DjangoObjectPermissions]
-    serializer_class = serializers.PersonSerializer
+    # serializer_class = serializers.PersonSerializer
     # for key
     lookup_field = 'uuid'
+
+    def get_serializer_class(self):
+        if self.request.user.groups.filter(name='profile:person_advanced').exists():
+            return serializers.PersonSerializer
+        elif self.request.user.groups.filter(name='profile:person_intermediate').exists():
+            return serializers.IntermediatePersonSerializer
+        elif self.request.user.groups.filter(name='profile:person_basic').exists():
+            return serializers.BasicPersonSerializer
+        raise Http404
 
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Person, uuid=self.kwargs['uuid'])
