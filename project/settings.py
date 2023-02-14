@@ -13,9 +13,6 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 DEBUG = env('DEBUG', default=False)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-#Project PORT
-PROJECT_PORT = env("PROJECT_PORT")
-
 ALLOWED_HOSTS = list(
     filter(lambda h: h != '', env('ALLOWED_HOSTS', default='*').split(','))
 )
@@ -24,6 +21,8 @@ ALLOWED_HOSTS = list(
 CORS_URLS_REGEX = r'^/api/v1/.*$'
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
+    #Project PORT
+    PROJECT_PORT = env("PROJECT_PORT")
 else:
     CORS_ALLOWED_ORIGINS = [
         "https://portal.stage.pm.pb.gov.br",
