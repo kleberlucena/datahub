@@ -5,7 +5,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.http import JsonResponse
 import logging
+import json
 
 from social_django.utils import psa
 
@@ -57,8 +60,13 @@ def exchange_token(request, backend):
 
         if user:
             if user.is_active:
-                token, _ = Token.objects.get_or_create(user=user)
-                return Response({'token': token.key})
+                # token, _ = Token.objects.get_or_create(user=user)
+                # return Response({'token': token.key})
+                refresh = RefreshToken.for_user(user)
+                response = {"refresh": str(refresh), "access": str(refresh.access_token)}
+                print("##############################")
+                print(response)
+                return JsonResponse(response)
             else:
                 # user is not active; at some point they deleted their account,
                 # or were banned by a superuser. They can't just log in with their

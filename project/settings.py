@@ -67,6 +67,7 @@ INSTALLED_APPS = [
 
     # Libraries
     'rest_framework',
+    'rest_framework_simplejwt',
     'drf_yasg',
     'rest_framework.authtoken',  # if you use the same token auth system as the example
     'social_django',  # python social auth
@@ -190,6 +191,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
@@ -269,11 +271,6 @@ MINIO_BUCKET_CHECK_ON_SAVE = True
 # Config debug toolbar
 INTERNAL_IPS = ["127.0.0.1",]
 
-# Watermark from imgproxy
-WATERMARK_ACTIVE = env('WATERMARK_ACTIVE')
-WATERMARK_HOST = env('WATERMARK_HOST')
-WATERMARK_SECRET = env('WATERMARK_SECRET')
-
 # Services 
 SERVICES_URL = env('SERVICES_URL')
 SERVICES_ENDPOINT_MARK = env('SERVICES_ENDPOINT_MARK')
@@ -288,6 +285,7 @@ PUBLIC_PATHS = [
     r'^/health_check',
     r'^/auth/logout/',
     r'^/api/v1/.*',
+    r'/api/token/refresh/',
     r'^/watermark/.*',
     r'^/admin/.*',  # Descomentar para expor rota adminitrativa (só para ajustes de configurações do keycloak)
 ]
