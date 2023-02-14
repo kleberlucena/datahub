@@ -1,6 +1,7 @@
 from django.http import HttpResponse, Http404, HttpResponseForbidden
 from django.core.exceptions import PermissionDenied
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from rest_framework import generics, status
 from rest_framework.decorators import action
 from rest_framework.permissions import DjangoObjectPermissions, DjangoModelPermissions
@@ -48,24 +49,18 @@ class VehicleByPlacaViewSet(generics.GenericAPIView):
         vehicle_cortex = None
 
         try:
-            vehicle_cortex = helpers.process_cortex_consult(username=username, placa=placa.upper())
+            helpers.process_cortex_consult(username=username, placa=placa.upper())
             
         except Exception as e:
             logger.error('Error while process_cortex_consult vehicle_cortex - {}'.format(e))
         try:
-            """  instance = get_object_or_404(VehicleCortex, placa=placa.upper())
-            serializer = self.get_serializer()
-            if serializer is None:
-                return HttpResponseForbidden()
-            else:
-                serializer.serialize(instance)
-                return Response(serializer.data) """
-            instance = get_object_or_404(VehicleCortex, placa=placa.upper())
-            serializer = self.get_serializer(instance)
-
+            vehicle_cortex = get_object_or_404(VehicleCortex, placa=placa.upper())
+        except Exception as e:
+            logger.error('Error while get vehicle_cortex - {}'.format(e))
+            return Response(status=400)
+        try:
+            serializer = self.get_serializer(vehicle_cortex)
             return Response(serializer.data)
-        except (TypeError, AttributeError):
-                return Response(HttpResponseForbidden)
         except Exception as e:
             logger.error('Error while serialize vehicle_cortex - {}'.format(e))
-            return Response(status=500)
+            return Response(status=403)
