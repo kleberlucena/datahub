@@ -5,12 +5,19 @@ import logging
 
 from apps.cortex import services
 from .models import PersonRenavamCortex, VehicleCortex, RegistryVehicleCortex
+from apps.person.models import Person
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
 portalCortexService = services.PortalCortexService()
 
+
+def update_registers(person_renavam_cortex):
+    people = Person.objects.filter(documents__number__icontains=person_renavam_cortex.numeroDocumento)
+    if people:
+        for person in people:
+           RegistryVehicleCortex.objects.update_or_create(person_renavam_cortex=person_renavam_cortex, person=person)
 
 @shared_task(bind=True)
 def cortex_consult(self, username, placa=False, chassi=False, renavam=False, numeroMotor=False, cpf=False):
@@ -116,6 +123,7 @@ def add_arrendatario(arrendatario_json):
                 nome = arrendatario_json["nomeArrendatario"],
                 endereco = arrendatario_json["enderecoArrendatario"]
             )
+            update_registers(person_renavam_cortex=person)
             return person
     except Exception as e:
         logger.error('Error while add arrendatario vehicle from cortex - {}'.format(e))
@@ -133,6 +141,7 @@ def add_proprietario(proprietario_json):
                 nome = proprietario_json["nomeProprietario"],
                 endereco = proprietario_json["enderecoProprietario"]
             )
+            update_registers(person_renavam_cortex=person)
             return person
     except Exception as e:
         logger.error('Error while add proprietario vehicle from cortex - {}'.format(e))
@@ -150,6 +159,7 @@ def add_possuidor(possuidor_json):
                 nome = possuidor_json["nomePossuidor"],
                 endereco = possuidor_json["enderecoPossuidor"]
             )
+            update_registers(person_renavam_cortex=person)
             return person
     except Exception as e:
         logger.error('Error while add possuidor vehicle from cortex - {}'.format(e))

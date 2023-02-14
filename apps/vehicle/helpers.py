@@ -1,7 +1,7 @@
 import logging
 from datetime import date
 
-from apps.vehicle.models import VehicleCortex
+from apps.vehicle.models import VehicleCortex, PersonRenavamCortex, RegistryVehicleCortex
 from . import tasks
 
 # Get an instance of a logger

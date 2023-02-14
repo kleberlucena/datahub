@@ -118,7 +118,7 @@ class VehicleCortex(Base, SoftDelete):
 
 
 class RegistryVehicleCortex(Registry):
-    person_renavan_cortex = models.ForeignKey(PersonRenavamCortex, related_name='registers', on_delete=models.CASCADE)
+    person_renavam_cortex = models.ForeignKey(PersonRenavamCortex, related_name='registers', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.uuid}"

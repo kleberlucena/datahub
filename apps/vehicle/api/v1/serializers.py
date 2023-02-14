@@ -39,7 +39,7 @@ class RegistryVehicleSerializer(serializers.ModelSerializer):
 
 
 class PersonRenavamCortexSerializer(serializers.ModelSerializer):
-    registers = RegistryVehicleSerializer(many=True, read_only=True)
+    registers = RegistryVehicleSerializer(many=True, read_only=True, required=False, allow_null=True)
 
     class Meta:
         model = PersonRenavamCortex
@@ -47,7 +47,7 @@ class PersonRenavamCortexSerializer(serializers.ModelSerializer):
 
 
 class ProprietarioRenavamCortexSerializer(serializers.ModelSerializer):
-    registers = RegistryVehicleSerializer(many=True, read_only=True)
+    registers = RegistryVehicleSerializer(many=True, read_only=True, required=False, allow_null=True)
     tipoDocumentoProprietario = serializers.CharField(source="tipoDocumento")
     numeroDocumentoProprietario = serializers.CharField(source="numeroDocumento")
     nomeProprietario = serializers.CharField(source="nome")
@@ -59,7 +59,7 @@ class ProprietarioRenavamCortexSerializer(serializers.ModelSerializer):
 
 
 class PossuidorRenavamCortexSerializer(serializers.ModelSerializer):
-    registers = RegistryVehicleSerializer(many=True, read_only=True)
+    registers = RegistryVehicleSerializer(many=True, read_only=True, required=False, allow_null=True)
     tipoDocumentoPossuidor = serializers.CharField(source="tipoDocumento")
     numeroDocumentoPossuidor = serializers.CharField(source="numeroDocumento")
     nomePossuidor = serializers.CharField(source="nome")
@@ -71,7 +71,7 @@ class PossuidorRenavamCortexSerializer(serializers.ModelSerializer):
 
 
 class ArrendatarioRenavamCortexSerializer(serializers.ModelSerializer):
-    registers = RegistryVehicleSerializer(many=True, read_only=True)
+    registers = RegistryVehicleSerializer(many=True, read_only=True, required=False, allow_null=True)
     tipoDocumentoArrendatario = serializers.CharField(source="tipoDocumento")
     numeroDocumentoArrendatario = serializers.CharField(source="numeroDocumento")
     nomeArrendatario = serializers.CharField(source="nome")
@@ -142,10 +142,10 @@ class VehicleCortexSerializer(serializers.ModelSerializer):
                   "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo", 
                   "origemPossuidor", "quaantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
                   "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao", 
-                  "proprietario", "possuidor", "arrendatario",)
+                  "proprietario", "possuidor", "arrendatario")
 
 
-class VehicleIntermediateCortexSerializer(serializers.ModelSerializer):
+class IntermediateVehicleCortexSerializer(serializers.ModelSerializer):
     dataEmplacamento = serializers.DateTimeField(format=None)
     proprietario = ProprietarioIntermediateRenavamCortexSerializer(read_only=True, required=False)
     possuidor = PossuidorIntermediateRenavamCortexSerializer(read_only=True, required=False)
@@ -164,10 +164,10 @@ class VehicleIntermediateCortexSerializer(serializers.ModelSerializer):
                   "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo", 
                   "origemPossuidor", "quaantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
                   "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao", 
-                  "proprietario", "possuidor", "arrendatario",)
+                  "proprietario", "possuidor", "arrendatario")
 
 
-class VehicleBasicCortexSerializer(serializers.ModelSerializer):
+class BasicVehicleCortexSerializer(serializers.ModelSerializer):
     dataEmplacamento = serializers.DateTimeField(format=None)
     proprietario = ProprietarioBasicRenavamCortexSerializer(read_only=True, required=False)
 
