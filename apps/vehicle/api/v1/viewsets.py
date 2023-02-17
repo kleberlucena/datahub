@@ -15,6 +15,7 @@ import logging
 from apps.vehicle.api.v1.serializers import VehicleCortexSerializer, IntermediateVehicleCortexSerializer, BasicVehicleCortexSerializer, VehicleSerializer
 from apps.vehicle.models import VehicleCortex, Vehicle
 from apps.vehicle import helpers
+from apps.person.api.v1.serializers import PersonSerializer
 
 signal = openapi.Parameter('signal', openapi.IN_QUERY, description="param signal do veículo", type=openapi.TYPE_STRING)
 chassi = openapi.Parameter('chassi', openapi.IN_QUERY, description="param chassi do veículo", type=openapi.TYPE_STRING)
@@ -71,6 +72,101 @@ class VehicleByPlacaViewSet(generics.GenericAPIView):
             return Response(status=403)
         
 
+class VehicleRetrieveDestroyView(generics.RetrieveDestroyAPIView):
+    queryset = Vehicle.objects.all()
+    permission_classes = [DjangoObjectPermissions]
+    serializer_class = VehicleSerializer
+    # for key
+    lookup_field = 'uuid'
+
+    def destroy(self, request, *args, **kwargs):
+        instance = get_object_or_404(Vehicle, uuid=self.kwargs['uuid'])
+        user = self.request.user
+        unauthorized = HttpResponse("Unauthorized", status=401)
+        if user.has_perm('vehicle.delete_vehicle', instance):
+            """ for image in instance.images.all():
+                if not user.has_perm('image_vehicle.delete_image_vehicle', image):
+                    return unauthorized """
+            if instance.soft_delete_cascade_policy_action(deleted_by=user):
+                return HttpResponse("Deleted", status=204)
+            else:
+                return HttpResponse("Deleting", status=202)
+        else:
+            return unauthorized
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = get_object_or_404(Vehicle, uuid=kwargs['uuid'])
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except Exception as e:
+            logger.error('Error while serialize Vehicle - {}'.format(e))
+            return Response(status=403)
+        
+
+class VehicleAddOwnerView(mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Vehicle.objects.all()
+    serializer_class = PersonSerializer
+    permission_classes = [DjangoObjectPermissions]
+
+    def perform_create(self, serializer):
+        try:
+            vehicle = get_object_or_404(Vehicle, uuid=self.kwargs['uuid'])
+            print(vehicle)
+            if serializer.is_valid():
+                instance = serializer.save(created_by=self.request.user)
+                print(instance)
+                assign_perm("change_person", self.request.user, instance)
+                assign_perm("delete_person", self.request.user, instance)
+                vehicle.save(owner=instance)
+                return Response(serializer.data, status=201)
+            return Response(serializer.errors, status=400)
+        except Exception as e:
+            logger.error('Error while serialize Vehicle - {}'.format(e))
+        return Response(serializer.errors, status=500)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class VehicleAddCustodianView(mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Vehicle.objects.all()
+    serializer_class = PersonSerializer
+    permission_classes = [DjangoObjectPermissions]
+
+    def perform_create(self, serializer):
+        vehicle = get_object_or_404(Vehicle, uuid=self.kwargs['uuid'])
+        if serializer.is_valid():
+            instance = serializer.save(created_by=self.request.user)
+            assign_perm("change_person", self.request.user, instance)
+            assign_perm("delete_person", self.request.user, instance)
+            vehicle.save(custodian=instance)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class VehicleAddRenterView(mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Vehicle.objects.all()
+    serializer_class = PersonSerializer
+    permission_classes = [DjangoObjectPermissions]
+
+    def perform_create(self, serializer):
+        vehicle = get_object_or_404(Vehicle, uuid=self.kwargs['uuid'])
+        if serializer.is_valid():
+            instance = serializer.save(created_by=self.request.user)
+            assign_perm("change_person", self.request.user, instance)
+            assign_perm("delete_person", self.request.user, instance)
+            vehicle.save(renter=instance)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
 class AddVehicleListView(generics.ListCreateAPIView):
     # permission_classes = [DjangoModelPermissions]
     serializer_class = VehicleSerializer
@@ -108,16 +204,18 @@ class AddVehicleListView(generics.ListCreateAPIView):
             return Response(status=403)
 
     def create(self, request, *args, **kwargs):
+        """ try:
+            data = request.data.copy()
+            owner = data.pop('owner', None)
+            print(owner)
+            custodian = data.pop('custodian', None)
+            renter = data.pop('renter', None)
+        except Exception as e:
+            logger.error('Error while pop request data - {}'.format(e)) """
         try:
             print(request.data)
-            print("*****************************")
-            print("*****************************")
-            print("*****************************")
-            print("*****************************")
-            print("*****************************")
-            print("*****************************")
             serializer = self.get_serializer(data=request.data)
-            # serializer.is_valid(raise_exception=True)
+            serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from guardian.shortcuts import get_perms
 from drf_extra_fields.fields import Base64ImageField
+from drf_writable_nested import WritableNestedModelSerializer
 
 from apps.vehicle.models import PersonRenavamCortex, VehicleCortex, Vehicle, VehicleImage
 from base.models import Registry
@@ -230,9 +231,9 @@ class VehicleImageSerializer(serializers.ModelSerializer):
         
 
 class VehicleSerializer(serializers.ModelSerializer):    
-    owner = PersonToVehicleSerializer(read_only=True, required=False, allow_null=True)
-    custodian = PersonToVehicleSerializer(read_only=True, required=False, allow_null=True)
-    renter = PersonToVehicleSerializer(read_only=True, required=False, allow_null=True)
+    owner = PersonToVehicleSerializer(required=False, allow_null=True)
+    custodian = PersonToVehicleSerializer(required=False, allow_null=True)
+    renter = PersonToVehicleSerializer(required=False, allow_null=True)
     images = VehicleImageSerializer(many=True, required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
 
