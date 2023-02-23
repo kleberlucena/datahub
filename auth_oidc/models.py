@@ -8,12 +8,11 @@ from allauth.socialaccount.models import SocialAccount
 logger = logging.getLogger(__name__)
 
 
-def synchronize_oidc_permission(sender, user, request, **kwargs):
+def synchronize_permissions(user, mapa_of_permissions):
     try:
-        data = SocialAccount.objects.get(user_id=user.id).extra_data['resource_access']
-        clients = list(data.keys())  # get the first key in the dictionary which is the client
+        clients = list(mapa_of_permissions.keys())  # get the first key in the dictionary which is the client
         if 'bacinf' in clients:
-            roles_oidc = data['bacinf']['roles']
+            roles_oidc = mapa_of_permissions['bacinf']['roles']
         else:
             roles_oidc = []
         roles_oidc_to_analyze = []  # list of roles not existing in user
@@ -45,7 +44,15 @@ def synchronize_oidc_permission(sender, user, request, **kwargs):
         logger.info("[synchronize_oidc_permission] - sync permissions")
 
     except Exception as err:
+        logger.error(f"Failed when trying to sync permissions: {err}")
+
+
+def synchronize_oidc_permission(sender, user, request, **kwargs):
+    try:
+        data = SocialAccount.objects.get(user_id=user.id).extra_data['resource_access']
+        synchronize_permissions(user, data)
+    except Exception as err:
         logger.error(f"Failed when trying to sync permissions with provider: {err}", exc_info=True)
-
-
+        
+        
 user_logged_in.connect(synchronize_oidc_permission)
