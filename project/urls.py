@@ -7,25 +7,59 @@ from rest_framework import permissions
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from drf_yasg import openapi
+from drf_yasg.generators import OpenAPISchemaGenerator
 from drf_yasg.views import get_schema_view
+
+
+class CustomOpenAPISchemaGenerator(OpenAPISchemaGenerator):
+  def get_schema(self, request=None, public=False):
+    """Generate a :class:`.Swagger` object with custom tags"""
+
+    swagger = super().get_schema(request, public)
+    swagger.tags = [
+        {
+            "name": "person",
+            "description": "everything about People API"
+        },
+        {
+            "name": "bnmp",
+            "description": "everything about People BNMP CORTEX API"
+        },
+        {
+            "name": "vehicle",
+            "description": "everything about Vehicle API and Vehicle CORTEX API"
+        },
+        {
+            "name": "cortex",
+            "description": "everything about People CORTEX API"
+        },
+        {
+            "name": "alert",
+            "description": "everything about People and Vehicle alerts CORTEX API"
+        },
+    ]
+
+    return swagger
+  
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Snippets API",
-      default_version='v1',
-      description="Test description",
+      title="Bacinf API",
+      default_version='V1',
+      description="Base Central de Informações",
       terms_of_service="https://www.google.com/policies/terms/",
       contact=openapi.Contact(email="contact@snippets.local"),
       license=openapi.License(name="BSD License"),
    ),
-   public=True,
+   generator_class=CustomOpenAPISchemaGenerator,
    permission_classes=[permissions.DjangoModelPermissions],
+   public=True,
 )
 
 
-urlpatterns = [
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+urlpatterns = [   
+    path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
@@ -36,9 +70,9 @@ urlpatterns = [
     path('api/v1/alert/', include('apps.alert.api.v1.urls'), name='alert'),
     path('api/v1/bnmp/', include('apps.bnmp.api.v1.urls'), name='bnmp'),
     path('api/v1/cortex/', include('apps.cortex.api.v1.urls'), name='cortex'),
-    path('api/v1/document/', include('apps.document.api.urls'), name='person'),
+    path('api/v1/document/', include('apps.document.api.urls'), name='document'),
     path('api/v1/person/', include('apps.person.api.v1.urls'), name='person'),
-    path('api/v1/vehicle/', include('apps.vehicle.api.v1.urls'), name='person'),
+    path('api/v1/vehicle/', include('apps.vehicle.api.v1.urls'), name='vehicle'),
     path('api/v1/image/', include('apps.image.api.urls'), name='image'),
     path('api/v1/address/', include('apps.address.api.urls'), name='address'),
     path('api/v1/legacy/', include('apps.person.api.legacy.urls'), name='legacy'),

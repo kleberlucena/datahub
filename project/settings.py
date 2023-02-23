@@ -5,7 +5,6 @@ import environ
 import requests
 import json
 
-
 # Environment variable definitions
 env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env()

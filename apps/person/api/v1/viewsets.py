@@ -72,15 +72,13 @@ class PersonByCpfViewSet(generics.ListAPIView):
                 logger.info('With documents - {}'.format(documents))
                 helpers_cortex.update_registers(documents, person_cortex)
         except Exception as e:
-            logger.error('Error while serialize person_cortex - {}'.format(e))
-            return Response(status=500)
-            """ unregistered_people_condition = ~Q(registers__system_label__contains='CORTEX PESSOA')
-            unregistered_people = queryset.filter(unregistered_people_condition)
-            if unregistered_people.exists():
-                tasks.cortex_registry_list(username=request.user.username, person_list=unregistered_people, cpf=request.query_params.get('cpf')) """
-        finally:
+            logger.error('Error while get person_cortex - {}'.format(e))
+        try:
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
+        except Exception as e:
+            logger.error('Error while serialize person - {}'.format(e))
+            return Response(status=403)
 
 
 class AddPersonListView(generics.ListCreateAPIView):
@@ -107,21 +105,28 @@ class AddPersonListView(generics.ListCreateAPIView):
         self.permission_classes = [DjangoModelPermissions]
         queryset = self.filter_queryset(self.get_queryset())
         # queryset = get_objects_for_user(self.request.user, 'person.view_person')
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        try:
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+        
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            logger.error('Error while serialize person - {}'.format(e))
+            return Response(status=403)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        except Exception as e:
+            logger.error('Error while serialize person - {}'.format(e))
+            return Response(status=403)
 
     def get_queryset(self):
         """
@@ -197,6 +202,8 @@ class AddPersonListView(generics.ListCreateAPIView):
         except Exception as e:
             return Response(serializer.errors, status=400)
 
+    @swagger_auto_schema(method='post')
+    @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -222,6 +229,8 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
             return serializers.BasicPersonSerializer
         raise Http404
 
+    @swagger_auto_schema()
+    @action(detail=True, methods=['DELETE'])
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         user = self.request.user
@@ -243,10 +252,16 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
         else:
             return unauthorized
 
+    @swagger_auto_schema()
+    @action(detail=True, methods=['GET'])
     def retrieve(self, request, *args, **kwargs):
-        instance = get_object_or_404(Person, uuid=kwargs['uuid'])
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+        try:
+            instance = get_object_or_404(Person, uuid=kwargs['uuid'])
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except Exception as e:
+            logger.error('Error while serialize person - {}'.format(e))
+            return Response(status=403)
 
 
 class PersonAddFaceView(mixins.CreateModelMixin, generics.GenericAPIView):
@@ -264,6 +279,8 @@ class PersonAddFaceView(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
+    @swagger_auto_schema(method='post')
+    @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -283,6 +300,8 @@ class PersonAddTattooView(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
+    @swagger_auto_schema(method='post')
+    @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -302,6 +321,8 @@ class PersonAddNicknameView(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
+    @swagger_auto_schema(method='post')
+    @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -321,6 +342,8 @@ class PersonAddPhysicalView(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
+    @swagger_auto_schema(method='post')
+    @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -341,6 +364,8 @@ class PersonAddDocumentView(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
+    @swagger_auto_schema(method='post')
+    @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -360,6 +385,8 @@ class PersonAddAddressView(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
+    @swagger_auto_schema(method='post')
+    @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -380,6 +407,8 @@ class PersonAddImageView(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
+    @swagger_auto_schema(method='post')
+    @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -405,6 +434,8 @@ class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         else:
             return Response(serializer.errors, status=400)
 
+    @swagger_auto_schema(method='DELETE')
+    @action(detail=True, methods=['DELETE'])
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Face, uuid=kwargs['uuid'])
         user = self.request.user
@@ -413,6 +444,11 @@ class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             return Response('Success', status=204)
         else:
             return Response('Unauthorized', status=401)
+        
+    @swagger_auto_schema(method='DELETE')
+    @action(detail=True, methods=['DELETE'])
+    def post(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 class TattooUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
