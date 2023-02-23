@@ -8,10 +8,19 @@ from . import tasks
 logger = logging.getLogger(__name__)
 
 
-def process_cortex_consult(username, placa=None):
+def process_cortex_consult(username, placa=None, chassi=None, renavam=None, motor=None, cpf=None):
     retorno = None
     try:
-        vehicle_cortex = VehicleCortex.objects.get(placa=placa)
+        vehicle_cortex = None
+        if placa:
+            vehicle_cortex = VehicleCortex.objects.get(placa=placa)
+        elif chassi:
+            vehicle_cortex = VehicleCortex.objects.get(chassi=chassi)
+        elif renavam:
+            vehicle_cortex = VehicleCortex.objects.get(renavam=renavam)
+        elif motor:
+            vehicle_cortex = VehicleCortex.objects.get(numeroMotor=motor)
+            
         retorno = vehicle_cortex
         if vehicle_cortex.updated_at.date() < date.today():
             if vehicle_cortex.proprietario:
@@ -32,8 +41,8 @@ def process_cortex_consult(username, placa=None):
             if vehicle_cortex.arrendatario:
                 tasks.update_registers(vehicle_cortex.arrendatario)
     except VehicleCortex.DoesNotExist:        
-        try:          
-            vehicle_cortex = tasks.cortex_consult(username=username, placa=placa)
+        try:
+            vehicle_cortex = tasks.cortex_consult(username=username, placa=placa, chassi=chassi, renavam=renavam, motor=motor)
             if vehicle_cortex:
                 retorno = vehicle_cortex
         except Exception as e:

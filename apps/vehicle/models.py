@@ -135,7 +135,7 @@ class RegistryVehicleCortex(Registry):
 
 class Vehicle(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    signal = models.CharField(max_length=11, unique=True)
+    signal = models.CharField('PLACA', max_length=11, unique=True)
     chassi = models.CharField(max_length=30, null=True, blank=True)
     brand = models.CharField(max_length=100, null=True, blank=True)
     model = models.CharField(max_length=100, null=True, blank=True)

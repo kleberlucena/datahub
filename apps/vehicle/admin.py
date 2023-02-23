@@ -47,7 +47,7 @@ class VehicleCortexAdmin(admin.ModelAdmin):
 
 @admin.register(models.Vehicle)
 class VehicleAdmin(SafeDeleteAdmin, GuardedModelAdmin):
-    list_display = (highlight_deleted, "highlight_deleted_field", 'signal', 'chassi', 'owner', 'custodian', 'renter', 'uuid', 'created_at', 'updated_at',
+    list_display = ('uuid', 'signal', 'chassi', 'owner', 'custodian', 'renter', 'uuid', 'created_at', 'updated_at',
                     "created_by", "deleted_by") + SafeDeleteAdmin.list_display
     inlines = [ ImagesAdminInLine, ]
     list_filter = ("created_by", SafeDeleteAdminFilter,) + SafeDeleteAdmin.list_filter

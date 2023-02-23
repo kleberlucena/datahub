@@ -20,14 +20,25 @@ def update_registers(person_renavam_cortex):
            RegistryVehicleCortex.objects.update_or_create(person_renavam_cortex=person_renavam_cortex, person=person)
 
 @shared_task(bind=True)
-def cortex_consult(self, username, placa=False, chassi=False, renavam=False, numeroMotor=False, cpf=False):
+def cortex_consult(self, username, placa=False, chassi=False, renavam=False, motor=False, cpf=False):
     """
     Get service and consult person on cortex by params
     """
     retorno = None
     try:
         logger.info('Task cortex_consult processing')
-        vehicle_json = portalCortexService.get_vehicle_by_placa(placa=placa, username=username)
+        vehicle_json = None
+        if placa:
+            vehicle_json = portalCortexService.get_vehicle_by_placa(placa=placa, username=username)
+        elif chassi:
+            vehicle_json = portalCortexService.get_vehicle_by_chassi(chassi=chassi, username=username)
+        elif renavam:
+            vehicle_json = portalCortexService.get_vehicle_by_renavam(renavam=renavam, username=username)
+        elif motor:
+            vehicle_json = portalCortexService.get_vehicle_by_motor(motor=motor, username=username)
+        elif cpf:
+            vehicle_json = portalCortexService.get_vehicle_by_proprietario(cpf=cpf, username=username)
+
         if vehicle_json:
             del vehicle_json["nomeArrendatario"]
             del vehicle_json["nomePossuidor"]
