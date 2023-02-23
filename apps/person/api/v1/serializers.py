@@ -15,8 +15,25 @@ from apps.address.api.serializers import AddressSerializer
 from apps.image.api.serializers import ImageSerializer
 from apps.document.api.serializers import DocumentSerializer
 from apps.watermark import helpers as watermark_helpers
+from apps.vehicle.models import RegistryVehicleCortex, PersonRenavamCortex
 
 
+class PersonToRenavamCortexSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PersonRenavamCortex
+        fields = ("numeroCPF", "nomeCompleto", "nomeMae", "dataNascimento", "municipioNaturalidade", "ufNaturalidade", "paisNascimento", "situacaoCadastral", "identificadorResidenteExterior")
+
+                  
+class RegistryVehicleCortexSerializer(serializers.ModelSerializer):
+    person_renavam_cortex = PersonToRenavamCortexSerializer(read_only=True, required=False, allow_null=True)
+    person_uuid = serializers.CharField(source="person")
+
+    class Meta:
+        model = RegistryVehicleCortex
+        fields =  ('uuid', 'created_at', 'updated_at', 'person_uuid', 'person_renavam_cortex')
+
+                  
 class PersonToCortexSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -47,7 +64,8 @@ class RegistryPersonSerializer(serializers.ModelSerializer):
 class RegistryPolymorphicSerializer(PolymorphicSerializer):
     model_serializer_mapping = {
         Registry: RegistryPersonSerializer,
-        RegistryCortex: RegistryCortexSerializer
+        RegistryCortex: RegistryCortexSerializer,
+        RegistryVehicleCortex: RegistryVehicleCortexSerializer
     } 
 
 

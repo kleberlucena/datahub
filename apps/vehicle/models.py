@@ -1,7 +1,12 @@
 import uuid
 from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import User
+from stdimage.models import StdImageField
+from django_minio_backend import MinioBackend
 
 from base.models import Base, SoftDelete, Registry
+from apps.person.models import Person
 
 
 class PersonRenavamCortex(Base, SoftDelete):
@@ -118,7 +123,7 @@ class VehicleCortex(Base, SoftDelete):
 
 
 class RegistryVehicleCortex(Registry):
-    person_renavan_cortex = models.ForeignKey(PersonRenavamCortex, related_name='registers', on_delete=models.CASCADE)
+    person_renavam_cortex = models.ForeignKey(PersonRenavamCortex, related_name='registers', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.uuid}"
@@ -126,3 +131,95 @@ class RegistryVehicleCortex(Registry):
     class Meta:
         verbose_name = "Registro Veículo Cortex"
         verbose_name_plural = "Registros Veículo Cortex"
+
+
+class Vehicle(Base, SoftDelete):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    signal = models.CharField('PLACA', max_length=11, unique=True)
+    chassi = models.CharField(max_length=30, null=True, blank=True)
+    brand = models.CharField(max_length=100, null=True, blank=True)
+    model = models.CharField(max_length=100, null=True, blank=True)
+    color = models.CharField(max_length=100, null=True, blank=True)
+    category = models.CharField(max_length=100, null=True, blank=True)
+    model_year = models.CharField(max_length=5, null=True, blank=True)
+    manufactured_year = models.CharField(max_length=5, null=True, blank=True)
+    owner = models.ForeignKey(Person, related_name='own_vehicles', null=True,
+        blank=True, on_delete=models.RESTRICT)
+    custodian = models.ForeignKey(Person, related_name='custody_vehicles', null=True,
+        blank=True, on_delete=models.RESTRICT)
+    renter = models.ForeignKey(Person, related_name='rented_vehicles', null=True,
+        blank=True, on_delete=models.RESTRICT)
+    updated_by = models.ForeignKey(
+        User,
+        related_name='vehicle_updater',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    created_by = models.ForeignKey(
+        User,
+        related_name='vehicle_creator',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    def soft_delete_cascade_policy_action(self, **kwargs):
+        # Insert here custom pre delete logic
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action()
+        # Insert here custom post delete logic
+
+    def __str__(self):
+        return f"{self.uuid}"
+
+    class Meta:
+        verbose_name = "Veículo"
+        verbose_name_plural = "Veículos"
+    
+
+class VehicleImage(Base, SoftDelete):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    label = models.CharField("descrição", max_length=255)
+    file = StdImageField(
+        'imagem de veículo',
+        storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
+        upload_to='vehicles_imagens',
+        variations={
+            'large': {'width': 720, 'height': 720, 'crop': True},
+            'medium': {'width': 480, 'height': 480, 'crop': True},
+            'thumbnail': {'width': 128, 'height': 128, 'crop': True},
+        }, delete_orphans=True, blank=True
+    )
+    vehicle = models.ForeignKey(Vehicle, related_name='images', on_delete=models.CASCADE)
+    updated_by = models.ForeignKey(
+        User,
+        related_name='images_vehicle_updater',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    created_by = models.ForeignKey(
+        User,
+        related_name='images_vehicle_creator',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    def soft_delete_cascade_policy_action(self, **kwargs):
+        # Insert here custom pre delete logic
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action()
+        # Insert here custom post delete logic
+
+    def __str__(self):
+        return f"{self.uuid}"
+
+    class Meta:
+        verbose_name = "Imagem de Veículo"
+        verbose_name_plural = "Imagens de Veículo"

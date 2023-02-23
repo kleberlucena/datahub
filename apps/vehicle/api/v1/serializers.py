@@ -1,9 +1,13 @@
 from rest_framework import serializers
 from guardian.shortcuts import get_perms
-from apps.vehicle.models import PersonRenavamCortex, VehicleCortex
+from drf_extra_fields.fields import Base64ImageField
+from drf_writable_nested import WritableNestedModelSerializer
+
+from apps.vehicle.models import PersonRenavamCortex, VehicleCortex, Vehicle, VehicleImage
 from base.models import Registry
 from apps.person.models import Person
 from apps.person.api.v1.serializers import NicknameSerializer, FaceSerializer, AddressSerializer, ImageSerializer, TattooSerializer, PhysicalSerializer, DocumentSerializer
+from apps.watermark import helpers as watermark_helpers
 
 
 class PersonToVehicleSerializer(serializers.ModelSerializer):
@@ -39,7 +43,7 @@ class RegistryVehicleSerializer(serializers.ModelSerializer):
 
 
 class PersonRenavamCortexSerializer(serializers.ModelSerializer):
-    registers = RegistryVehicleSerializer(many=True, read_only=True)
+    registers = RegistryVehicleSerializer(many=True, read_only=True, required=False, allow_null=True)
 
     class Meta:
         model = PersonRenavamCortex
@@ -47,7 +51,7 @@ class PersonRenavamCortexSerializer(serializers.ModelSerializer):
 
 
 class ProprietarioRenavamCortexSerializer(serializers.ModelSerializer):
-    registers = RegistryVehicleSerializer(many=True, read_only=True)
+    registers = RegistryVehicleSerializer(many=True, read_only=True, required=False, allow_null=True)
     tipoDocumentoProprietario = serializers.CharField(source="tipoDocumento")
     numeroDocumentoProprietario = serializers.CharField(source="numeroDocumento")
     nomeProprietario = serializers.CharField(source="nome")
@@ -59,7 +63,7 @@ class ProprietarioRenavamCortexSerializer(serializers.ModelSerializer):
 
 
 class PossuidorRenavamCortexSerializer(serializers.ModelSerializer):
-    registers = RegistryVehicleSerializer(many=True, read_only=True)
+    registers = RegistryVehicleSerializer(many=True, read_only=True, required=False, allow_null=True)
     tipoDocumentoPossuidor = serializers.CharField(source="tipoDocumento")
     numeroDocumentoPossuidor = serializers.CharField(source="numeroDocumento")
     nomePossuidor = serializers.CharField(source="nome")
@@ -71,7 +75,7 @@ class PossuidorRenavamCortexSerializer(serializers.ModelSerializer):
 
 
 class ArrendatarioRenavamCortexSerializer(serializers.ModelSerializer):
-    registers = RegistryVehicleSerializer(many=True, read_only=True)
+    registers = RegistryVehicleSerializer(many=True, read_only=True, required=False, allow_null=True)
     tipoDocumentoArrendatario = serializers.CharField(source="tipoDocumento")
     numeroDocumentoArrendatario = serializers.CharField(source="numeroDocumento")
     nomeArrendatario = serializers.CharField(source="nome")
@@ -142,10 +146,10 @@ class VehicleCortexSerializer(serializers.ModelSerializer):
                   "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo", 
                   "origemPossuidor", "quaantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
                   "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao", 
-                  "proprietario", "possuidor", "arrendatario",)
+                  "proprietario", "possuidor", "arrendatario")
 
 
-class VehicleIntermediateCortexSerializer(serializers.ModelSerializer):
+class IntermediateVehicleCortexSerializer(serializers.ModelSerializer):
     dataEmplacamento = serializers.DateTimeField(format=None)
     proprietario = ProprietarioIntermediateRenavamCortexSerializer(read_only=True, required=False)
     possuidor = PossuidorIntermediateRenavamCortexSerializer(read_only=True, required=False)
@@ -164,10 +168,10 @@ class VehicleIntermediateCortexSerializer(serializers.ModelSerializer):
                   "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo", 
                   "origemPossuidor", "quaantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
                   "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao", 
-                  "proprietario", "possuidor", "arrendatario",)
+                  "proprietario", "possuidor", "arrendatario")
 
 
-class VehicleBasicCortexSerializer(serializers.ModelSerializer):
+class BasicVehicleCortexSerializer(serializers.ModelSerializer):
     dataEmplacamento = serializers.DateTimeField(format=None)
     proprietario = ProprietarioBasicRenavamCortexSerializer(read_only=True, required=False)
 
@@ -183,3 +187,64 @@ class VehicleBasicCortexSerializer(serializers.ModelSerializer):
                   "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo", 
                   "origemPossuidor", "quaantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
                   "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao", "proprietario")
+
+
+class VehicleImageSerializer(serializers.ModelSerializer):
+    file = Base64ImageField(write_only=True)    
+    path_image = serializers.SerializerMethodField('_get_image_path', read_only=True)
+    thumbnail = serializers.SerializerMethodField('_get_thumbnail', read_only=True)
+    medium = serializers.SerializerMethodField('_get_medium', read_only=True)
+    large = serializers.SerializerMethodField('_get_large', read_only=True)
+    permissions = serializers.SerializerMethodField('_get_permissions')
+
+    def _get_medium(self, object):
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.medium.url, request.user.id)
+
+    def _get_large(self, object):
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.large.url, request.user.id)
+
+    def _get_thumbnail(self, object):
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.thumbnail.url, request.user.id)
+
+    def _get_image_path(self, object):
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.url, request.user.id)
+
+    def _get_permissions(self, object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, object)
+            return perms
+
+    class Meta:
+        model = VehicleImage
+        fields = ('uuid', 'label', 'file', 'path_image', 'large', 'medium', 'thumbnail', 'created_at', 'updated_at', 'permissions')
+
+    """ def create(self, validated_data):
+        file=validated_data.pop('file')
+        label=validated_data.pop('label')
+        vehicle=validated_data.pop('vehicle')
+        return VehicleImage.objects.create(vehicle=vehicle, label=label, file=file) """
+        
+
+class VehicleSerializer(serializers.ModelSerializer):    
+    owner = PersonToVehicleSerializer(required=False, allow_null=True)
+    custodian = PersonToVehicleSerializer(required=False, allow_null=True)
+    renter = PersonToVehicleSerializer(required=False, allow_null=True)
+    images = VehicleImageSerializer(many=True, required=False)
+    permissions = serializers.SerializerMethodField('_get_permissions')
+
+    def _get_permissions(self, object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, object)
+            return perms
+
+    class Meta:
+        model = Vehicle
+        fields = ("uuid", "chassi", "signal", "brand", "model", "color", "category", "model_year",
+                  "manufactured_year", "owner", "custodian", "renter", "images", "created_at", "updated_at", "permissions")
+                  
