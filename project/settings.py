@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import List, Tuple
 import environ
 
-
 # Environment variable definitions
 env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env()

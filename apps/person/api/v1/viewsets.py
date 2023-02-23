@@ -53,7 +53,7 @@ class PersonByCpfViewSet(generics.ListAPIView):
             has_cpf = Q(documents__number__icontains=document_number)
         return queryset.filter(has_cpf)
 
-    @swagger_auto_schema(tags=["v1/person"], method='get', manual_parameters=[cpf])
+    @swagger_auto_schema(method='get', manual_parameters=[cpf])
     @action(detail=True, methods=['GET'])
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -202,12 +202,12 @@ class AddPersonListView(generics.ListCreateAPIView):
         except Exception as e:
             return Response(serializer.errors, status=400)
 
-    @swagger_auto_schema(tags=["v1/person"], method='post')
+    @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
-    @swagger_auto_schema(tags=["v1/person"], method='get', manual_parameters=[document_name, document_number, nickname_label])
+    @swagger_auto_schema(method='get', manual_parameters=[document_name, document_number, nickname_label])
     @action(detail=True, methods=['GET'])
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -229,7 +229,7 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
             return serializers.BasicPersonSerializer
         raise Http404
 
-    @swagger_auto_schema(tags=["v1/person"], method='delete')
+    @swagger_auto_schema()
     @action(detail=True, methods=['DELETE'])
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Person, uuid=self.kwargs['uuid'])
@@ -252,7 +252,7 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
         else:
             return unauthorized
 
-    @swagger_auto_schema(tags=["v1/person"], method='get')
+    @swagger_auto_schema()
     @action(detail=True, methods=['GET'])
     def retrieve(self, request, *args, **kwargs):
         try:
@@ -279,7 +279,7 @@ class PersonAddFaceView(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-    @swagger_auto_schema(tags=["v1/person"], method='post')
+    @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -300,7 +300,7 @@ class PersonAddTattooView(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-    @swagger_auto_schema(tags=["v1/person"], method='post')
+    @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -321,7 +321,7 @@ class PersonAddNicknameView(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-    @swagger_auto_schema(tags=["v1/person"], method='post')
+    @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -342,7 +342,7 @@ class PersonAddPhysicalView(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-    @swagger_auto_schema(tags=["v1/person"], method='post')
+    @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -364,7 +364,7 @@ class PersonAddDocumentView(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-    @swagger_auto_schema(tags=["v1/person"], method='post')
+    @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -385,7 +385,7 @@ class PersonAddAddressView(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-    @swagger_auto_schema(tags=["v1/person"], method='post')
+    @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -407,7 +407,7 @@ class PersonAddImageView(mixins.CreateModelMixin, generics.GenericAPIView):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-    @swagger_auto_schema(tags=["v1/person"], method='post')
+    @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -434,6 +434,8 @@ class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         else:
             return Response(serializer.errors, status=400)
 
+    @swagger_auto_schema(method='DELETE')
+    @action(detail=True, methods=['DELETE'])
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Face, uuid=kwargs['uuid'])
         user = self.request.user
@@ -442,6 +444,11 @@ class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             return Response('Success', status=204)
         else:
             return Response('Unauthorized', status=401)
+        
+    @swagger_auto_schema(method='DELETE')
+    @action(detail=True, methods=['DELETE'])
+    def post(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 class TattooUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
