@@ -43,10 +43,11 @@ TEMPLATES_MARKS = {
 
 # Watermark
 def handle(image_url, user_id):
-    url_temporary = create_temporary_url(user_id)
-    tasks.process_watermark(user_id, url_temporary.pk, image_url)
-    return url_temporary.temporary_url
-    
+    uuid_temp = uuid.uuid4()
+    url_temp = "{}/api/v1/watermark/{}/{}/".format(settings.SELF_URL_BASE, user_id, uuid_temp)
+    url_temporary = tasks.create_temporary_url_task.delay(user_id, uuid_temp, url_temp)
+    tasks.process_watermark.delay(user_id, uuid_temp, image_url)
+    return url_temp
     
 def calculate_positions_mark_custom(img_width, img_height):
     """
@@ -154,13 +155,14 @@ def get_url_momentum(uuid):
         return data
 
 
-def create_temporary_url(user_id):
+def create_temporary_url(user_id, uuid_temp=None, url_temp=None):
     '''Cria url temporária para a imagem a ser processada'''
-    uuid_generated = uuid.uuid4()
-    url_temp = "{}/api/v1/watermark/{}/{}/".format(settings.SELF_URL_BASE, user_id, uuid_generated)
+    if not uuid_temp:
+        uuid_temp = uuid.uuid4()
+    if not url_temp:
+        url_temp = "{}/api/v1/watermark/{}/{}/".format(settings.SELF_URL_BASE, user_id, uuid_temp)
     time_expiration = datetime.now() + timedelta(minutes=10)
-    new_temporary_url = models.TemporaryURL.objects.create(uuid=uuid_generated, temporary_url=url_temp,
-                                                           expiration_date=time_expiration)
+    new_temporary_url = models.TemporaryURL.objects.create(uuid=uuid_temp, temporary_url=url_temp, expiration_date=time_expiration)
     return new_temporary_url
 
 

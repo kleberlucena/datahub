@@ -10,7 +10,11 @@ from . import models
 logger = logging.getLogger(__name__)
 
 @shared_task(bind=True)
-def process_watermark(self, user_id, url_pk, image_url):
+def create_temporary_url_task(self, user_id, uuid_temp=None, url_temp=None):
+    return helpers.create_temporary_url(user_id, uuid_temp, url_temp)
+
+@shared_task(bind=True)
+def process_watermark(self, user_id, uuid_url, image_url):
     # verify mark passando o user
     mark = helpers.get_mark_user(user_id)
     img = helpers.add_watermark_image(image_url, mark)
@@ -19,10 +23,9 @@ def process_watermark(self, user_id, url_pk, image_url):
     img.save(buf, format='JPEG', quality=90)
     buf.seek(0)
 
-    url = models.TemporaryURL.objects.get(pk=url_pk)
-    url.photo.save("{}.jpg".format(url_pk), File(buf), save=True)
+    url = models.TemporaryURL.objects.get(uuid=uuid_url)
+    url.photo.save("{}.jpg".format(uuid_url), File(buf), save=True)
     
-
 @shared_task(bind=True)
 def deactivate_mark(self):
     user_mark_queryset = models.UserMark.objects.filter(active=True)()
@@ -30,7 +33,6 @@ def deactivate_mark(self):
     user_mark_queryset.update(active=False)
     logger.info('Deactivate all UserMark successfully')
     
-
 @shared_task(bind=True)
 def remove_temporary_url(self):
     models.TemporaryURL.objects.filter(expiration_date__lte=timezone.now()).delete()

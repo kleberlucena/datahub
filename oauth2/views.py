@@ -6,11 +6,15 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.settings import api_settings
 from django.http import JsonResponse
+import requests
 import logging
 import json
+import jwt
 
 from social_django.utils import psa
+from auth_oidc.models import synchronize_permissions
 
 
 # Get an instance of a logger
@@ -44,7 +48,8 @@ def exchange_token(request, backend):
             # this line, plus the psa decorator above, are all that's necessary to
             # get and populate a user object for any properly enabled/configured backend
             # which python-social-auth can handle.
-            user = request.backend.do_auth(serializer.validated_data['access_token'])
+            jwt_token = serializer.validated_data['access_token']
+            user = request.backend.do_auth(jwt_token)
         # except HTTPError as e:
         except Exception as e:
             # An HTTPError bubbled up from the request to the social auth provider.
@@ -60,18 +65,13 @@ def exchange_token(request, backend):
 
         if user:
             if user.is_active:
-                # token, _ = Token.objects.get_or_create(user=user)
-                # return Response({'token': token.key})
+                decoded_token = jwt.decode(jwt_token, key=settings.KEYCLOAK_SERVER_PUBLIC_KEY, algorithms=['RS256'], audience="account")
+                mapa_of_permissions = decoded_token['resource_access']
+                synchronize_permissions(user, mapa_of_permissions)
                 refresh = RefreshToken.for_user(user)
                 response = {"refresh": str(refresh), "access": str(refresh.access_token)}
-                print("##############################")
-                print(response)
                 return JsonResponse(response)
             else:
-                # user is not active; at some point they deleted their account,
-                # or were banned by a superuser. They can't just log in with their
-                # normal credentials anymore, so they can't log in with social
-                # credentials either.
                 return Response(
                     {'errors': {nfe: 'This user account is inactive'}},
                     status=status.HTTP_400_BAD_REQUEST,

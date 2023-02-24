@@ -37,6 +37,11 @@ class PersonRetrieveView(generics.RetrieveAPIView):
         instance = get_object_or_404(PersonCortex, uuid=kwargs['uuid'])
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+    
+    @swagger_auto_schema(method='get')
+    @action(detail=True, methods=['GET'])
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs) 
 
 
 class PessoaByCpfViewSet(generics.GenericAPIView):
