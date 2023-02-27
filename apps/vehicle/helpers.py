@@ -7,8 +7,14 @@ from . import tasks
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
+def process_cortex_consult_by_cpf(username, cpf=None):
+    try:
+        return tasks.cortex_consult(username=username, cpf=cpf)
+    except Exception as e:
+        logger.error('Error while consult vehicle by CPF - {}'.format(e))
+        return None
 
-def process_cortex_consult(username, placa=None, chassi=None, renavam=None, motor=None, cpf=None):
+def process_cortex_consult(username, placa=None, chassi=None, renavam=None, motor=None):
     retorno = None
     try:
         vehicle_cortex = None
@@ -20,26 +26,31 @@ def process_cortex_consult(username, placa=None, chassi=None, renavam=None, moto
             vehicle_cortex = VehicleCortex.objects.get(renavam=renavam)
         elif motor:
             vehicle_cortex = VehicleCortex.objects.get(numeroMotor=motor)
+        """  elif cpf:
+            vehicle_cortex = VehicleCortex.objects.filter(proprietario__numeroDocumento__icontains=cpf) """
+
+        if isinstance(vehicle_cortex, VehicleCortex):
+            if vehicle_cortex.updated_at.date() < date.today():
+                if vehicle_cortex.proprietario:
+                    tasks.update_registers(vehicle_cortex.proprietario)
+                if vehicle_cortex.possuidor:
+                    tasks.update_registers(vehicle_cortex.possuidor)
+                if vehicle_cortex.arrendatario:
+                    tasks.update_registers(vehicle_cortex.arrendatario)
+                logger.info('Request update...')
+                vehicle_updated = tasks.cortex_update(username=username, vehicle_cortex=vehicle_cortex)
+                if vehicle_updated:
+                    retorno = vehicle_updated
+            else:
+                if vehicle_cortex.proprietario:
+                    tasks.update_registers(vehicle_cortex.proprietario)
+                if vehicle_cortex.possuidor:
+                    tasks.update_registers(vehicle_cortex.possuidor)
+                if vehicle_cortex.arrendatario:
+                    tasks.update_registers(vehicle_cortex.arrendatario)
             
         retorno = vehicle_cortex
-        if vehicle_cortex.updated_at.date() < date.today():
-            if vehicle_cortex.proprietario:
-                tasks.update_registers(vehicle_cortex.proprietario)
-            if vehicle_cortex.possuidor:
-                tasks.update_registers(vehicle_cortex.possuidor)
-            if vehicle_cortex.arrendatario:
-                tasks.update_registers(vehicle_cortex.arrendatario)
-            logger.info('Request update...')
-            vehicle_updated = tasks.cortex_update(username=username, vehicle_cortex=vehicle_cortex)
-            if vehicle_updated:
-                retorno = vehicle_updated
-        else:
-            if vehicle_cortex.proprietario:
-                tasks.update_registers(vehicle_cortex.proprietario)
-            if vehicle_cortex.possuidor:
-                tasks.update_registers(vehicle_cortex.possuidor)
-            if vehicle_cortex.arrendatario:
-                tasks.update_registers(vehicle_cortex.arrendatario)
+        
     except VehicleCortex.DoesNotExist:        
         try:
             vehicle_cortex = tasks.cortex_consult(username=username, placa=placa, chassi=chassi, renavam=renavam, motor=motor)
