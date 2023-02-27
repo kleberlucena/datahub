@@ -2,7 +2,6 @@ from celery import shared_task
 from django.conf import settings
 from celery_progress.backend import ProgressRecorder
 import logging
-import json
 
 from apps.cortex import services
 from .models import PersonRenavamCortex, VehicleCortex, RegistryVehicleCortex
@@ -21,14 +20,7 @@ def update_registers(person_renavam_cortex):
         for person in people:
            RegistryVehicleCortex.objects.update_or_create(person_renavam_cortex=person_renavam_cortex, person=person)
 
-def update_registers(person_renavam_cortex):
-    people = Person.objects.filter(documents__number__icontains=person_renavam_cortex.numeroDocumento)
-    if people:
-        for person in people:
-           RegistryVehicleCortex.objects.update_or_create(person_renavam_cortex=person_renavam_cortex, person=person)
-
 @shared_task(bind=True)
-def cortex_consult(self, username, placa=False, chassi=False, renavam=False, motor=False, cpf=False):
 def cortex_consult(self, username, placa=False, chassi=False, renavam=False, motor=False, cpf=False):
     """
     Get service and consult person on cortex by params
@@ -85,7 +77,6 @@ def add_arrendatario(arrendatario_json):
                 endereco = arrendatario_json["enderecoArrendatario"]
             )
             update_registers(person_renavam_cortex=person)
-            update_registers(person_renavam_cortex=person)
             return person
     except Exception as e:
         logger.error('Error while add arrendatario vehicle from cortex - {}'.format(e))
@@ -104,7 +95,6 @@ def add_proprietario(proprietario_json):
                 endereco = proprietario_json["enderecoProprietario"]
             )
             update_registers(person_renavam_cortex=person)
-            update_registers(person_renavam_cortex=person)
             return person
     except Exception as e:
         logger.error('Error while add proprietario vehicle from cortex - {}'.format(e))
@@ -122,7 +112,6 @@ def add_possuidor(possuidor_json):
                 nome = possuidor_json["nomePossuidor"],
                 endereco = possuidor_json["enderecoPossuidor"]
             )
-            update_registers(person_renavam_cortex=person)
             update_registers(person_renavam_cortex=person)
             return person
     except Exception as e:

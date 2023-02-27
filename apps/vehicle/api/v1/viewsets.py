@@ -13,7 +13,7 @@ from guardian.shortcuts import assign_perm
 import logging
 
 from apps.vehicle.api.v1.serializers import VehicleCortexSerializer, IntermediateVehicleCortexSerializer, BasicVehicleCortexSerializer, VehicleSerializer
-from apps.vehicle.models import VehicleCortex, Vehicle
+from apps.vehicle.models import PersonRenavamCortex, VehicleCortex, Vehicle
 from apps.vehicle import helpers
 from apps.person.api.v1.serializers import PersonSerializer
 from apps.person.models import Person
@@ -27,6 +27,52 @@ cpf_renter = openapi.Parameter('cpf_renter', openapi.IN_QUERY, description="para
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
+
+
+class VehicleByCPFViewSet(generics.GenericAPIView):
+    model = VehicleCortex
+    serializer_class = VehicleCortexSerializer
+    permission_classes = [DjangoModelPermissions]
+    has_owner = Q()
+    has_custodian = Q()
+    has_renter = Q()
+
+    def get_serializer_class(self):
+        if self.request.user.groups.filter(name='profile:vehicle_advanced').exists():
+            return VehicleCortexSerializer
+        elif self.request.user.groups.filter(name='profile:vehicle_intermediate').exists():
+            return IntermediateVehicleCortexSerializer
+        elif self.request.user.groups.filter(name='profile:vehicle_basic').exists():
+            return BasicVehicleCortexSerializer
+        raise Http404
+
+    def get_queryset(self):
+        return self.model.objects.filter(self.has_owner | self.has_custodian | self.has_renter)
+
+    @swagger_auto_schema()
+    @action(detail=True, methods=['GET'], permission_classes=DjangoObjectPermissions)
+    def get(self, request, cpf):
+        username = request.user.username
+        vehicle_cortex = None
+
+        try:
+            helpers.process_cortex_consult_by_cpf(username=username, cpf=cpf)
+            
+        except Exception as e:
+            logger.error('Error while process_cortex_consult vehicle_cortex - {}'.format(e))
+        try:
+            self.has_owner = Q(proprietario__numeroDocumento__icontains=cpf)
+            self.has_custodian = Q(possuidor__numeroDocumento__icontains=cpf)
+            self.has_renter = Q(arrendatario__numeroDocumento__icontains=cpf)
+            vehicle_cortex = self.get_queryset()
+        except Exception as e:
+            logger.error('Error while get vehicle_cortex - {}'.format(e))
+        try:
+            serializer = self.get_serializer(vehicle_cortex, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            logger.error('Error while serialize vehicle_cortex - {}'.format(e))
+            return Response(status=403)
 
 
 class VehicleByMotorViewSet(generics.GenericAPIView):
@@ -53,12 +99,12 @@ class VehicleByMotorViewSet(generics.GenericAPIView):
         vehicle_cortex = None
 
         try:
-            helpers.process_cortex_consult(username=username, motor=motor)
+            helpers.process_cortex_consult(username=username, motor=motor.upper())
             
         except Exception as e:
             logger.error('Error while process_cortex_consult vehicle_cortex - {}'.format(e))
         try:
-            vehicle_cortex = get_object_or_404(VehicleCortex, numeroMotor=motor)
+            vehicle_cortex = get_object_or_404(VehicleCortex, numeroMotor=motor.upper())
         except Exception as e:
             logger.error('Error while get vehicle_cortex - {}'.format(e))
         try:
@@ -93,12 +139,12 @@ class VehicleByRenavamViewSet(generics.GenericAPIView):
         vehicle_cortex = None
 
         try:
-            helpers.process_cortex_consult(username=username, renavam=renavam)
+            helpers.process_cortex_consult(username=username, renavam=renavam.upper())
             
         except Exception as e:
             logger.error('Error while process_cortex_consult vehicle_cortex - {}'.format(e))
         try:
-            vehicle_cortex = get_object_or_404(VehicleCortex, renavam=renavam)
+            vehicle_cortex = get_object_or_404(VehicleCortex, renavam=renavam.upper())
         except Exception as e:
             logger.error('Error while get vehicle_cortex - {}'.format(e))
             return Response(status=400)
