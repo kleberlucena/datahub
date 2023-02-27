@@ -58,10 +58,9 @@ class VehicleByMotorViewSet(generics.GenericAPIView):
         except Exception as e:
             logger.error('Error while process_cortex_consult vehicle_cortex - {}'.format(e))
         try:
-            vehicle_cortex = get_object_or_404(VehicleCortex, motor=motor)
+            vehicle_cortex = get_object_or_404(VehicleCortex, numeroMotor=motor)
         except Exception as e:
             logger.error('Error while get vehicle_cortex - {}'.format(e))
-            return Response(status=400)
         try:
             serializer = self.get_serializer(vehicle_cortex)
             return Response(serializer.data)
