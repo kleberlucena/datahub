@@ -86,6 +86,7 @@ INSTALLED_APPS = [
 
     # Apps
     'base',
+    'apps.portal',
     'apps.cortex',
     'apps.person',
     'apps.image',
@@ -252,6 +253,8 @@ SOCIAL_AUTH_PIPELINE = (
 # Portal
 PORTAL_TOKEN = env('PORTAL_TOKEN')
 PORTAL_URL_BASE = env('PORTAL_URL_BASE')
+PORTAL_RELATIVE_URL_LIST_MILITARY=env('PORTAL_RELATIVE_URL_LIST_MILITARY')
+PORTAL_RELATIVE_URL_LIST_ENTITY=env('PORTAL_RELATIVE_URL_LIST_ENTITY')
 
 SELF_URL_BASE = env('SELF_URL_BASE')
 

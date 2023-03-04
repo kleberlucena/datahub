@@ -20,6 +20,10 @@ class DocumentImageSerializer(serializers.ModelSerializer):
     thumbnail = serializers.SerializerMethodField('_get_thumbnail', read_only=True)
     medium = serializers.SerializerMethodField('_get_medium', read_only=True)
     large = serializers.SerializerMethodField('_get_large', read_only=True)
+    entity = serializers.SerializerMethodField('_get_entity')
+    
+    def _get_entity(self, object):
+        return object.entity.name
 
     def _get_medium(self, object):
         request = self.context.get('request', None)
@@ -45,7 +49,7 @@ class DocumentImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DocumentImage
-        fields = ['uuid', 'file', 'path_image', 'large', 'medium', 'thumbnail', 'label', 'created_at', 'updated_at', 'permissions']
+        fields = ['uuid', 'file', 'path_image', 'large', 'medium', 'thumbnail', 'label', 'created_at', 'updated_at', 'entity', 'permissions']
 
 
 class DocumentImageListSerializer(serializers.ModelSerializer):
@@ -77,6 +81,10 @@ class DocumentTypeSerializer(serializers.ModelSerializer):
 class DocumentSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
     permissions = serializers.SerializerMethodField('_get_permissions')
     images = DocumentImageSerializer(many=True, required=False)
+    entity = serializers.SerializerMethodField('_get_entity')
+    
+    def _get_entity(self, object):
+        return object.entity.name
 
     def _get_permissions(self, document_object):
         request = self.context.get('request', None)
@@ -86,7 +94,7 @@ class DocumentSerializer(WritableNestedModelSerializer, serializers.ModelSeriali
 
     class Meta:
         model = Document
-        fields = ['uuid', 'number', 'name', 'birth_date', 'mother', 'father', 'type', 'images', 'created_at', 'updated_at', 'permissions']
+        fields = ['uuid', 'number', 'name', 'birth_date', 'mother', 'father', 'type', 'images', 'created_at', 'updated_at', 'entity', 'permissions']
 
     def create(self, validated_data):
         images_data = None

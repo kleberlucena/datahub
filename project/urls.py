@@ -77,6 +77,7 @@ urlpatterns = [
     path('api/v1/address/', include('apps.address.api.urls'), name='address'),
     path('api/v1/legacy/', include('apps.person.api.legacy.urls'), name='legacy'),
     path('api/v1/watermark/', include('apps.watermark.urls'), name='watermark'),
+    path('portal/', include('apps.portal.urls'), name='portal'),
     path('celery-progress/', include('celery_progress.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

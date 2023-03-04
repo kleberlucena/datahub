@@ -7,7 +7,16 @@ from django_minio_backend import MinioBackend
 
 from base.models import Base, SoftDelete, Registry
 from apps.person.models import Person
+from apps.portal.models import Entity, Military
 
+
+""" def get_entity_from_created_by(obj):
+    # Recupera a entity a partir do user que criou o objeto
+    user = obj.created_by
+    military = Military.objects.get(cpf=user.username)
+    entity = Entity.objects.get(id=military.entity.id)
+    return entity """
+    
 
 class PersonRenavamCortex(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -135,7 +144,7 @@ class RegistryVehicleCortex(Registry):
 
 class Vehicle(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    signal = models.CharField('PLACA', max_length=11, unique=True)
+    signal = models.CharField('PLACA', max_length=11, null=True, blank=True, unique=True)
     chassi = models.CharField(max_length=30, null=True, blank=True)
     brand = models.CharField(max_length=100, null=True, blank=True)
     model = models.CharField(max_length=100, null=True, blank=True)
@@ -160,6 +169,13 @@ class Vehicle(Base, SoftDelete):
         User,
         related_name='vehicle_creator',
         on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    entity = models.ForeignKey(
+        Entity, 
+        related_name='vehicles_entity', 
+        on_delete=models.PROTECT,
         null=True,
         blank=True
     )
@@ -205,6 +221,13 @@ class VehicleImage(Base, SoftDelete):
         User,
         related_name='images_vehicle_creator',
         on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    entity = models.ForeignKey(
+        Entity, 
+        related_name='vehicleimages_entity', 
+        on_delete=models.PROTECT,
         null=True,
         blank=True
     )

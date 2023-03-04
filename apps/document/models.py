@@ -7,6 +7,8 @@ from django_minio_backend import MinioBackend
 from safedelete import SOFT_DELETE_CASCADE
 from safedelete.models import SafeDeleteModel
 
+from apps.portal.models import Entity
+
 
 class Base(models.Model):
     created_at = models.DateTimeField('Criado', auto_now_add=True)
@@ -71,6 +73,13 @@ class Document(Base, SoftDelete):
     mother = models.CharField("mãe", max_length=255, blank=True, null=True)
     father = models.CharField("pai", max_length=255, blank=True, null=True)
     type = models.ForeignKey(DocumentType, related_name='emitidos', on_delete=models.SET_NULL, null=True, blank=True)
+    entity = models.ForeignKey(
+        Entity, 
+        related_name='documents_entity', 
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True
+    )
     updated_by = models.ForeignKey(
         User,
         related_name='document_updater',
@@ -115,6 +124,13 @@ class DocumentImage(Base, SoftDelete):
             'thumbnail': {'width': 64, 'height': 64, 'crop': True},
         }, delete_orphans=True, null=True, blank=True)
     document = models.ForeignKey(Document, related_name='images', on_delete=models.CASCADE, null=True)
+    entity = models.ForeignKey(
+        Entity, 
+        related_name='document_images_entity', 
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True
+    )
     created_by = models.ForeignKey(
         User,
         related_name='document_image_creator',

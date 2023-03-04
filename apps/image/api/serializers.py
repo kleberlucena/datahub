@@ -19,6 +19,10 @@ class ImageSerializer(serializers.ModelSerializer):
     thumbnail = serializers.SerializerMethodField('_get_thumbnail', read_only=True)
     medium = serializers.SerializerMethodField('_get_medium', read_only=True)
     large = serializers.SerializerMethodField('_get_large', read_only=True)
+    entity = serializers.SerializerMethodField('_get_entity')
+    
+    def _get_entity(self, object):
+        return object.entity.name
 
     def _get_medium(self, object):
         request = self.context.get('request', None)
@@ -46,7 +50,7 @@ class ImageSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Image
-        fields = ['uuid', 'file', 'path_image', 'large', 'medium', 'thumbnail', 'label', 'created_at', 'updated_at', 'permissions']
+        fields = ['uuid', 'file', 'path_image', 'large', 'medium', 'thumbnail', 'label', 'created_at', 'updated_at', 'entity', 'permissions']
 
 
 class ImageListSerializer(serializers.ModelSerializer):

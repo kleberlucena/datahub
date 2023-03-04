@@ -1,4 +1,5 @@
 from django.http import HttpResponse, Http404
+from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, filters, mixins, status
@@ -18,6 +19,7 @@ from apps.person.models import *
 from apps.person import helpers, tasks
 from apps.cortex import helpers as helpers_cortex
 from apps.cortex.models import PersonCortex
+from apps.portal.models import Entity, Military
 import logging
 
 
@@ -117,16 +119,18 @@ class AddPersonListView(generics.ListCreateAPIView):
             logger.error('Error while serialize person - {}'.format(e))
             return Response(status=403)
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
-        try:
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
+        #try:
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        except Exception as e:
-            logger.error('Error while serialize person - {}'.format(e))
-            return Response(status=403)
+        else:
+            return Response(serializer.error, status=403)
+        """ except Exception as e:
+            logger.error('Error while serialize person - {}'.format(e)) """
 
     def get_queryset(self):
         """
@@ -155,52 +159,49 @@ class AddPersonListView(generics.ListCreateAPIView):
         return queryset.filter(has_my & has_nickname & has_number & has_name)
 
     def perform_create(self, serializer):
-        try:
+        # try:
             if serializer.is_valid():
-                instance = serializer.save(created_by=self.request.user)
+                user = self.request.user
+                military = Military.objects.get(cpf=user.username)
+                entity = Entity.objects.get(id=military.entity.id)
+                instance = serializer.save(entity=entity, created_by=user)
                 nicknames = instance.nicknames.all()
                 for nickname in nicknames:
-                    nickname.created_by = self.request.user
-                    nickname.save()
+                    nickname.save(entity=entity, created_by=user)
                     assign_perm("change_nickname", self.request.user, nickname)
                     assign_perm("delete_nickname", self.request.user, nickname)
                 for tattoo in instance.tattoos.all():
-                    tattoo.created_by = self.request.user
-                    tattoo.save()
+                    tattoo.save(entity=entity, created_by=user)
                     assign_perm("change_tattoo", self.request.user, tattoo)
                     assign_perm("delete_tattoo", self.request.user, tattoo)
                 for address in instance.addresses.all():
-                    address.created_by = self.request.user
-                    address.save()
+                    address.save(entity=entity, created_by=user)
                     assign_perm("change_address", self.request.user, address)
                     assign_perm("delete_address", self.request.user, address)
                 for physical in instance.physicals.all():
-                    physical.created_by = self.request.user
-                    physical.save()
+                    physical.save(entity=entity, created_by=user)
                     assign_perm("change_physical", self.request.user, physical)
                     assign_perm("delete_physical", self.request.user, physical)
                 for document in instance.documents.all():
-                    document.created_by = self.request.user
-                    document.save()
+                    document.save(entity=entity, created_by=user)
                     if document.type.label == 'CPF':
                         helpers.process_external_consult(id_person=instance.id, username=self.request.user.username, cpf=document.number)
                     assign_perm("change_document", self.request.user, document)
                     assign_perm("delete_document", self.request.user, document)
                 for face in instance.faces.all():
-                    face.created_by = self.request.user
-                    face.save()
+                    face.save(entity=entity, created_by=user)
                     assign_perm("change_face", self.request.user, face)
                     assign_perm("delete_face", self.request.user, face)
                 for image in instance.images.all():
-                    image.created_by = self.request.user
-                    image.save()
+                    image.save(entity=entity, created_by=user)
                     assign_perm("change_image", self.request.user, image)
                     assign_perm("delete_image", self.request.user, image)
                 assign_perm("change_person", self.request.user, instance)
                 assign_perm("delete_person", self.request.user, instance)
                 return Response(serializer.data, status=201)
-        except Exception as e:
-            return Response(serializer.errors, status=400)
+            else:
+                return Response(serializer.errors, status=422)
+        # except Exception as e:
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -272,12 +273,15 @@ class PersonAddFaceView(mixins.CreateModelMixin, generics.GenericAPIView):
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(person=person, created_by=self.request.user)
+            user = self.request.user
+            military = Military.objects.get(cpf=user.username)
+            entity = Entity.objects.get(id=military.entity.id)
+            instance = serializer.save(person=person, entity=entity, created_by=user)
             assign_perm("change_face", self.request.user, instance)
             assign_perm("delete_face", self.request.user, instance)
             person.save()
             return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -293,12 +297,15 @@ class PersonAddTattooView(mixins.CreateModelMixin, generics.GenericAPIView):
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(person=person, created_by=self.request.user)
+            user = self.request.user
+            military = Military.objects.get(cpf=user.username)
+            entity = Entity.objects.get(id=military.entity.id)
+            instance = serializer.save(person=person, entity=entity, created_by=user)
             assign_perm("change_tattoo", self.request.user, instance)
             assign_perm("delete_tattoo", self.request.user, instance)
             person.save()
             return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -314,12 +321,15 @@ class PersonAddNicknameView(mixins.CreateModelMixin, generics.GenericAPIView):
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(person=person, created_by=self.request.user)
+            user = self.request.user
+            military = Military.objects.get(cpf=user.username)
+            entity = Entity.objects.get(id=military.entity.id)
+            instance = serializer.save(person=person, entity=entity, created_by=user)
             assign_perm("change_nickname", self.request.user, instance)
             assign_perm("delete_nickname", self.request.user, instance)
             person.save()
             return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -335,12 +345,15 @@ class PersonAddPhysicalView(mixins.CreateModelMixin, generics.GenericAPIView):
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(person=person, created_by=self.request.user)
+            user = self.request.user
+            military = Military.objects.get(cpf=user.username)
+            entity = Entity.objects.get(id=military.entity.id)
+            instance = serializer.save(person=person, entity=entity, created_by=user)
             assign_perm("change_physical", self.request.user, instance)
             assign_perm("delete_physical", self.request.user, instance)
             person.save()
             return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -356,13 +369,16 @@ class PersonAddDocumentView(mixins.CreateModelMixin, generics.GenericAPIView):
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(created_by=self.request.user)
+            user = self.request.user
+            military = Military.objects.get(cpf=user.username)
+            entity = Entity.objects.get(id=military.entity.id)
+            instance = serializer.save(entity=entity, created_by=user)
             person.documents.add(instance)
             assign_perm("change_document", self.request.user, instance)
             assign_perm("delete_document", self.request.user, instance)
             person.save()
             return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -378,12 +394,15 @@ class PersonAddAddressView(mixins.CreateModelMixin, generics.GenericAPIView):
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(created_by=self.request.user)
+            user = self.request.user
+            military = Military.objects.get(cpf=user.username)
+            entity = Entity.objects.get(id=military.entity.id)
+            instance = serializer.save(entity=entity, created_by=user)
             person.addresses.add(instance)
             assign_perm("change_address", self.request.user, instance)
             assign_perm("delete_address", self.request.user, instance)
             return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -399,13 +418,16 @@ class PersonAddImageView(mixins.CreateModelMixin, generics.GenericAPIView):
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(created_by=self.request.user)
+            user = self.request.user
+            military = Military.objects.get(cpf=user.username)
+            entity = Entity.objects.get(id=military.entity.id)
+            instance = serializer.save(entity=entity, created_by=user)
             person.images.add(instance)
             assign_perm("change_image", self.request.user, instance)
             assign_perm("delete_image", self.request.user, instance)
             person.save()
             return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -432,7 +454,7 @@ class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             serializer.save(updated_by=self.request.user)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='DELETE')
     @action(detail=True, methods=['DELETE'])
@@ -468,7 +490,7 @@ class TattooUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             serializer.save(updated_by=self.request.user)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Tattoo, uuid=kwargs['uuid'])
@@ -497,7 +519,7 @@ class NicknameUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             serializer.save(updated_by=self.request.user)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Nickname, uuid=kwargs['uuid'])
@@ -526,7 +548,7 @@ class PhysicalUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             serializer.save(updated_by=self.request.user)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Physical, uuid=kwargs['uuid'])
@@ -555,7 +577,7 @@ class DocumentUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             serializer.save(updated_by=self.request.user)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Document, uuid=kwargs['uuid'])
@@ -585,7 +607,7 @@ class AddressUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             serializer.save(updated_by=self.request.user)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Address, uuid=kwargs['uuid'])
@@ -615,7 +637,7 @@ class ImageUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             serializer.save(updated_by=self.request.user)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Image, uuid=kwargs['uuid'])
