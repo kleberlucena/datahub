@@ -475,25 +475,19 @@ class AddVehicleListView(generics.ListCreateAPIView):
         return queryset.filter(has_my & has_signal & has_chassi)
 
     def perform_create(self, serializer):
-        try:
-            if serializer.is_valid():
-                user = self.request.user
-                military = Military.objects.get(cpf=user.username)
-                entity = Entity.objects.get(id=military.entity.id)
-                instance = serializer.save(created_by=user, entity=entity)
-                if instance.signal:
-                    helpers.process_cortex_consult(username=self.request.user.username, placa=instance.signal)
+        if serializer.is_valid():
+            user = self.request.user
+            military = Military.objects.get(cpf=user.username)
+            entity = Entity.objects.get(id=military.entity.id)
+            instance = serializer.save(created_by=user, entity=entity)
+            if instance.signal:
+                helpers.process_cortex_consult(username=user.username, placa=instance.signal)
                 for image in instance.images.all():
-                    image.created_by = self.request.user
-                    image.save()
+                    image.save(created_by=user, entity=entity)
                     assign_perm("change_vehicleimage", self.request.user, image)
                     assign_perm("delete_vehicleimage", self.request.user, image)
-                assign_perm("change_vehicle", self.request.user, instance)
-                assign_perm("delete_vehicle", self.request.user, instance)
-                return Response(serializer.data, status=201)
-        except Exception as e:
-            logger.error('Error while save serialize vehicle - {}'.format(e))
-            # return Response(serializer.errors, status=400)
+            assign_perm("change_vehicle", self.request.user, instance)
+            assign_perm("delete_vehicle", self.request.user, instance)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -510,6 +504,10 @@ class VehicleAddImageView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = VehicleImage.objects.all()
     serializer_class = VehicleImageSerializer
     permission_classes = [DjangoObjectPermissions]
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        self.perform_create(self.get_serializer(data=request.data))
 
     def perform_create(self, serializer):
         vehicle = get_object_or_404(Vehicle, uuid=self.kwargs['uuid'])

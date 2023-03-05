@@ -2,17 +2,27 @@
 
 from django.db import migrations
 
-    
+def reverse_set_new_column(apps, schema_editor):
+    Document = apps.get_model('document', 'Document')    
+    DocumentImage = apps.get_model('document', 'DocumentImage')
+    for row in Document.objects.all():
+        row.entity = None
+        row.save()    
+    for row in DocumentImage.objects.all():
+        row.entity = None
+        row.save()    
     
 
 def set_new_column(apps, schema_editor):
     Military = apps.get_model('portal', 'Military')
     Entity = apps.get_model('portal', 'Entity')
+    User = apps.get_model('auth', 'User')
     Document = apps.get_model('document', 'Document')    
     for row in Document.objects.all():
         try:
             user = row.created_by
-            entity = Military.objects.get(cpf=user.username).entity
+            username = User.objects.get(user)
+            entity = Military.objects.get(cpf=username).entity
             row.entity = entity
         except:
             row.entity = Entity.objects.get(name='PMPB|QCG|EME|EM 2')
@@ -22,7 +32,8 @@ def set_new_column(apps, schema_editor):
     for row in DocumentImage.objects.all():
         try:
             user = row.created_by
-            entity = Military.objects.get(cpf=user.username).entity
+            username = User.objects.get(user)
+            entity = Military.objects.get(cpf=username).entity
             row.entity = entity
         except:
             row.entity = Entity.objects.get(name='PMPB|QCG|EME|EM 2')
@@ -36,5 +47,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(set_new_column)
+        migrations.RunPython(set_new_column, reverse_set_new_column)
     ]

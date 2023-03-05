@@ -16,9 +16,8 @@ from apps.address.api.serializers import AddressSerializer
 from apps.image.api.serializers import ImageSerializer
 from apps.document.api.serializers import DocumentSerializer
 from apps.person.models import *
-from apps.person import helpers, tasks
+from apps.person import helpers
 from apps.cortex import helpers as helpers_cortex
-from apps.cortex.models import PersonCortex
 from apps.portal.models import Entity, Military
 import logging
 
@@ -121,16 +120,16 @@ class AddPersonListView(generics.ListCreateAPIView):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-        #try:
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        else:
-            return Response(serializer.error, status=403)
-        """ except Exception as e:
-            logger.error('Error while serialize person - {}'.format(e)) """
+        try:
+            serializer = self.get_serializer(data=request.data)
+            if serializer.is_valid():
+                self.perform_create(serializer)                
+            else:
+                return Response(serializer.error, status=422)
+        except Exception as e:
+            logger.error('Error while serialize person - {}'.format(e))
+            return Response(status=403)
+        
 
     def get_queryset(self):
         """
@@ -159,49 +158,67 @@ class AddPersonListView(generics.ListCreateAPIView):
         return queryset.filter(has_my & has_nickname & has_number & has_name)
 
     def perform_create(self, serializer):
-        # try:
-            if serializer.is_valid():
-                user = self.request.user
-                military = Military.objects.get(cpf=user.username)
-                entity = Entity.objects.get(id=military.entity.id)
-                instance = serializer.save(entity=entity, created_by=user)
-                nicknames = instance.nicknames.all()
-                for nickname in nicknames:
-                    nickname.save(entity=entity, created_by=user)
-                    assign_perm("change_nickname", self.request.user, nickname)
-                    assign_perm("delete_nickname", self.request.user, nickname)
-                for tattoo in instance.tattoos.all():
-                    tattoo.save(entity=entity, created_by=user)
-                    assign_perm("change_tattoo", self.request.user, tattoo)
-                    assign_perm("delete_tattoo", self.request.user, tattoo)
-                for address in instance.addresses.all():
-                    address.save(entity=entity, created_by=user)
-                    assign_perm("change_address", self.request.user, address)
-                    assign_perm("delete_address", self.request.user, address)
-                for physical in instance.physicals.all():
-                    physical.save(entity=entity, created_by=user)
-                    assign_perm("change_physical", self.request.user, physical)
-                    assign_perm("delete_physical", self.request.user, physical)
-                for document in instance.documents.all():
-                    document.save(entity=entity, created_by=user)
-                    if document.type.label == 'CPF':
-                        helpers.process_external_consult(id_person=instance.id, username=self.request.user.username, cpf=document.number)
-                    assign_perm("change_document", self.request.user, document)
-                    assign_perm("delete_document", self.request.user, document)
-                for face in instance.faces.all():
-                    face.save(entity=entity, created_by=user)
-                    assign_perm("change_face", self.request.user, face)
-                    assign_perm("delete_face", self.request.user, face)
-                for image in instance.images.all():
-                    image.save(entity=entity, created_by=user)
-                    assign_perm("change_image", self.request.user, image)
-                    assign_perm("delete_image", self.request.user, image)
-                assign_perm("change_person", self.request.user, instance)
-                assign_perm("delete_person", self.request.user, instance)
-                return Response(serializer.data, status=201)
-            else:
-                return Response(serializer.errors, status=422)
-        # except Exception as e:
+        with transaction.atomic():
+            try:
+                if serializer.is_valid():
+                    user = self.request.user
+                    military = Military.objects.get(cpf=user.username)
+                    entity = Entity.objects.get(id=military.entity.id)
+                    serializer.entity = entity
+                    serializer.created_by=user
+                    instance = serializer.save()
+                    nicknames = instance.nicknames.all()
+                    for nickname in nicknames:
+                        nickname.entity=entity
+                        nickname.created_by=user
+                        nickname.save()
+                        assign_perm("change_nickname", self.request.user, nickname)
+                        assign_perm("delete_nickname", self.request.user, nickname)
+                    for tattoo in instance.tattoos.all():
+                        tattoo.entity=entity
+                        tattoo.created_by=user
+                        tattoo.save()
+                        assign_perm("change_tattoo", self.request.user, tattoo)
+                        assign_perm("delete_tattoo", self.request.user, tattoo)
+                    for address in instance.addresses.all():
+                        address.entity=entity
+                        address.created_by=user
+                        address.save()
+                        assign_perm("change_address", self.request.user, address)
+                        assign_perm("delete_address", self.request.user, address)
+                    for physical in instance.physicals.all():
+                        physical.entity=entity
+                        physical.created_by=user
+                        physical.save()
+                        assign_perm("change_physical", self.request.user, physical)
+                        assign_perm("delete_physical", self.request.user, physical)
+                    for document in instance.documents.all():
+                        document.entity=entity
+                        document.created_by=user
+                        document.save()
+                        if document.type.label == 'CPF':
+                            helpers.process_external_consult(id_person=instance.id, username=self.request.user.username, cpf=document.number)
+                        assign_perm("change_document", self.request.user, document)
+                        assign_perm("delete_document", self.request.user, document)
+                    for face in instance.faces.all():
+                        face.entity=entity
+                        face.created_by=user
+                        face.save()
+                        assign_perm("change_face", self.request.user, face)
+                        assign_perm("delete_face", self.request.user, face)
+                    for image in instance.images.all():
+                        image.entity=entity
+                        image.created_by=user
+                        image.save()
+                        assign_perm("change_image", self.request.user, image)
+                        assign_perm("delete_image", self.request.user, image)
+                    assign_perm("change_person", self.request.user, instance)
+                    assign_perm("delete_person", self.request.user, instance)
+                    headers = self.get_success_headers(serializer.data)
+                    return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            except Exception as e:
+                transaction.set_rollback(True)
+                raise e
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])

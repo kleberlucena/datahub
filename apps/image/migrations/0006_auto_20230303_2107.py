@@ -2,14 +2,22 @@
 
 from django.db import migrations
 
+def reverse_set_new_column(apps, schema_editor):
+    Image = apps.get_model('image', 'Image')
+    for row in Image.objects.all():
+        row.entity = None
+        row.save()
+
 def set_new_column(apps, schema_editor):
     Military = apps.get_model('portal', 'Military')
     Entity = apps.get_model('portal', 'Entity')
+    User = apps.get_model('auth', 'User')
     Image = apps.get_model('image', 'Image')    
     for row in Image.objects.all():
         try:
             user = row.created_by
-            entity = Military.objects.get(cpf=user.username).entity
+            username = User.objects.get(user)
+            entity = Military.objects.get(cpf=username).entity
             row.entity = entity
         except:
             row.entity = Entity.objects.get(name='PMPB|QCG|EME|EM 2')
@@ -23,5 +31,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(set_new_column)
+        migrations.RunPython(set_new_column, reverse_set_new_column)
     ]
