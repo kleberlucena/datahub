@@ -1,6 +1,5 @@
 from celery import shared_task
 from io import BytesIO
-from django.core.files import File
 from django.utils import timezone
 import logging
 
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 @shared_task(bind=True)
 def create_temporary_url_task(self, user_id, uuid_temp=None, url_temp=None):
-    return helpers.create_temporary_url(user_id, uuid_temp, url_temp)
+    helpers.create_temporary_url(user_id, uuid_temp, url_temp)
 
 @shared_task(bind=True)
 def process_watermark(self, user_id, uuid_url, image_url):
@@ -24,7 +23,7 @@ def process_watermark(self, user_id, uuid_url, image_url):
     buf.seek(0)
 
     url = models.TemporaryURL.objects.get(uuid=uuid_url)
-    url.photo.save("{}.jpg".format(uuid_url), File(buf), save=True)
+    url.photo.save("{}.jpg".format(uuid_url), buf, save=True)
     
 @shared_task(bind=True)
 def deactivate_mark(self):
