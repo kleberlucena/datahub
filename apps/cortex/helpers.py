@@ -18,7 +18,7 @@ def process_cortex_consult(username, cpf=None):
         retorno = cortex_person
         if cortex_person.updated_at.date() < date.today():
             tasks.cortex_update(username, cortex_person)
-    except models.PersonCortex.DoesNotExist:        
+    except models.PersonCortex.DoesNotExist:       
         try:          
             retorno = tasks.cortex_consult(username=username, cpf=cpf)
         except Exception as e:

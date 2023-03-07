@@ -30,7 +30,7 @@ def cortex_consult(self, username, cpf=False, name=False, mother_name=False, bir
             else:
                 logger.info('Updated cortex_instance')          
         else:
-            logger.warn('Not found person in cortex in cortex - {}'.format(cpf))
+            logger.warn('Not found personcortex in cortex - {}'.format(cpf))
             retorno = None
     except Exception as e:
         logger.error('Error while getting registry in cortex - {}'.format(e))

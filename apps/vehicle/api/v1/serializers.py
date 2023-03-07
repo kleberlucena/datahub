@@ -222,7 +222,9 @@ class VehicleImageSerializer(serializers.ModelSerializer):
             return perms
     
     def _get_entity(self, object):
-        return object.entity.name
+        if object.entity:
+            return object.entity.name
+        return None
 
     class Meta:
         model = VehicleImage
@@ -277,7 +279,9 @@ class VehicleSerializer(WritableNestedModelSerializer, serializers.ModelSerializ
         return instance
 
     def _get_entity(self, object):
-        return object.entity.name
+        if object.entity:
+            return object.entity.name
+        return None
     
     def _get_permissions(self, object):
         request = self.context.get('request', None)

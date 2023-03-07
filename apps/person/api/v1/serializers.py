@@ -12,7 +12,7 @@ from apps.cortex.models import RegistryCortex, PersonCortex
 from base import helpers
 from base.models import Registry
 from apps.address.api.serializers import AddressSerializer
-from apps.image.api.serializers import ImageSerializer
+from apps.image.api.serializers import ImageSerializer, ImageMediumSerializer
 from apps.document.api.serializers import DocumentSerializer
 from apps.watermark import helpers as watermark_helpers
 from apps.vehicle.models import RegistryVehicleCortex, PersonRenavamCortex
@@ -69,6 +69,32 @@ class RegistryPolymorphicSerializer(PolymorphicSerializer):
     } 
 
 
+class FaceMediumSerializer(serializers.ModelSerializer):
+    file = Base64ImageField(write_only=True)
+    permissions = serializers.SerializerMethodField('_get_permissions')
+    medium = serializers.SerializerMethodField('_get_medium', read_only=True)
+    entity = serializers.SerializerMethodField('_get_entity')
+
+    def _get_entity(self, object):
+        if object.entity:
+            return object.entity.name
+        return None
+
+    def _get_medium(self, object):
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.medium.url, request.user.id)
+
+    def _get_permissions(self, object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, object)
+            return perms
+
+    class Meta:
+        model = Face
+        fields = ('uuid', 'file', 'medium', 'created_at', 'updated_at', 'entity', 'permissions')
+
+
 class FaceSerializer(serializers.ModelSerializer):
     file = Base64ImageField(write_only=True)    
     path_image = serializers.SerializerMethodField('_get_image_path', read_only=True)
@@ -79,7 +105,9 @@ class FaceSerializer(serializers.ModelSerializer):
     entity = serializers.SerializerMethodField('_get_entity')
 
     def _get_entity(self, object):
-        return object.entity.name
+        if object.entity:
+            return object.entity.name
+        return None
 
     def _get_medium(self, object):
         request = self.context.get('request', None)
@@ -122,12 +150,42 @@ class NicknameSerializer(serializers.ModelSerializer):
             return perms
 
     def _get_entity(self, object):
-        return object.entity.name
+        if object.entity:
+            return object.entity.name
+        return None
 
     class Meta:
         model = Nickname
         fields = ('uuid', 'label', 'created_at', 'updated_at', 'entity', 'permissions')
 
+
+class TattooMediumSerializer(serializers.ModelSerializer):
+    label = serializers.CharField()
+    point = PointField(required=False)
+    file = Base64ImageField(write_only=True)
+    permissions = serializers.SerializerMethodField('_get_permissions')
+    medium = serializers.SerializerMethodField('_get_medium', read_only=True)
+    entity = serializers.SerializerMethodField('_get_entity')
+
+    def _get_entity(self, object):
+        if object.entity:
+            return object.entity.name
+        return None
+
+    def _get_medium(self, object):
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.medium.url, request.user.id)
+
+    def _get_permissions(self, object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, object)
+            return perms
+
+    class Meta:
+        model = Tattoo
+        fields = ('uuid', 'label', 'point', 'file', 'medium', 'created_at', 'updated_at', 'entity', 'permissions')
+    
 
 class TattooSerializer(serializers.ModelSerializer):
     label = serializers.CharField()
@@ -141,7 +199,9 @@ class TattooSerializer(serializers.ModelSerializer):
     entity = serializers.SerializerMethodField('_get_entity')
 
     def _get_entity(self, object):
-        return object.entity.name
+        if object.entity:
+            return object.entity.name
+        return None
 
     def _get_medium(self, object):
         request = self.context.get('request', None)
@@ -171,13 +231,6 @@ class TattooSerializer(serializers.ModelSerializer):
         model = Tattoo
         fields = ('uuid', 'label', 'point', 'file', 'path_image', 'large', 'medium', 'thumbnail', 'created_at', 'updated_at', 'entity', 'permissions')
 
-    def create(self, validated_data):
-        file=validated_data.pop('file')
-        label=validated_data.pop('label')
-        point=validated_data.pop('point')
-        person=validated_data.pop('person')
-        return Tattoo.objects.create(person=person, label=label, point=point, file=file)
-
 
 class PhysicalSerializer(serializers.ModelSerializer):
     label = serializers.CharField()
@@ -192,7 +245,9 @@ class PhysicalSerializer(serializers.ModelSerializer):
             return perms
 
     def _get_entity(self, object):
-        return object.entity.name
+        if object.entity:
+            return object.entity.name
+        return None
 
     class Meta:
         model = Physical
@@ -201,10 +256,10 @@ class PhysicalSerializer(serializers.ModelSerializer):
 
 class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
     nicknames = NicknameSerializer(many=True, required=False)
-    faces = FaceSerializer(many=True, required=False)
+    faces = FaceMediumSerializer(many=True, required=False)
     addresses = AddressSerializer(many=True, required=False)
-    images = ImageSerializer(many=True, required=False)
-    tattoos = TattooSerializer(many=True, required=False)
+    images = ImageMediumSerializer(many=True, required=False)
+    tattoos = TattooMediumSerializer(many=True, required=False)
     physicals = PhysicalSerializer(many=True, required=False)
     documents = DocumentSerializer(many=True, required=False)
     registers = RegistryPolymorphicSerializer(many=True, read_only=True, required=False, allow_null=True)
@@ -218,7 +273,9 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
             return perms
 
     def _get_entity(self, object):
-        return object.entity.name
+        if object.entity:
+            return object.entity.name
+        return None
     
     class Meta:
         model = Person
@@ -265,7 +322,7 @@ class BasicPersonSerializer(WritableNestedModelSerializer, serializers.ModelSeri
             return perms
 
     def _get_entity(self, object):
-        return object.entity.name
+        return object.entity
 
     class Meta:
         model = Person

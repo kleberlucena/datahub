@@ -13,6 +13,37 @@ from apps.watermark import helpers as watermark_helpers
 logger = logging.getLogger(__name__)
 
 
+class DocumentImageMediumSerializer(serializers.ModelSerializer):
+    file = Base64ImageField(write_only=True)
+    path_image = serializers.SerializerMethodField('_get_image_path', read_only=True)
+    permissions = serializers.SerializerMethodField('_get_permissions')
+    medium = serializers.SerializerMethodField('_get_medium', read_only=True)
+    entity = serializers.SerializerMethodField('_get_entity')
+    
+    def _get_entity(self, object):
+        if object.entity:
+            return object.entity.name
+        return None
+
+    def _get_medium(self, object):
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.medium.url, request.user.id)
+
+    def _get_image_path(self, object):
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.url, request.user.id)
+
+    def _get_permissions(self, document_image_object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, document_image_object)
+            return perms
+
+    class Meta:
+        model = DocumentImage
+        fields = ['uuid', 'file', 'path_image', 'medium', 'label', 'created_at', 'updated_at', 'entity', 'permissions']
+
+
 class DocumentImageSerializer(serializers.ModelSerializer):
     file = Base64ImageField(write_only=True)
     path_image = serializers.SerializerMethodField('_get_image_path', read_only=True)
@@ -23,7 +54,9 @@ class DocumentImageSerializer(serializers.ModelSerializer):
     entity = serializers.SerializerMethodField('_get_entity')
     
     def _get_entity(self, object):
-        return object.entity.name
+        if object.entity:
+            return object.entity.name
+        return None
 
     def _get_medium(self, object):
         request = self.context.get('request', None)
@@ -84,7 +117,9 @@ class DocumentSerializer(WritableNestedModelSerializer, serializers.ModelSeriali
     entity = serializers.SerializerMethodField('_get_entity')
     
     def _get_entity(self, object):
-        return object.entity.name
+        if object.entity:
+            return object.entity.name
+        return None
 
     def _get_permissions(self, document_object):
         request = self.context.get('request', None)
