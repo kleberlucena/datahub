@@ -520,20 +520,34 @@ class AddVehicleListView(generics.ListCreateAPIView):
             has_my = Q(created_by=self.request.user)
         return queryset.filter(has_my & has_signal & has_chassi)
 
+    @transaction.atomic
     def perform_create(self, serializer):
         if serializer.is_valid():
-            user = self.request.user
-            military = Military.objects.get(cpf=user.username)
-            entity = Entity.objects.get(id=military.entity.id)
-            instance = serializer.save(created_by=user, entity=entity)
-            if instance.signal:
-                helpers.process_cortex_consult(username=user.username, placa=instance.signal)
-                for image in instance.images.all():
-                    image.save(created_by=user, entity=entity)
-                    assign_perm("change_vehicleimage", self.request.user, image)
-                    assign_perm("delete_vehicleimage", self.request.user, image)
-            assign_perm("change_vehicle", self.request.user, instance)
-            assign_perm("delete_vehicle", self.request.user, instance)
+            try:
+                with transaction.atomic():
+                    user = self.request.user
+                    military = Military.objects.get(cpf=user.username)
+                    entity = Entity.objects.get(id=military.entity.id)
+                    instance = serializer.save()
+                    instance.created_by=user
+                    instance.entity=entity
+                    if instance.signal:
+                        helpers.process_cortex_consult(username=user.username, placa=instance.signal)
+                        for image in instance.images.all():
+                            image.created_by=user
+                            image.entity=entity
+                            image.save()
+                            assign_perm("change_vehicleimage", self.request.user, image)
+                            assign_perm("delete_vehicleimage", self.request.user, image)
+                    assign_perm("change_vehicle", self.request.user, instance)
+                    assign_perm("delete_vehicle", self.request.user, instance)
+                    instance.save()
+                    return Response(serializer.data, status=201)
+            except Exception as e:
+                logger.warn('Warning while save Vehicle - {}'.format(e))
+                transaction.set_rollback(True)
+                return Response(status=403)
+        return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
