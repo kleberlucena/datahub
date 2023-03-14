@@ -75,8 +75,11 @@ urlpatterns = [
     path('api/v1/vehicle/', include('apps.vehicle.api.v1.urls'), name='vehicle'),
     path('api/v1/image/', include('apps.image.api.urls'), name='image'),
     path('api/v1/address/', include('apps.address.api.urls'), name='address'),
+    path('api/v1/base/', include('base.api.v1.urls'), name='base'),
     path('api/v1/legacy/', include('apps.person.api.legacy.urls'), name='legacy'),
     path('api/v1/watermark/', include('apps.watermark.urls'), name='watermark'),
+    path('portal/', include('apps.portal.urls'), name='portal'),
+    path('person/', include('apps.person.urls'), name='person'),
     path('celery-progress/', include('celery_progress.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

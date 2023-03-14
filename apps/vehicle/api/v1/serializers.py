@@ -196,6 +196,7 @@ class VehicleImageSerializer(serializers.ModelSerializer):
     medium = serializers.SerializerMethodField('_get_medium', read_only=True)
     large = serializers.SerializerMethodField('_get_large', read_only=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
+    entity = serializers.SerializerMethodField('_get_entity')
 
     def _get_medium(self, object):
         request = self.context.get('request', None)
@@ -207,6 +208,7 @@ class VehicleImageSerializer(serializers.ModelSerializer):
 
     def _get_thumbnail(self, object):
         request = self.context.get('request', None)
+        print(request)
         return watermark_helpers.handle(object.file.thumbnail.url, request.user.id)
 
     def _get_image_path(self, object):
@@ -218,10 +220,15 @@ class VehicleImageSerializer(serializers.ModelSerializer):
         if request:
             perms = get_perms(request.user, object)
             return perms
+    
+    def _get_entity(self, object):
+        if object.entity:
+            return object.entity.name
+        return None
 
     class Meta:
         model = VehicleImage
-        fields = ('uuid', 'label', 'file', 'path_image', 'large', 'medium', 'thumbnail', 'created_at', 'updated_at', 'permissions')
+        fields = ('uuid', 'label', 'file', 'path_image', 'large', 'medium', 'thumbnail', "entity", 'created_at', 'updated_at', 'permissions')
 
     """ def create(self, validated_data):
         file=validated_data.pop('file')
@@ -230,10 +237,67 @@ class VehicleImageSerializer(serializers.ModelSerializer):
         return VehicleImage.objects.create(vehicle=vehicle, label=label, file=file) """
         
 
-class VehicleSerializer(serializers.ModelSerializer):    
-    owner = PersonToVehicleSerializer(required=False, allow_null=True)
-    custodian = PersonToVehicleSerializer(required=False, allow_null=True)
-    renter = PersonToVehicleSerializer(required=False, allow_null=True)
+class VehicleUpdateSerializer(serializers.ModelSerializer):    
+    signal = serializers.CharField(required=False, allow_null=True)
+    cpf_owner = serializers.CharField(write_only=True, required=False, allow_null=True)
+    cpf_custodian = serializers.CharField(write_only=True, required=False, allow_null=True)
+    cpf_renter = serializers.CharField(write_only=True, required=False, allow_null=True)
+    
+    permissions = serializers.SerializerMethodField('_get_permissions')
+
+    def _get_permissions(self, object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, object)
+            return perms
+
+    class Meta:
+        model = Vehicle
+        fields = ("chassi", "signal", "brand", "model", "color", "category", "model_year", "manufactured_year", "cpf_owner", "cpf_custodian", "cpf_renter", "created_at", "updated_at", "permissions")
+
+
+class VehicleSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):    
+    signal = serializers.CharField(required=False, allow_null=True)
+    cpf_owner = serializers.CharField(write_only=True, required=False, allow_null=True)
+    cpf_custodian = serializers.CharField(write_only=True, required=False, allow_null=True)
+    cpf_renter = serializers.CharField(write_only=True, required=False, allow_null=True)
+    owner = PersonToVehicleSerializer(read_only=True)
+    custodian = PersonToVehicleSerializer(read_only=True)
+    renter = PersonToVehicleSerializer(read_only=True)
+    images = VehicleImageSerializer(many=True, required=False)
+    permissions = serializers.SerializerMethodField('_get_permissions')
+    entity = serializers.SerializerMethodField('_get_entity')
+
+    def update(self, instance, validated_data):
+        owner = Person.objects.filter(cpf=validated_data["cpf_owner"])
+        custodian = Person.objects.filter(cpf=validated_data["cpf_custodian"])
+        renter = Person.objects.filter(cpf=validated_data["cpf_renter"])
+        instance.owner = owner[0]
+        instance.custodian = custodian[0]
+        instance.renter = renter[0]
+        instance.save()
+        return instance
+
+    def _get_entity(self, object):
+        if object.entity:
+            return object.entity.name
+        return None
+    
+    def _get_permissions(self, object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, object)
+            return perms
+
+    class Meta:
+        model = Vehicle
+        fields = ("uuid", "chassi", "signal", "brand", "model", "color", "category", "model_year",
+                  "manufactured_year", "owner", "cpf_owner", "custodian", "cpf_custodian", "renter", "entity", "cpf_renter", "images", "created_at", "updated_at", "permissions")
+
+
+class BasicVehicleSerializer(serializers.ModelSerializer):    
+    signal = serializers.CharField(required=False, allow_null=True)
+    owner = PersonToVehicleSerializer(read_only=True)    
     images = VehicleImageSerializer(many=True, required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
 
@@ -246,5 +310,25 @@ class VehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vehicle
         fields = ("uuid", "chassi", "signal", "brand", "model", "color", "category", "model_year",
-                  "manufactured_year", "owner", "custodian", "renter", "images", "created_at", "updated_at", "permissions")
-                  
+                  "manufactured_year", "owner", "images", "created_at", "updated_at", "permissions")             
+
+
+class IntermediateVehicleSerializer(serializers.ModelSerializer):    
+    signal = serializers.CharField(required=False, allow_null=True)
+    owner = PersonToVehicleSerializer(read_only=True)
+    custodian = PersonToVehicleSerializer(read_only=True)
+    renter = PersonToVehicleSerializer(read_only=True)
+    images = VehicleImageSerializer(many=True, required=False)
+    permissions = serializers.SerializerMethodField('_get_permissions')
+
+    def _get_permissions(self, object):
+        request = self.context.get('request', None)
+        if request:
+            perms = get_perms(request.user, object)
+            return perms
+
+    class Meta:
+        model = Vehicle
+        fields = ("uuid", "chassi", "signal", "brand", "model", "color", "category", "model_year",
+                  "manufactured_year", "owner", "cpf_owner", "custodian", "cpf_custodian", "renter", "cpf_renter", "images", "created_at", "updated_at", "permissions")             
+

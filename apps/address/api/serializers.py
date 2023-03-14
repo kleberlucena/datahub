@@ -8,6 +8,12 @@ from apps.address.models import Address
 class AddressSerializer(serializers.ModelSerializer):
     place = PointField(required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
+    entity = serializers.SerializerMethodField('_get_entity')
+    
+    def _get_entity(self, object):
+        if object.entity:
+            return object.entity.name
+        return None
 
     def _get_permissions(self, object):
         request = self.context.get('request', None)
@@ -18,4 +24,4 @@ class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
         fields = ("uuid", "street", "number", "complement", "neighborhood", "city", "state", "region", "country",
-                  "zipcode", "place", "created_at", "updated_at", "permissions")
+                  "zipcode", "place", "created_at", "updated_at", "entity", "permissions")

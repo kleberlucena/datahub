@@ -13,6 +13,7 @@ from safedelete.models import SafeDeleteModel
 from apps.address.models import Address
 from apps.image.models import Image
 from apps.document.models import Document
+from apps.portal.models import Entity
 
 
 class Base(models.Model):
@@ -52,6 +53,13 @@ class Person(Base, SoftDelete):
         Document,
         through='PersonDocuments',
         through_fields=('person', 'document'),
+    )
+    entity = models.ForeignKey(
+        Entity, 
+        related_name='persons_entity', 
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True
     )
     updated_by = models.ForeignKey(
         User,
@@ -125,6 +133,13 @@ class Nickname(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     label = models.CharField("Alcunha", max_length=255)
     person = models.ForeignKey(Person, related_name='nicknames', on_delete=models.CASCADE)
+    entity = models.ForeignKey(
+        Entity, 
+        related_name='nicknames_person_entity', 
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True
+    )
     updated_by = models.ForeignKey(
         User,
         related_name='nickname_updater',
@@ -170,6 +185,13 @@ class Tattoo(Base, SoftDelete):
             'medium': {'width': 480, 'height': 480, 'crop': True},
             'thumbnail': {'width': 128, 'height': 128, 'crop': True},
         }, delete_orphans=True, null=True, blank=True)
+    entity = models.ForeignKey(
+        Entity, 
+        related_name='tattoos_person_entity', 
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True
+    )
     updated_by = models.ForeignKey(
         User,
         related_name='tattoo_updater',
@@ -206,6 +228,13 @@ class Physical(Base, SoftDelete):
     label = models.CharField("descrição", max_length=255)
     value = models.CharField("valor", max_length=255)
     person = models.ForeignKey(Person, related_name='physicals', on_delete=models.CASCADE)
+    entity = models.ForeignKey(
+        Entity, 
+        related_name='physicals_person_entity', 
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True
+    )
     updated_by = models.ForeignKey(
         User,
         related_name='physical_updater',
@@ -250,6 +279,13 @@ class Face(Base, SoftDelete):
         }, delete_orphans=True, blank=True
     )
     person = models.ForeignKey(Person, related_name='faces', on_delete=models.CASCADE)
+    entity = models.ForeignKey(
+        Entity, 
+        related_name='faces_person_entity', 
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True
+    )
     updated_by = models.ForeignKey(
         User,
         related_name='face_updater',

@@ -2,13 +2,73 @@
 
 <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
-        {% if user.is_superuser %}
+      {% if user.is_superuser %}
+      <!--Módulo técnico-->
+      <li class="nav-item module-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-code nav-icon"></i>
+            <p>Área técnica<i class="fas fa-angle-left right"></i></p>
+          </a>
+          <ul class="nav nav-treeview" style="display: none;">
             <li class="nav-item">
-                <a href="{% url 'admin:index' %}" class="nav-link">
-                  <i class="fas fa-cogs nav-icon"></i>
-                  <p>Administração</p>
-                </a>
+              <a href="{% url 'admin:index' %}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Área Administrativa</p>
+              </a>
             </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="fas fa-sync-alt nav-icon"></i>
+                <p>
+                  Tarefas
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">
+                
+                <li class="nav-item">
+                  <a href="{% url 'person:list_person' %}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Visualizar Pessoas</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'person:command_person' %}" class="nav-link">
+                    <i class="fas fa-terminal nav-icon"></i>
+                    <p>Comandos Disponíveis</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+      </li>
+      {% endif %}
+      {% if user.is_superuser %}
+        <li class="nav-header">INTEGRAÇÕES</li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-sync-alt nav-icon"></i>
+            <p>
+              PORTAL
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview" style="display: none;">
+            
+            <li class="nav-item">
+              <a href="{% url 'portal:list_entity' %}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Visualizar Unidades</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'portal:command_portal' %}" class="nav-link">
+                <i class="fas fa-terminal nav-icon"></i>
+                <p>Comandos Disponíveis</p>
+              </a>
+            </li>
+          </ul>
+        </li>
         {% endif %}
         <li class="nav-header">INFORMAÇÕES</li>
         <li class="nav-item">
