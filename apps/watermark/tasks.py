@@ -21,9 +21,17 @@ def process_watermark(self, user_id, uuid_url, image_url):
     buf = BytesIO()
     img.save(buf, format='JPEG', quality=90)
     buf.seek(0)
-
-    url = models.TemporaryURL.objects.get(uuid=uuid_url)
-    url.photo.save("{}.jpg".format(uuid_url), buf, save=True)
+    """ url = models.TemporaryURL.objects.get(uuid=uuid_url)
+    url.photo.save("{}.jpg".format(uuid_url), buf, save=True) """
+    iteration = 0
+    while iteration < 5:
+        try:
+            url = models.TemporaryURL.objects.get(uuid=uuid_url)
+            url.photo.save("{}.jpg".format(uuid_url), buf, save=True)
+            break
+        except:
+            iteration += 1
+            time.sleep(0.5)
     
 @shared_task(bind=True)
 def deactivate_mark(self):

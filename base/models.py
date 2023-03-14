@@ -8,6 +8,7 @@ from safedelete import SOFT_DELETE_CASCADE
 from safedelete.models import SafeDeleteModel
 
 from apps.person.models import Person
+from apps.portal.models import Entity
 
 
 class Base(models.Model):
@@ -41,3 +42,45 @@ class Registry(Base, PolymorphicModel):
     class Meta:
         verbose_name = "Registro"
         verbose_name_plural = "Registros"
+        
+
+class Suggestion(Base, SoftDelete):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    label = models.CharField("Título", max_length=255, null=True, blank=True)
+    content = models.TextField("Conteúdo")
+    entity = models.ForeignKey(
+        Entity, 
+        related_name='suggestion_entity', 
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True
+    )
+    updated_by = models.ForeignKey(
+        User,
+        related_name='suggestion_updater',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    created_by = models.ForeignKey(
+        User,
+        related_name='suggestion_creator',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    def soft_delete_cascade_policy_action(self, **kwargs):
+        # Insert here custom pre delete logic
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action()
+        # Insert here custom post delete logic
+
+    def __str__(self):
+        return f"{self.uuid}"
+
+    class Meta:
+        verbose_name = "Sugestão"
+        verbose_name_plural = "Sugestões"

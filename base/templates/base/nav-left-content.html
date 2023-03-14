@@ -16,6 +16,30 @@
                 <p>Área Administrativa</p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="fas fa-sync-alt nav-icon"></i>
+                <p>
+                  Tarefas
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">
+                
+                <li class="nav-item">
+                  <a href="{% url 'person:list_person' %}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Visualizar Pessoas</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'person:command_person' %}" class="nav-link">
+                    <i class="fas fa-terminal nav-icon"></i>
+                    <p>Comandos Disponíveis</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
           </ul>
       </li>
       {% endif %}
