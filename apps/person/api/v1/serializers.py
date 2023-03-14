@@ -208,12 +208,10 @@ class TattooSerializer(serializers.ModelSerializer):
         return watermark_helpers.handle(object.file.medium.url, request.user.id)
 
     def _get_large(self, object):
-        # return helpers.get_image_variation(self, object, 'large')
         request = self.context.get('request', None)
         return watermark_helpers.handle(object.file.large.url, request.user.id)
 
     def _get_thumbnail(self, object):
-        # return helpers.get_image_variation(self, object, 'thumbnail')
         request = self.context.get('request', None)
         return watermark_helpers.handle(object.file.thumbnail.url, request.user.id)
 
