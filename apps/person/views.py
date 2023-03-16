@@ -2,6 +2,7 @@
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, UpdateView, RedirectView, DetailView
 from django_datatables_view.base_datatable_view import BaseDatatableView
+from django.utils.html import escape
 
 from apps.portal.models import Entity
 from .models import Person, Tattoo
@@ -10,15 +11,29 @@ from .tasks import task_set_entity_person, task_set_entity_tattoo, task_set_enti
 
 class PersonListJson(BaseDatatableView):
     max_display_length = 100
-    model = Entity
-    columns = ['uuid', 'created_at', 'updated_at', 'entity',]
-    # permission_required = 'entity.view_entity'
+    model = Person
+    columns = ['uuid', 'nicknames', 'documents', 'created_at', 'updated_at', 'created_by', 'entity',]
+    permission_required = 'person.view_person'
+
+    def get_initial_queryset(self):
+        return Person.objects.all().prefetch_related('nicknames')
+    
+    def render_column(self, row, column):
+        # We want to render user as a custom column
+        if column == 'nicknames':
+            # escape HTML for security reasons
+            return escape('{0}'.format(row.nicknames.first()))
+        if column == 'documents':
+            # escape HTML for security reasons
+            return escape('{0}'.format(row.documents.first()))
+        else:
+            return super(PersonListJson, self).render_column(row, column)
 
 
 class PersonListView(TemplateView):
     template_name = 'person_list.html'
     # teste.delay()
-    # permission_required = 'entity.view_entity'
+    permission_required = 'person.view_person'
 
 
 class TaskSetEntityFromPersonView(TemplateView):

@@ -5,7 +5,7 @@ from rest_framework import routers
 # from apps.document.views import DocumentView
 from .viewset import DocumentViewSet, DocumentRetrieve, DocumentTypeListViewSet
 
-app_name = 'document'
+app_name = 'document_api'
 
 router = routers.DefaultRouter()
 

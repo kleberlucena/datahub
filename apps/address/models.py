@@ -72,8 +72,8 @@ class Address(Base, SoftDelete):
         blank=True
     )
 
-    def get_absolute_url(self):
-        return reverse_lazy('address:address_detail', kwargs={'uuid': self.uuid})
+    """ def get_absolute_url(self):
+        return reverse_lazy('address:address_detail', kwargs={'uuid': self.uuid}) """
 
     def soft_delete_cascade_policy_action(self, **kwargs):
         # Insert here custom pre delete logic

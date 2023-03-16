@@ -78,9 +78,6 @@ class Image(Base, SoftDelete):
     def __str__(self):
         return f"{self.uuid}"
 
-    def get_absolute_url(self):
-        return reverse_lazy('image:image_detail', kwargs={'uuid': self.uuid})
-
     class Meta:
         verbose_name = "Imagem"
         verbose_name_plural = "Imagens"

@@ -2,7 +2,7 @@
 {% load static %}
 
 <!-- browser title -->
-{% block title %} Pessoas {% endblock %}
+{% block title %} Imagens de Documento {% endblock %}
 
 <!-- styles -->
 {% block style_sheet %}
@@ -13,19 +13,19 @@
 {% endblock %}
 
 <!-- context title -->
-{% block title-header %} Gestão de Pessoas da Bacinf {% endblock %}
+{% block title-header %} Gestão de Imagens de Documento da Bacinf {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'base:index' %}">Início</a></li>
-<li class="breadcrumb-item active">Unidades</li>
+<li class="breadcrumb-item active">Imagens de Documento</li>
 {% endblock %}
 
 <!-- main container -->
 {% block content %}
 <div class="card card-primary card-outline">
   <div class="card-header">
-    <h3 class="card-title">Unidades Cadastradas</h3>
+    <h3 class="card-title">Imagens de Documentos Cadastradas</h3>
   </div>
   <!-- /.card-header -->
   <div class="card-body">
@@ -35,12 +35,13 @@
         <thead>
           <tr>
             <th>Id</th>
-            <th>Alcunha</th>
+            <th>Descrição</th>
+            <th>Arquivo</th>
             <th>Documento</th>
-            <th>Criada</th>
-            <th>Atualizada</th>
-            <th>Usuário</th>
             <th>Unidade</th>
+            <th>Usuário</th>
+            <th>Cadastrado</th>
+            <th>Atualizado</th>
           </tr>
         </thead>
       </table>
@@ -75,7 +76,7 @@
       processing: true,
       serverSide: true,
       stateSave: true,
-      ajax: '{% url "person:person_list_json" %}',
+      ajax: '{% url "document:document_image_list_json" %}',
       order: [[0, "desc"]],
     });
   });
