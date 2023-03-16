@@ -1,12 +1,12 @@
 from django.urls import path
-from global_login_required import login_not_required
 
-from apps.address.views import *
-from apps.address.api import viewsets
+from .views import *
 
-app_name = 'apps.address'
+app_name = 'address'
 
 urlpatterns = [
-    path('', viewsets.AddressList.as_view(), name='list_json'),
-    path('<uuid:uuid>/', viewsets.AddressRetrieve.as_view(), name='address_detail'),
+    path('api-v1/address_list_json/', AddressListJson.as_view(), name='address_list_json'),
+    path('list_address/', AddressListView.as_view(), name='list_address'),
+    path('task-address-api-entity/', TaskSetEntityFromAddressView.as_view(), name='task-address-api-entity'),
+    path('command_address/', CommandsAPIAddressView.as_view(), name='command_address'),
 ]

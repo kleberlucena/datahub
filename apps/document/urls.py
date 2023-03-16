@@ -1,19 +1,15 @@
-from django.urls import include, path
-from global_login_required import login_not_required
-from rest_framework import routers
+from django.urls import path
 
-# from apps.document.views import DocumentView
-from apps.document.api.viewset import DocumentViewSet, DocumentRetrieve, DocumentTypeListViewSet
+from .views import *
 
 app_name = 'document'
 
-router = routers.DefaultRouter()
-
-router.register(r'', DocumentViewSet)
-# router.register(r'images', ImageViewSet)
-
 urlpatterns = [
-    path('document-types/', DocumentTypeListViewSet.as_view(), name='document_type_json'),
-    path('<uuid:uuid>/', DocumentRetrieve.as_view(), name='image_detail'),
-    path("", include(router.urls)),
+    path('api-v1/document_list_json/', DocumentListJson.as_view(), name='document_list_json'),
+    path('list_document/', DocumentListView.as_view(), name='list_document'),
+    path('task-document-api-entity/', TaskSetEntityFromDocumentView.as_view(), name='task-document-api-entity'),
+    path('command_document/', CommandsAPIDocumentView.as_view(), name='command_document'),
+    path('api-v1/document_image_list_json/', DocumentImageListJson.as_view(), name='document_image_list_json'),
+    path('list_document_image/', DocumentImageListView.as_view(), name='list_document_image'),
+    path('task-document-image-api-entity/', TaskSetEntityFromDocumentImageView.as_view(), name='task-document-image-api-entity'),
 ]

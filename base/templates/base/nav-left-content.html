@@ -20,7 +20,7 @@
               <a href="#" class="nav-link">
                 <i class="fas fa-sync-alt nav-icon"></i>
                 <p>
-                  Tarefas
+                  Tarefas Pessoas
                   <i class="fas fa-angle-left right"></i>
                 </p>
               </a>
@@ -40,8 +40,86 @@
                 </li>
               </ul>
             </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="fas fa-sync-alt nav-icon"></i>
+                <p>
+                  Tarefas Endereços
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">
+                
+                <li class="nav-item">
+                  <a href="{% url 'address:list_address' %}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Visualizar Endereços</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'address:command_address' %}" class="nav-link">
+                    <i class="fas fa-terminal nav-icon"></i>
+                    <p>Comandos Disponíveis</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="fas fa-sync-alt nav-icon"></i>
+                <p>
+                  Tarefas Documentos
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">
+                
+                <li class="nav-item">
+                  <a href="{% url 'document:list_document' %}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Visualizar Documentos</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'document:list_document_image' %}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Visualizar Imagens de Documentos</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'document:command_document' %}" class="nav-link">
+                    <i class="fas fa-terminal nav-icon"></i>
+                    <p>Comandos Disponíveis</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="fas fa-sync-alt nav-icon"></i>
+                <p>
+                  Tarefas Imagens
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">
+                
+                <li class="nav-item">
+                  <a href="{% url 'image:list_image' %}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Visualizar Imagens</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'image:command_image' %}" class="nav-link">
+                    <i class="fas fa-terminal nav-icon"></i>
+                    <p>Comandos Disponíveis</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
           </ul>
-      </li>
+      </li>      
       {% endif %}
       {% if user.is_superuser %}
         <li class="nav-header">INTEGRAÇÕES</li>

@@ -2,7 +2,7 @@ from django.urls import path
 
 from . import viewsets
 
-app_name = 'base'
+app_name = 'base_api'
 
 urlpatterns = [
     path('suggestions/', viewsets.AddSuggestionView.as_view(), name='add_list_suggestion_json'),

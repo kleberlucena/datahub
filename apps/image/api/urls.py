@@ -3,7 +3,7 @@ from global_login_required import login_not_required
 
 from . import viewsets
 
-app_name = 'apps.image'
+app_name = 'image_api'
 
 urlpatterns = [
     path('', viewsets.ImageList.as_view(), name='image_list_json'),

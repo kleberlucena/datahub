@@ -3,7 +3,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, filters, mixins, status
-from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
+from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from guardian.decorators import permission_required_or_403
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 class AddSuggestionView(generics.ListCreateAPIView):
     queryset = Suggestion.objects.all()
     serializer_class = serializers.SuggestionSerializer
-    permission_classes = [DjangoObjectPermissions]
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at', 'updated_at']
 
