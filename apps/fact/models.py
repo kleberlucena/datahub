@@ -17,6 +17,26 @@ class Fact(Base, SoftDelete):
     description = models.TextField("Relato", null=True, blank=True)
     start_time = models.DateTimeField("Início")
     end_time = models.DateTimeField("Término", null=True, blank=True)
+    addresses = models.ManyToManyField(
+        Address,
+        through='FactAddresses',
+        through_fields=('fact', 'address'),
+    )
+    victims = models.ManyToManyField(
+        Person,
+        through='FactVictims',
+        through_fields=('fact', 'victim'),
+    )
+    suspects = models.ManyToManyField(
+        Person,
+        through='FactSuspects',
+        through_fields=('fact', 'suspect'),
+    )
+    witnesses = models.ManyToManyField(
+        Person,
+        through='FactWitnesses',
+        through_fields=('fact', 'witness'),
+    )
     updated_by = models.ForeignKey(
         User,
         related_name='fact_updater',
