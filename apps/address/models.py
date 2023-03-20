@@ -43,6 +43,7 @@ class Address(Base, SoftDelete):
     street = models.CharField('Logradouro', max_length=255, null=True, blank=True)
     number = models.CharField('Número', max_length=9, null=True, blank=True)
     complement = models.CharField('Complemento', max_length=255, null=True, blank=True)
+    reference = models.CharField('Pontos de Referência', max_length=255, null=True, blank=True)
     neighborhood = models.CharField('Bairro', max_length=155, null=True, blank=True)
     city = models.CharField('Cidade', max_length=155, null=True, blank=True)
     state = BRStateField('Estado', default='PB', null=True, blank=True)
