@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
+    'django.contrib.postgres',
 
     'auth_oidc',  # O APP auth must come before allauth to load templates
     'oauth2',  # Include authenticate token
