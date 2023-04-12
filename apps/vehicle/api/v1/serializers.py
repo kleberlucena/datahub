@@ -87,11 +87,13 @@ class ArrendatarioRenavamCortexSerializer(serializers.ModelSerializer):
 
 
 class ProprietarioBasicRenavamCortexSerializer(serializers.ModelSerializer):
+    tipoDocumentoProprietario = serializers.CharField(source="tipoDocumento")
+    numeroDocumentoProprietario = serializers.CharField(source="numeroDocumento")
     nomeProprietario = serializers.CharField(source="nome")
 
     class Meta:
         model = PersonRenavamCortex
-        fields = ("nomeProprietario",)
+        fields = ("nomeProprietario", "tipoDocumentoProprietario", "numeroDocumentoProprietario")
 
 
 class ProprietarioIntermediateRenavamCortexSerializer(serializers.ModelSerializer):
@@ -133,9 +135,9 @@ class VehicleCortexSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VehicleCortex
-        fields = ("uuid", "placa", "dataEmplacamento", "chassi", "tipoDocumentoFaturado", "numeroIdentificacaoFaturado", 
-                  "ufFatura", "tipoDocumentoProprietario", "ufEmplacamento", "municipioPlaca", "anoFabricacao", "anoModelo", 
-                  "marcaModelo", "grupoVeiculo", "tipoVeiculo", "especie", "carroceria", "numeroCarroceria", "cor", 
+        fields = ("uuid", "placa", "placaPreMercosul", "dataPreCadastro", "dataEmplacamento", "chassi", "identificadorUnicoVeiculo", "tipoDocumentoFaturado", "mesFabricacaoVeiculo",
+                  "ufDestinoVeiculoFaturado", "numeroIdentificacaoFaturado", "ufFatura", "ufJurisdicaoVeiculo", "ufEmplacamento", "tipoDocumentoProprietario", "ufEmplacamento", 
+                  "municipioPlaca", "anoFabricacao", "anoModelo", "marcaModelo", "grupoVeiculo", "tipoVeiculo", "especie", "carroceria", "numeroCarroceria", "cor", 
                   "combustivel", "potencia", "cilindrada", "lotacao", "capacidadeMaximaCarga", "pesoBrutoTotal", 
                   "capacidadeMaximaTracao", "indicadorRemarcacaoChassi", "numeroCaixaCambio", "quantidadeEixo", "numeroEixoTraseiro",
                   "numeroEixoAuxiliar", "numeroMotor", "tipoMontagem", "numeroIdentificacaoImportador", "numeroDeclaracaoImportacao",
@@ -143,10 +145,11 @@ class VehicleCortexSerializer(serializers.ModelSerializer):
                   "restricaoVeiculo3", "restricaoVeiculo4", "dataLimiteRestricaoTributaria", "indicadorVeiculoLicenciadoCirculacao", 
                   "renavam", "codigoMunicipioEmplacamento", "dataAtualizacaoRouboFurto", "dataAtualizacaoAlarme", 
                   "indicadorVeiculoNacional", "numeroLicencaUsoConfiguracaoVeiculosMotor", "categoria", "codigoCategoria", 
-                  "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo", 
-                  "origemPossuidor", "quaantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
-                  "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao", 
-                  "proprietario", "possuidor", "arrendatario")
+                  "dataEmissaoUltimoCRV", "numeroSequenciaCRV", "numeroCRV", "numeroViaCRV", "codigoSegurancaCRV", "numeroTipoCRLV", "dataEmissaoCRLV", "numeroViaCRLV", "anoUltimoLicenciamnento", "mesAnoValidadeLicenciamento",
+                  "valorIPVA", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo", 
+                  "origemPossuidor", "quantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
+                  "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "codigoCarroceira", "restricao", "indiceNacionalVeiculos",
+                  "dataReplicacao", "flagAtivo", "proprietario", "possuidor", "arrendatario")
 
 
 class IntermediateVehicleCortexSerializer(serializers.ModelSerializer):
@@ -166,7 +169,7 @@ class IntermediateVehicleCortexSerializer(serializers.ModelSerializer):
                   "renavam", "codigoMunicipioEmplacamento", "dataAtualizacaoRouboFurto", "dataAtualizacaoAlarme", 
                   "indicadorVeiculoNacional", "numeroLicencaUsoConfiguracaoVeiculosMotor", "categoria", "codigoCategoria", 
                   "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo", 
-                  "origemPossuidor", "quaantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
+                  "origemPossuidor", "quantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
                   "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao", 
                   "proprietario", "possuidor", "arrendatario")
 
@@ -178,15 +181,12 @@ class BasicVehicleCortexSerializer(serializers.ModelSerializer):
     class Meta:
         model = VehicleCortex
         fields = ("uuid", "placa", "dataEmplacamento", "chassi", "ufEmplacamento", "municipioPlaca", "anoFabricacao", "anoModelo", 
-                  "marcaModelo", "grupoVeiculo", "tipoVeiculo", "especie", "cor", "combustivel", "potencia", "cilindrada", "lotacao", 
-                  "capacidadeMaximaCarga", "pesoBrutoTotal", "capacidadeMaximaTracao", "indicadorRemarcacaoChassi", "numeroCaixaCambio", 
-                  "quantidadeEixo", "numeroEixoTraseiro", "numeroEixoAuxiliar", "numeroMotor", "tipoMontagem", "restricaoVeiculo1", 
+                  "marcaModelo", "cor", "combustivel", "potencia", "cilindrada", "numeroMotor", "restricaoVeiculo1", 
                   "restricaoVeiculo2", "restricaoVeiculo3", "restricaoVeiculo4", "dataLimiteRestricaoTributaria", 
-                  "indicadorVeiculoLicenciadoCirculacao", "renavam", "codigoMunicipioEmplacamento", "dataAtualizacaoRouboFurto", 
-                  "dataAtualizacaoAlarme", "indicadorVeiculoNacional", "numeroLicencaUsoConfiguracaoVeiculosMotor", "categoria", "codigoCategoria", 
-                  "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo", 
-                  "origemPossuidor", "quaantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
-                  "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao", "proprietario")
+                  "indicadorVeiculoLicenciadoCirculacao", "renavam", "dataAtualizacaoRouboFurto", 
+                  "dataAtualizacaoAlarme", "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo",  
+                  "origemPossuidor", "quantidadeRestricoesBaseEmplacamento",  "situacaoVeiculo", 
+                  "restricao", "proprietario")
 
 
 class VehicleImageSerializer(serializers.ModelSerializer):

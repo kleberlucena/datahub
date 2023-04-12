@@ -17,9 +17,11 @@ from apps.image.api.serializers import ImageSerializer, ImageMediumSerializer
 from apps.document.api.serializers import DocumentSerializer
 from apps.person.models import *
 from apps.person import helpers
+from apps.bnmp import helpers as helpers_bnmp
 from apps.cortex import helpers as helpers_cortex
 from apps.cortex.models import RegistryCortex
 from apps.portal.models import Entity, Military
+from base import helpers as helpers_base
 import logging
 
 
@@ -97,7 +99,6 @@ class PersonByCpfViewSet(generics.ListAPIView):
 
 class AddPersonListView(generics.ListCreateAPIView):
     permission_classes = [DjangoObjectPermissions, DjangoModelPermissions]
-    serializer_class = serializers.PersonSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at', 'updated_at']
 
@@ -105,7 +106,9 @@ class AddPersonListView(generics.ListCreateAPIView):
 
     def get_serializer_class(self):
         if self.request.method in ['POST']:
-            return serializers.PersonSerializer
+            if self.request.user.groups.filter(name__icontains='profile:person').exists():
+                return serializers.PersonSerializer
+            raise Http404  
         elif self.request.user.groups.filter(name='profile:person_advanced').exists():
             return list_serializers.PersonListSerializer
         elif self.request.user.groups.filter(name='profile:person_intermediate').exists():
@@ -116,15 +119,27 @@ class AddPersonListView(generics.ListCreateAPIView):
 
     @action(detail=True, methods=['GET'], permission_classes=DjangoObjectPermissions)
     def list(self, request, *args, **kwargs):
-        self.permission_classes = [DjangoModelPermissions]
-        queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-    
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        try:
+            probable_cpf = self.request.query_params.get('document_number')
+            cpf = helpers_base.validate_cpf(probable_cpf)
+            helpers.process_cortex_consult(username=request.user.username, cpf=cpf)            
+            helpers.process_bnmp_consult(username=request.user.username, cpf=cpf)            
+        except Exception as e:
+            logger.error('Error while get person_cortex - {}'.format(e))
+        
+        try:            
+            self.permission_classes = [DjangoModelPermissions]
+            queryset = self.filter_queryset(self.get_queryset())
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+        
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            logger.error('Error while serialize person - {}'.format(e))
+            return Response(status=403)
         
 
     def create(self, request, *args, **kwargs):
@@ -133,6 +148,7 @@ class AddPersonListView(generics.ListCreateAPIView):
             retorno = self.perform_create(serializer)
             return retorno
         except Exception as e:
+            print('nem serializou')
             return Response(status=403)
         # return Response(serializer.data, status=status.HTTP_201_CREATED)     
 
@@ -187,7 +203,7 @@ class AddPersonListView(generics.ListCreateAPIView):
         if address_zipcode is not None:
             has_zipcode = Q(addresses__zipcode__icontains=address_zipcode)
         if document_name is not None:
-            has_name = Q(documents__name__unaccent__icontains=document_name)
+            has_name = Q(documents__name__unaccent__icontains=document_name)  | Q(nicknames__label__unaccent__icontains=document_name)
         if document_mother is not None:
             has_mother = Q(documents__mother__unaccent__icontains=document_mother)
         if document_father is not None:
@@ -197,12 +213,12 @@ class AddPersonListView(generics.ListCreateAPIView):
         if document_number is not None:
             has_number = Q(documents__number__icontains=document_number)
         if nickname_label is not None:
-            has_nickname = Q(nicknames__label__unaccent__icontains=nickname_label)
+            has_nickname = Q(nicknames__label__unaccent__icontains=nickname_label) | Q(documents__name__unaccent__icontains=nickname_label)
         if tattoo_label is not None:
             has_tattoo = Q(tattoos__label__unaccent__icontains=tattoo_label)
         if entity_name is not None:
             has_entity = Q(entity__name__unaccent__icontains=entity_name)
-        if my is not None:
+        if my is not None or self.request.user.groups.filter(name__in=['profile:person_intermediate', 'profile:person_basic']).exists():
             has_my = Q(created_by=self.request.user)
         return queryset.filter(has_my & 
                                has_city & 
@@ -260,7 +276,8 @@ class AddPersonListView(generics.ListCreateAPIView):
                         document.created_by=user
                         document.save()                        
                         if document.type.label == 'CPF':
-                            person_cortex = helpers.process_external_consult(username=self.request.user.username, cpf=document.number)
+                            helpers.process_cortex_consult(username=self.request.user.username, cpf=document.number)
+                            helpers.process_bnmp_consult(username=self.request.user.username, cpf=cpf) 
                         assign_perm("change_document", self.request.user, document)
                         assign_perm("delete_document", self.request.user, document)
                         for image in document.images.all():
@@ -283,10 +300,7 @@ class AddPersonListView(generics.ListCreateAPIView):
                         assign_perm("delete_image", self.request.user, image)
                     assign_perm("change_person", self.request.user, instance)
                     assign_perm("delete_person", self.request.user, instance)
-                    if person_cortex:
-                        RegistryCortex.objects.update_or_create(person_cortex=person_cortex, person=instance)
-                    instance.save()
-                    print(instance.uuid)                 
+                    instance.save()               
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
                 else:
                     return Response(serializer.error, status=422)

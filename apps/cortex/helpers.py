@@ -22,8 +22,10 @@ def process_cortex_consult(username, cpf=None):
         try:          
             retorno = tasks.cortex_consult(username=username, cpf=cpf)
         except Exception as e:
-            logger.error('Error while processing helper in app person - {}'.format(e))
+            logger.error('Error while helper get person in app cortex - {}'.format(e))
             retorno = None
+    except Exception as e:
+        logger.error('Error while helper update person in app cortex - {}'.format(e))
     finally:
         return retorno
 

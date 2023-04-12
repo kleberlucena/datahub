@@ -15,6 +15,7 @@ class ImageMediumSerializer(serializers.ModelSerializer):
     label = serializers.CharField(required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
     medium = serializers.SerializerMethodField('_get_medium', read_only=True)
+    large = serializers.SerializerMethodField('_get_large', read_only=True)
     entity = serializers.SerializerMethodField('_get_entity')
     
     def _get_entity(self, object):
@@ -25,6 +26,10 @@ class ImageMediumSerializer(serializers.ModelSerializer):
     def _get_medium(self, object):
         request = self.context.get('request', None)
         return watermark_helpers.handle(object.file.medium.url, request.user.id)
+    
+    def _get_large(self, object):
+        request = self.context.get('request', None)
+        return watermark_helpers.handle(object.file.large.url, request.user.id)
 
     def _get_permissions(self, object):
         request = self.context.get('request', None)
@@ -34,7 +39,7 @@ class ImageMediumSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Image
-        fields = ['uuid', 'file', 'medium', 'label', 'created_at', 'updated_at', 'entity', 'permissions']
+        fields = ['uuid', 'file', 'medium', 'large', 'label', 'created_at', 'updated_at', 'entity', 'permissions']
 
 
 class ImageSerializer(serializers.ModelSerializer):
