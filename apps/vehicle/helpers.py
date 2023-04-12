@@ -1,4 +1,5 @@
 import logging
+from django.db.models import Q
 from datetime import date
 
 from apps.vehicle.models import VehicleCortex, PersonRenavamCortex, RegistryVehicleCortex
@@ -9,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 def process_cortex_consult_by_cpf(username, cpf=None):
     try:
-        return tasks.cortex_consult(username=username, cpf=cpf)
+        return tasks.cortex_consult_vehicle_by_cpf(username=username, cpf=cpf)
     except Exception as e:
         logger.error('Error while consult vehicle by CPF - {}'.format(e))
         return None

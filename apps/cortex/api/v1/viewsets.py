@@ -1,4 +1,5 @@
 from datetime import date
+from django.http import HttpResponse, Http404, HttpResponseForbidden
 from rest_framework import generics, status
 from rest_framework.decorators import action
 from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
@@ -8,7 +9,7 @@ from drf_yasg import openapi
 from django.shortcuts import get_object_or_404
 import logging
 
-from apps.cortex.api.v1.serializers import PersonCortexSerializer
+from apps.cortex.api.v1.serializers import PersonCortexSerializer, BasicPersonCortexSerializer
 from apps.cortex.models import PersonCortex, RegistryCortex
 from apps.cortex import helpers, tasks
 from apps.cortex.services import PortalCortexService
@@ -47,7 +48,13 @@ class PersonRetrieveView(generics.RetrieveAPIView):
 class PessoaByCpfViewSet(generics.GenericAPIView):
     queryset = PersonCortex.objects.all()
     permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
-    serializer_class = PersonCortexSerializer
+
+    def get_serializer_class(self):
+        if self.request.user.groups.filter(name__in=['profile:person_intermediate', 'profile:person_advanced']).exists():
+            return PersonCortexSerializer
+        elif self.request.user.groups.filter(name='profile:person_basic').exists():
+            return BasicPersonCortexSerializer
+        raise HttpResponseForbidden
 
     @swagger_auto_schema()
     @action(detail=True, methods=['GET'])
@@ -56,12 +63,7 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
         person_cortex = None
 
         try:
-            person_cortex = helpers.process_cortex_consult(username=username, cpf=cpf)
-            documents = helpers.validate_document(number=cpf)
-            if documents is None or len(documents) == 0:
-                helpers.create_person_and_document(person_cortex)
-            else:
-                helpers.update_registers(documents, person_cortex)
+            helpers.process_cortex_consult(username=username, cpf=cpf)
             instance = get_object_or_404(PersonCortex, numeroCPF=cpf)
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
@@ -87,9 +89,11 @@ class PessoaByBirthdateViewSet(generics.ListAPIView):
         birthdate = request.query_params.get('birthdate', None)
 
         try:
-            people_json = portalCortexService.get_person_by_birthdate(username=username, name=name,
-                                                                   birthdate=birthdate)
-            return Response(people_json)
+            if self.request.user.groups.filter(name__in=['profile:person_intermediate', 'profile:person_advanced', 'profile:person_basic']).exists():
+                people_json = portalCortexService.get_person_by_birthdate(username=username, name=name,
+                                                                    birthdate=birthdate)
+                return Response(people_json)
+            raise HttpResponseForbidden
         except Exception as e:
             logger.error('Error while getting personcortex by birthdate - {}'.format(e))
 
@@ -112,8 +116,10 @@ class PessoaByMotherViewSet(generics.ListAPIView):
         mother_name = request.query_params.get('mother_name', None)
 
         try:
-            people_json = portalCortexService.get_person_by_mother(username=username, name=name, mother_name=mother_name)
-            return Response(people_json)
+            if self.request.user.groups.filter(name__in=['profile:person_intermediate', 'profile:person_advanced', 'profile:person_basic']).exists():
+                people_json = portalCortexService.get_person_by_mother(username=username, name=name, mother_name=mother_name)
+                return Response(people_json)
+            raise HttpResponseForbidden
         except Exception as e:
             logger.error('Error while getting personcortex mother - {}'.format(e))
 

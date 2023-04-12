@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
@@ -12,8 +13,9 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 import logging
 
+from base import helpers as base_helpers
 from apps.person.models import *
-from apps.person import helpers, tasks
+from apps.bnmp import helpers
 from apps.cortex.services import PortalCortexService
 from apps.bnmp.api.v1.serializers import *
 from apps.bnmp.models import PersonBNMP
@@ -33,43 +35,23 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
     permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
     serializer_class = PersonBNMPSerializer
 
-    def _get_bnmp_person(self, username, cpf):
-        try:
-            person_json = portalCortexService.get_person_bnmp_by_cpf(username, cpf)
-            if person_json:
-                for person in person_json:
-                    person["numeroCPF"] = cpf
-                    PersonBNMP.objects.create(**person)            
-                return True
-            else:
-                return False
-        except Exception as e:
-            logger.error('Error while getting person bnmp remote - {}'.format(e))
-            return None
-
     def get_queryset(self):
-        cpf = self.request.query_params.get('cpf')
-        username = self.request.user.username
-        bnmp = None
-        person_bnmp = []
-        try:
-            person_bnmp = PersonBNMP.objects.filter(numeroCPF=cpf)            
-            if person_bnmp is None or len(person_bnmp) == 0:
-                find = self._get_bnmp_person(username, cpf)
-                if find:
-                    person_bnmp = PersonBNMP.objects.filter(numeroCPF=cpf)
-        except Exception as e:
-            logger.error('Error while getting person bnmp - {}'.format(e))
-        finally:
-            return person_bnmp      
+        return PersonBNMP.objects.all()      
 
     @swagger_auto_schema(method='get', manual_parameters=[cpf])
     @action(detail=True, methods=['GET'])
     def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-    
-    def list(self, request):
-        # obtenha a lista de resultados usando o queryset do viewset
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        cpf = self.request.query_params.get('cpf')
+        username = self.request.user.username
+
+        try:
+            cpf = base_helpers.validate_cpf(value=cpf)
+            instance = helpers.process_bnmp_consult(username=username, cpf=cpf)
+            serializer = self.get_serializer(instance, many=True)
+            return Response(serializer.data)
+        except ValidationError as e:
+            logger.error('Error while validate CPF - {}'.format(e))
+            return Response(status=422)
+        except Exception as e:
+            logger.error('Error while serialize person_bnmp - {}'.format(e))
+            return Response(status=500)

@@ -25,8 +25,8 @@ class ImagesAdminInLine(admin.TabularInline):
 
 @admin.register(models.VehicleCortex)
 class VehicleCortexAdmin(admin.ModelAdmin):
-    list_display = ("placa", "dataEmplacamento", "chassi", "tipoDocumentoFaturado", "numeroIdentificacaoFaturado", 
-                  "ufFatura", "tipoDocumentoProprietario", "ufEmplacamento", "municipioPlaca", "anoFabricacao", "anoModelo", 
+    list_display = ("uuid", "placa", "dataEmplacamento", "chassi", "tipoDocumentoFaturado", "numeroIdentificacaoFaturado", 
+                  "ufEmplacamento", "tipoDocumentoProprietario", "ufEmplacamento", "municipioPlaca", "anoFabricacao", "anoModelo", 
                   "marcaModelo", "grupoVeiculo", "tipoVeiculo", "especie", "carroceria", "numeroCarroceria", "cor", 
                   "combustivel", "potencia", "cilindrada", "lotacao", "capacidadeMaximaCarga", "pesoBrutoTotal", 
                   "capacidadeMaximaTracao", "indicadorRemarcacaoChassi", "numeroCaixaCambio", "quantidadeEixo", "numeroEixoTraseiro",
@@ -36,8 +36,9 @@ class VehicleCortexAdmin(admin.ModelAdmin):
                   "renavam", "codigoMunicipioEmplacamento", "dataAtualizacaoRouboFurto", "dataAtualizacaoAlarme", 
                   "indicadorVeiculoNacional", "numeroLicencaUsoConfiguracaoVeiculosMotor", "categoria", "codigoCategoria", 
                   "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo", 
-                  "origemPossuidor", "quaantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
-                  "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao", "created_at", "updated_at")
+                  "origemPossuidor", "registroAduaneiro", "situacaoVeiculo", 
+                  "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao", 
+                  "proprietario", "possuidor", "arrendatario", "created_at", "updated_at")
     
     list_filter = ("ufEmplacamento", "municipioPlaca", "anoFabricacao", "anoModelo", "marcaModelo","updated_at",)
     search_fields = ('uuid', 'placa', 'renavam', 'chassi', 'ufEmplacamento')
