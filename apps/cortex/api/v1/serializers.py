@@ -42,7 +42,12 @@ class RegistrySerializer(serializers.ModelSerializer):
         fields =  ('uuid', 'created_at', 'updated_at', 'person')
 
         
+class BasicPersonCortexSerializer(serializers.ModelSerializer):
+    dataAtualizacao = serializers.DateTimeField(format=None)
 
+    class Meta:
+        model = PersonCortex
+        fields = ("numeroCPF", "nomeCompleto", "nomeMae", "dataNascimento", "sexo", "nomeSocial", "anoObito", "dataAtualizacao", "created_at", "updated_at")
 
 
 class PersonCortexSerializer(serializers.ModelSerializer):

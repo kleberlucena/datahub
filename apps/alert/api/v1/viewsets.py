@@ -1,5 +1,5 @@
 import json
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, Http404
 from django.db.models import Q
 from drf_yasg import openapi
 from django.shortcuts import get_object_or_404
@@ -31,9 +31,7 @@ class AddAlertCortexListView(generics.ListCreateAPIView):
             return serializers.AlertCortexPolymorphicSerializer
         elif self.request.user.groups.filter(name='profile:alert_advanced').exists():
             return serializers.AlertCortexPolymorphicSerializer
-        elif self.request.user.groups.filter(name='profile:alert_intermediate').exists():
-            return serializers.BasicAlertCortexPolymorphicSerializer
-        return serializers.BasicAlertCortexPolymorphicSerializer
+        raise Http404
 
     @swagger_auto_schema(method='get')
     @action(detail=True, methods=['GET'])
@@ -62,9 +60,11 @@ class AddVehicleAlertCortexListView(generics.ListCreateAPIView):
             return serializers.VehicleAlertCortexSerializer
         elif self.request.user.groups.filter(name='profile:alert_advanced').exists():
             return serializers.VehicleAlertCortexSerializer
-        elif self.request.user.groups.filter(name='profile:alert_intermediate').exists():
+        elif self.request.user.groups.filter(name='profile:alert_vehicle_intermediate').exists():
             return serializers.IntermediateVehicleAlertCortexSerializer
-        return serializers.BasicVehicleAlertCortexSerializer
+        elif self.request.user.groups.filter(name='profile:alert_vehicle_basic').exists():
+            return serializers.BasicVehicleAlertCortexSerializer
+        raise Http404 
 
     @swagger_auto_schema(method='get', manual_parameters=[placa])
     @action(detail=True, methods=['GET'])
@@ -93,9 +93,11 @@ class AddPersonAlertCortexListView(generics.ListCreateAPIView):
             return serializers.PersonAlertCortexSerializer
         elif self.request.user.groups.filter(name='profile:alert_advanced').exists():
             return serializers.PersonAlertCortexSerializer
-        elif self.request.user.groups.filter(name='profile:alert_intermediate').exists():
+        elif self.request.user.groups.filter(name='profile:alert_person_intermediate').exists():
             return serializers.IntermediatePersonAlertCortexSerializer
-        return serializers.BasicPersonAlertCortexSerializer
+        elif self.request.user.groups.filter(name='profile:alert_person_basic').exists():
+            return serializers.BasicPersonAlertCortexSerializer
+        raise Http404 
 
     @swagger_auto_schema(method='get', manual_parameters=[cpf])
     @action(detail=True, methods=['GET'])
