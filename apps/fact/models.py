@@ -11,10 +11,38 @@ from apps.person.models import Person
 from apps.portal.models import Entity
 
 
+class FactType(Base, SoftDelete):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    title = models.CharField("Título", max_length=255)
+    description = models.TextField("Descrição", null=True, blank=True)
+
+    def soft_delete_cascade_policy_action(self, **kwargs):
+        # Insert here custom pre delete logic
+        user = kwargs['deleted_by']
+        if user is not None:
+            self.deleted_by = user
+        super().soft_delete_cascade_policy_action()
+        # Insert here custom post delete logic
+
+    def __str__(self):
+        return f"{self.uuid}"
+
+    class Meta:
+        verbose_name = "Tipo de Fato"
+        verbose_name_plural = "Tipos de Fatos"
+
+
 class Fact(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    label = models.CharField("Descrição", max_length=255)
-    description = models.TextField("Relato", null=True, blank=True)
+    title = models.CharField("Título", max_length=255)
+    description = models.TextField("Descrição", null=True, blank=True)
+    fact_type = models.ForeignKey(
+        FactType, 
+        related_name='facts', 
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True
+    )
     start_time = models.DateTimeField("Início")
     end_time = models.DateTimeField("Término", null=True, blank=True)
     addresses = models.ManyToManyField(
@@ -24,16 +52,19 @@ class Fact(Base, SoftDelete):
     )
     victims = models.ManyToManyField(
         Person,
+        related_name='victims',
         through='FactVictims',
         through_fields=('fact', 'victim'),
     )
     suspects = models.ManyToManyField(
         Person,
+        related_name='suspects',
         through='FactSuspects',
         through_fields=('fact', 'suspect'),
     )
     witnesses = models.ManyToManyField(
         Person,
+        related_name='witnesses',
         through='FactWitnesses',
         through_fields=('fact', 'witness'),
     )

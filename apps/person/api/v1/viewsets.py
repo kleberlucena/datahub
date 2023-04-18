@@ -218,7 +218,7 @@ class AddPersonListView(generics.ListCreateAPIView):
             has_tattoo = Q(tattoos__label__unaccent__icontains=tattoo_label)
         if entity_name is not None:
             has_entity = Q(entity__name__unaccent__icontains=entity_name)
-        if my is not None or self.request.user.groups.filter(name__in=['profile:person_intermediate', 'profile:person_basic']).exists():
+        if my is not None or self.request.user.groups.filter(name__in=['profile:person_basic']).exists():
             has_my = Q(created_by=self.request.user)
         return queryset.filter(has_my & 
                                has_city & 
