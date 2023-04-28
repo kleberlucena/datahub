@@ -30,6 +30,110 @@ def update_registers(documents, person_bnmp):
 
 
 @shared_task(bind=True)
+def bnmp_consult_idpessoa(self, username, idpessoa):
+    retorno = None
+    bnmp_instance = None
+    mandados = []
+    try:
+        bnmp_instance = PersonBNMP.objects.get(idpessoa=idpessoa)
+    except Exception as e:
+        logger.error('Error while getting bnmp in database - {}'.format(e))
+        bnmp_instance = None
+    try:
+        logger.info('Task bnmp_consult_idpessoa processing')
+        
+        print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+        print(bnmp_instance)
+        print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+        data_mandados = portalCortexService.get_bnmp_by_idpessoa(idpessoa=idpessoa, username=username)
+        print('recuperou a lista')
+        if bnmp_instance is None and data_mandados is not None:           
+            new_bnmp_instance = PersonBNMP.objects.create(
+                idpessoa = idpessoa,
+                nome = data_mandados["nome"],
+                alcunha = data_mandados["alcunha"],
+                nomeMae = data_mandados["mae"],
+                nomePai = data_mandados["pai"],
+                sexo = data_mandados["sexo"],
+                statusPessoa = data_mandados["pessoa"]["statusPessoa"],
+                tipoBuscaCPF = data_mandados["tipoBuscaCPF"],
+            )
+            bnmp_instance = new_bnmp_instance
+        user = User.objects.get(username=username)
+        json_mandados = data_mandados['mandadoPrisao']
+        if json_mandados is None or len(json_mandados) == 0:
+            logger.info('Without mandadosPrisao')
+        else:
+            for item_mandado in json_mandados:
+                print('------------------------------------------')
+                print(item_mandado)
+                mandado_instance, mandado_created = MandadoPrisao.objects.update_or_create(**item_mandado)
+                mandado_instance.create_by = user
+                mandado_instance.person_bnmp=bnmp_instance
+                mandado_instance.save()
+                mandados.append(mandado_instance)
+                print(mandado_instance)
+                if bnmp_instance is not None:
+                    bnmp_instance.mandados.add(mandado_instance)
+                print('------------------------------------------')
+            bnmp_instance.save()
+        retorno = mandados
+    except Exception as e:
+        logger.error('Error while getting mandados in bnmp cortex - {}'.format(e))
+    finally:
+        return retorno
+
+@shared_task(bind=True)
+def bnmp_consult_name_birthdate(self, username, name, birthdate):
+    try:
+        logger.info('Task bnmp_consult processing')
+        data = portalCortexService.get_person_bnmp_by_birthdate(name=name, username=username, birthdate=birthdate)
+        return data
+    except Exception as e:
+        logger.error('Error while getting person in bnmp cortex by birthdate - {}'.format(e))
+        return None
+
+@shared_task(bind=True)
+def bnmp_consult_name_mother(self, username, name, mother_name):
+    try:
+        logger.info('Task bnmp_consult processing')
+        data = portalCortexService.get_person_bnmp_by_mother(name=name, username=username, mother_name=mother_name)
+        return data
+    except Exception as e:
+        logger.error('Error while getting person in bnmp cortex by mother - {}'.format(e))
+        return None
+
+@shared_task(bind=True)
+def bnmp_consult_name_nickname(self, username, name, nickname):
+    try:
+        logger.info('Task bnmp_consult processing')
+        data = portalCortexService.get_person_bnmp_by_nickname(name=name, username=username, nickname=nickname)
+        return data
+    except Exception as e:
+        logger.error('Error while getting person in bnmp cortex by name and nickname - {}'.format(e))
+        return None
+
+@shared_task(bind=True)
+def bnmp_consult_nickname(self, username, nickname):
+    try:
+        logger.info('Task bnmp_consult processing')
+        data = portalCortexService.get_person_bnmp_by_nickname(username=username, nickname=nickname)
+        return data
+    except Exception as e:
+        logger.error('Error while getting person in bnmp cortex by nickname - {}'.format(e))
+        return None
+
+@shared_task(bind=True)
+def bnmp_consult_name(self, username, name):
+    try:
+        logger.info('Task bnmp_consult processing')
+        data = portalCortexService.get_person_bnmp_by_name(name=name, username=username)
+        return data
+    except Exception as e:
+        logger.error('Error while getting person in bnmp cortex by name - {}'.format(e))
+        return None
+
+@shared_task(bind=True)
 def bnmp_consult(self, username, cpf=False, name=False, mother_name=False, birthdate=False, nickname=False):
     """
     Get service and consult person on bnmp by params

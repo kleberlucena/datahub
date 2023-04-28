@@ -86,10 +86,10 @@ class FactImageSerializer(serializers.ModelSerializer):
 
 
 class FactSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
-    victims = FactPersonSerializer(many=True, required=False)
-    suspects = FactPersonSerializer(many=True, required=False)
-    witnesses = FactPersonSerializer(many=True, required=False)
-    addresses = AddressSerializer(many=True, required=False)
+    victims = FactPersonSerializer(read_only=True, many=True, required=False)
+    suspects = FactPersonSerializer(read_only=True, many=True, required=False)
+    witnesses = FactPersonSerializer(read_only=True, many=True, required=False)
+    addresses = AddressSerializer(read_only=True, many=True, required=False)
     images = FactImageSerializer(many=True, required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
     entity = serializers.SerializerMethodField('_get_entity')

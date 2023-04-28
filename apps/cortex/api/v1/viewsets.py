@@ -1,5 +1,5 @@
 from datetime import date
-from django.http import HttpResponse, Http404, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseServerError, HttpResponseForbidden, HttpResponseNotAllowed
 from rest_framework import generics, status
 from rest_framework.decorators import action
 from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
@@ -54,7 +54,7 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
             return PersonCortexSerializer
         elif self.request.user.groups.filter(name='profile:person_basic').exists():
             return BasicPersonCortexSerializer
-        raise HttpResponseForbidden
+        raise HttpResponseNotAllowed
 
     @swagger_auto_schema()
     @action(detail=True, methods=['GET'])
@@ -93,11 +93,10 @@ class PessoaByBirthdateViewSet(generics.ListAPIView):
                 people_json = portalCortexService.get_person_by_birthdate(username=username, name=name,
                                                                     birthdate=birthdate)
                 return Response(people_json)
-            raise HttpResponseForbidden
+            raise HttpResponseNotAllowed
         except Exception as e:
             logger.error('Error while getting personcortex by birthdate - {}'.format(e))
-
-        return Response(status=status.HTTP_404_NOT_FOUND)
+            raise HttpResponseServerError
 
     def get_queryset(self):
         return PersonCortex.objects.all()
@@ -119,11 +118,10 @@ class PessoaByMotherViewSet(generics.ListAPIView):
             if self.request.user.groups.filter(name__in=['profile:person_intermediate', 'profile:person_advanced', 'profile:person_basic']).exists():
                 people_json = portalCortexService.get_person_by_mother(username=username, name=name, mother_name=mother_name)
                 return Response(people_json)
-            raise HttpResponseForbidden
+            raise HttpResponseNotAllowed
         except Exception as e:
             logger.error('Error while getting personcortex mother - {}'.format(e))
-
-        return Response(status=status.HTTP_404_NOT_FOUND)
+            raise HttpResponseServerError
 
     def get_queryset(self):
         return PersonCortex.objects.all()
