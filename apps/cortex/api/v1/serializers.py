@@ -60,4 +60,4 @@ class PersonCortexSerializer(serializers.ModelSerializer):
                   "paisResidencia", "sexo", "nomeSocial", "naturezaOcupacao", "ocupacaoPrincipal", "anoExercicioOcupacao", "tipoLogradouro",
                   "logradouro", "numeroLogradouro", "complementoLogradouro", "bairro", "cep", "uf", "municipio", "ddd",
                   "telefone", "regiaoFiscal", "anoObito", "indicadorEstrangeiro", "indicadorMoradorEstrangeiro", "dataAtualizacao", "tituloEleitor",
-                  "latitudeAproximadaLocal", "longitudeAproximadaLocal", "registers", "created_at", "updated_at")
+                  "latitudeAproximadaLocal", "longitudeAproximadaLocal", "indiceNacionalPessoas", "registers", "created_at", "updated_at")

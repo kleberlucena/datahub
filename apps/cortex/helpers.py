@@ -12,20 +12,12 @@ logger = logging.getLogger(__name__)
 
 
 def process_cortex_consult(username, cpf=None):
+    print('No helper')
     retorno = None
     try:
-        cortex_person = models.PersonCortex.objects.get(numeroCPF=cpf)
-        retorno = cortex_person
-        if cortex_person.updated_at.date() < date.today():
-            tasks.cortex_update(username, cortex_person)
-    except models.PersonCortex.DoesNotExist:       
-        try:          
-            retorno = tasks.cortex_consult(username=username, cpf=cpf)
-        except Exception as e:
-            logger.error('Error while helper get person in app cortex - {}'.format(e))
-            retorno = None
+        retorno = tasks.cortex_consult(username=username, cpf=cpf)
     except Exception as e:
-        logger.error('Error while helper update person in app cortex - {}'.format(e))
+        logger.error('Error while helper consult person in app cortex - {}'.format(e))
     finally:
         return retorno
 
