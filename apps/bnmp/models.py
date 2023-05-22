@@ -71,13 +71,12 @@ class MandadoPrisao(Base, SoftDelete):
     dataInfracao = models.CharField(max_length=50, null=True, blank=True)
     descricaoLocalOcorrencia = models.CharField(
         max_length=255, null=True, blank=True)
-    sinteseDecisao = models.TextField(max_length=255, null=True, blank=True)
+    sinteseDecisao = models.TextField(null=True, blank=True)
     tempoPenaAno = models.CharField(max_length=255, null=True, blank=True)
     tempoPenaMes = models.CharField(max_length=255, null=True, blank=True)
     tempoPenaDia = models.CharField(max_length=255, null=True, blank=True)
-    descricaoCumprimento = models.TextField(
-        max_length=255, null=True, blank=True)
-    observacao = models.CharField(max_length=255, null=True, blank=True)
+    descricaoCumprimento = models.TextField(null=True, blank=True)
+    observacao = models.TextField(null=True, blank=True)
     regimePrisional = models.CharField(max_length=255, null=True, blank=True)
     especiePrisao = models.CharField(max_length=255, null=True, blank=True)
     sigilo = models.CharField(max_length=255, null=True, blank=True)

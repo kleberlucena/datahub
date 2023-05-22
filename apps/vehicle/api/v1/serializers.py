@@ -19,7 +19,7 @@ class PersonToVehicleSerializer(serializers.ModelSerializer):
     physicals = PhysicalSerializer(many=True, required=False)
     documents = DocumentSerializer(many=True, required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
-    
+
     def _get_permissions(self, object):
         request = self.context.get('request', None)
         if request:
@@ -39,31 +39,37 @@ class RegistryVehicleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Registry
-        fields =  ('uuid', 'created_at', 'updated_at', 'person')
+        fields = ('uuid', 'created_at', 'updated_at', 'person')
 
 
 class PersonRenavamCortexSerializer(serializers.ModelSerializer):
-    registers = RegistryVehicleSerializer(many=True, read_only=True, required=False, allow_null=True)
+    registers = RegistryVehicleSerializer(
+        many=True, read_only=True, required=False, allow_null=True)
 
     class Meta:
         model = PersonRenavamCortex
-        fields = ("uuid", "tipoDocumento", "numeroDocumento", "nome", "endereco", "registers")
+        fields = ("uuid", "tipoDocumento", "numeroDocumento",
+                  "nome", "endereco", "registers")
 
 
 class ProprietarioRenavamCortexSerializer(serializers.ModelSerializer):
-    registers = RegistryVehicleSerializer(many=True, read_only=True, required=False, allow_null=True)
+    registers = RegistryVehicleSerializer(
+        many=True, read_only=True, required=False, allow_null=True)
     tipoDocumentoProprietario = serializers.CharField(source="tipoDocumento")
-    numeroDocumentoProprietario = serializers.CharField(source="numeroDocumento")
+    numeroDocumentoProprietario = serializers.CharField(
+        source="numeroDocumento")
     nomeProprietario = serializers.CharField(source="nome")
     enderecoProprietario = serializers.CharField(source="endereco")
 
     class Meta:
         model = PersonRenavamCortex
-        fields = ("uuid", "tipoDocumentoProprietario", "numeroDocumentoProprietario", "nomeProprietario", "enderecoProprietario", "registers")
+        fields = ("uuid", "tipoDocumentoProprietario", "numeroDocumentoProprietario",
+                  "nomeProprietario", "enderecoProprietario", "registers")
 
 
 class PossuidorRenavamCortexSerializer(serializers.ModelSerializer):
-    registers = RegistryVehicleSerializer(many=True, read_only=True, required=False, allow_null=True)
+    registers = RegistryVehicleSerializer(
+        many=True, read_only=True, required=False, allow_null=True)
     tipoDocumentoPossuidor = serializers.CharField(source="tipoDocumento")
     numeroDocumentoPossuidor = serializers.CharField(source="numeroDocumento")
     nomePossuidor = serializers.CharField(source="nome")
@@ -71,39 +77,47 @@ class PossuidorRenavamCortexSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PersonRenavamCortex
-        fields = ("uuid", "tipoDocumentoPossuidor", "numeroDocumentoPossuidor", "nomePossuidor", "enderecoPossuidor", "registers")
+        fields = ("uuid", "tipoDocumentoPossuidor", "numeroDocumentoPossuidor",
+                  "nomePossuidor", "enderecoPossuidor", "registers")
 
 
 class ArrendatarioRenavamCortexSerializer(serializers.ModelSerializer):
-    registers = RegistryVehicleSerializer(many=True, read_only=True, required=False, allow_null=True)
+    registers = RegistryVehicleSerializer(
+        many=True, read_only=True, required=False, allow_null=True)
     tipoDocumentoArrendatario = serializers.CharField(source="tipoDocumento")
-    numeroDocumentoArrendatario = serializers.CharField(source="numeroDocumento")
+    numeroDocumentoArrendatario = serializers.CharField(
+        source="numeroDocumento")
     nomeArrendatario = serializers.CharField(source="nome")
     enderecoArrendatario = serializers.CharField(source="endereco")
 
     class Meta:
         model = PersonRenavamCortex
-        fields = ("uuid", "tipoDocumentoArrendatario", "numeroDocumentoArrendatario", "nomeArrendatario", "enderecoArrendatario", "registers")
+        fields = ("uuid", "tipoDocumentoArrendatario", "numeroDocumentoArrendatario",
+                  "nomeArrendatario", "enderecoArrendatario", "registers")
 
 
 class ProprietarioBasicRenavamCortexSerializer(serializers.ModelSerializer):
     tipoDocumentoProprietario = serializers.CharField(source="tipoDocumento")
-    numeroDocumentoProprietario = serializers.CharField(source="numeroDocumento")
+    numeroDocumentoProprietario = serializers.CharField(
+        source="numeroDocumento")
     nomeProprietario = serializers.CharField(source="nome")
 
     class Meta:
         model = PersonRenavamCortex
-        fields = ("nomeProprietario", "tipoDocumentoProprietario", "numeroDocumentoProprietario")
+        fields = ("nomeProprietario", "tipoDocumentoProprietario",
+                  "numeroDocumentoProprietario")
 
 
 class ProprietarioIntermediateRenavamCortexSerializer(serializers.ModelSerializer):
     tipoDocumentoProprietario = serializers.CharField(source="tipoDocumento")
-    numeroDocumentoProprietario = serializers.CharField(source="numeroDocumento")
+    numeroDocumentoProprietario = serializers.CharField(
+        source="numeroDocumento")
     nomeProprietario = serializers.CharField(source="nome")
 
     class Meta:
         model = PersonRenavamCortex
-        fields = ("tipoDocumentoProprietario", "numeroDocumentoProprietario", "nomeProprietario")
+        fields = ("tipoDocumentoProprietario",
+                  "numeroDocumentoProprietario", "nomeProprietario")
 
 
 class PossuidorIntermediateRenavamCortexSerializer(serializers.ModelSerializer):
@@ -113,86 +127,94 @@ class PossuidorIntermediateRenavamCortexSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PersonRenavamCortex
-        fields = ("tipoDocumentoPossuidor", "numeroDocumentoPossuidor", "nomePossuidor")
+        fields = ("tipoDocumentoPossuidor",
+                  "numeroDocumentoPossuidor", "nomePossuidor")
 
 
 class ArrendatarioIntermediateRenavamCortexSerializer(serializers.ModelSerializer):
     tipoDocumentoArrendatario = serializers.CharField(source="tipoDocumento")
-    numeroDocumentoArrendatario = serializers.CharField(source="numeroDocumento")
+    numeroDocumentoArrendatario = serializers.CharField(
+        source="numeroDocumento")
     nomeArrendatario = serializers.CharField(source="nome")
 
     class Meta:
         model = PersonRenavamCortex
-        fields = ("tipoDocumentoArrendatario", "numeroDocumentoArrendatario", "nomeArrendatario")
+        fields = ("tipoDocumentoArrendatario",
+                  "numeroDocumentoArrendatario", "nomeArrendatario")
 
 
-class VehicleCortexSerializer(serializers.ModelSerializer):    
-    dataDeclaracaoImportacao = serializers.DateTimeField(format=None)
-    dataEmplacamento = serializers.DateTimeField(format=None)
-    proprietario = ProprietarioRenavamCortexSerializer(read_only=True, required=False)
-    possuidor = PossuidorRenavamCortexSerializer(read_only=True, required=False)
-    arrendatario = ArrendatarioRenavamCortexSerializer(read_only=True, required=False)
+class VehicleCortexSerializer(serializers.ModelSerializer):
+    proprietario = ProprietarioRenavamCortexSerializer(
+        read_only=True, required=False)
+    possuidor = PossuidorRenavamCortexSerializer(
+        read_only=True, required=False)
+    arrendatario = ArrendatarioRenavamCortexSerializer(
+        read_only=True, required=False)
 
     class Meta:
         model = VehicleCortex
         fields = ("uuid", "placa", "placaPreMercosul", "dataPreCadastro", "dataEmplacamento", "chassi", "identificadorUnicoVeiculo", "tipoDocumentoFaturado", "mesFabricacaoVeiculo",
-                  "ufDestinoVeiculoFaturado", "numeroIdentificacaoFaturado", "ufFatura", "ufJurisdicaoVeiculo", "ufEmplacamento", "tipoDocumentoProprietario", "ufEmplacamento", 
-                  "municipioPlaca", "anoFabricacao", "anoModelo", "marcaModelo", "grupoVeiculo", "tipoVeiculo", "especie", "carroceria", "numeroCarroceria", "cor", 
-                  "combustivel", "potencia", "cilindrada", "lotacao", "capacidadeMaximaCarga", "pesoBrutoTotal", 
+                  "ufDestinoVeiculoFaturado", "numeroIdentificacaoFaturado", "ufFatura", "ufJurisdicaoVeiculo", "ufEmplacamento", "tipoDocumentoProprietario", "ufEmplacamento",
+                  "municipioPlaca", "anoFabricacao", "anoModelo", "marcaModelo", "grupoVeiculo", "tipoVeiculo", "especie", "carroceria", "numeroCarroceria", "cor",
+                  "combustivel", "potencia", "cilindrada", "lotacao", "capacidadeMaximaCarga", "pesoBrutoTotal",
                   "capacidadeMaximaTracao", "indicadorRemarcacaoChassi", "numeroCaixaCambio", "quantidadeEixo", "numeroEixoTraseiro",
                   "numeroEixoAuxiliar", "numeroMotor", "tipoMontagem", "numeroIdentificacaoImportador", "numeroDeclaracaoImportacao",
-                  "dataDeclaracaoImportacao", "codigoOrgaoSRF", "dataDeclaracaoImportacao", "restricaoVeiculo1", "restricaoVeiculo2", 
-                  "restricaoVeiculo3", "restricaoVeiculo4", "dataLimiteRestricaoTributaria", "indicadorVeiculoLicenciadoCirculacao", 
-                  "renavam", "codigoMunicipioEmplacamento", "dataAtualizacaoRouboFurto", "dataAtualizacaoAlarme", 
-                  "indicadorVeiculoNacional", "numeroLicencaUsoConfiguracaoVeiculosMotor", "categoria", "codigoCategoria", 
+                  "dataDeclaracaoImportacao", "codigoOrgaoSRF", "dataDeclaracaoImportacao", "restricaoVeiculo1", "restricaoVeiculo2",
+                  "restricaoVeiculo3", "restricaoVeiculo4", "dataLimiteRestricaoTributaria", "indicadorVeiculoLicenciadoCirculacao",
+                  "renavam", "codigoMunicipioEmplacamento", "dataAtualizacaoRouboFurto", "dataAtualizacaoAlarme",
+                  "indicadorVeiculoNacional", "numeroLicencaUsoConfiguracaoVeiculosMotor", "categoria", "codigoCategoria",
                   "dataEmissaoUltimoCRV", "numeroSequenciaCRV", "numeroCRV", "numeroViaCRV", "codigoSegurancaCRV", "numeroTipoCRLV", "dataEmissaoCRLV", "numeroViaCRLV", "anoUltimoLicenciamnento", "mesAnoValidadeLicenciamento",
-                  "valorIPVA", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo", 
-                  "origemPossuidor", "quantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
+                  "valorIPVA", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo",
+                  "origemPossuidor", "quantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo",
                   "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "codigoCarroceira", "restricao", "indiceNacionalVeiculos",
                   "dataReplicacao", "flagAtivo", "proprietario", "possuidor", "arrendatario")
 
 
 class IntermediateVehicleCortexSerializer(serializers.ModelSerializer):
-    dataEmplacamento = serializers.DateTimeField(format=None)
-    proprietario = ProprietarioIntermediateRenavamCortexSerializer(read_only=True, required=False)
-    possuidor = PossuidorIntermediateRenavamCortexSerializer(read_only=True, required=False)
-    arrendatario = ArrendatarioIntermediateRenavamCortexSerializer(read_only=True, required=False)
+    proprietario = ProprietarioIntermediateRenavamCortexSerializer(
+        read_only=True, required=False)
+    possuidor = PossuidorIntermediateRenavamCortexSerializer(
+        read_only=True, required=False)
+    arrendatario = ArrendatarioIntermediateRenavamCortexSerializer(
+        read_only=True, required=False)
 
     class Meta:
         model = VehicleCortex
-        fields = ("uuid", "placa", "dataEmplacamento", "chassi", "ufEmplacamento", "municipioPlaca", "anoFabricacao", "anoModelo", 
-                  "marcaModelo", "grupoVeiculo", "tipoVeiculo", "especie", "cor", 
-                  "combustivel", "potencia", "cilindrada", "lotacao", "capacidadeMaximaCarga", "pesoBrutoTotal", 
+        fields = ("uuid", "placa", "dataEmplacamento", "chassi", "ufEmplacamento", "municipioPlaca", "anoFabricacao", "anoModelo",
+                  "marcaModelo", "grupoVeiculo", "tipoVeiculo", "especie", "cor",
+                  "combustivel", "potencia", "cilindrada", "lotacao", "capacidadeMaximaCarga", "pesoBrutoTotal",
                   "capacidadeMaximaTracao", "indicadorRemarcacaoChassi", "numeroCaixaCambio", "quantidadeEixo", "numeroEixoTraseiro",
-                  "numeroEixoAuxiliar", "numeroMotor", "tipoMontagem", "restricaoVeiculo1", "restricaoVeiculo2", 
-                  "restricaoVeiculo3", "restricaoVeiculo4", "dataLimiteRestricaoTributaria", "indicadorVeiculoLicenciadoCirculacao", 
-                  "renavam", "codigoMunicipioEmplacamento", "dataAtualizacaoRouboFurto", "dataAtualizacaoAlarme", 
-                  "indicadorVeiculoNacional", "numeroLicencaUsoConfiguracaoVeiculosMotor", "categoria", "codigoCategoria", 
-                  "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo", 
-                  "origemPossuidor", "quantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo", 
-                  "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao", 
+                  "numeroEixoAuxiliar", "numeroMotor", "tipoMontagem", "restricaoVeiculo1", "restricaoVeiculo2",
+                  "restricaoVeiculo3", "restricaoVeiculo4", "dataLimiteRestricaoTributaria", "indicadorVeiculoLicenciadoCirculacao",
+                  "renavam", "codigoMunicipioEmplacamento", "dataAtualizacaoRouboFurto", "dataAtualizacaoAlarme",
+                  "indicadorVeiculoNacional", "numeroLicencaUsoConfiguracaoVeiculosMotor", "categoria", "codigoCategoria",
+                  "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo", "numeroProcessoImportacao", "paisTransferenciaVeiculo",
+                  "origemPossuidor", "quantidadeRestricoesBaseEmplacamento", "registroAduaneiro", "situacaoVeiculo",
+                  "codigoMarcaModelo", "codigoEspecie", "codigoTipoVeiculo", "codigoCor", "restricao",
                   "proprietario", "possuidor", "arrendatario")
 
 
 class BasicVehicleCortexSerializer(serializers.ModelSerializer):
-    dataEmplacamento = serializers.DateTimeField(format=None)
-    proprietario = ProprietarioBasicRenavamCortexSerializer(read_only=True, required=False)
+    proprietario = ProprietarioBasicRenavamCortexSerializer(
+        read_only=True, required=False)
 
     class Meta:
         model = VehicleCortex
-        fields = ("uuid", "placa", "dataEmplacamento", "chassi", "ufEmplacamento", "municipioPlaca", "anoFabricacao", "anoModelo", 
-                  "marcaModelo", "cor", "combustivel", "potencia", "cilindrada", "numeroMotor", "restricaoVeiculo1", 
-                  "restricaoVeiculo2", "restricaoVeiculo3", "restricaoVeiculo4", "dataLimiteRestricaoTributaria", 
-                  "indicadorVeiculoLicenciadoCirculacao", "renavam", "dataAtualizacaoRouboFurto", 
-                  "dataAtualizacaoAlarme", "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo",  
-                  "origemPossuidor", "quantidadeRestricoesBaseEmplacamento",  "situacaoVeiculo", 
+        fields = ("uuid", "placa", "dataEmplacamento", "chassi", "ufEmplacamento", "municipioPlaca", "anoFabricacao", "anoModelo",
+                  "marcaModelo", "cor", "combustivel", "potencia", "cilindrada", "numeroMotor", "restricaoVeiculo1",
+                  "restricaoVeiculo2", "restricaoVeiculo3", "restricaoVeiculo4", "dataLimiteRestricaoTributaria",
+                  "indicadorVeiculoLicenciadoCirculacao", "renavam", "dataAtualizacaoRouboFurto",
+                  "dataAtualizacaoAlarme", "dataEmissaoUltimoCRV", "dataHoraAtualizacaoVeiculo",
+                  "origemPossuidor", "quantidadeRestricoesBaseEmplacamento",  "situacaoVeiculo",
                   "restricao", "proprietario")
 
 
 class VehicleImageSerializer(serializers.ModelSerializer):
-    file = Base64ImageField(write_only=True)    
-    path_image = serializers.SerializerMethodField('_get_image_path', read_only=True)
-    thumbnail = serializers.SerializerMethodField('_get_thumbnail', read_only=True)
+    file = Base64ImageField(write_only=True)
+    path_image = serializers.SerializerMethodField(
+        '_get_image_path', read_only=True)
+    thumbnail = serializers.SerializerMethodField(
+        '_get_thumbnail', read_only=True)
     medium = serializers.SerializerMethodField('_get_medium', read_only=True)
     large = serializers.SerializerMethodField('_get_large', read_only=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
@@ -220,7 +242,7 @@ class VehicleImageSerializer(serializers.ModelSerializer):
         if request:
             perms = get_perms(request.user, object)
             return perms
-    
+
     def _get_entity(self, object):
         if object.entity:
             return object.entity.name
@@ -228,21 +250,25 @@ class VehicleImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VehicleImage
-        fields = ('uuid', 'label', 'file', 'path_image', 'large', 'medium', 'thumbnail', "entity", 'created_at', 'updated_at', 'permissions')
+        fields = ('uuid', 'label', 'file', 'path_image', 'large', 'medium',
+                  'thumbnail', "entity", 'created_at', 'updated_at', 'permissions')
 
     """ def create(self, validated_data):
         file=validated_data.pop('file')
         label=validated_data.pop('label')
         vehicle=validated_data.pop('vehicle')
         return VehicleImage.objects.create(vehicle=vehicle, label=label, file=file) """
-        
 
-class VehicleUpdateSerializer(serializers.ModelSerializer):    
+
+class VehicleUpdateSerializer(serializers.ModelSerializer):
     signal = serializers.CharField(required=False, allow_null=True)
-    cpf_owner = serializers.CharField(write_only=True, required=False, allow_null=True)
-    cpf_custodian = serializers.CharField(write_only=True, required=False, allow_null=True)
-    cpf_renter = serializers.CharField(write_only=True, required=False, allow_null=True)
-    
+    cpf_owner = serializers.CharField(
+        write_only=True, required=False, allow_null=True)
+    cpf_custodian = serializers.CharField(
+        write_only=True, required=False, allow_null=True)
+    cpf_renter = serializers.CharField(
+        write_only=True, required=False, allow_null=True)
+
     permissions = serializers.SerializerMethodField('_get_permissions')
 
     def _get_permissions(self, object):
@@ -253,14 +279,18 @@ class VehicleUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Vehicle
-        fields = ("chassi", "signal", "brand", "model", "color", "category", "model_year", "manufactured_year", "cpf_owner", "cpf_custodian", "cpf_renter", "created_at", "updated_at", "permissions")
+        fields = ("chassi", "signal", "brand", "model", "color", "category", "model_year", "manufactured_year",
+                  "cpf_owner", "cpf_custodian", "cpf_renter", "created_at", "updated_at", "permissions")
 
 
-class VehicleSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):    
+class VehicleSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
     signal = serializers.CharField(required=False, allow_null=True)
-    cpf_owner = serializers.CharField(write_only=True, required=False, allow_null=True)
-    cpf_custodian = serializers.CharField(write_only=True, required=False, allow_null=True)
-    cpf_renter = serializers.CharField(write_only=True, required=False, allow_null=True)
+    cpf_owner = serializers.CharField(
+        write_only=True, required=False, allow_null=True)
+    cpf_custodian = serializers.CharField(
+        write_only=True, required=False, allow_null=True)
+    cpf_renter = serializers.CharField(
+        write_only=True, required=False, allow_null=True)
     owner = PersonToVehicleSerializer(read_only=True)
     custodian = PersonToVehicleSerializer(read_only=True)
     renter = PersonToVehicleSerializer(read_only=True)
@@ -282,7 +312,7 @@ class VehicleSerializer(WritableNestedModelSerializer, serializers.ModelSerializ
         if object.entity:
             return object.entity.name
         return None
-    
+
     def _get_permissions(self, object):
         request = self.context.get('request', None)
         if request:
@@ -295,9 +325,9 @@ class VehicleSerializer(WritableNestedModelSerializer, serializers.ModelSerializ
                   "manufactured_year", "owner", "cpf_owner", "custodian", "cpf_custodian", "renter", "entity", "cpf_renter", "images", "created_at", "updated_at", "permissions")
 
 
-class BasicVehicleSerializer(serializers.ModelSerializer):    
+class BasicVehicleSerializer(serializers.ModelSerializer):
     signal = serializers.CharField(required=False, allow_null=True)
-    owner = PersonToVehicleSerializer(read_only=True)    
+    owner = PersonToVehicleSerializer(read_only=True)
     images = VehicleImageSerializer(many=True, required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
 
@@ -310,10 +340,10 @@ class BasicVehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vehicle
         fields = ("uuid", "chassi", "signal", "brand", "model", "color", "category", "model_year",
-                  "manufactured_year", "owner", "images", "created_at", "updated_at", "permissions")             
+                  "manufactured_year", "owner", "images", "created_at", "updated_at", "permissions")
 
 
-class IntermediateVehicleSerializer(serializers.ModelSerializer):    
+class IntermediateVehicleSerializer(serializers.ModelSerializer):
     signal = serializers.CharField(required=False, allow_null=True)
     owner = PersonToVehicleSerializer(read_only=True)
     custodian = PersonToVehicleSerializer(read_only=True)
@@ -330,5 +360,4 @@ class IntermediateVehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vehicle
         fields = ("uuid", "chassi", "signal", "brand", "model", "color", "category", "model_year",
-                  "manufactured_year", "owner", "cpf_owner", "custodian", "cpf_custodian", "renter", "cpf_renter", "images", "created_at", "updated_at", "permissions")             
-
+                  "manufactured_year", "owner", "cpf_owner", "custodian", "cpf_custodian", "renter", "cpf_renter", "images", "created_at", "updated_at", "permissions")

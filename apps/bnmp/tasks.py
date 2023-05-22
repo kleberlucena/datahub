@@ -1,4 +1,5 @@
 from celery import shared_task
+from django.core.exceptions import FieldError
 from django.conf import settings
 from django.contrib.auth.models import User
 from celery_progress.backend import ProgressRecorder
@@ -46,13 +47,9 @@ def bnmp_consult_idpessoa(self, username, idpessoa):
     try:
         logger.info('Task bnmp_consult_idpessoa processing')
 
-        print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-        print(bnmp_instance)
-        print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
         data_mandados = portalCortexService.get_bnmp_by_idpessoa(
             idpessoa=idpessoa, username=username)
-        print('recuperou a lista')
-        print(data_mandados)
+
         user = User.objects.get(username=username)
         if bnmp_instance is None and data_mandados is not None:
             new_bnmp_instance = PersonBNMP.objects.create(
@@ -61,8 +58,8 @@ def bnmp_consult_idpessoa(self, username, idpessoa):
                 alcunha=data_mandados["alcunha"],
                 nomeMae=data_mandados["mae"],
                 nomePai=data_mandados["pai"],
-                sexo=data_mandados["sexo"],
                 dataNascimento=data_mandados["dataNascimento"],
+                sexo=data_mandados["sexo"],
                 statusPessoa=data_mandados["pessoa"]["statusPessoa"],
                 tipoBuscaCPF=data_mandados["tipoBuscaCPF"],
                 created_by=user,
@@ -73,20 +70,20 @@ def bnmp_consult_idpessoa(self, username, idpessoa):
             logger.info('Without mandadosPrisao')
         else:
             for item_mandado in json_mandados:
-                print('------------------------------------------')
-                print(item_mandado)
                 mandado_instance, mandado_created = MandadoPrisao.objects.update_or_create(
                     **item_mandado)
                 mandado_instance.create_by = user
                 mandado_instance.person_bnmp = bnmp_instance
                 mandado_instance.save()
                 mandados.append(mandado_instance)
-                print(mandado_instance)
                 if bnmp_instance is not None:
                     bnmp_instance.mandados.add(mandado_instance)
-                print('------------------------------------------')
             bnmp_instance.save()
         retorno = mandados
+    except FieldError as e:
+        logger.error(
+            'FieldError while getting mandados in bnmp cortex - {}'.format(e))
+        raise e
     except Exception as e:
         logger.error(
             'Error while getting mandados in bnmp cortex - {}'.format(e))
@@ -170,11 +167,9 @@ def bnmp_consult(self, username, cpf):
         logger.info('Task bnmp_consult processing')
         data = portalCortexService.get_person_bnmp_by_cpf(
             cpf=cpf, username=username)
-        print('recuperou a lista')
         user = User.objects.get(username=username)
 
         if data:
-            print(data)
             for item in data:
                 bnmp_instance, created = PersonBNMP.objects.update_or_create(
                     **item)
@@ -188,16 +183,12 @@ def bnmp_consult(self, username, cpf):
                     logger.info('Without mandadosPrisao')
                 else:
                     for item_mandado in json_mandados:
-                        print('------------------------------------------')
-                        print(item_mandado)
                         mandado_instance, mandado_created = MandadoPrisao.objects.update_or_create(
                             **item_mandado)
                         mandado_instance.create_by = user
                         mandado_instance.person_bnmp = bnmp_instance
                         mandado_instance.save()
-                        print(mandado_instance)
                         bnmp_instance.mandados.add(mandado_instance)
-                        print('------------------------------------------')
                 bnmp_instance.save()
                 documents = get_documents(number=cpf)
                 update_registers(documents=documents,
@@ -214,46 +205,6 @@ def bnmp_consult(self, username, cpf):
             'Error while getting registry in bnmp cortex - {}'.format(e))
     finally:
         return retorno
-
-
-""" @shared_task(bind=True)
-def bnmp_update(username, person_bnmp):
-    try:
-        idpessoa=person_bnmp.idpessoa
-        user = User.objects.get(username=username)
-        data_mandados = portalCortexService.get_bnmp_by_idpessoa(username=username, idpessoa=idpessoa)
-        if data_mandados:
-            print(data_mandados)
-            json_mandados = data_mandados['mandadoPrisao']
-            if json_mandados is None or len(json_mandados) == 0:
-                logger.info('Without mandadosPrisao')
-            else:
-                for item_mandado in json_mandados:
-                    mandado_instance, mandado_created = MandadoPrisao.objects.update_or_create(**item_mandado)
-                    mandado_instance.create_by = user
-                    mandado_instance.person_bnmp=person_bnmp
-                    mandado_instance.save()
-                    print(mandado_instance)
-                    # bnmp_instance.mandados.append(mandado_instance)
-                person_bnmp.save()
-                if mandado_created:
-                    logger.info('Created bnmp_instance')
-                else:
-                    logger.info('Updated bnmp_instance')          
-        else:
-            logger.warn('Not found personbnmp in cortex - {}'.format(idpessoa))
-        id = person_bnmp.id
-        value = person_json['numeroCPF']
-        person_bnmp_updated, created = PersonBNMP.objects.update_or_create(
-                    numeroCPF=value, id=id, defaults={**person_json},
-                )
-        if person_bnmp_updated:
-            documents = get_documents(number=person_bnmp_updated.numeroCPF)
-            update_registers(documents=documents, person_bnmp=person_bnmp_updated)
-            logger.info('Person bnmp updated - {}'.format(person_bnmp_updated.numeroCPF))
-    except Exception as e:
-        logger.error('Error while getting person in cortex - {}'.format(e))
- """
 
 
 @shared_task(bind=True)

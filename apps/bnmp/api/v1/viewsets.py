@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, FieldError
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
@@ -104,6 +104,8 @@ class MandadoByIdPessoaViewSet(generics.GenericAPIView):
             raise NotFound
 
     def handle_exception(self, exc):
+        if isinstance(exc, FieldError):
+            return Response({"detail": "Erro em um atributo."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         if isinstance(exc, ValidationError):
             return Response({"detail": "Erro na validação do CPF."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         if isinstance(exc, PermissionDenied):
