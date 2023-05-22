@@ -1,5 +1,7 @@
 from celery import shared_task
+from datetime import datetime
 from django.conf import settings
+from django.utils import timezone
 from celery_progress.backend import ProgressRecorder
 import logging
 
@@ -13,7 +15,8 @@ portalCortexService = services.PortalCortexService()
 
 
 @shared_task(bind=True)
-def cortex_consult(self, username, cpf=False, name=False, mother_name=False, birthdate=False, nickname=False):
+def cortex_consult(self, username, cpf):
+    print('task de consulta ao portal')
     """
     Get service and consult person on cortex by params
     """
@@ -23,12 +26,19 @@ def cortex_consult(self, username, cpf=False, name=False, mother_name=False, bir
         data = portalCortexService.get_person_by_cpf(cpf=cpf, username=username)
 
         if data:
+            print(data["dataAtualizacao"])
+            data_atualizacao_str = data.pop("dataAtualizacao")
+            """
+            data_atualizacao = datetime.strptime(
+                data_atualizacao_str, "%Y-%m-%dT%H:%M:%S")
+            data_atualizacao = timezone.make_aware(data_atualizacao) """
+
             cortex_instance, created = PersonCortex.objects.update_or_create(**data)
             retorno = cortex_instance
             if created:
                 logger.info('Created cortex_instance')
             else:
-                logger.info('Updated cortex_instance')          
+                logger.info('Updated cortex_instance')
         else:
             logger.warn('Not found personcortex in cortex - {}'.format(cpf))
             retorno = None
@@ -48,7 +58,7 @@ def cortex_update(username, person_cortex):
                     numeroCPF=value, id=id, defaults={**person_json},
                 )
         if person_cortex:
-            logger.info('Person cortex updated - {}'.format(cpf))
+            logger.info('Person cortex updated - {}'.format(value))
             return person_cortex_updated
         else:
             return None

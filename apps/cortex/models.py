@@ -65,6 +65,7 @@ class PersonCortex(Base, SoftDelete):
     nomeSocial = models.CharField(max_length=255, null=True, blank=True)
     paisNascimento = models.CharField(max_length=255, null=True, blank=True)
     ufNaturalidade = models.CharField(max_length=255, null=True, blank=True)
+    indiceNacionalPessoas = models.JSONField(null=True, blank=True)
 
     def soft_delete_cascade_policy_action(self, **kwargs):
         # Insert here custom pre delete logic

@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     'apps.bnmp',
     'apps.vehicle',
     'apps.watermark',
+    'apps.fact',
 
 ]
 MIDDLEWARE = [

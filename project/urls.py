@@ -71,6 +71,7 @@ urlpatterns = [
     path('api/v1/bnmp/', include('apps.bnmp.api.v1.urls'), name='bnmp'),
     path('api/v1/cortex/', include('apps.cortex.api.v1.urls'), name='cortex'),
     path('api/v1/document/', include('apps.document.api.urls'), name='document_api'),
+    path('api/v1/fact/', include('apps.fact.api.v1.urls'), name='fact'),
     path('api/v1/person/', include('apps.person.api.v1.urls'), name='person'),
     path('api/v1/vehicle/', include('apps.vehicle.api.v1.urls'), name='vehicle'),
     path('api/v1/image/', include('apps.image.api.urls'), name='image_api'),
