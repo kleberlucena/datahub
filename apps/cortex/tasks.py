@@ -7,7 +7,8 @@ import logging
 
 from apps.cortex import services
 from apps.cortex.models import PersonCortex, RegistryCortex
-from apps.document.models import Document
+from apps.document.models import Document, DocumentType
+from apps.person.models import Person, Nickname
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -29,18 +30,7 @@ def cortex_consult(self, username, cpf):
         if data:
             cortex_instance, created = PersonCortex.objects.update_or_create(
                 **data)
-            documents = Document.objects.filter(number=cpf)
-            for document in documents:
-                people = document.person_set.all()
-                if people:
-                    for person in people:
-                        RegistryCortex.objects.update_or_create(
-                            person_cortex=cortex_instance, person=person)
             retorno = cortex_instance
-            if created:
-                logger.info('Created cortex_instance')
-            else:
-                logger.info('Updated cortex_instance')
         else:
             logger.warn('Not found personcortex in cortex - {}'.format(cpf))
             retorno = None
@@ -52,7 +42,7 @@ def cortex_consult(self, username, cpf):
 
 
 @shared_task(bind=True)
-def cortex_update(username, person_cortex):
+def cortex_update(self, username, person_cortex):
     try:
         person_json = portalCortexService.get_person_by_cpf(
             username=username, cpf=person_cortex.numeroCPF)
@@ -61,7 +51,7 @@ def cortex_update(username, person_cortex):
         person_cortex_updated, created = PersonCortex.objects.update_or_create(
             numeroCPF=value, id=id, defaults={**person_json},
         )
-        if person_cortex:
+        if person_cortex_updated:
             logger.info('Person cortex updated - {}'.format(value))
             return person_cortex_updated
         else:
