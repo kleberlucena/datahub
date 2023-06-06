@@ -131,11 +131,21 @@ class AddPersonListView(generics.ListCreateAPIView):
     def list(self, request, *args, **kwargs):
         probable_cpf = self.request.query_params.get('document_number')
         try:
-            cpf = base_helpers.validate_cpf(probable_cpf)
-            helpers.process_cortex_consult(
-                username=request.user.username, cpf=cpf)
-            helpers.process_bnmp_consult(
-                username=request.user.username, cpf=cpf)
+            if probable_cpf:
+                cpf = base_helpers.validate_cpf(probable_cpf)
+                if cpf:
+                    person_cortex = helpers_cortex.process_cortex_consult(
+                        username=request.user.username, cpf=cpf)
+                    if person_cortex:
+                        documents = helpers_cortex.validate_document(cpf)
+                        if documents is None:
+                            helpers_cortex.create_person_and_document(
+                                person_cortex)
+                        else:
+                            helpers_cortex.update_registers(
+                                documents=documents, person_cortex=person_cortex)
+                    helpers_bnmp.process_bnmp_consult(
+                        username=request.user.username, cpf=cpf)
         except Exception as e:
             logger.error('Error while getting person_cortex - {}'.format(e))
 
@@ -239,23 +249,26 @@ class AddPersonListView(generics.ListCreateAPIView):
         return super().handle_exception(exc)
 
     def build_filter_conditions(self):
+        print('No filtro personalizado...')
         filters = Q()
         query_params = self.request.query_params
 
         filters &= Q(created_by=self.request.user) if query_params.get(
             'my') or self.request.user.groups.filter(name='profile:person_basic').exists() else Q()
 
-        for field in ['address_city', 'address_neighborhood', 'address_street', 'address_complement',
-                      'address_reference', 'address_zipcode', 'document_name', 'document_mother', 'document_father',
-                      'document_birth_date', 'document_number', 'nickname_label', 'tattoo_label', 'entity_name']:
-            if value := query_params.get(field):
-                q = Q(**{f"{field}__unaccent__icontains": value}) if field in ['address_city', 'address_neighborhood', 'address_street',
-                                                                               'address_complement', 'address_reference', 'address_zipcode'] else Q(
-                    **{f"{field}__unaccent__iexact": value})
-                filters &= q
+        query_dict = {'address_city': 'addresses__city', 'address_neighborhood': 'addresses__neighborhood', 'address_street': 'addresses__street',
+                      'address_complement': 'addresses__complement', 'address_reference': 'addresses__reference', 'address_zipcode': 'addresses__zipcode',
+                      'document_name': 'documents__name', 'document_mother': 'documents__mother', 'document_father': 'documents__father',
+                      'document_birth_date': 'documents__birth_date', 'document_number': 'documents__number', 'nickname_label': 'nicknames__label',
+                      'tattoo_label': 'tattoos__label', 'entity_name': 'entity__name'}
 
-        if query_params.get('face'):
-            filters &= Q(faces__id=query_params.get('face'))
+        for field, flag in query_dict.items():
+            if value := query_params.get(field):
+                q = Q(**{f"{flag}__unaccent__icontains": value}) if field in ['address_city', 'address_neighborhood', 'address_street',
+                                                                              'address_complement', 'address_reference', 'address_zipcode'] else Q(
+                    **{f"{flag}__unaccent__iexact": value})
+                filters &= q
+        print(filters)
 
         return filters
 
