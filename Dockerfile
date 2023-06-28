@@ -1,4 +1,4 @@
-FROM python:3.8-slim
+FROM python:3.8-slim-bullseye
 # Configurando PYTHONUNBUFFERED com qualquer valor diferente de vazio
 # faz com que o Python lance todos os seus logs direto para terminal
 # evitando o buffer. Isso nos ajuda a ver os logs direto no container imediatamente.

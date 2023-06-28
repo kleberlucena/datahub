@@ -52,6 +52,10 @@ class AddAlertCortexListView(generics.ListCreateAPIView):
         if signal_number is not None:
             has_signal = Q(placa__icontains=signal_number)
         queryset = queryset.filter(has_signal | has_cpf) """
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         if serializer.data == []:
             raise NotFound
@@ -100,6 +104,10 @@ class AddVehicleAlertCortexListView(generics.ListCreateAPIView):
         if signal_number is not None:
             has_signal = Q(placa__icontains=signal_number)
         queryset = queryset.filter(has_signal)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         if serializer.data == []:
             raise NotFound
@@ -145,6 +153,12 @@ class AddPersonAlertCortexListView(generics.ListCreateAPIView):
         if cpf is not None:
             has_cpf = Q(cpf__icontains=cpf)
         queryset = queryset.filter(has_cpf)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
         serializer = self.get_serializer(queryset, many=True)
         if serializer.data == []:
             raise NotFound
