@@ -1,0 +1,58 @@
+{% extends "controle/pages/intermediate.html" %}
+
+<!-- browser title -->
+{% block title %} Painel {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Painel {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Painel</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+    <div class="grid-container">
+        <div class="parte_superior">
+            {% include 'controle/partials/adminlte_cards.html' %}
+        </div>
+
+        <div class="parte_infeior">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title"></h3>
+                </div>
+                <div class="card-body">
+                    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
+                        <div class="container">
+                            <ul class="painel_system_info">
+                                    <h3>Informações sobre o sistema</h3>
+                                    <li> <strong class="bg-primary">Missões</strong>
+                                        <p>O usuário poderá cadastrar de forma rápida o local da missão e a aeronave a ser utilizada. Além disso é possível acompanhar as missões em andamento ou as encerradas e também finalizar a missão com o preenchimento do relatório.
+                                        </p>
+                                    </li>
+                                    <li><strong class="bg-secondary">Checklists</strong>
+                                        <p>É possível confeccionar um checklist para a aeronave em uso no dia de serviço assim como acompanhar o histórico de alterações das aeronaves.
+                                        </p>
+                                    </li>
+                                    <li><strong class="bg-success">Efetivo</strong>
+                                        <p>Cadastro e alteração de informações sobre o efetivo.</p>
+                                    </li>
+                                    <li><strong class="bg-warning">Aeronaves</strong>
+                                        <p>Cadastro e alteração de informações sobre aeronaves.</p>
+                                    </li>
+                                    <li><strong class="bg-info">Baterias</strong>
+                                        <p>Cadastro e alteração de informações sobre as baterias. Além disso é possível alterar o nível crítico de ciclos das baterias.</p>
+                                    </li>
+                                    <li><strong class="bg-light">Relatórios</strong>
+                                        <p>Relatórios das missões realizadas e formulário para obtenção de dados para estatísticas sobre missões.</p>
+                                    </li>
+                                </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

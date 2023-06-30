@@ -1,0 +1,33 @@
+{% extends "controle/pages/intermediate.html" %}
+
+<!-- browser title -->
+{% block title %} Baterias {% endblock %}
+
+
+<!-- context title -->
+{% block title-header %} {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'rpa_manager:principal' %}">Principal</a></li>
+    <li class="breadcrumb-item active">Baterias</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+    <div class="grid-container">
+        {% comment %} <div class="parte_superior">
+            {% include 'controle/partials/adminlte_cards.html' %}
+        </div> {% endcomment %}
+
+        <div class="parte_infeior">
+            {% comment %} {% for numeracao in numeracao_baterias_nivel_critico %}
+            <span> {{ numeracao }}</span>
+            {% endfor %} {% endcomment %}
+            {% include 'controle/partials/table_baterias.html' %}
+        </div>
+    </div>
+    
+{% endblock content %}
+

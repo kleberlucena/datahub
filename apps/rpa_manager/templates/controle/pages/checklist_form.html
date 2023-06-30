@@ -1,0 +1,114 @@
+{% extends "controle/pages/intermediate.html" %}
+
+<!-- browser title -->
+{% block title %} Novo checklist {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Novo checklist {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %} 
+    <li class="breadcrumb-item"><a href="{% url 'rpa_manager:principal' %}">Principal</a></li>
+    <li class="breadcrumb-item active">Novo checklist</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h3 class="card-title"></h3>
+    </div>
+    <div class="card-body">
+        <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
+            <h2 class="ver_missao_title"> </h2>
+            <div class="container formulario_nova_missao">
+                <!--  CONTENT HERE -->
+                <form id="add-checklist-form" method="POST", action="">
+                        {% csrf_token %}
+                        <p class="edicao_checklist">{{ edicao_checklist }}</p>
+
+                        <div class="container formulario_checklist_parte1">
+                            {{ checklist_form.piloto }}
+                            <label for="id_aeronave">Aeronave</label>
+                            Selecione uma aeronave para iniciar o checklist
+                            {{ checklist_form.aeronave }}
+                            <label for="id_num_helices">Número de hélices</label>
+                            {{ checklist_form.num_helices }}
+                            <label for="id_num_baterias">Número de baterias</label>
+                            {{ checklist_form.num_baterias }}
+                        </div>
+
+                        <h2 class="formulario_checklist_titulo_selecao">Marcar itens que estão Ok </h2>
+                        <div class="formulario_checklist_selecao_itens ">
+                            <div class="container formulario_checklist_parte2">
+                                <label for="id_baterias_carregadas">Baterias carregadas</label>
+                                {{ checklist_form.baterias_carregadas }}
+                                <label for="id_bateria_controle_carregada">Bateria controle carregada</label>
+                                {{ checklist_form.bateria_controle_carregada }}
+                                <label for="id_corpo">Corpo/Shell</label>
+                                {{ checklist_form.corpo }}
+                                <label for="id_hastes_motor">Hastes</label>
+                                {{ checklist_form.hastes_motor }}
+                                <label for="id_helices">Hélices</label>
+                                {{ checklist_form.helices }}
+                                <label for="id_gimbal">Gimbal</label>
+                                {{ checklist_form.gimbal }}
+                                <label for="id_holofote">Holofote</label>
+                                {{ checklist_form.holofote }}
+                                <label for="id_auto_falante">Auto-falante</label>
+                                {{ checklist_form.auto_falante }}
+                                <label for="id_luz_estroboscopica">Luz Estroboscópica</label>
+                                {{ checklist_form.luz_estroboscopica }}
+                                <label for="id_cabos">Cabos</label>
+                                {{ checklist_form.cabos }}
+                                <label for="id_carregador">Carregador</label>
+                                {{ checklist_form.carregador }}
+                            </div>
+                            
+                            <div class="container formulario_checklist_parte2">
+                                <label for="id_fonte">Fonte de energia</label>
+                                {{ checklist_form.fonte }}
+                                <label for="id_smart_controller">Smart controller</label>
+                                {{ checklist_form.smart_controller }}
+                                <label for="id_controle">Controle remoto</label>
+                                {{ checklist_form.controle }}
+                                <label for="id_cartao_sd">Cartão SD</label>
+                                {{ checklist_form.cartao_sd }}
+                                <label for="id_IMU">IMU</label>
+                                {{ checklist_form.IMU }}
+                                <label for="id_compass">Compass/Bússola</label>
+                                {{ checklist_form.compass }}
+                                <label for="id_sinal_transmissao">Sinal de transmissão</label>
+                                {{ checklist_form.sinal_transmissao }}
+                                <label for="id_sistema_rtk_ppk">Sistema RTK PPK</label>
+                                {{ checklist_form.sistema_rtk_ppk }}
+                                <label for="id_paraquedas">Paraquedas</label>
+                                {{ checklist_form.paraquedas }}
+                                <label for="id_sinal_de_video">Sinal de vídeo</label>
+                                {{ checklist_form.sinal_de_video }}
+                                <label for="id_telemetria">Telemetria</label>
+                                {{ checklist_form.telemetria }}
+                                
+                            </div>
+                        </div>
+                        
+                        <div class="container">
+                            <h4 class="formulario_checklist_titulo_selecao">Caso algum item não esteja ok, descrever abaixo as alterações:</h4>
+                            <label class="container_alteracoes_titulo" for="id_alteracoes">Alterações</label>
+                            <input type="button" class="btn btn-danger botao_limpar" value="Limpar" onclick="limpaAlteracoes();"/><br>
+                            {{ checklist_form.alteracoes }}
+
+                        </div>
+
+                        <input type="submit" value="Enviar" class="btn btn-primary botao_enviar">
+                        <a href="{% url 'rpa_manager:checklists' %}"><input type="button" value="Voltar" class="btn btn-primary botao_enviar"></a>
+                </form>
+                    
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

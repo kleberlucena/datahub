@@ -1,0 +1,59 @@
+{% load static %}
+
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h3 class="card-title">Efetivo</h3>
+    </div>
+
+    <div class="card-body">
+        <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
+            <table id="table_efeitvo" class="table">
+    <thead class="tabela_cabecalho">
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Matrícula</th>
+            <th scope="col">Total de missões</th>
+            <th scope="col">Horas/voo</th>
+            <th scope="col">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for militar in militares %}
+            <tr> 
+                    <td>{{ militar.nome_de_guerra }}</td>
+                    <td>{{ militar.matricula }}</td>
+
+                    {% for key, value in missoes_por_usuario.items %}
+                        {% if militar.usuario.id == key %}
+                            <td>{{ value }}</td>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <td>{{ militar.total_de_horas_voo }}</td>
+                    <td>
+                        <div class="actions_buttons">
+                            <a href="{% url 'controle:ver_efetivo' militar.id %}" class="card_title" type="button" class="btn btn-primary">
+                                <div class="ver_relatorio"><i class="fas fa-eye"></i></div>
+                            </a>
+                            <div class="editar_missao">
+                                <a href="{% url 'controle:editar_efetivo' militar.id %}">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                            </div>
+                            <div class="deletar_missao">
+                                <a href="{% url 'controle:deletar_efetivo' militar.id %}">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+            </tr>
+        {% endfor %}
+          
+    </tbody>
+</table>
+        </div>
+    </div>
+</div>
+
+

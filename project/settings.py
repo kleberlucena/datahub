@@ -99,6 +99,7 @@ INSTALLED_APPS = [
     'apps.watermark',
     'apps.fact',
     'apps.police_report',
+    'apps.rpa_manager',
 
 ]
 MIDDLEWARE = [

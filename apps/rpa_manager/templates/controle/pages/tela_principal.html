@@ -1,0 +1,30 @@
+{% extends "controle/pages/intermediate.html" %}
+
+<!-- browser title -->
+{% block title %} Principal {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Página principal {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Página principal</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+    <div class="grid-container">
+        {% comment %} <div class="parte_superior">
+            {% include 'controle/partials/adminlte_cards.html' %}
+        </div> {% endcomment %}
+
+        <div class="parte_infeior">
+            {% include 'controle/partials/table_missoes.html' %}
+        </div>
+    </div>
+    {% comment %} A páginal abaixo carrega ao criar nova missão {% endcomment %}
+    {% comment %} {% include 'controle/partials/criar_novo_relatorio.html' %} {% endcomment %}
+{% endblock content %}
+
+

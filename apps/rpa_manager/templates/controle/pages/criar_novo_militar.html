@@ -1,0 +1,36 @@
+{% extends "controle/pages/intermediate.html" %}
+<!-- browser title -->
+{% block title %} Nova Militar {% endblock %}
+
+
+<!-- context title -->
+{% block title-header %}  {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+    
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title"></h3>
+        </div>
+        <div class="card-body">
+            <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
+                <div class="container formulario_nova_missao">
+                    <h2 class="ver_missao_title"> Novo militar </h2>
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        {{ militar_form.as_p }}
+                        <input type="submit" value="Enviar" class="btn btn-primary botao_enviar">
+                        <a href="{% url 'rpa_manager:efetivo' %}"><input type="button" value="Voltar" class="btn btn-primary botao_enviar"></a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

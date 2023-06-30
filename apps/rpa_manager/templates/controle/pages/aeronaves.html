@@ -1,0 +1,31 @@
+{% extends "controle/pages/intermediate.html" %}
+
+<!-- browser title -->
+{% block title %} Aeronaves {% endblock %}
+
+
+<!-- context title -->
+{% block title-header %} {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'rpa_manager:principal' %}">Principal</a></li>
+    <li class="breadcrumb-item active">Aeronaves</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+    <div class="grid-container">
+        {% comment %} <div class="parte_superior">
+            {% include 'controle/partials/adminlte_cards.html' %} 
+        </div> {% endcomment %}
+
+        <div class="parte_infeior">
+            {% include 'controle/partials/table_aeronaves.html' %}
+        </div>
+    </div>
+
+    {% comment %} {% include 'controle/partials/criar_novo_relatorio.html' %} {% endcomment %}
+{% endblock content %}
+

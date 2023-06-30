@@ -1,0 +1,57 @@
+{% load static %}
+
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h3 class="card-title">Relatórios</h3><br>
+    <div class="card-body">
+        <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
+            {% comment %} table here {% endcomment %}
+            <table id="table_relatorios" class="table">
+                <thead class="tabela_cabecalho">
+                    <tr>
+                        <th scope="col">Título</th>
+                        <th scope="col">Militar</th>
+                        <th scope="col">Data</th>
+                        <th scope="col">Local</th>
+                        <th scope="col">Aeronave</th>
+                        <th scope="col">OPM Apoiada</th>
+                        <th scope="col">Unidade Apoiada</th>
+                        <th scope="col">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for relatorio in relatorios %}
+                        <tr> 
+                                <td>{{ relatorio.titulo }}</td>
+                                <td>{{ relatorio.militar }}</td>
+                                <td>{{ relatorio.data | date:"d/m/Y" }}</td>
+                                <td>{{ relatorio.local }}</td>
+                                <td>{{ relatorio.aeronave }}</td>
+                                <td>{{ relatorio.opm_apoiada}}</td>                    
+                                <td>{{ relatorio.unidade_apoiada }}</td>
+                                <td>
+                                    <div class="actions_buttons">
+                                        <a href="{% url 'controle:ver_relatorio' relatorio.id %}" class="card_title" type="button" class="btn btn-primary">
+                                            <div class="ver_relatorio"><i class="fas fa-eye"></i></div>
+                                        </a>
+                                        <div class="editar_missao">
+                                            <a href="{% url 'controle:editar_relatorio' relatorio.id %}">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </a>
+                                        </div>
+                                        <div class="deletar_missao">
+                                            <a href="{% url 'controle:deletar_relatorio' relatorio.id %}">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,24 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .titulo {
+                color: black;
+            }
+        </style>
+    </head>
+
+    <body>
+        <img src="/static/controle/img/banner1.png" alt="banner">
+
+        <h3 class="titulo">COA PMPB - Sistema de Gestão de Operações Aéreas</h3>
+        <p>Nova missão adicionada em andamento</p>
+        <p>Missão <strong>{{ titulo }}</strong></p>
+        <small>Gestão de Operações Aéreas - COA</small>
+
+        <img src="{{ STATIC_URL }}controle/img/banner2.png" alt="banner">
+    </body>
+
+</html>

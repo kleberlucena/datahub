@@ -1,0 +1,76 @@
+{% load static %}
+
+<div class="cards_container">
+
+    <div class="cartao">
+        <a class="botao" href="{% url 'controle:principal' %}">
+            <img class="card_image" src="{% static 'controle/img/drone.svg' %}" alt="Image">
+            <h2>MISSÕES</h2>
+        </a>
+        <div class="footer">
+            <a href="{% url 'controle:criar_nova_missao' %}">
+                <p>NOVA MISSÃO</p>
+            </a>
+        </div class="footer">
+    </div>
+
+    <div class="cartao">
+        <a href="{% url 'controle:checklists' %}">
+            <img class="card_image" src="{% static 'controle/img/checklist.svg' %}" alt="Image">
+            <h2 class="card_title">CHECKLISTS</h2>
+        </a>
+        <div class="footer">
+            <a href="{% url 'controle:selecao_aeronave' %}">
+                <p>NOVO CHECKLIST</p>
+            </a>
+        </div class="footer">
+    </div>
+
+    <div class="cartao">
+        <a href="{% url 'controle:efetivo' %}">
+            <img class="card_image" src="{% static 'controle/img/person.svg' %}" alt="Image">
+            <h2 class="card_title">EFETIVO</h2>
+        </a>
+        <div class="footer">
+            <a href="{% url 'controle:criar_novo_militar' %}">
+                <p>NOVO MILITAR</p>
+            </a>
+        </div class="footer">
+    </div>
+
+    <div class="cartao">
+        <a class="botao" href="{% url 'controle:aeronaves' %}"> 
+            <img class="card_image" src="{% static 'controle/img/aircrafts.svg' %}" alt="Image">
+            <h2 class="card_title">AERONAVES</h2> 
+        </a>
+        <div class="footer">
+            <a href="{% url 'controle:criar_nova_aeronave' %}">
+                <p>NOVA AERONAVE</p>
+            </a>
+        </div class="footer">
+    </div>
+
+    <div class="cartao">
+        <a href="{% url 'controle:baterias' %}">
+            <img class="card_image" src="{% static 'controle/img/battery.svg' %}" alt="Image">
+            <h2 class="card_title">BATERIAS</h2>  
+        </a>
+        <div class="footer">
+            <a href="{% url 'controle:criar_nova_bateria' %}">
+                <p>NOVA BATERIA</p>
+            </a>
+        </div class="footer">
+    </div>
+
+    <div class="cartao">
+        <a class="botao" href="{% url 'controle:relatorios' %}">
+            <img class="card_image" src="{% static 'controle/img/report.svg' %}" alt="Image">
+            <h2>RELATÓRIOS</h2>
+        </a>
+        <div class="footer">
+            <a href="#">
+                <p></p>
+            </a>
+        </div class="footer">
+    </div>
+</div>

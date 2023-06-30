@@ -1,0 +1,21 @@
+{% extends "controle/pages/intermediate.html" %}
+
+<!-- browser title -->
+{% block title %} Seleção de Aeronave {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Seleção de Aeronave {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'rpa_manager:principal' %}">Principal</a></li>
+    <li class="breadcrumb-item active">Seleção de Aeronave</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+    {% include 'controle/partials/cards_aeronaves.html' %}
+    
+    {% comment %} {% include 'controle/partials/criar_novo_relatorio.html' %} {% endcomment %}
+{% endblock content %}

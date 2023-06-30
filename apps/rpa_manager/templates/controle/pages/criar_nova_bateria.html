@@ -1,0 +1,41 @@
+{% extends "controle/pages/intermediate.html" %}
+
+<!-- browser title -->
+{% block title %} Nova Bateria {% endblock %}
+
+
+<!-- context title -->
+{% block title-header %}  {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+    
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title"></h3>
+        </div>
+        <div class="card-body">
+            <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
+                <h2 class="ver_missao_title"> Novo Bateria </h2>
+                <form action="" method="POST">
+                    {% csrf_token %}
+
+                    <div class="container formulario_misssao">
+                        {% for field in bateria_form %}
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                        {% endfor %}
+                        <input type="submit" value="Enviar" class="btn btn-primary botao_enviar">
+                        <a href="{% url 'rpa_manager:baterias' %}"><input type="button" value="Voltar" class="btn btn-primary botao_enviar"></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

@@ -1,0 +1,52 @@
+{% extends "controle/pages/intermediate.html" %}
+
+<!-- browser title -->
+{% block title %} Novo Relatório {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+    {% load static %}
+
+{% endblock %}
+
+<!-- context title -->
+{% block title-header %} Novo Relatório {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  {% comment %} <li class="breadcrumb-item active">Início</li> {% endcomment %}
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title"></h3>
+        </div>
+        <div class="card-body">
+            <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
+                <div class="novo_relatorio">
+
+                    <form id="add-relatorio-form" method="POST", action="", enctype="multipart/form-data">
+                        {% csrf_token %}
+            
+                        <div class="formulario_misssao">
+            
+                            {% for field in relatorio_form %}
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                            {% endfor %}
+                        </div>
+             
+                        <input type="submit" class="btn btn-primary botao_enviar" value="Enviar">
+                        <a href="{% url 'rpa_manager:principal' %}"><input type="button" value="Voltar" class="btn btn-primary botao_enviar"></a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %} {% endblock %}

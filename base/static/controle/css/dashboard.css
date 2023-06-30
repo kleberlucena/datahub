@@ -1,0 +1,15 @@
+.dashboard_graphics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 50%;
+    gap: 20px;
+    
+}
+
+.dashboard_bar_graph {
+    margin: 30px;
+}
+
+.graph_title {
+    text-align: center;
+}

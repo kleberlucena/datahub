@@ -1,0 +1,49 @@
+{% extends "controle/pages/intermediate.html" %}
+
+<!-- browser title -->
+{% block title %} Ver Bateria {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+    {% load static %}
+
+{% endblock %}
+
+<!-- context title -->
+{% block title-header %} Ver Bateria {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  {% comment %} <li class="breadcrumb-item active">Início</li> {% endcomment %}
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title"></h3>
+        </div>
+        <div class="card-body">
+            <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
+                <div class="container">
+                    <dl class="row">
+                        <dt class="col-sm-3">Numeração</dt>
+                        <dd class="col-sm-9">{{ bateria.numeracao }}</dd>
+                        <dt class="col-sm-3">Ciclos</dt>
+                        <dd class="col-sm-9">{{ bateria.num_ciclos }}</dd>
+                        <dt class="col-sm-3">Limite ciclos</dt>
+                        <dd class="col-sm-9">{{ bateria.ciclos_maximo }}</dd>
+                        <dt class="col-sm-3">Associada a aeronave</dt>
+                        <dd class="col-sm-9">{{ bateria.aeronave }}</dd>
+                        
+
+                        <a href="{% url 'rpa_manager:baterias' %}">
+                            <button type="button" class="btn btn-primary">Voltar</button>
+                        </a>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{% endblock content %}

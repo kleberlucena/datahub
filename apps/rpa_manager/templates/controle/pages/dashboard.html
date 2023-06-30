@@ -1,0 +1,16 @@
+{% extends "controle/pages/intermediate.html" %}
+<!-- browser title -->
+{% block title %} Dashboard {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Dashboard {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+    {% comment %} <li class="breadcrumb-item active">Dashboard</li> {% endcomment %}
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+    {% include 'controle/partials/dashboard_cards.html' %}    
+{% endblock content %}

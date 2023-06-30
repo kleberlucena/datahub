@@ -1,0 +1,57 @@
+{% extends "controle/pages/intermediate.html" %}
+
+<!-- browser title -->
+{% block title %} Ver Checklist {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+    {% load static %}
+
+{% endblock %}
+
+<!-- context title -->
+{% block title-header %} Ver Checklist {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  {% comment %} <li class="breadcrumb-item active">Início</li> {% endcomment %}
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h3 class="card-title"></h3>
+    </div>
+    <div class="card-body">
+        <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
+            {% comment %} code here {% endcomment %}
+            <div class="container">
+                <dl class="row">
+                    <dt class="col-sm-3">Piloto remoto</dt>
+                    <dd class="col-sm-9">{{ checklist.piloto }}</dd>
+                    <dt class="col-sm-3">Aeronave</dt>
+                    <dd class="col-sm-9">{{ checklist.aeronave }}</dd>
+                    <dt class="col-sm-3">Data</dt>
+                    <dd class="col-sm-9">{{ checklist.data }}</dd>
+                    <dt class="col-sm-3">Qnt Baterias</dt>
+                    <dd class="col-sm-9">{{ checklist.num_baterias }}</dd>
+                    <dt class="col-sm-3">Qnt Hélices</dt>
+                    <dd class="col-sm-9">{{ checklist.num_helices }}</dd>
+                    <dt class="col-sm-3">Alterações</dt>
+                    <dd class="col-sm-9">
+                        {% for alteracao in nova_lista_alteracoes %}
+                            {{ alteracao }}
+                        {% endfor %}
+                    </dd> 
+                        
+                    <a href="{% url 'rpa_manager:checklists' %}">
+                        <button type="button" class="btn btn-primary">Voltar</button>
+                    </a>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

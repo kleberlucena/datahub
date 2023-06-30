@@ -56,7 +56,6 @@ schema_view = get_schema_view(
     public=True,
 )
 
-
 urlpatterns = [
     path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -86,6 +85,7 @@ urlpatterns = [
     path('image/', include('apps.image.urls'), name='image'),
     path('person/', include('apps.person.urls'), name='person'),
     path('portal/', include('apps.portal.urls'), name='portal'),
+    path('rpa_manager/', include('apps.rpa_manager.urls'), name="rpa_manager"),
     path('celery-progress/', include('celery_progress.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
