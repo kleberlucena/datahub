@@ -1,7 +1,7 @@
 <!-- Módulo Operações aéreas -->
 <li class="nav-item module-item">
     <a href="#" class="nav-link">
-    <i class="nav-icon fas fa-university"></i>
+    <i class="fas fa-cogs nav-icon"></i>
     <p>
         Operações Aéreas
         <i class="fas fa-angle-left right"></i>
@@ -35,23 +35,35 @@
             <p>Relatórios</p>
         </a>
     </li>
-    <li class="nav-item ">
-        <a href="{% url 'controle:efetivo' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>Efetivo</p>
+
+    <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="fa fa-cog nav-icon" aria-hidden="true"></i>
+          <p>
+            Configurações
+            <i class="fas fa-angle-left right"></i>
+          </p>
         </a>
-    </li>
-    <li class="nav-item ">
-        <a href="{% url 'controle:aeronaves' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>Aeronaves</p>
-        </a>
-    </li>
-    <li class="nav-item ">
-        <a href="{% url 'controle:baterias' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>Baterias</p>
-        </a>
-    </li>  
+        <ul class="nav nav-treeview" style="display: none;">
+            <li class="nav-item ">
+                <a href="{% url 'controle:efetivo' %}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Efetivo</p>
+                </a>
+            </li>
+            <li class="nav-item ">
+                <a href="{% url 'controle:aeronaves' %}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Aeronaves</p>
+                </a>
+            </li>
+            <li class="nav-item ">
+                <a href="{% url 'controle:baterias' %}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Baterias</p>
+                </a>
+            </li>  
+        </ul>
+      </li>
     </ul>
 </li>
