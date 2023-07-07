@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="{% static '/sti/img/coint_64.png' %}">
   <title>
-    SAI | {% block title %}{% endblock %}
+    BACINF | {% block title %}{% endblock %}
   </title>
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -16,7 +16,13 @@
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/toastr/toastr.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
   {% block style_sheet %}{% endblock %}
-  <style></style>
+  <style>
+    .pm-nav-header-yellow{ background-color: #f4ca16; color: black;}
+    .nav-item nav-link:hover { color: rgba(255,255,255,.75) !important; }
+    .navbar-dark .navbar-nav .nav-link {
+      color: rgb(0, 0, 0);
+  }
+  </style>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -56,12 +62,15 @@
   <script src="{% static 'adminlte-3.1.0/plugins/jquery/jquery.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/toastr/toastr.min.js' %}"></script>
-  {% block js %}
-  
-  {% endblock %}
+  {% block js %}{% endblock %}
   <script src="{% static 'adminlte-3.1.0/js/adminlte.min.js' %}"></script>
+  <!-- Nav right statements-->
+  <script src="{% static 'adminlte-3.1.0/js/demo.js' %}"></script>
+
   <!-- active menu itens -->
   <script>
+    $(function () {
+      var currentPage = window.location.pathname;
       var navItem = $('.nav-item a[href="' + currentPage + '"]');
       navItem.closest('li').css({
         'border':'1px solid white',
@@ -79,9 +88,25 @@
   </script>
   {% if messages %}
     <!-- Toasts -->
-    <script></script>
+    <script>
+      $(function () {
+        loadMessages.init();
+      });
+      var loadMessages = {
+        init: function(){
+          toastr.options = {
+            "progressBar": true,
+            "positionClass": "toast-bottom-right", 
+            "timeOut": "5000",
+            "showEasing": "swing",
+            "preventDuplicates": true,
+          }
+          {% for message in messages %}
+            toastr.{{ message.tags }}('{{ message }}')
+          {% endfor %}
+        }
+      }
+    </script>
   {% endif %}
 </body>
 </html>
-
-
