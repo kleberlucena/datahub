@@ -1,4 +1,3 @@
-
 $(document).ready(function() {
     $('#table_missoes').DataTable( {
         responsive: true,
@@ -27,28 +26,6 @@ $(document).ready(function() {
         responsive: true,
         "order": [[ 1, "desc" ]],
         "paging": true,
-        dom: 'Bfrtip',
-        buttons: [
-            {
-                //EXCEL
-                extend: 'excelHtml5',
-                text: '<i class="fas fa-file-excel"></i> XLSX', 
-                //u can define a diferent text or icon
-                title: 'Relatório',
-            },
-            {
-                //PDF
-                extend: 'pdf',
-                text: '<i class="fas fa-file-pdf"></i> PDF',
-                title: 'Relatório',
-            },
-            {
-                //PRINT
-                extend: 'print',
-                text: '<i class="fas fa-print"></i> IMPRIMIR',
-                title: 'Relatório',
-            }
-        ],
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Portuguese-Brasil.json"
         }

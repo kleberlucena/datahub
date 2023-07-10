@@ -100,8 +100,8 @@ INSTALLED_APPS = [
     'apps.fact',
     'apps.police_report',
     'apps.rpa_manager',
-
 ]
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -186,7 +186,6 @@ DEFAULT_FILE_STORAGE = 'django_minio_backend.models.MinioBackend'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 # Expiration Cookie
 SESSION_COOKIE_AGE = 1800

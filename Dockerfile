@@ -21,4 +21,3 @@ COPY requirements_prod.txt /code/
 RUN pip install --upgrade pip
 RUN pip install -r requirements_prod.txt
 COPY . /code/
-
