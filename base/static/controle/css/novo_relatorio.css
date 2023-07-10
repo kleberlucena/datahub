@@ -3,5 +3,8 @@
     justify-content: center;
     margin: 0 auto;
     align-items: center;
-    max-width: 800px;
+}
+
+.report_container {
+    width: 100%;
 }

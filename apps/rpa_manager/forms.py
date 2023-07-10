@@ -63,7 +63,16 @@ class RelatorioFormulario(forms.ModelForm):
      
     class Meta:
         model = Relatorio
-        # fields = '__all__'
+        fields = [
+            'titulo', 'militar',
+            'piloto_observador', 'data',
+            'horario_inicial', 'horario_final',
+            'local', 'arquivo_solicitacao',
+            'num_sarpas', 'opm_apoiada',
+            'unidade_apoiada', 'natureza_de_voo',
+            'tipo_de_operacao', 'aeronave',
+            'relato_da_missao'
+        ]
         exclude = ['missao']
         
         labels = {
@@ -84,7 +93,9 @@ class RelatorioFormulario(forms.ModelForm):
             'horario_inicial': forms.TimeInput(attrs={'type': 'time'}),
             'horario_final': forms.TimeInput(attrs={'type': 'time'}),
             'data': forms.DateInput(attrs={'type': 'date'}),
-            'num_sarpas': forms.Textarea(attrs={'placeholder': 'Informe o Protocolo ou nº SARPAS'}),
+            'num_sarpas': forms.Textarea(attrs={
+                'placeholder': 'Informe o Protocolo ou nº SARPAS',
+                'rows': 1}),
             'relato_da_missao': forms.Textarea(attrs={'placeholder': 'Descreva a alteração'})
         }
         

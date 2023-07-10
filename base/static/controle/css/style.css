@@ -1,4 +1,3 @@
-
 /* navbar-left */
 .navbar_operacoes_title {
     margin-left: 5px;
@@ -113,55 +112,6 @@
 
 .small-box .small-box_title {
     font-size: 1rem;
-}
-
-/* a cor do card do dashboard irá ser recebida pelo arquivo da views */
-/* .dashboard_small-box {
-    background-color: blueviolet;
-} */
-
-.dash_first_color {
-    background-color: rgb(19, 212, 19);
-}
-.dash_second_color {
-    background-color: rgb(120, 112, 192);
-}
-.dash_third_color {
-    background-color: rgb(231, 229, 79);
-}
-.dash_fourth_color {
-    background-color: rgb(162, 212, 208);
-}
-
-.dash_card_container_statistics {
-    text-decoration: none;
-    color: white;
-}
-
-.dash_card_container_statistics:hover {
-    color: black;
-}
-
-.display_dashboard_results {
-    display: flex;
-    flex-direction: row;
-    gap: 20px
-}
-
-.display_dashboard_result_number, .display_dashboard_result_title {
-    display: flex;
-    font-size: 1.6rem;
-    font-weight: 700;
-    justify-content: center;
-    padding-bottom: 10px;
-    position: relative;
-    color: black;
-}
-
-.dashboard_cards {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
 }
 
 /* PAINEL */

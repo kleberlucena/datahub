@@ -33,8 +33,4 @@ cards = [
         'badge': 'bg-warning',
         'url_do_icone': "/static/controle/img/report.svg",
         'url_da_tabela': "/rpa_manager/relatorios"},
-    {   'title': 'Estatísticas',
-        'badge': 'bg-success',
-        'url_do_icone': "/static/controle/img/statistics.svg",
-        'url_da_tabela': '/rpa_manager/dashboard'},
 ]

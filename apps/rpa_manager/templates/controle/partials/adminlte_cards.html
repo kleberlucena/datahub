@@ -7,11 +7,14 @@
                         <h3 class="small-box_title">{{ card.title }}</h3>
                         <img class="card_image" src="{{ card.url_do_icone }}" alt="Image">
                     </div>
-                    <a class="create_new_element" href="{{ card.novo_elemento }}">
-                        {% if card.title != 'Relatórios' and card.title != 'Estatísticas' %}
-                            Adicionar {{ card.title_novo_elemento }}
-                        {% endif %}
-                    </a>
+                    <div class="create_new_element_container">
+                        <a class="create_new_element" href="{{ card.novo_elemento }}">
+                            {% if card.title != 'Relatórios'%}
+                                Adicionar {{ card.title_novo_elemento }} 
+                                <i class="fas fa-arrow-circle-right"></i>
+                            {% endif %}
+                        </a>
+                    </div>
                 </div>
             </div>
         </a>

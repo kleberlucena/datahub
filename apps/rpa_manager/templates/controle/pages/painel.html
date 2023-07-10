@@ -2,39 +2,11 @@
 
 <!-- styles -->
 {% block style_sheet %}
-    {% load static %}
-
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
-
-    {% comment %} <link rel="stylesheet" type="text/css" href="{% static '/DataTables/select2-4.1.0/dist/css/select2.min.css' %}"> {% endcomment %}
-    {% comment %} ATENÇÃO - DELETAR LINHA ABAIXO APENAS DEPOIS DE TESTAR {% endcomment %}
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'select2-4.1.0-rc.0/dist/css/select2.min.css' %}">
-
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
-    <link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{% static '/DataTables/datatables.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static '/DataTables/Responsive-2.4.0/css/responsive.dataTables.min.css' %}">
-
-    {% comment %} <link rel="stylesheet" type="text/css" href="{% static '/DataTables/Buttons-2.3.6/css/buttons.dataTables.min.css' %}"> {% endcomment %}
-    {% comment %} ATENÇÃO - DELETAR LINHA ABAIXO APENAS DEPOIS DE TESTAR {% endcomment %}
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.2/css/buttons.dataTables.min.css">
-
-    <link rel="stylesheet" href="{% static 'controle/css/novo_relatorio.css' %}">
-    <link rel="stylesheet" href="{% static 'controle/css/novo_checklist.css' %}">
-    <link rel="stylesheet" href="{% static 'controle/css/nova_bateria.css' %}">
-    <link rel="stylesheet" href="{% static 'controle/css/tables-style.css' %}"> 
-    <link rel="stylesheet" href="{% static 'controle/css/card-style.css' %}">
-    <link rel="stylesheet" href="{% static 'controle/css/dashboard.css' %}"> 
-    <link rel="stylesheet" href="{% static 'controle/css/style.css' %}">
-    {% comment %} bacinf style_sheet {% endcomment %}
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+{% load static %}
+{% comment %} bacinf style_sheet {% endcomment %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -45,106 +17,103 @@
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
-    <li class="breadcrumb-item active">Painel</li>
+<li class="breadcrumb-item active">Painel</li>
 {% endblock %}
 
 <!-- main container -->
 {% block content %}
-    <div class="grid-container">
-        <div class="parte_superior">
-            {% include 'controle/partials/adminlte_cards.html' %}
-        </div>
-
-        <div class="parte_infeior">
-            <div class="card card-primary card-outline">
-                <div class="card-header">
-                    <h3 class="card-title"></h3>
-                </div>
-                <div class="card-body">
-                    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
-                        <div class="container">
-                            <ul class="painel_system_info">
-                                    <h3>Informações sobre o sistema</h3>
-                                    <li> <strong class="bg-primary">Missões</strong>
-                                        <p>O usuário poderá cadastrar de forma rápida o local da missão e a aeronave a ser utilizada. Além disso é possível acompanhar as missões em andamento ou as encerradas e também finalizar a missão com o preenchimento do relatório.
-                                        </p>
-                                    </li>
-                                    <li><strong class="bg-secondary">Checklists</strong>
-                                        <p>É possível confeccionar um checklist para a aeronave em uso no dia de serviço assim como acompanhar o histórico de alterações das aeronaves.
-                                        </p>
-                                    </li>
-                                    <li><strong class="bg-success">Efetivo</strong>
-                                        <p>Cadastro e alteração de informações sobre o efetivo.</p>
-                                    </li>
-                                    <li><strong class="bg-warning">Aeronaves</strong>
-                                        <p>Cadastro e alteração de informações sobre aeronaves.</p>
-                                    </li>
-                                    <li><strong class="bg-info">Baterias</strong>
-                                        <p>Cadastro e alteração de informações sobre as baterias. Além disso é possível alterar o nível crítico de ciclos das baterias.</p>
-                                    </li>
-                                    <li><strong class="bg-light">Relatórios</strong>
-                                        <p>Relatórios das missões realizadas e formulário para obtenção de dados para estatísticas sobre missões.</p>
-                                    </li>
-                                </ul>
-                        </div>
+<div class="grid-container">
+    <div class="parte_superior">
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>150</h3>
+                        <p>New Orders</p>
                     </div>
+                    <div class="icon">
+                        <i class="ion ion-bag"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
+
+            <div class="col-lg-3 col-6">
+
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>53<sup style="font-size: 20px">%</sup></h3>
+                        <p>Bounce Rate</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6">
+
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>44</h3>
+                        <p>User Registrations</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-person-add"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6">
+
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>65</h3>
+                        <p>Unique Visitors</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
         </div>
     </div>
+
+    <div class="parte_infeior">
+        <div class="callout callout-info">
+            <h5>I am an info callout!</h5>
+            <p>Follow the steps to continue to payment.</p>
+        </div>
+    </div> 
+</div>
 {% endblock content %}
 
 <!-- javascripts -->
 {% block js %}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Ionicons local -->
+<script type="module" src="{% static 'controle/js/ionicos/ionicons.esm.js' %}"></script>
+<script type="module" src="{% static 'controle/js/ionicos/ionicons.js' %}"></script>
 
-    <script type="text/javascript" charset="utf8" src="{% static '/DataTables/datatables.js' %}"></script>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <!-- Nav right statements-->
-    <script src="{% static 'controle/js/datatables_config_jquery.js' %}"></script>
-    <script src="{% static 'controle/js/checklist_controle_aeronave.js' %}"></script>
-    <script src="{% static 'controle/js/checklist_adiciona_alteracoes.js' %}"></script>
-    <script src="{% static 'controle/js/dashboard.js' %}"></script>
-
-    <!-- Ionicons -->
-    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-
-    {% comment %} <script src="{% static '/DataTables/select2.min.js' %}"></script> {% endcomment %}
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" defer></script>
-    <script src="{% static 'select2-4.1.0-rc.0/dist/js/select2.min.js' %}" defer></script>
-
-
-    <!-- DataTables PDF Libraries -->
-    {% comment %} <script src="https://code.jquery.com/jquery-3.5.1.js"></script> {% endcomment %}
-
-    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-
-    <script src="https://cdn.datatables.net/buttons/2.3.2/js/dataTables.buttons.min.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-
-    <script src="https://cdn.datatables.net/buttons/2.3.2/js/buttons.html5.min.js"></script>
-
-    <script src="https://cdn.datatables.net/buttons/2.3.2/js/buttons.print.min.js"></script>
-
-    {% comment %} <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script> {% endcomment %}
-    <script src="{% static 'DataTables/Responsive-2.4.0/js/dataTables.responsive.min.js' %}"></script>
 <!-- DataTables  & Plugins -->
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+
+{% comment %} scripts do app rpa_manager {% endcomment %}
+<script src="{% static 'controle/js/checklist_controle_aeronave.js' %}"></script>
+<script src="{% static 'controle/js/checklist_adiciona_alteracoes.js' %}"></script>
 {% endblock %}
