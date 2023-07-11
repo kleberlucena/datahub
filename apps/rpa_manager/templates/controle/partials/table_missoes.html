@@ -33,7 +33,6 @@
   
     <!-- /.card-header -->
     <div class="card-body">
-  
       <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
         <table id="objects_list" class="table table-bordered table-striped dataTable dtr-inline" role="grid"
           aria-describedby="objects_list_info" width="100%">
@@ -92,7 +91,7 @@
                     </div>
                     <div class="col-sm">
                       <div class="editar_missao">
-                        <a href="{% url 'rpa_manager:editar_missao' missao.id %}">
+                        <a href="{% url 'rpa_manager:editar_missao' missao.pk %}">
                           <i class="fa fa-pen-nib"></i>
                         </a>
                       </div>

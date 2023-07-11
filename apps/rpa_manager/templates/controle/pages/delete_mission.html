@@ -34,23 +34,26 @@
 
 <!-- main container -->
 {% block content %}
+  <div class="card">
     <div class="card card-primary card-outline">
-      <div class="card-header">
-          <h3 class="card-title"></h3>
-      </div>
-      <div class="card-body">
-          <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
-              <div class="container">
-                <form action="" method="POST">
-                  {% csrf_token %}
-                  <p>Tem certeza que dejesar excluir "{{ obj }}"?</p>
-                  <a class="btn btn-primary" href="{{ request.META.HTTP_REFERER }}">Cancelar</a>
-                  <input type="submit" class="btn btn-danger" value="Confirmar">
-                </form>
-              </div>
-          </div>
-      </div>
-    </div>  
+        <div class="card-header">
+          <h3 class="card-title">Deletar <strong>{{ form }}</strong> </h3>
+    </div>
+    <div class="card-body">
+        <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4"></div>
+            <form class="p-1" method='post'>
+                {% csrf_token %}
+                <p>Tem certeza que dejesar excluir <strong>{{ form }}</strong>?</p>
+                <div class="mt-3">
+                  <button type="submit" class="btn btn-primary">Salvar</button>
+                  <a href="{{ request.META.HTTP_REFERER }}"> 
+                      <button type="button" class="btn btn-warning">Cancelar</button>
+                  </a>
+                </div>
+            </form>    
+        </div>
+    </div>
+  </div>
 
 {% endblock content %}
 

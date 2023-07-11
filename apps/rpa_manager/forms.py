@@ -45,8 +45,20 @@ class MissaoFormulario(forms.ModelForm):
         }
         
         widgets = {'usuario': forms.HiddenInput(),
-                   'concluida': forms.HiddenInput()}
+                   'titulo': forms.TextInput(attrs={'class': 'form-control'}),
+                   'concluida': forms.HiddenInput(),
+                   }
 
+        # widgets = {
+        #     'militar': forms.HiddenInput(),
+        #     'horario_inicial': forms.TimeInput(attrs={'type': 'time'}),
+        #     'horario_final': forms.TimeInput(attrs={'type': 'time'}),
+        #     'data': forms.DateInput(attrs={'type': 'date'}),
+        #     'num_sarpas': forms.Textarea(attrs={
+        #         'placeholder': 'Informe o Protocolo ou nº SARPAS',
+        #         'rows': 1}),
+        #     'relato_da_missao': forms.Textarea(attrs={'placeholder': 'Descreva a alteração'})
+        # }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
