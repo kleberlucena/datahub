@@ -73,7 +73,8 @@ def task_get_military_from_portal(self):
                             zipcode=result['zipcode'],
                             register=result['register'],
                             cpf=result['cpf'],
-                            url_image=result['url_image'])
+                            url_image=result['url_image'],)
+                            # image=result['image'])
 
                         MilitaryHistoryTransfer = HistoryTransfer.objects.filter(
                             military__register=result['register'])
@@ -129,7 +130,8 @@ def task_get_military_from_portal(self):
                             zipcode=result['zipcode'],
                             register=result['register'],
                             cpf=result['cpf'],
-                            url_image=result['url_image'])
+                            url_image=result['url_image'],
+                            image=result['image'])
 
                         HistoryTransfer.objects.create(
                             military=military, entity=unit, date_start=date.now(), obs="Primeiro cadastro")

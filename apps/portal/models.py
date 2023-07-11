@@ -1,5 +1,8 @@
 from django.db import models
+from django.conf import settings
 from django.urls import reverse
+from stdimage.models import StdImageField
+from django_minio_backend import MinioBackend
 from localflavor.br.models import BRStateField, BRCPFField, BRPostalCodeField
 
 from django.utils import timezone
@@ -95,6 +98,12 @@ class Military(Base):
     state = BRStateField("Estado")
     zipcode = BRPostalCodeField("CEP")
     unit = models.ManyToManyField(Entity, through='HistoryTransfer',)
+    image = StdImageField(
+        'Image', 
+        storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
+        upload_to='militaries_pmpb', blank=True, null=True, delete_orphans=True
+    )
+
 
     class Meta:
         unique_together = ('register', 'cpf',)
