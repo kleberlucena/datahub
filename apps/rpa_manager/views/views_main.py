@@ -14,17 +14,13 @@ from . views_crud_relatorio import *
 from . views_dashboard_cards import dashboard_cards
 from . views_funcoes_auxiliares import *
 
+from django.views.generic import TemplateView
 
 def home(request):
     return render(request, 'controle/pages/base.html')
 
-
-def painel(request):    
-    context = {
-        'cards' : cards
-    }
-
-    return render(request, 'controle/pages/painel.html', context)
+class PainelView(TemplateView):
+    template_name = 'controle/pages/painel.html'
 
 def dashboard(request):
     numero_de_missoes = obtem_total_de_missoes()
@@ -63,96 +59,110 @@ def obtem_dados_de_missoes_por_usuario(request):
         
     return JsonResponse(usuariosPorMissoes, safe=False)
     
-def principal(request):
-    missoes = Missao.objects.all().order_by('-data', '-horario')
-    form = formulario_missao(request)
+class PrincipalView(TemplateView):
+    template_name = 'controle/pages/tela_principal.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        missoes = Missao.objects.all().order_by('-data', '-horario')
+        form = formulario_missao(self.request)
+
+        context['missoes'] = missoes
+        context['form'] = form
+
+        return context
+
+class ChecklistsView(TemplateView):
+    template_name = 'controle/pages/checklists.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        checklists = Checklist.objects.all().order_by('-data', '-horario')
+        form = formulario_missao(self.request)
+
+        context['checklists'] = checklists
+        context['form'] = form
+
+        return context
+
+
+class RelatoriosView(TemplateView):
+    template_name = 'controle/pages/relatorios.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        relatorios = Relatorio.objects.all().order_by('-horario_inicial', '-data')
+        form = formulario_missao(self.request)
+
+        context['relatorios'] = relatorios
+        context['form'] = form
+
+        return context
+
+
+class EfetivoView(TemplateView):
+    template_name = 'controle/pages/usuarios.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        militares = Militar.objects.all()
+        numero_de_usuarios = User.objects.count()
+        missoes_por_usuario = numero_de_missoes_por_usuario()
+        form = formulario_missao(self.request)
+
+        context['militares'] = militares
+        context['form'] = form
+        context['missoes_por_usuario'] = missoes_por_usuario
+        context['numero_de_usuarios'] = numero_de_usuarios
+
+        return context
+
+
+class AeronavesView(TemplateView):
+    template_name = 'controle/pages/aeronaves.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        aeronaves = Aeronave.objects.all()
+        form = formulario_missao(self.request)
+
+        context['aeronaves'] = aeronaves
+        context['form'] = form
+
+        return context
+
+
+# def baterias(request):
+#     limite_de_ciclos = 45 
     
-    context = { 'missoes': missoes,
-                'is_app_page': True, 
-                'form': form,
-                'cards' : cards, 
-                }
+#     baterias = Bateria.objects.all()
     
-    return render(request, 'controle/pages/tela_principal.html', context)
+#     ids_baterias_nivel_critico = baterias_em_nivel_critico(limite_de_ciclos)
 
-def checklists(request):
-    checklists = Checklist.objects.all().order_by('-data', '-horario')
-    form = formulario_missao(request)
-     
-    context = { 
-                'checklists': checklists, 
-                'is_app_page': True, 
-                'form': form,
-                'cards': cards,
-            }
-    return render(request, 'controle/pages/checklists.html', context)
-
-
-def relatorios(request):
-    relatorios = Relatorio.objects.all().order_by('-horario_inicial', '-data')
-    
-    form = formulario_missao(request)
-
-    context = {
-                'relatorios': relatorios,
-
-                'is_app_page': True, 
-                'form': form,
-                'cards': cards,
-            }
-    return render(request, 'controle/pages/relatorios.html', context)
-
-
-def efetivo(request):
-    militares = Militar.objects.all()
-    numero_de_usuarios = User.objects.count()
-
-    missoes_por_usuario = numero_de_missoes_por_usuario()
-    
-    form = formulario_missao(request)
-      
-    context = { 'militares': militares, 
-                'is_app_page': True, 
-                'form': form, 
-                'missoes_por_usuario': missoes_por_usuario,
-                'numero_de_usuarios': numero_de_usuarios,
-                'cards': cards,
-            }
-
-    return render(request, 'controle/pages/usuarios.html', context)
-
-
-def aeronaves(request):
-    aeronaves = Aeronave.objects.all()
-
-    form = formulario_missao(request)
-    
-    context= {
-                'aeronaves': aeronaves, 
-                'is_app_page': True, 
-                'form': form,
-                'cards': cards,
-            }
-    return render(request, 'controle/pages/aeronaves.html', context)
-
-
-def baterias(request):
-    limite_de_ciclos = 45 
-    
-    baterias = Bateria.objects.all()
-    
-    ids_baterias_nivel_critico = baterias_em_nivel_critico(limite_de_ciclos)
-
-    form = formulario_missao(request)
+#     form = formulario_missao(request)
  
-    context = { 
-                'baterias': baterias,
-                'ids_baterias_nivel_critico': ids_baterias_nivel_critico, 
-                'is_app_page': True, 
-                'form': form,
-                'cards': cards,
-            }
-    return render(request, 'controle/pages/baterias.html', context)
+#     context = { 
+#                 'baterias': baterias,
+#                 'ids_baterias_nivel_critico': ids_baterias_nivel_critico, 
+#                 'form': form,
+#             }
+#     return render(request, 'controle/pages/baterias.html', context)
+
+class BateriasView(TemplateView):
+    template_name = 'controle/pages/baterias.html'
+    limite_de_ciclos = 45
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        baterias = Bateria.objects.all()
+        ids_baterias_nivel_critico = baterias_em_nivel_critico(self.limite_de_ciclos)
+        form = formulario_missao(self.request)
+
+        context['baterias'] = baterias
+        context['ids_baterias_nivel_critico'] = ids_baterias_nivel_critico
+        context['form'] = form
+
+        return context
 
 def retorna_total_de_missoes(request):
     total_de_missoes = Missao.objects.count()

@@ -1,15 +1,21 @@
 from django.urls import path
 
 from .views import views_main
+from .views.views_main import (
+    PainelView, PrincipalView,
+    ChecklistsView, RelatoriosView,
+    EfetivoView, AeronavesView,
+    BateriasView, 
+    )
 
 app_name = "rpa_manager"
 
 urlpatterns = [
-    path('painel/', views_main.painel, name="painel"),
-    path('principal/', views_main.principal, name="principal"),
-    path('dashboard/', views_main.dashboard, name="dashboard"),
+    path('painel/', PainelView.as_view(), name="painel"),
+    path('principal/', PrincipalView.as_view(), name="principal"),
     path('criar_nova_missao/', views_main.criar_nova_missao, name="criar_nova_missao"),
     path('criar_novo_relatorio/<int:id>/', views_main.criar_novo_relatorio, name="criar_novo_relatorio"),
+    path('checklist_form/', views_main.checklist_form, name="checklist_form"),
     path('criar_novo_militar/', views_main.criar_novo_militar, name="criar_novo_militar"),
     path('criar_nova_aeronave/', views_main.criar_nova_aeronave, name="criar_nova_aeronave"),
     path('criar_nova_bateria/', views_main.criar_nova_bateria, name="criar_nova_bateria"),
@@ -31,12 +37,9 @@ urlpatterns = [
     path('deletar_efetivo/<int:id>/', views_main.deletar_efetivo, name="deletar_efetivo"),
     path('deletar_aeronave/<int:id>/', views_main.deletar_aeronave, name="deletar_aeronave"),
     path('deletar_bateria/<int:id>/', views_main.deletar_bateria, name="deletar_bateria"),
-    path('aeronaves/', views_main.aeronaves, name="aeronaves"),
-    path('relatorios/', views_main.relatorios, name="relatorios"),
-    path('checklists/', views_main.checklists, name="checklists"),
-    path('checklist_form/', views_main.checklist_form, name="checklist_form"),
-    path('efetivo/', views_main.efetivo, name="efetivo"),
-    path('baterias/', views_main.baterias, name="baterias"),
-    path('obtem_dados_de_missoes_por_mes/', views_main.obtem_dados_de_missoes_por_mes, name="obtem_dados_de_missoes_por_mes"),
-    path('obtem_dados_de_missoes_por_usuario/', views_main.obtem_dados_de_missoes_por_usuario, name="obtem_dados_de_missoes_por_usuario"),
+    path('aeronaves/', AeronavesView.as_view(), name="aeronaves"),
+    path('relatorios/', RelatoriosView.as_view(), name="relatorios"),
+    path('checklists/', ChecklistsView.as_view(), name="checklists"),
+    path('efetivo/', EfetivoView.as_view(), name="efetivo"),
+    path('baterias/', BateriasView.as_view(), name="baterias"),
 ]
