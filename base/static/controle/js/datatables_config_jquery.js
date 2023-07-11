@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('#table_missoes').DataTable( {
+    $('#objects_list').DataTable( {
         responsive: true,
         "order": [[ 2, "desc" ]],
         "language": {

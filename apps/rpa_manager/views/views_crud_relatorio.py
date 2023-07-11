@@ -3,64 +3,46 @@ from django.shortcuts import redirect, render
 from . views_send_email import send_html_email
 from apps.rpa_manager.forms import RelatorioFormulario
 from apps.rpa_manager.models import Missao, Relatorio
+from django.views.generic import DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+
+class VerRelatorioView(DetailView):
+    model = Relatorio
+    template_name = 'controle/pages/ver_relatorio.html'
+    context_object_name = 'relatorio'
 
 
-def ver_relatorio(request, id):
-    relatorio = Relatorio.objects.get(pk=id)
-    
-    return render(request, 'controle/pages/ver_relatorio.html', {'relatorio': relatorio})
+class CriarNovoRelatorioView(CreateView):
+    model = Relatorio
+    form_class = RelatorioFormulario
+    template_name = 'controle/pages/criar_novo_relatorio.html'
+    success_url = reverse_lazy('rpa_manager:relatorios')
+
+    def get_initial(self):
+        missao = Missao.objects.get(pk=self.kwargs['pk'])
+        return {
+            'titulo': missao.titulo,
+            'militar': self.request.user,
+            'piloto_observador': missao.piloto_observador,
+            'data': missao.data,
+            'local': missao.local,
+            'relato_da_missao': 'Sem alteração',
+            'aeronave': missao.aeronave
+        }
 
 
-def criar_novo_relatorio(request, id):
-    missao = Missao.objects.get(pk=id)
-    
-    subject = "Missão concluída."
-    recipient_list = ['marcospaivajr7@gmail.com']
-    
-    dados_missao = {
-        'titulo': missao.titulo,
-        'militar': request.user,
-        'piloto_observador': missao.piloto_observador,
-        'data': missao.data,
-        'local': missao.local,
-        # 'relato_da_missao': 'Sem alteração',
-        'aeronave': missao.aeronave
-    }
-    relatorio_form = RelatorioFormulario(request.POST, initial=dados_missao)
-    
-    missao.concluida = relatorio_form['status_missao'].value()
-    missao.save()
-    
-    if request.method == 'POST':
-        relatorio_form = RelatorioFormulario(request.POST, request.FILES, initial=dados_missao)
-        if relatorio_form.is_valid():
-            relatorio_form.save()
-            
-            html_message = 'emails/missao_encerrada.html'
-            context = {'titulo': missao.titulo}
-            # send_html_email(subject, html_message, context, recipient_list)
-            return redirect('controle:relatorios')
-    else:
-        relatorio_form = RelatorioFormulario(initial=dados_missao)
-    
-    return render(request, 'controle/pages/criar_novo_relatorio.html', {'relatorio_form': relatorio_form, 'is_app_page': True,})
+class EditarRelatorioView(UpdateView):
+    model = Relatorio
+    form_class = RelatorioFormulario
+    template_name = 'controle/pages/criar_novo_relatorio.html'
+    success_url = reverse_lazy('rpa_manager:relatorios')
+    context_object_name = 'relatorio'
 
-def editar_relatorio(request, id):
-    relatorio = Relatorio.objects.get(pk=id)
-    relatorio_form = RelatorioFormulario(instance=relatorio)
+
+class DeletarRelatorioView(DeleteView):
+    model = Relatorio
+    template_name = 'controle/pages/delete_relatorio.html'
+    success_url = reverse_lazy('rpa_manager:relatorios')
+    context_object_name = 'obj'
     
-    if request.method == 'POST':
-        relatorio_form =  RelatorioFormulario(request.POST, request.FILES, instance=relatorio)
-        if relatorio_form.is_valid():
-            relatorio_form.save()
-            return redirect('controle:relatorios')
-
-    context = {'relatorio_form': relatorio_form}
-    return render(request, 'controle/pages/criar_novo_relatorio.html', context)
-
-def deletar_relatorio(request, id):
-    relatorio = Relatorio.objects.get(pk=id)
-    if request.method == 'POST':
-        relatorio.delete()
-        return redirect('controle:relatorios')
-    return render(request, 'controle/pages/delete_relatorio.html', {'obj': relatorio})

@@ -1,122 +1,94 @@
 {% load static %}
 
-<div class="card">
-  <div class="card card-primary card-outline">
-    <div class="card-header">
-      <h3 class="card-title">Missões</h3>
-    </div>
-  
-    <div class="col-sm-12 col-md-6">
-      <div class="dt-buttons btn-group flex-wrap">
-        <div class="btn-group">
-          <button class="btn btn-secondary buttons-collection dropdown-toggle buttons-page-length"
-            tabindex="0" aria-controls="objects_list" type="button" aria-haspopup="true">
-            <span>Mostrar 10 registros</span>
-          </button>
-        </div>
-        <button class="btn btn-secondary buttons-pdf buttons-html5" tabindex="0" aria-controls="objects_list"
-          type="button" id="pdf-button">
-          <span>PDF</span>
+<div class="card card-primary card-outline">
+  <div class="card-header">
+    <h3 class="card-title">Missões</h3>
+  </div>
+
+  <div class="col-sm-12 col-md-6 mt-3 ml-3">
+    <div class="dt-buttons btn-group flex-wrap">
+      <div class="btn-group">
+        <button class="btn btn-secondary buttons-collection dropdown-toggle buttons-page-length"
+          tabindex="0" aria-controls="objects_list" type="button" aria-haspopup="true">
+          <span>Mostrar 10 registros</span>
         </button>
-        <button class="btn btn-secondary buttons-excel buttons-html5" tabindex="0" aria-controls="objects_list"
-          type="button" id="excel-button">
-          <span>Excel</span>
+      </div>
+      <button class="btn btn-secondary buttons-pdf buttons-html5" tabindex="0" aria-controls="objects_list"
+        type="button" id="pdf-button">
+        <span>PDF</span>
+      </button>
+      <button class="btn btn-secondary buttons-excel buttons-html5" tabindex="0" aria-controls="objects_list"
+        type="button" id="excel-button">
+        <span>Excel</span>
+      </button>
+      <div class="btn-group">
+        <button class="btn btn-secondary buttons-collection dropdown-toggle buttons-colvis"
+          tabindex="0" aria-controls="objects_list" type="button" aria-haspopup="true" aria-expanded="false">
+          <span>Visibilidade da Coluna</span>
         </button>
-        <div class="btn-group">
-          <button class="btn btn-secondary buttons-collection dropdown-toggle buttons-colvis"
-            tabindex="0" aria-controls="objects_list" type="button" aria-haspopup="true" aria-expanded="false">
-            <span>Visibilidade da Coluna</span>
-          </button>
-        </div>
       </div>
     </div>
-  
-    <!-- /.card-header -->
-    <div class="card-body">
-      <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
-        <table id="objects_list" class="table table-bordered table-striped dataTable dtr-inline" role="grid"
-          aria-describedby="objects_list_info" width="100%">
-          <thead>
-            <tr>
-              <th scope="col">Militar</th>
-              <th scope="col">Missão</th>
-              <th scope="col">Data</th>
-              <th scope="col">Aeronave</th>
-              <th scope="col">Status</th>
-              <th scope="col">Ações</th>
-            </tr>
-          </thead>
-  
-          <tbody>
-            {% for missao in missoes %}
-            <tr>
-              <td>{{ missao.usuario.first_name }} {{ missao.usuario.last_name }}</td>
-              <td>{{ missao.titulo }}</td>
-              <td data-sort='YYYYMMDD'>{{ missao.data | date:"d/m/Y" }}</td>
-              <td>{{ missao.aeronave.prefixo}} - {{ missao.aeronave.modelo}}</td>
-              <td>
-                {% if missao.concluida is True %}
-                <span class="badge badge-success">Encerrada</span>
-                {% else %}
-  
-                <span class="badge badge-warning">Em andamento</span>
-                {% endif %}
-              </td>
-              <td>
-                <div class="container">
-                  <div class="row">
-                    <div class="col-sm">
-                      <a href="{% url 'rpa_manager:ver_missao' missao.id %}" class="card_title" type="button"
-                        class="btn btn-primary">
-                        <div class="ver_relatorio"><i class="fas fa-eye icon"></i></div>
-                      </a>
-                    </div>
-                    {% if missao.concluida is True %}
-                    <div class="col-sm">
-                      <div class="finalizar_missao"><i class="fa fa-flag"></i></div>
-                    </div>
-                    <div class="col-sm">
-                      <div class="editar_missao"><i class="fas fa-pencil-alt"></div>
-                    </div>
-                    <div class="col-sm">
-                      <div class="deletar_missao"><i class="fa fa-trash icon" aria-hidden="true"></i>
-                      </div>
-                    </div>
-                    {% else %}
-                    <div class="col-sm">
-                      <a href="{% url 'rpa_manager:criar_novo_relatorio' missao.id %}" class="card_title" type="button"
-                        class="btn btn-primary">
-                        <div class="finalizar_missao"><i class="fa fa-flag"></i></div>
-                      </a>
-                    </div>
-                    <div class="col-sm">
-                      <div class="editar_missao">
-                        <a href="{% url 'rpa_manager:editar_missao' missao.pk %}">
-                          <i class="fa fa-pen-nib"></i>
-                        </a>
-                      </div>
-                    </div>
-                    <div class="col-sm">
-                      <div class="deletar_missao">
-                        <a href="{% url 'rpa_manager:deletar_missao' missao.id %}">
-                          <i class="fa fa-trash icon" aria-hidden="true"></i>
-                        </a>
-                      </div>
-                    </div>
-                    {% endif %}
-                  </div>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      <div class="row">
-        <a href="#" alt="Nova Sprint">
-          <button type="button" class="btn btn-block btn-primary"><i class="fa fa-plus"></i> Nova
-            Missão</button>
-        </a>
-      </div>
+  </div>
+
+  <div class="card-body">
+    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+      <table id="objects_list" class="table table-bordered table-striped dataTable dtr-inline" role="grid"
+        aria-describedby="objects_list_info" width="100%">
+        <thead>
+          <tr>
+            <th scope="col">Militar</th>
+            <th scope="col">Missão</th>
+            <th scope="col">Data</th>
+            <th scope="col">Aeronave</th>
+            <th scope="col">Status</th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for missao in missoes %}
+          <tr>
+            <td>{{ missao.usuario.first_name }} {{ missao.usuario.last_name }}</td>
+            <td>{{ missao.titulo }}</td>
+            <td data-sort='YYYYMMDD'>{{ missao.data | date:"d/m/Y" }}</td>
+            <td>{{ missao.aeronave.prefixo}} - {{ missao.aeronave.modelo}}</td>
+            <td>
+              {% if missao.concluida is True %}
+              <span class="badge badge-success">Encerrada</span>
+              {% else %}
+
+              <span class="badge badge-warning">Em andamento</span>
+              {% endif %}
+            </td>
+            <td >
+              <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
+                <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+                Filtros
+                </button>
+                <div class="dropdown-menu" role="menu" style="">
+                  {% if missao.concluida is not True %}
+                    <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver missão</a>
+                    <a class="dropdown-item" href="{% url 'rpa_manager:criar_novo_relatorio' missao.id %}">Encerrar missão</a>
+                    <a class="dropdown-item" href="{% url 'rpa_manager:editar_missao' missao.id %}">Editar missão</a>
+                    <a class="dropdown-item" href="{% url 'rpa_manager:deletar_missao' missao.id %}">Excluir missão</a>
+                  {% else %}
+                    <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver missão</a>
+                  {% endif %}
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+
+    <div style="width: 10rem">
+      <a href="{% url 'rpa_manager:criar_nova_missao' %}">
+        <button type="button" style="display: inline" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i> Nova missão </button>
+      </a>
+    </div>
+
   </div>
 </div>

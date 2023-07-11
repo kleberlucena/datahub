@@ -5,14 +5,15 @@ from . views_send_email import send_html_email
 from apps.rpa_manager.forms import MissaoFormulario
 from apps.rpa_manager.models import Missao
 from django.views import View
+from django.views.generic import DetailView
 from django.urls import reverse_lazy
-from django.views.generic.edit import (CreateView, UpdateView,
+from django.views.generic.edit import (UpdateView,
                                        DeleteView,)
 
-def ver_missao(request, id):
-    missao = Missao.objects.get(pk=id)
-    
-    return render(request, 'controle/pages/ver_missao.html', {'missao': missao})
+class VerMissaoView(DetailView):
+    model = Missao
+    template_name = "controle/pages/ver_missao.html"
+    context_object_name = 'missao'
 
     
 class CriarNovaMissaoView(View):
@@ -29,21 +30,7 @@ class CriarNovaMissaoView(View):
 
         context = {'form': form}
         return render(request, 'controle/pages/criar_nova_missao.html', context)
-
-
-# def editar_missao(request, id):
-#     missao = Missao.objects.get(pk=id)
-#     missao_form = MissaoFormulario(instance=missao)
     
-#     if request.method == 'POST':
-#         missao_form =  MissaoFormulario(request.POST, instance=missao)
-#         if missao_form.is_valid():
-#             missao_form.save()
-#             return redirect('rpa_manager:principal')
-
-#     context = {'missao_form': missao_form}
-#     return render(request, 'controle/pages/criar_nova_missao.html', context)
-
 
 class EditarMissaoView(UpdateView):
     model = Missao
@@ -52,13 +39,6 @@ class EditarMissaoView(UpdateView):
     context_object_name = 'form'
     success_url = reverse_lazy('rpa_manager:principal')
 
-
-# def deletar_missao(request, id):
-#     missao = Missao.objects.get(pk=id)
-#     if request.method == 'POST':
-#         missao.delete()
-#         return redirect('rpa_manager:principal')
-#     return render(request, 'controle/pages/delete_mission.html', {'obj': missao})
 
 class EventoDeleteView(DeleteView):
     model = Missao
