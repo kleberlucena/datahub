@@ -26,32 +26,29 @@
 
 <!-- main container -->
 {% block content %}
-    <div class="card">
+  <div class="row">
+    <div class="col-md-12">
       <div class="card card-primary card-outline">
         <div class="card-header">
           <h3 class="card-title">Criar novo relatório</h3>
         </div>
-
-        <div class="card-body">
-          <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4"></div>
-              <form class="p-1" method='post'>
-                  {% csrf_token %}
-                  <div class="form-row">
-                  <div class="form-group col-md-12 mb-0">
-                    {% for field in form %}
-                      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                      {{ field }}
-                    {% endfor %}
-                  </div>
-                  </div>
-                  <div class="mt-3">
-                      <button type="submit" class="btn btn-primary">Salvar</button>
-                  <a href="{% url 'rpa_manager:principal' %}">
-                      <button type="button" class="btn btn-warning">Cancelar</button>
-                  </a>
-                  </div>
-              </form>    
+        <form class="p-3" method='post' enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group col-md-12 mb-0">
+              {% for field in form %}
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}<br>
+              {% endfor %}
+            </div>
           </div>
+          <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'rpa_manager:principal' %}">
+              <button type="button" class="btn btn-warning">Cancelar</button>
+            </a>
+          </div>
+        </form>
       </div>
     </div>
   {% endblock content %}

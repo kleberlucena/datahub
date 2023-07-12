@@ -1,65 +1,43 @@
-from django.shortcuts import redirect, render
-
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from apps.rpa_manager.forms import ChecklistForm
 from apps.rpa_manager.models import Checklist
+from django.urls import reverse_lazy
+
+class VerChecklistView(DetailView):
+    model = Checklist
+    template_name = 'controle/pages/ver_checklist.html'
+    context_object_name = 'checklist'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        lista_de_alteracoes = self.object.alteracoes.split('\n')
+        nova_lista_alteracoes = []
+        for item in lista_de_alteracoes:
+            if len(lista_de_alteracoes) == 1 and lista_de_alteracoes[0] == '':
+                nova_lista_alteracoes.append('Sem alterações')
+            else:
+                nova_lista_alteracoes.append(item + ' | ')
+        context['nova_lista_alteracoes'] = nova_lista_alteracoes
+        return context
+
+class ChecklistFormView(CreateView):
+    model = Checklist
+    form_class = ChecklistForm
+    template_name = 'controle/pages/checklist_form.html'
+    success_url = reverse_lazy('controle:checklists')
 
 
-def ver_checklist(request, id):
-    checklist = Checklist.objects.get(pk=id)
-    lista_de_alteracoes = checklist.alteracoes.split('\n')
-    nova_lista_alteracoes = []
-    for item in lista_de_alteracoes:
-        print(lista_de_alteracoes)
-        if len(lista_de_alteracoes) == 1 and lista_de_alteracoes[0] == '':
-            nova_lista_alteracoes.append('Sem alterações')
-        else:
-            nova_lista_alteracoes.append(item + ' | ')
-
-    print(nova_lista_alteracoes)
-    return render(request, 'controle/pages/ver_checklist.html',
-                  {'checklist': checklist, 'nova_lista_alteracoes': nova_lista_alteracoes})
-
-#create checklist
-def checklist_form(request):
-    dados_checklist = {
-        'piloto': request.user,
-        # 'alteracoes': 'Sem alteração',
-    }
-    
-    checklist_form = ChecklistForm(initial=dados_checklist)
-    
-
-    if request.method == 'POST':
-        checklist_form = ChecklistForm(request.POST, initial=dados_checklist)
-        if checklist_form.is_valid():
-            checklist_form.save()
-            return redirect('controle:checklists')
-        
-    context = {
-                'is_app_page': True, 
-                'checklist_form': checklist_form
-            }
-    return render(request, 'controle/pages/checklist_form.html', context)
+class EditarChecklistView(UpdateView):
+    model = Checklist
+    form_class = ChecklistForm
+    template_name = 'controle/pages/checklist_form.html'
+    success_url = reverse_lazy('controle:checklists')
+    context_object_name = 'checklist'
+    extra_context = {'edicao_checklist': True}
 
 
-def editar_checklist(request, id):
-    checklist = Checklist.objects.get(pk=id)
-    checklist_form = ChecklistForm(instance=checklist)
-    
-    if request.method == 'POST':
-        checklist_form =  ChecklistForm(request.POST, instance=checklist)
-        if checklist_form.is_valid():
-            checklist_form.save()
-            return redirect('controle:checklists')
-
-    context = {'checklist_form': checklist_form,
-               'edicao_checklist': 'True'}
-    return render(request, 'controle/pages/checklist_form.html', context)
-
-
-def deletar_checklist(request, id):
-    checklist = Checklist.objects.get(pk=id)
-    if request.method == 'POST':
-        checklist.delete()
-        return redirect('controle:checklists')
-    return render(request, 'controle/pages/delete_checklist.html', {'obj': checklist})
+class DeletarChecklistView(DeleteView):
+    model = Checklist
+    template_name = 'controle/pages/delete_checklist.html'
+    success_url = reverse_lazy('controle:checklists')
+    context_object_name = 'obj'

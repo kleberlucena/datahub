@@ -1,49 +1,79 @@
 {% load static %}
 
 <div class="card card-primary card-outline">
-    <div class="card-header">
-        <h3 class="card-title">Checklists</h3>
+  <div class="card-header">
+    <h3 class="card-title">Checklists</h3>
+  </div>
+
+  <div class="col-sm-12 col-md-6 mt-3 ml-3">
+    <div class="dt-buttons btn-group flex-wrap">
+      <div class="btn-group">
+        <button class="btn btn-secondary buttons-collection dropdown-toggle buttons-page-length" tabindex="0"
+          aria-controls="objects_list" type="button" aria-haspopup="true">
+          <span>Mostrar 10 registros</span>
+        </button>
+      </div>
+      <button class="btn btn-secondary buttons-pdf buttons-html5" tabindex="0" aria-controls="objects_list"
+        type="button" id="pdf-button">
+        <span>PDF</span>
+      </button>
+      <button class="btn btn-secondary buttons-excel buttons-html5" tabindex="0" aria-controls="objects_list"
+        type="button" id="excel-button">
+        <span>Excel</span>
+      </button>
+      <div class="btn-group">
+        <button class="btn btn-secondary buttons-collection dropdown-toggle buttons-colvis" tabindex="0"
+          aria-controls="objects_list" type="button" aria-haspopup="true" aria-expanded="false">
+          <span>Visibilidade da Coluna</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+      <table id="objects_list" class="table table-bordered table-striped dataTable dtr-inline" role="grid"
+        aria-describedby="objects_list_info" width="100%">
+        <thead>
+          <tr>
+            <th scope="col">Piloto</th>
+            <th scope="col">Aeronave</th>
+            <th scope="col">Data</th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for checklist in checklists %}
+          <tr>
+            <td>{{ checklist.piloto }}</td>
+            <td>{{ checklist.aeronave }}</td>
+            <td>{{ checklist.data | date:"d/m/Y" }}</td>
+
+            <td>
+              <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
+                <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+                Filtros
+                </button>
+                <div class="dropdown-menu" role="menu" style="">
+                    <a class="dropdown-item" href="{% url 'rpa_manager:ver_checklist' checklist.id %}">Ver checklist</a>
+                    <a class="dropdown-item" href="{% url 'rpa_manager:editar_checklist' checklist.id %}">Editar checklist</a>
+                    <a class="dropdown-item" href="{% url 'rpa_manager:deletar_checklist' checklist.id %}">Excluir checklist</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
 
-    <div class="card-body">
-        <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
-        <table id="table_checklists" class="table">
-            <thead class="tabela_cabecalho">
-                <tr>
-                    <th scope="col">Piloto</th>
-                    <th scope="col">Aeronave</th>
-                    <th scope="col">Data</th>
-                    <th scope="col">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for checklist in checklists %}
-                    <tr> 
-                        <td>{{ checklist.piloto }}</td>
-                        <td>{{ checklist.aeronave }}</td>
-                        <td>{{ checklist.data  | date:"d/m/Y" }}</td>
-                        <td>
-                            <div class="actions_buttons">
-                                <a href="{% url 'controle:ver_checklist' checklist.id %}" class="card_title" type="button" class="btn btn-primary">
-                                    <div class="ver_relatorio"><i class="fas fa-eye"></i></div>
-                                </a>
-                                <div class="editar_missao">
-                                    <a href="{% url 'controle:editar_checklist' checklist.id %}">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </a>
-                                </div>
-                                <div class="deletar_missao">
-                                    <a href="{% url 'controle:deletar_checklist' checklist.id %}">
-                                        <i class="fa fa-trash" aria-hidden="true"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-        </table>
-        </div>
+    <div style="width: 10rem">
+      <a href="{% url 'rpa_manager:checklist_form' %}">
+        <button type="button" style="display: inline" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i> Novo Checklist </button>
+      </a>
     </div>
-</div>    
 
+  </div>
+</div>

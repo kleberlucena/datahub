@@ -8,10 +8,12 @@ from .views.views_main import (
     BateriasView, VerMissaoView,
     CriarNovaMissaoView,EditarMissaoView, 
     EventoDeleteView, CriarNovoRelatorioView,
-    VerRelatorioView,
+    VerRelatorioView, ChecklistFormView,
     EditarRelatorioView, DeletarRelatorioView,
     VerEfetivoView, CriarNovoMilitarView,
     EditarEfetivoView, DeletarEfetivoView,
+    EditarChecklistView,DeletarChecklistView,
+    VerChecklistView, 
     )
 
 app_name = "rpa_manager"
@@ -40,11 +42,10 @@ urlpatterns = [
     path('editar_bateria/<int:pk>/', views_main.editar_bateria, name="editar_bateria"),
     path('deletar_bateria/<int:pk>/', views_main.deletar_bateria, name="deletar_bateria"),
 
-    path('checklists/', ChecklistsView.as_view(), name="checklists"),
-    path('checklist_form/', views_main.checklist_form, name="checklist_form"),
-    path('ver_checklist/<int:pk>/', views_main.ver_checklist, name="ver_checklist"),
-    path('editar_checklist/<int:pk>/', views_main.editar_checklist, name="editar_checklist"),
-    path('deletar_checklist/<int:pk>/', views_main.deletar_checklist, name="deletar_checklist"),
+    path('ver_checklist/<int:pk>/', VerChecklistView.as_view(), name="ver_checklist"),
+    path('checklist_form/', ChecklistFormView.as_view(), name="checklist_form"),
+    path('editar_checklist/<int:pk>/', EditarChecklistView.as_view(), name="editar_checklist"),
+    path('deletar_checklist/<int:pk>/', DeletarChecklistView.as_view(), name="deletar_checklist"),
 
     path('efetivo/', EfetivoView.as_view(), name="efetivo"),
     path('criar_novo_militar/', CriarNovoMilitarView.as_view(), name="criar_novo_militar"),
@@ -52,6 +53,7 @@ urlpatterns = [
     path('editar_efetivo/<int:pk>/', EditarEfetivoView.as_view(), name="editar_efetivo"),
     path('deletar_efetivo/<int:pk>/', DeletarEfetivoView.as_view(), name="deletar_efetivo"),
 
+    path('checklists/', ChecklistsView.as_view(), name="checklists"),
     path('aeronaves/', AeronavesView.as_view(), name="aeronaves"),
     path('relatorios/', RelatoriosView.as_view(), name="relatorios"),
     path('baterias/', BateriasView.as_view(), name="baterias"),
