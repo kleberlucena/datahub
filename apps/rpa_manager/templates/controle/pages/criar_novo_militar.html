@@ -1,15 +1,24 @@
-{% extends "controle/pages/intermediate.html" %}
+{% extends "base/base.html" %}
+{% load static %}
 
 <!-- styles -->
 {% block style_sheet %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet"
+    href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    .select2-selection__choice {
+      background-color: #007BFF !important;
+    }
+  </style>
 {% endblock %}
 
 <!-- browser title -->
 {% block title %} Nova Militar {% endblock %}
-
 
 <!-- context title -->
 {% block title-header %}  {% endblock %}
@@ -21,41 +30,50 @@
 
 <!-- main container -->
 {% block content %}
-
-    <div class="card card-primary card-outline">
-        <div class="card-header">
-            <h3 class="card-title"></h3>
-        </div>
-        <div class="card-body">
-            <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
-                <div class="container formulario_nova_missao">
-                    <h2 class="ver_missao_title"> Novo militar </h2>
-                    <form action="" method="POST">
-                        {% csrf_token %}
-                        {{ militar_form.as_p }}
-                        <input type="submit" value="Enviar" class="btn btn-primary botao_enviar">
-                        <a href="{% url 'rpa_manager:efetivo' %}"><input type="button" value="Voltar" class="btn btn-primary botao_enviar"></a>
-                    </form>
-                </div>
+  <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h3 class="card-title">Adicionar novo militar</h3>
+          </div>
+          <form class="p-3" method='post' enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-row">
+              <div class="form-group col-md-12 mb-0">
+                {{ form }}
+              </div>
             </div>
+            <div class="mt-3">
+              <button type="submit" class="btn btn-primary">Salvar</button>
+              <a href="{% url 'rpa_manager:efetivo' %}">
+                <button type="button" class="btn btn-warning">Cancelar</button>
+              </a>
+            </div>
+          </form>
         </div>
-    </div>
+      </div>
 
 {% endblock content %}
 
 <!-- javascripts -->
 {% block js %}
-<!-- DataTables  & Plugins -->
-<script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+    <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+    <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+    <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+    <script>
+      $(document).ready(function () {
+        $('.roles_escolha').select2()
+      })
+    </script>
 {% endblock %}

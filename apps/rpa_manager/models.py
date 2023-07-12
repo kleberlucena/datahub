@@ -40,13 +40,18 @@ class CidadesPB(Base):
     def __str__(self):
         return self.cidades_pb
 
-class Militar(Base):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+class Roles(Base):
+    role = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.role
+    
+class Militar(Base):  
     nome_de_guerra = models.CharField(max_length=100, null=False)
     total_de_horas_voo = models.IntegerField(default=0, null=False)
-    matricula = models.CharField(max_length=9, null=False)
-    esta_em_missao = models.BooleanField(default=False)
-    
+    matricula = models.CharField(max_length=9, null=False, unique=True)
+    roles = models.ManyToManyField('Roles')
+
     def __str__(self):
         return self.nome_de_guerra
 
@@ -65,7 +70,7 @@ class Maleta(Base):
 
 
 class Aeronave(Base):
-    prefixo = models.CharField(max_length=20)
+    prefixo = models.CharField(max_length=20, unique=True)
     modelo = models.CharField(max_length=20)
     marca = models.CharField(max_length=20)
     maleta = models.ForeignKey(Maleta, on_delete=models.SET_NULL, null=True)
@@ -77,7 +82,7 @@ class Aeronave(Base):
 
 class Missao(Base):
     titulo = models.CharField(max_length=100)
-    piloto_observador = models.ForeignKey(Militar, on_delete=models.DO_NOTHING, blank=True, null=True)
+    piloto_observador = models.ForeignKey(Militar, on_delete=models.SET_NULL, blank=True, null=True)
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
     horario = models.TimeField(auto_now_add=True)
     data = models.DateField(auto_now_add=True)
@@ -90,7 +95,7 @@ class Missao(Base):
 
 
 class Bateria(Base):
-    numeracao = models.CharField(max_length=20)
+    numeracao = models.CharField(max_length=20, unique=True)
     num_ciclos = models.IntegerField(null=False)
     ciclos_maximo = models.IntegerField(null=False, default=45)
     aeronave = models.ForeignKey(Aeronave, on_delete=models.SET_NULL, null=True)
@@ -138,7 +143,7 @@ class Checklist(Base):
 class Relatorio(Base):
     titulo = models.CharField(max_length=250, null=False, blank=False, default='')
     militar = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    piloto_observador = models.ForeignKey(Militar, on_delete=models.DO_NOTHING, blank=True, null=True)
+    piloto_observador = models.ForeignKey(Militar, on_delete=models.SET_NULL, blank=True, null=True)
     data = models.DateField(blank=False, null=False)
     horario_inicial = models.TimeField()
     horario_final = models.TimeField()
@@ -155,12 +160,3 @@ class Relatorio(Base):
     def __str__(self):
         return self.titulo
 
-
-class Estatisticas(Base):
-    nome_piloto_maior_numero_missoes = models.CharField(max_length=200, null=False, blank=False)
-    numero_piloto_maior_numero_missoes = models.IntegerField(null=False, blank=False)
-    opm_maior_numero_apoios = models.CharField(max_length=200, null=False, blank=False)
-    numero_opm_maior_numero_apoios = models.IntegerField(null=False, blank=False)
-    
-    def __str__(self):
-        return self.nome_piloto_maior_numero_missoes

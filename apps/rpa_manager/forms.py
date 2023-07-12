@@ -2,12 +2,12 @@ from django import forms
 
 from .models import *
 
-
 def adiciona_atributo_classe_ao_widget(aponta_para_o_objecto_da_classe, campo, novo_attrs1, novo_attrs2):
     aponta_para_o_objecto_da_classe.fields[campo].widget.attrs.update({
         'class': str(novo_attrs1) + '_escolha ' +  str(novo_attrs2)
     })
 
+    
 
 camposCheckboxesChecklist = [
         'baterias_carregadas',
@@ -49,19 +49,9 @@ class MissaoFormulario(forms.ModelForm):
                    'concluida': forms.HiddenInput(),
                    }
 
-        # widgets = {
-        #     'militar': forms.HiddenInput(),
-        #     'horario_inicial': forms.TimeInput(attrs={'type': 'time'}),
-        #     'horario_final': forms.TimeInput(attrs={'type': 'time'}),
-        #     'data': forms.DateInput(attrs={'type': 'date'}),
-        #     'num_sarpas': forms.Textarea(attrs={
-        #         'placeholder': 'Informe o Protocolo ou nº SARPAS',
-        #         'rows': 1}),
-        #     'relato_da_missao': forms.Textarea(attrs={'placeholder': 'Descreva a alteração'})
-        # }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         campos = ['titulo', 'piloto_observador', 'local', 'aeronave', 'usuario']
         
         for campo in campos:
@@ -138,23 +128,30 @@ class RelatorioFormulario(forms.ModelForm):
         self.fields['status_missao'].widget.attrs.update({
             'class': 'form-check form-switch', 
         })
-        
 
                 
 class MilitarForm(forms.ModelForm):
     
     class Meta:
         model = Militar
-        # fields = '__all__'
-        exclude = ['esta_em_missao']
-        
+        fields = ['nome_de_guerra', 'total_de_horas_voo', 'matricula', 'roles']
+    
+    def clean_matricula(self):
+        valor = self.cleaned_data['matricula']
+        if self.instance.pk is None and Militar.objects.filter(matricula=valor).exists():
+            raise forms.ValidationError('Este valor já existe. Por favor, escolha outro.')
+        return valor
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        campos = ['usuario', 'nome_de_guerra', 'total_de_horas_voo', 'matricula']
+        self.fields['roles'].widget.attrs.update({'data-placeholder': 'Selecione as funções'})
+
+        campos = ['nome_de_guerra', 'total_de_horas_voo', 'matricula', 'roles']
         
         for campo in campos:
             adiciona_atributo_classe_ao_widget(self, campo, campo, 'form-control')
+
 
 class AeronavesForm(forms.ModelForm):
 
@@ -196,7 +193,22 @@ class ChecklistForm(forms.ModelForm):
     
     class Meta:
         model = Checklist
-        fields = '__all__'
+        
+        fields = [
+            'piloto', 'aeronave',
+            'num_helices', 'num_baterias',
+            'baterias_carregadas', 'bateria_controle_carregada',
+            'corpo', 'hastes_motor',
+            'helices', 'gimbal',
+            'holofote', 'auto_falante',
+            'luz_estroboscopica', 'cabos',
+            'carregador', 'fonte',
+            'smart_controller', 'controle',
+            'cartao_sd', 'IMU',
+            'compass', 'sinal_transmissao',
+            'sistema_rtk_ppk', 'sinal_de_video',
+            'telemetria', 'paraquedas',
+            'alteracoes']
 
         labels = {
             'piloto': '',

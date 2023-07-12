@@ -5,31 +5,6 @@
     <h3 class="card-title">Checklists</h3>
   </div>
 
-  <div class="col-sm-12 col-md-6 mt-3 ml-3">
-    <div class="dt-buttons btn-group flex-wrap">
-      <div class="btn-group">
-        <button class="btn btn-secondary buttons-collection dropdown-toggle buttons-page-length" tabindex="0"
-          aria-controls="objects_list" type="button" aria-haspopup="true">
-          <span>Mostrar 10 registros</span>
-        </button>
-      </div>
-      <button class="btn btn-secondary buttons-pdf buttons-html5" tabindex="0" aria-controls="objects_list"
-        type="button" id="pdf-button">
-        <span>PDF</span>
-      </button>
-      <button class="btn btn-secondary buttons-excel buttons-html5" tabindex="0" aria-controls="objects_list"
-        type="button" id="excel-button">
-        <span>Excel</span>
-      </button>
-      <div class="btn-group">
-        <button class="btn btn-secondary buttons-collection dropdown-toggle buttons-colvis" tabindex="0"
-          aria-controls="objects_list" type="button" aria-haspopup="true" aria-expanded="false">
-          <span>Visibilidade da Coluna</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
   <div class="card-body">
     <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
       <table id="objects_list" class="table table-bordered table-striped dataTable dtr-inline" role="grid"
@@ -39,7 +14,7 @@
             <th scope="col">Piloto</th>
             <th scope="col">Aeronave</th>
             <th scope="col">Data</th>
-            <th scope="col">Ações</th>
+            <th class="removerDoPdf" scope="col">Ações</th>
           </tr>
         </thead>
 

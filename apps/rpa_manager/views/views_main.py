@@ -70,16 +70,19 @@ class EfetivoView(TemplateView):
         context = super().get_context_data(**kwargs)
         militares = Militar.objects.all()
         numero_de_usuarios = User.objects.count()
-        missoes_por_usuario = numero_de_missoes_por_usuario()
         form = formulario_missao(self.request)
 
         context['militares'] = militares
         context['form'] = form
-        context['missoes_por_usuario'] = missoes_por_usuario
         context['numero_de_usuarios'] = numero_de_usuarios
 
-        return context
+        militares_com_roles = {}
+        for militar in militares:
+            roles = militar.roles.all()
+            militares_com_roles[militar] = roles
 
+        context['militares_com_roles'] = militares_com_roles
+        return context
 
 class AeronavesView(TemplateView):
     template_name = 'controle/pages/aeronaves.html'

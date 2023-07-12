@@ -1,38 +1,98 @@
 {% extends "base/base.html" %}
+{% load static %}
 
 <!-- styles -->
 {% block style_sheet %}
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
 
-  {% endblock style_sheet %}
+{% endblock style_sheet %}
 
   <!-- browser title -->
-  {% block title %} Principal {% endblock %}
+{% block title %} Principal {% endblock %}
 
   <!-- context title -->
-  {% block title-header %} Página principal {% endblock %}
+{% block title-header %} Página principal {% endblock %}
 
   <!-- breadcrumb -->
-  {% block breadcrumb %}
+{% block breadcrumb %}
   <li class="breadcrumb-item active">Página principal</li>
-  {% endblock %}
+{% endblock %}
 
-  <!-- main container -->
-  {% block content %}
-    
-    {% include 'controle/partials/table_missoes.html' %}
+<!-- main container -->
+{% block content %}
 
-  {% endblock content %}
+  <div class="card card-primary card-outline">
+    <div class="card-header">
+      <h3 class="card-title">Missões</h3>
+    </div>
+
+    <div class="card-body">
+      <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+        <table id="objects_list" class="table table-bordered table-striped dataTable dtr-inline" role="grid"
+          aria-describedby="objects_list_info" width="100%">
+          <thead>
+            <tr>
+              <th scope="col">Militar</th>
+              <th scope="col">Missão</th>
+              <th scope="col">Data</th>
+              <th scope="col">Aeronave</th>
+              <th scope="col">Status</th>
+              <th scope="col">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for missao in missoes %}
+            <tr>
+              <td>{{ missao.usuario.first_name }} {{ missao.usuario.last_name }}</td>
+              <td>{{ missao.titulo }}</td>
+              <td data-sort='YYYYMMDD'>{{ missao.data | date:"d/m/Y" }}</td>
+              <td>{{ missao.aeronave.prefixo}} - {{ missao.aeronave.modelo}}</td>
+              <td>
+                {% if missao.concluida is True %}
+                <span class="badge badge-success">Encerrada</span>
+                {% else %}
+  
+                <span class="badge badge-warning">Em andamento</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
+                  <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                  Filtros
+                  </button>
+                  <div class="dropdown-menu" role="menu" style="">
+                    {% if missao.concluida is not True %}
+                      <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver missão</a>
+                      <a class="dropdown-item" href="{% url 'rpa_manager:criar_novo_relatorio' missao.id %}">Encerrar missão</a>
+                      <a class="dropdown-item" href="{% url 'rpa_manager:editar_missao' missao.id %}">Editar missão</a>
+                      <a class="dropdown-item" href="{% url 'rpa_manager:deletar_missao' missao.id %}">Excluir missão</a>
+                    {% else %}
+                      <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver missão</a>
+                    {% endif %}
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+  
+      <div style="width: 10rem">
+        <a href="{% url 'rpa_manager:criar_nova_missao' %}">
+          <button type="button" style="display: inline" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i> Nova missão </button>
+        </a>
+      </div>
+  
+    </div>
+  </div>
+{% endblock content %}
 
   <!-- javascripts -->
 {% block js %}
-  <!-- DataTables  & Plugins -->
   <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
@@ -45,14 +105,17 @@
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
   <script>
-    <script>
-      $(document).ready(function() {
-          $('#objects_list').DataTable({
-              responsive: true
-          });
-      });
+    var table = $('#objects_list').DataTable( {
+        lengthChange: false,
+        buttons: [ 'pageLength', 'excel', 'pdf', 'colvis' ],
+        dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        language: { "url": "//cdn.datatables.net/plug-ins/1.11.1/i18n/pt_br.json" },
+        responsive: true,
+        searching: true,
+        processing: true,
+        columnDefs: [{ "width": "150px", targets: [-1]}]
+    } );
   </script>
-  </script>
+
 {% endblock %}

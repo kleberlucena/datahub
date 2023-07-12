@@ -1,8 +1,8 @@
 {% extends "base/base.html" %}
+{% load static %}
 
 <!-- styles -->
 {% block style_sheet %}
-{% load static %}
   {% comment %} bacinf style_sheet {% endcomment %}
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
@@ -59,6 +59,10 @@
       .formulario_checklist_alteracoes {
         max-width: 100%;
       }
+
+      .formulario_checklist_parte2 > input {
+        width: 1rem;
+      } 
       
       @media (max-width: 768px) {
       
@@ -73,15 +77,15 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Novo checklist {% endblock %}
+{% block title %} Editar checklist {% endblock %}
 
 <!-- context title -->
-{% block title-header %} Novo checklist {% endblock %}
+{% block title-header %} Editar checklist {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'rpa_manager:principal' %}">Principal</a></li>
-<li class="breadcrumb-item active">Novo checklist</li>
+<li class="breadcrumb-item active">Editar checklist</li>
 {% endblock %}
 
 <!-- main container -->
@@ -91,76 +95,73 @@
   <div class="col-md-12">
     <div class="card card-primary card-outline">
       <div class="card-header">
-        <h3 class="card-title">Criar novo relatório</h3>
+        <h3 class="card-title">Editar novo relatório</h3>
       </div>
       <form  class="p-3" method='post' enctype="multipart/form-data">
         {% csrf_token %}
-
-        {% comment %} Esta variavel verifica se o form esta sendo editado e carrega {% endcomment %}
-        {% comment %} a lista de itens a serem avaliados {% endcomment %}
-        <p class="edicao_checklist">{{ edicao_checklist }}</p> 
+        <p class="edicao_checklist">{{ edicao_checklist }}</p>
 
         <div class="container formulario_checklist_parte1">
-          {{ checklist_form.piloto }}
+          {{ form.piloto }}
           <label for="id_aeronave">Aeronave</label>
           Selecione uma aeronave para iniciar o checklist
-          {{ checklist_form.aeronave }}
+          {{ form.aeronave }}
           <label for="id_num_helices">Número de hélices</label>
-          {{ checklist_form.num_helices }}
+          {{ form.num_helices }}
           <label for="id_num_baterias">Número de baterias</label>
-          {{ checklist_form.num_baterias }}
+          {{ form.num_baterias }}
         </div>
 
         <h2 class="formulario_checklist_titulo_selecao">Marcar itens que estão Ok </h2>
         <div class="formulario_checklist_selecao_itens ">
           <div class="container formulario_checklist_parte2">
             <label for="id_baterias_carregadas">Baterias carregadas</label>
-            {{ checklist_form.baterias_carregadas }}
+            {{ form.baterias_carregadas }}
             <label for="id_bateria_controle_carregada">Bateria controle carregada</label>
-            {{ checklist_form.bateria_controle_carregada }}
+            {{ form.bateria_controle_carregada }}
             <label for="id_corpo">Corpo/Shell</label>
-            {{ checklist_form.corpo }}
+            {{ form.corpo }}
             <label for="id_hastes_motor">Hastes</label>
-            {{ checklist_form.hastes_motor }}
+            {{ form.hastes_motor }}
             <label for="id_helices">Hélices</label>
-            {{ checklist_form.helices }}
+            {{ form.helices }}
             <label for="id_gimbal">Gimbal</label>
-            {{ checklist_form.gimbal }}
+            {{ form.gimbal }}
             <label for="id_holofote">Holofote</label>
-            {{ checklist_form.holofote }}
+            {{ form.holofote }}
             <label for="id_auto_falante">Auto-falante</label>
-            {{ checklist_form.auto_falante }}
+            {{ form.auto_falante }}
             <label for="id_luz_estroboscopica">Luz Estroboscópica</label>
-            {{ checklist_form.luz_estroboscopica }}
+            {{ form.luz_estroboscopica }}
             <label for="id_cabos">Cabos</label>
-            {{ checklist_form.cabos }}
+            {{ form.cabos }}
             <label for="id_carregador">Carregador</label>
-            {{ checklist_form.carregador }}
+            {{ form.carregador }}
           </div>
 
           <div class="p-3 formulario_checklist_parte2 ">
             <label for="id_fonte">Fonte de energia</label>
-            {{ checklist_form.fonte }}
+            {{ form.fonte }}
             <label for="id_smart_controller">Smart controller</label>
-            {{ checklist_form.smart_controller }}
+            {{ form.smart_controller }}
             <label for="id_controle">Controle remoto</label>
-            {{ checklist_form.controle }}
+            {{ form.controle }}
             <label for="id_cartao_sd">Cartão SD</label>
-            {{ checklist_form.cartao_sd }}
+            {{ form.cartao_sd }}
             <label for="id_IMU">IMU</label>
-            {{ checklist_form.IMU }}
+            {{ form.IMU }}
             <label for="id_compass">Compass/Bússola</label>
-            {{ checklist_form.compass }}
+            {{ form.compass }}
             <label for="id_sinal_transmissao">Sinal de transmissão</label>
-            {{ checklist_form.sinal_transmissao }}
+            {{ form.sinal_transmissao }}
             <label for="id_sistema_rtk_ppk">Sistema RTK PPK</label>
-            {{ checklist_form.sistema_rtk_ppk }}
+            {{ form.sistema_rtk_ppk }}
             <label for="id_paraquedas">Paraquedas</label>
-            {{ checklist_form.paraquedas }}
+            {{ form.paraquedas }}
             <label for="id_sinal_de_video">Sinal de vídeo</label>
-            {{ checklist_form.sinal_de_video }}
+            {{ form.sinal_de_video }}
             <label for="id_telemetria">Telemetria</label>
-            {{ checklist_form.telemetria }}
+            {{ form.telemetria }}
           </div>
         </div>
 
@@ -169,7 +170,7 @@
             alterações:</h4>
           <label class="container_alteracoes_titulo" for="id_alteracoes">Alterações</label>
           <input type="button" class="btn btn-danger botao_limpar" value="Limpar" onclick="limpaAlteracoes();" /><br>
-          {{ checklist_form.alteracoes }}
+          {{ form.alteracoes }}
         </div>
         <div class="mt-3">
           <button type="submit" class="btn btn-primary">Salvar</button>

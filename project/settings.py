@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     'django_minio_backend.apps.DjangoMinioBackendConfig',
     'stdimage',
     'crispy_forms',
+    'crispy_bootstrap5',
     'widget_tweaks',
     'localflavor',
     'django_celery_results',

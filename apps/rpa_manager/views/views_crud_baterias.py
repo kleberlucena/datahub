@@ -1,45 +1,33 @@
-from django.shortcuts import redirect, render
-
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 from apps.rpa_manager.forms import BateriaForm
 from apps.rpa_manager.models import Bateria
 
 
-def ver_bateria(request, id):
-    bateria = Bateria.objects.get(pk=id)
-    
-    return render(request, 'controle/pages/ver_bateria.html', {'bateria': bateria})
+class VerBateriaView(DetailView):
+    model = Bateria
+    template_name = 'controle/pages/ver_bateria.html'
+    context_object_name = 'bateria'
+    pk_url_kwarg = 'id'
 
 
-def criar_nova_bateria(request):
-    
-    bateria_form = BateriaForm(request.POST)
-    
-    if request.method == 'POST':
-        bateria_form = BateriaForm(request.POST)
-        if bateria_form.is_valid():
-            bateria_form.save()
-            return redirect('controle:baterias')
-    else:
-        bateria_form = BateriaForm()
-    
-    return render(request, 'controle/pages/criar_nova_bateria.html', {'bateria_form': bateria_form, 'is_app_page': True,})
+class CriarNovaBateriaView(CreateView):
+    model = Bateria
+    form_class = BateriaForm
+    template_name = 'controle/pages/criar_nova_bateria.html'
+    success_url = reverse_lazy('controle:baterias')
 
-def editar_bateria(request, id):
-    bateria = Bateria.objects.get(pk=id)
-    bateria_form = BateriaForm(instance=bateria)
-    
-    if request.method == 'POST':
-        bateria_form =  BateriaForm(request.POST, instance=bateria)
-        if bateria_form.is_valid():
-            bateria_form.save()
-            return redirect('controle:baterias')
 
-    context = {'bateria_form': bateria_form}
-    return render(request, 'controle/pages/criar_nova_bateria.html', context)
+class EditarBateriaView(UpdateView):
+    model = Bateria
+    form_class = BateriaForm
+    template_name = 'controle/pages/criar_nova_bateria.html'
+    pk_url_kwarg = 'id'
+    success_url = reverse_lazy('controle:baterias')
 
-def deletar_bateria(request, id):
-    bateria = Bateria.objects.get(pk=id)
-    if request.method == 'POST':
-        bateria.delete()
-        return redirect('controle:baterias')
-    return render(request, 'controle/pages/delete_bateria.html', {'obj': bateria})
+
+class DeletarBateriaView(DeleteView):
+    model = Bateria
+    template_name = 'controle/pages/delete_bateria.html'
+    pk_url_kwarg = 'id'
+    success_url = reverse_lazy('controle:baterias')

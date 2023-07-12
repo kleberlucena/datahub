@@ -49,14 +49,14 @@
                     <dd class="col-sm-9">{{ checklist.aeronave }}</dd>
                     <dt class="col-sm-3">Data</dt>
                     <dd class="col-sm-9">{{ checklist.data }}</dd>
-                    <dt class="col-sm-3">Qnt Baterias</dt>
+                    <dt class="col-sm-3">Quantidade Baterias</dt>
                     <dd class="col-sm-9">{{ checklist.num_baterias }}</dd>
-                    <dt class="col-sm-3">Qnt Hélices</dt>
+                    <dt class="col-sm-3">Quantidade Hélices</dt>
                     <dd class="col-sm-9">{{ checklist.num_helices }}</dd>
                     <dt class="col-sm-3">Alterações</dt>
                     <dd class="col-sm-9">
                         {% for alteracao in nova_lista_alteracoes %}
-                            {{ alteracao }}
+                            <span class="badge badge-primary">{{ alteracao }}</span><br>
                         {% endfor %}
                     </dd> 
                         
@@ -92,9 +92,6 @@
     <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
     <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
 
-    {% comment %} scripts do app rpa_manager {% endcomment %}
-    <script src="{% static 'controle/js/datatables_config_jquery.js' %}"></script>
     <script src="{% static 'controle/js/checklist_controle_aeronave.js' %}"></script>
     <script src="{% static 'controle/js/checklist_adiciona_alteracoes.js' %}"></script>
-    <script src="{% static 'controle/js/dashboard.js' %}"></script>
 {% endblock %}

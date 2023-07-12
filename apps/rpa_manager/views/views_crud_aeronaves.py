@@ -1,45 +1,33 @@
-from django.shortcuts import redirect, render
-
+from django.urls import reverse_lazy
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from apps.rpa_manager.forms import AeronavesForm
 from apps.rpa_manager.models import Aeronave 
 
 
-def ver_aeronave(request, id):
-    aeronave = Aeronave.objects.get(pk=id)
-    
-    return render(request, 'controle/pages/ver_aeronave.html', {'aeronave': aeronave})
+class VerAeronaveView(DetailView):
+    model = Aeronave
+    template_name = 'controle/pages/ver_aeronave.html'
+    context_object_name = 'aeronave'
+    pk_url_kwarg = 'id'
 
 
-def criar_nova_aeronave(request):
-    
-    aeronave_form = AeronavesForm(request.POST)
-    
-    if request.method == 'POST':
-        aeronave_form = AeronavesForm(request.POST)
-        if aeronave_form.is_valid():
-            aeronave_form.save()
-            return redirect('controle:aeronaves')
-    else:
-        aeronave_form = AeronavesForm()
-    
-    return render(request, 'controle/pages/criar_nova_aeronave.html', {'aeronave_form': aeronave_form, 'is_app_page': True,})
+class CriarNovaAeronaveView(CreateView):
+    model = Aeronave
+    form_class = AeronavesForm
+    template_name = 'controle/pages/criar_nova_aeronave.html'
+    success_url = reverse_lazy('rpa_manager:aeronaves')
 
-def editar_aeronave(request, id):
-    aeronave = Aeronave.objects.get(pk=id)
-    aeronave_form = AeronavesForm(instance=aeronave)
-    
-    if request.method == 'POST':
-        aeronave_form =  AeronavesForm(request.POST, request.FILES, instance=aeronave)
-        if aeronave_form.is_valid():
-            aeronave_form.save()
-            return redirect('controle:aeronaves')
 
-    context = {'aeronave_form': aeronave_form}
-    return render(request, 'controle/pages/criar_nova_aeronave.html', context)
+class EditarAeronaveView(UpdateView):
+    model = Aeronave
+    form_class = AeronavesForm
+    template_name = 'controle/pages/criar_nova_aeronave.html'
+    pk_url_kwarg = 'id'
+    success_url = reverse_lazy('rpa_manager:aeronaves')
 
-def deletar_aeronave(request, id):
-    aeronave = Aeronave.objects.get(pk=id)
-    if request.method == 'POST':
-        aeronave.delete()
-        return redirect('controle:aeronaves')
-    return render(request, 'controle/pages/delete_aeronave.html', {'obj': aeronave})
+
+class DeletarAeronaveView(DeleteView):
+    model = Aeronave
+    template_name = 'controle/pages/delete_aeronave.html'
+    pk_url_kwarg = 'id'
+    success_url = reverse_lazy('rpa_manager:aeronaves')

@@ -54,4 +54,16 @@
     <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
     <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
     <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+    <script>
+        var table = $('#objects_list').DataTable( {
+            lengthChange: false,
+            buttons: [ 'pageLength', 'excel', 'pdf', 'colvis' ],
+            dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            language: { "url": "//cdn.datatables.net/plug-ins/1.11.1/i18n/pt_br.json" },
+            responsive: true,
+            searching: true,
+            processing: true,
+            columnDefs: [{ "width": "150px", targets: [-1]}]
+        } );
+      </script>
 {% endblock %}
