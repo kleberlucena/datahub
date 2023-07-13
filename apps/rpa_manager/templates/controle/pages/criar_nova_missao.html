@@ -10,11 +10,11 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Nova Missão {% endblock %}
+{% block title %} Nova Operação {% endblock %}
 
 
 <!-- context title -->
-{% block title-header %} {% endblock %}
+{% block title-header %} Nova Operação {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
@@ -27,7 +27,7 @@
     <div class="col-md-12">
       <div class="card card-primary card-outline">
         <div class="card-header">
-          <h3 class="card-title">Criar nova missão</h3>
+          <h3 class="card-title">Criar nova operação</h3>
         </div>
         <form class="p-3" method='post' enctype="multipart/form-data">
           {% csrf_token %}

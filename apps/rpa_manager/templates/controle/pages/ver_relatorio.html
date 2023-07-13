@@ -1,15 +1,15 @@
-{% extends "controle/pages/intermediate.html" %}
+{% extends "base/base.html" %}
+{% load static %}
 
 <!-- styles -->
 {% block style_sheet %}
-    {% load static %}
-    {% comment %} bacinf style_sheet {% endcomment %}
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  {% comment %} bacinf style_sheet {% endcomment %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -20,92 +20,91 @@
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
-  {% comment %} <li class="breadcrumb-item active">Início</li> {% endcomment %}
+{% comment %} <li class="breadcrumb-item active">Início</li> {% endcomment %}
 {% endblock %}
 
 <!-- main container -->
 {% block content %}
-    <div class="card card-primary card-outline">
-        <div class="card-header">
-            <h3 class="card-title"></h3>
-        </div>
-        <div class="card-body">
-            <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
-                {% comment %} code here {% endcomment %}
-                <div class="container">
-                    <dl class="row">
-                        <dt class="col-sm-3">Título</dt>
-                        <dd class="col-sm-9">{{ relatorio.titulo }}</dd>
-                        <dt class="col-sm-3">Piloto remoto</dt>
-                        <dd class="col-sm-9">{{ relatorio.militar }}</dd>
-                        <dt class="col-sm-3">Piloto observador</dt>
-                            
-                        {% if relatorio.piloto_observador == None %}
-                            <dd class="col-sm-9"> -- </dd>
-                            {% else %}
-                            <dd class="col-sm-9"> {{ relatorio.piloto_observador }} </dd>
-                        {% endif %}
-                            
-                        
-                        <dt class="col-sm-3">Data</dt>
-                        <dd class="col-sm-9">{{ relatorio.data  | date:"d/m/Y"}}</dd>
-                        <dt class="col-sm-3">Horário inicial</dt>
-                        <dd class="col-sm-9">{{ relatorio.horario_inicial }}</dd>
-                        <dt class="col-sm-3">Horário final</dt>
-                        <dd class="col-sm-9">{{ relatorio.horario_final }}</dd>
-                        <dt class="col-sm-3">Localidade</dt>
-                        <dd class="col-sm-9">{{ relatorio.local }}</dd>
-                        <dt class="col-sm-3">Número Sarpas</dt>
-                        <dd class="col-sm-9">
-                            {{ relatorio.num_sarpas }}
-                            <a href="https://sarpas.decea.mil.br/consulta-protocolo" target="_blank" ><i class="fa-solid fa-magnifying-glass"></i> Consultar</a>
-                        </dd>
-                        
-                        
-                        <dt class="col-sm-3">Arquivo solicitação</dt>
-                        {% if relatorio.arquivo_solicitacao != '' %}
-                            <dd class="col-sm-9"><a href="/media/{{ relatorio.arquivo_solicitacao }}/" download >Baixar solicitação <i class="fas fa-file-pdf"></i> </a></dd> 
-                        {% else %}
-                            <dd class="col-sm-9"> -- </dd>  
-                        {% endif %}
-                        
-                        <dt class="col-sm-3">OPM apoiada</dt>
-                        <dd class="col-sm-9">{{ relatorio.opm_apoiada }}</dd>
-                        <dt class="col-sm-3">Unidade apoiada</dt>
-                        <dd class="col-sm-9">{{ relatorio.unidade_apoiada }}</dd>
-                        <dt class="col-sm-3">Natureza do voo</dt>
-                        <dd class="col-sm-9">{{ relatorio.natureza_de_voo }}</dd>
-                        <dt class="col-sm-3">Tipo de operação</dt>
-                        <dd class="col-sm-9">{{ relatorio.tipo_de_operacao }}</dd>
-                        <dt class="col-sm-3">Aeronave utilizada</dt>
-                        <dd class="col-sm-9">{{ relatorio.aeronave }}</dd>
-                        <dt class="col-sm-3">Relato da missão</dt>
-                        <dd class="col-sm-9">{{ relatorio.relato_da_missao }}</dd>
-                        <a href="{% url 'rpa_manager:relatorios' %}">
-                            <button type="button" class="btn btn-primary">Voltar</button>
-                        </a>
-                    </dl>
-                </div>
-            </div>
-        </div>
+<div class="card card-primary card-outline">
+  <div class="card-header">
+    <h3 class="card-title">Ver relatório </h3>
+  </div>
+  <div class="card-body">
+    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+      {% comment %} code here {% endcomment %}
+      <div class="container">
+        <dl class="row">
+          <dt class="col-sm-3">Título</dt>
+          <dd class="col-sm-9">{{ relatorio.titulo }}</dd>
+          <dt class="col-sm-3">Piloto remoto</dt>
+          <dd class="col-sm-9">{{ relatorio.militar }}</dd>
+          <dt class="col-sm-3">Piloto observador</dt>
+
+          {% if relatorio.piloto_observador == None %}
+            <dd class="col-sm-9"> -- </dd>
+          {% else %}
+            <dd class="col-sm-9"> {{ relatorio.piloto_observador }} </dd>
+          {% endif %}
+
+          <dt class="col-sm-3">Data</dt>
+          <dd class="col-sm-9">{{ relatorio.data | date:"d/m/Y"}}</dd>
+          <dt class="col-sm-3">Horário inicial</dt>
+          <dd class="col-sm-9">{{ relatorio.horario_inicial }}</dd>
+          <dt class="col-sm-3">Horário final</dt>
+          <dd class="col-sm-9">{{ relatorio.horario_final }}</dd>
+          <dt class="col-sm-3">Localidade</dt>
+          <dd class="col-sm-9">{{ relatorio.local }}</dd>
+          <dt class="col-sm-3">Número Sarpas</dt>
+          <dd class="col-sm-9">
+            {{ relatorio.num_sarpas }}
+            <a href="https://sarpas.decea.mil.br/consulta-protocolo" target="_blank"><i
+                class="fa-solid fa-magnifying-glass"></i> Consultar</a>
+          </dd>
+
+          <dt class="col-sm-3">Arquivo solicitação</dt>
+          {% if relatorio.arquivo_solicitacao != '' %}
+            <dd class="col-sm-9"><a href="/media/{{ relatorio.arquivo_solicitacao }}/" download>Baixar solicitação <i
+                class="fas fa-file-pdf"></i> </a></dd>
+          {% else %}
+            <dd class="col-sm-9"> -- </dd>
+          {% endif %}
+
+          <dt class="col-sm-3">OPM apoiada</dt>
+          <dd class="col-sm-9">{{ relatorio.opm_apoiada }}</dd>
+          <dt class="col-sm-3">Unidade apoiada</dt>
+          <dd class="col-sm-9">{{ relatorio.unidade_apoiada }}</dd>
+          <dt class="col-sm-3">Natureza do voo</dt>
+          <dd class="col-sm-9">{{ relatorio.natureza_de_voo }}</dd>
+          <dt class="col-sm-3">Tipo de operação</dt>
+          <dd class="col-sm-9">{{ relatorio.tipo_de_operacao }}</dd>
+          <dt class="col-sm-3">Aeronave utilizada</dt>
+          <dd class="col-sm-9">{{ relatorio.aeronave }}</dd>
+          <dt class="col-sm-3">Relato da missão</dt>
+          <dd class="col-sm-9">{{ relatorio.relato_da_missao }}</dd>
+          <a href="{% url 'rpa_manager:relatorios' %}">
+            <button type="button" class="btn btn-primary">Voltar</button>
+          </a>
+        </dl>
+      </div>
     </div>
+  </div>
+</div>
 {% endblock content %}
 
 <!-- javascripts -->
 {% block js %}
-    <!-- DataTables  & Plugins -->
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
-
+<!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
 {% endblock %}

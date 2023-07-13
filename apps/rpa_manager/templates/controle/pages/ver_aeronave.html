@@ -1,98 +1,72 @@
-{% extends "controle/pages/intermediate.html" %}
+{% extends "base/base.html" %}
+{% load static %}
 
 <!-- styles -->
 {% block style_sheet %}
-    {% load static %}
-    {% comment %} bacinf style_sheet {% endcomment %}
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
-    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
-
-    {% comment %} rpa_manager style_sheet {% endcomment %}
-    <link rel="stylesheet" href="{% static 'controle/css/novo_checklist.css' %}">
-    <link rel="stylesheet" href="{% static 'controle/css/nova_bateria.css' %}">
-    <link rel="stylesheet" href="{% static 'controle/css/tables-style.css' %}"> 
-    <link rel="stylesheet" href="{% static 'controle/css/card-style.css' %}">
-    <link rel="stylesheet" href="{% static 'controle/css/dashboard.css' %}"> 
-    <link rel="stylesheet" href="{% static 'controle/css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'controle/css/novo_relatorio.css' %}">
+{% comment %} bacinf style_sheet {% endcomment %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
 {% endblock style_sheet %}
 
 <!-- browser title -->
 {% block title %} Ver Aeronave {% endblock %}
-
-<!-- styles -->
-{% block style_sheet %}
-    {% load static %}
-
-{% endblock %}
 
 <!-- context title -->
 {% block title-header %} Ver Aeronave {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
-  {% comment %} <li class="breadcrumb-item active">Início</li> {% endcomment %}
+{% comment %} <li class="breadcrumb-item active">Início</li> {% endcomment %}
 {% endblock %}
 
 <!-- main container -->
 {% block content %}
-    <div class="card card-primary card-outline">
-        <div class="card-header">
-            <h3 class="card-title"></h3>
-        </div>
-        <div class="card-body">
-            <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
-                <div class="container">
-                    <dl class="row">
-                        <dt class="col-sm-3">Aeronave</dt>
-                        <dd class="col-sm-9">{{ aeronave.prefixo }}</dd>
-                        <dt class="col-sm-3">Modelo</dt>
-                        <dd class="col-sm-9">{{ aeronave.modelo }}</dd>
-                        <dt class="col-sm-3">Marca</dt>
-                        <dd class="col-sm-9">{{ aeronave.marca }}</dd>
-                        <dt class="col-sm-3">Local de operação</dt>
-                        <dd class="col-sm-9">{{ aeronave.local }}</dd>
-                        
+<div class="card card-primary card-outline">
+  <div class="card-header">
+    <h3 class="card-title"></h3>
+  </div>
+  <div class="card-body">
+    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+      <div class="container">
+        <dl class="row">
+          <dt class="col-sm-3">Aeronave</dt>
+          <dd class="col-sm-9">{{ aeronave.prefixo }}</dd>
+          <dt class="col-sm-3">Modelo</dt>
+          <dd class="col-sm-9">{{ aeronave.modelo }}</dd>
+          <dt class="col-sm-3">Marca</dt>
+          <dd class="col-sm-9">{{ aeronave.marca }}</dd>
+          <dt class="col-sm-3">Local de operação</dt>
+          <dd class="col-sm-9">{{ aeronave.local }}</dd>
 
-                        <a href="{% url 'rpa_manager:aeronaves' %}">
-                            <button type="button" class="btn btn-primary">Voltar</button>
-                        </a>
-                    </dl>
-                </div>
-            </div>
-        </div>
+          <a href="{% url 'rpa_manager:aeronaves' %}">
+            <button type="button" class="btn btn-primary">Voltar</button>
+          </a>
+        </dl>
+      </div>
     </div>
-    
+  </div>
+</div>
+
 {% endblock content %}
 
 <!-- javascripts -->
 {% block js %}
-    <!-- Ionicons local -->
-    <script type="module" src="{% static 'controle/js/ionicos/ionicons.esm.js' %}"></script>
-    <script type="module" src="{% static 'controle/js/ionicos/ionicons.js' %}"></script>
-
-    <!-- DataTables  & Plugins -->
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
-
-    {% comment %} scripts do app rpa_manager {% endcomment %}
-    <script src="{% static 'controle/js/datatables_config_jquery.js' %}"></script>
-    <script src="{% static 'controle/js/checklist_controle_aeronave.js' %}"></script>
-    <script src="{% static 'controle/js/checklist_adiciona_alteracoes.js' %}"></script>
-    <script src="{% static 'controle/js/dashboard.js' %}"></script>
+  <!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
 {% endblock %}

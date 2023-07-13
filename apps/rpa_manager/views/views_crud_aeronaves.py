@@ -8,7 +8,7 @@ class VerAeronaveView(DetailView):
     model = Aeronave
     template_name = 'controle/pages/ver_aeronave.html'
     context_object_name = 'aeronave'
-    pk_url_kwarg = 'id'
+    pk_url_kwarg = 'pk'
 
 
 class CriarNovaAeronaveView(CreateView):
@@ -21,13 +21,14 @@ class CriarNovaAeronaveView(CreateView):
 class EditarAeronaveView(UpdateView):
     model = Aeronave
     form_class = AeronavesForm
-    template_name = 'controle/pages/criar_nova_aeronave.html'
-    pk_url_kwarg = 'id'
+    template_name = 'controle/pages/editar_aeronave.html'
+    context_object_name = 'form'
+    pk_url_kwarg = 'pk'
     success_url = reverse_lazy('rpa_manager:aeronaves')
-
 
 class DeletarAeronaveView(DeleteView):
     model = Aeronave
     template_name = 'controle/pages/delete_aeronave.html'
-    pk_url_kwarg = 'id'
+    context_object_name = 'obj'
+    pk_url_kwarg = 'pk'
     success_url = reverse_lazy('rpa_manager:aeronaves')

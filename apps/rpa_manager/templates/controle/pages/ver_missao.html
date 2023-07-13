@@ -1,8 +1,8 @@
-{% extends "controle/pages/intermediate.html" %}
+{% extends "base/base.html" %}
+{% load static %}
 
 <!-- styles -->
 {% block style_sheet %}
-    {% load static %}
     {% comment %} bacinf style_sheet {% endcomment %}
     <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
     <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
@@ -14,10 +14,10 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Ver Missão {% endblock %}
+{% block title %} Ver Operação {% endblock %}
 
 <!-- context title -->
-{% block title-header %}  {% endblock %}
+{% block title-header %} Ver Operação {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
@@ -35,7 +35,7 @@
         <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4" >
             {% comment %} code here {% endcomment %}
             <div class="container">
-                <h2 class="ver_missao_title"> Ver Missão </h2>
+                <h2 class="ver_missao_title"> Ver Operação </h2>
                 <dl class="row">
                     <dt class="col-sm-3">Usuário</dt>
                     <dd class="col-sm-9">{{ missao.usuario }}</dd>
@@ -54,9 +54,13 @@
                     <dt class="col-sm-3">Status</dt>
                     
                     {% if missao.concluida %}
-                        <dd class="col-sm-9">Encerrada</dd>
+                        <dd class="col-sm-9">
+                            <span class="badge badge-primary">Encerrada</span><br>
+                        </dd>
                     {% else %}
-                        <dd class="col-sm-9">Em andamento</dd>
+                        <dd class="col-sm-9">
+                            <span class="badge badge-warning">Em andamento</span><br>
+                        </dd>
                     {% endif %}
                         
                     <a href="{% url 'rpa_manager:principal' %}">

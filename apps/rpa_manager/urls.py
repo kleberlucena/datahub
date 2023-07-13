@@ -5,7 +5,7 @@ from .views.views_main import (
     EfetivoView, AeronavesView,
     BateriasView, VerMissaoView,
     CriarNovaMissaoView,EditarMissaoView, 
-    EventoDeleteView, CriarNovoRelatorioView,
+    DeleteMissaoView, CriarNovoRelatorioView,
     VerRelatorioView, ChecklistFormView,
     EditarRelatorioView, DeletarRelatorioView,
     VerEfetivoView, CriarNovoMilitarView,
@@ -26,7 +26,7 @@ urlpatterns = [
     path('ver_missao/<int:pk>/', VerMissaoView.as_view(), name="ver_missao"),
     path('criar_nova_missao/', CriarNovaMissaoView.as_view(), name="criar_nova_missao"),
     path('editar_missao/<int:pk>/', EditarMissaoView.as_view(), name="editar_missao"),
-    path('deletar_missao/<int:pk>/', EventoDeleteView.as_view(), name="deletar_missao"),
+    path('deletar_missao/<int:pk>/', DeleteMissaoView.as_view(), name="deletar_missao"),
 
     path('ver_relatorio/<int:pk>/', VerRelatorioView.as_view(), name="ver_relatorio"),
     path('criar_novo_relatorio/<int:pk>/', CriarNovoRelatorioView.as_view(), name="criar_novo_relatorio"),

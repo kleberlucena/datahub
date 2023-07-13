@@ -6,18 +6,17 @@
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
-
 {% endblock style_sheet %}
 
   <!-- browser title -->
-{% block title %} Principal {% endblock %}
+{% block title %} Operações {% endblock %}
 
   <!-- context title -->
-{% block title-header %} Página principal {% endblock %}
+{% block title-header %} Operações {% endblock %}
 
   <!-- breadcrumb -->
 {% block breadcrumb %}
-  <li class="breadcrumb-item active">Página principal</li>
+  <li class="breadcrumb-item active"> Operações </li>
 {% endblock %}
 
 <!-- main container -->
@@ -25,7 +24,7 @@
 
   <div class="card card-primary card-outline">
     <div class="card-header">
-      <h3 class="card-title">Missões</h3>
+      <h3 class="card-title">Operações</h3>
     </div>
 
     <div class="card-body">
@@ -35,11 +34,11 @@
           <thead>
             <tr>
               <th scope="col">Militar</th>
-              <th scope="col">Missão</th>
+              <th scope="col">Operação</th>
               <th scope="col">Data</th>
               <th scope="col">Aeronave</th>
               <th scope="col">Status</th>
-              <th scope="col">Ações</th>
+              <th class="removerDoPdf" scope="col">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -65,12 +64,12 @@
                   </button>
                   <div class="dropdown-menu" role="menu" style="">
                     {% if missao.concluida is not True %}
-                      <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver missão</a>
-                      <a class="dropdown-item" href="{% url 'rpa_manager:criar_novo_relatorio' missao.id %}">Encerrar missão</a>
-                      <a class="dropdown-item" href="{% url 'rpa_manager:editar_missao' missao.id %}">Editar missão</a>
-                      <a class="dropdown-item" href="{% url 'rpa_manager:deletar_missao' missao.id %}">Excluir missão</a>
+                      <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver operação</a>
+                      <a class="dropdown-item" href="{% url 'rpa_manager:criar_novo_relatorio' missao.id %}">Encerrar operação</a>
+                      <a class="dropdown-item" href="{% url 'rpa_manager:editar_missao' missao.id %}">Editar operação</a>
+                      <a class="dropdown-item" href="{% url 'rpa_manager:deletar_missao' missao.id %}">Excluir operação</a>
                     {% else %}
-                      <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver missão</a>
+                      <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver operação</a>
                     {% endif %}
                   </div>
                 </div>
@@ -83,7 +82,7 @@
   
       <div style="width: 10rem">
         <a href="{% url 'rpa_manager:criar_nova_missao' %}">
-          <button type="button" style="display: inline" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i> Nova missão </button>
+          <button type="button" style="display: inline" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i> Nova operação </button>
         </a>
       </div>
   
@@ -108,7 +107,30 @@
   <script>
     var table = $('#objects_list').DataTable( {
         lengthChange: false,
-        buttons: [ 'pageLength', 'excel', 'pdf', 'colvis' ],
+        buttons: [ 'pageLength',
+        {
+          extend: 'excel',
+          text: 'Excel',
+          exportOptions: {
+            columns: ':not(.removerDoPdf)'
+          }
+        },
+        {
+          extend: 'pdf',
+          text: 'PDF',
+          exportOptions: {
+            columns: ':not(.removerDoPdf)'
+          }
+        },
+        {
+          extend: 'print',
+          text: 'Imprimir',
+          exportOptions: {
+            columns: ':not(.removerDoPdf)'
+          }
+        },
+        'colvis'
+      ],
         dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
         language: { "url": "//cdn.datatables.net/plug-ins/1.11.1/i18n/pt_br.json" },
         responsive: true,

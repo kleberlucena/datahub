@@ -23,7 +23,7 @@ class PainelView(TemplateView):
     template_name = 'controle/pages/painel.html'
 
 class PrincipalView(TemplateView):
-    template_name = 'controle/pages/tela_principal.html'
+    template_name = 'controle/pages/operacoes.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

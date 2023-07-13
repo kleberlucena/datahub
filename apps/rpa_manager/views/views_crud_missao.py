@@ -35,13 +35,13 @@ class CriarNovaMissaoView(View):
 class EditarMissaoView(UpdateView):
     model = Missao
     form_class = MissaoFormulario
-    template_name = "controle/pages/criar_nova_missao.html"
+    template_name = "controle/pages/editar_missao.html"
     context_object_name = 'form'
     success_url = reverse_lazy('rpa_manager:principal')
 
 
-class EventoDeleteView(DeleteView):
+class DeleteMissaoView(DeleteView):
     model = Missao
     template_name = "controle/pages/delete_mission.html"
-    context_object_name = 'form'
+    context_object_name = 'obj'
     success_url = reverse_lazy('rpa_manager:principal')
