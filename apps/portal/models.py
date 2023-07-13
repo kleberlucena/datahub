@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.urls import reverse
 from stdimage.models import StdImageField
 from django_minio_backend import MinioBackend
@@ -99,6 +100,13 @@ class Military(Base):
     state = BRStateField("Estado")
     zipcode = BRPostalCodeField("CEP")
     unit = models.ManyToManyField(Entity, through='HistoryTransfer',)
+    user = models.OneToOneField(
+        User,
+        related_name='military',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     image = StdImageField(
         'Image',
         storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),

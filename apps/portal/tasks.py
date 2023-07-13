@@ -2,6 +2,7 @@ from datetime import datetime as date
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import files
+from django.contrib.auth.models import User
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
 import logging
@@ -86,6 +87,12 @@ def task_get_military_from_portal(self):
                                 military.url_image = 'https://imgur.com/jS8iL9p'
                             military.save()
 
+                            # Saving user from military
+                            user = User.objects.filter(
+                                username=military.cpf).first()
+                            if user:
+                                military.user = user
+
                             # Saving image from military
                             image_file = getMilitaryImageFile(result['image'])
                             if image_file:
@@ -147,6 +154,12 @@ def task_get_military_from_portal(self):
                             register=result['register'],
                             cpf=result['cpf'],
                             url_image=result['image'])
+
+                        # Saving user from military
+                        user = User.objects.filter(
+                            username=military.cpf).first()
+                        if user:
+                            military.user = user
 
                         # Saving image from military
                         image_file = getMilitaryImageFile(result['image'])
