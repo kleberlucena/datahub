@@ -51,6 +51,7 @@ def convertDictFromObj(dict):
         'zipcode': dict['zipcode'],
         'register': dict['register'],
         'cpf': dict['cpf'],
+        'image': dict['image'],
 
 
     }

@@ -1,5 +1,9 @@
 from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import User
 from django.urls import reverse
+from stdimage.models import StdImageField
+from django_minio_backend import MinioBackend
 from localflavor.br.models import BRStateField, BRCPFField, BRPostalCodeField
 
 from django.utils import timezone
@@ -67,8 +71,9 @@ class Military(Base):
 
     name = models.CharField("Nome completo", max_length=256, blank=False)
     url_image = models.CharField(
-        "Endereço da imagem", max_length=256, blank=False)
-    entity = models.ForeignKey(Entity, related_name='entity_military', on_delete=models.PROTECT)
+        "Endereço da imagem", max_length=1024, blank=False)
+    entity = models.ForeignKey(
+        Entity, related_name='entity_military', on_delete=models.PROTECT)
     nickname = models.CharField("Nome de guerra", max_length=100, null=False)
     admission_date = models.DateField(
         "Data de admissão", blank=True, null=True)
@@ -95,6 +100,18 @@ class Military(Base):
     state = BRStateField("Estado")
     zipcode = BRPostalCodeField("CEP")
     unit = models.ManyToManyField(Entity, through='HistoryTransfer',)
+    user = models.OneToOneField(
+        User,
+        related_name='military',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    image = StdImageField(
+        'Image',
+        storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
+        upload_to='militaries_pmpb', blank=True, null=True, delete_orphans=True
+    )
 
     class Meta:
         unique_together = ('register', 'cpf',)
@@ -109,7 +126,8 @@ class Military(Base):
 
 
 class HistoryTransfer(Base):
-    entity = models.ForeignKey(Entity, verbose_name="Unidade", default=0, to_field='code', on_delete=models.CASCADE)
+    entity = models.ForeignKey(Entity, verbose_name="Unidade",
+                               default=0, to_field='code', on_delete=models.CASCADE)
     military = models.ForeignKey(Military, on_delete=models.CASCADE)
     obs = models.CharField(max_length=255, blank=True, null=True)
     date_start = models.DateField('Data início', default=timezone.now)

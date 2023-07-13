@@ -1,11 +1,14 @@
 from datetime import datetime as date
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.core import files
+from django.contrib.auth.models import User
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
 import logging
 
 from .models import Entity, Military, HistoryTransfer, Promotion
+from .helpers import getMilitaryImageFile
 from .services import get_data_entity_api_portal, get_data_military_api_portal
 
 logger = logging.getLogger(__name__)
@@ -16,7 +19,8 @@ def task_get_entity_from_portal(self):
     data = get_data_entity_api_portal(0)
     progress_recorder = ProgressRecorder(self)
     if data:
-        quantidade_paginas = int(data['count'] / 10) + 2  # Gets an extra page to receive data left over from division by 10
+        # Gets an extra page to receive data left over from division by 10
+        quantidade_paginas = int(data['count'] / 10) + 2
         if quantidade_paginas > 0:
             for i in range(1, quantidade_paginas):
                 results = data['results']
@@ -27,9 +31,11 @@ def task_get_entity_from_portal(self):
 
                 data = get_data_entity_api_portal(i * 10)
                 total_percents = ((i / 10) * 100)
-                progress_recorder.set_progress(i + 1, 10, f'Concluído {total_percents}%')
-    else: 
+                progress_recorder.set_progress(
+                    i + 1, 10, f'Concluído {total_percents}%')
+    else:
         progress_recorder.set_progress(0, 0, f'Concluído 100%')
+
 
 @shared_task(bind=True)
 def task_get_military_from_portal(self):
@@ -49,31 +55,49 @@ def task_get_military_from_portal(self):
                     if militaryInSai.exists():
                         print('Unidade anterir')
                         print(militaryInSai)
-                        print('__________________')                        
+                        print('__________________')
                         military = Military.objects.filter(
-                            register=result['register']).update(
-                            entity=unit,
-                            name=result['name'],
-                            admission_date=result['admission_date'],
-                            birthdate=result['birthdate'],
-                            mather=result['mather'],
-                            place_of_birth=result['place_of_birth'],
-                            nickname=result['nickname'],
-                            activity_status=result['activity_status'],
-                            genre=result['genre'],
-                            email=result['email'],
-                            marital_status=result['marital_status'],
-                            phone=result['phone'],
-                            address=result['address'],
-                            number=result['number'],
-                            complement=result['complement'],
-                            district=result['district'],
-                            city=result['city'],
-                            state=result['state'],
-                            zipcode=result['zipcode'],
-                            register=result['register'],
-                            cpf=result['cpf'],
-                            url_image=result['url_image'])
+                            register=result['register']).first()
+
+                        if military:
+                            military.entity = unit
+                            military.name = result['name']
+                            military.admission_date = result['admission_date']
+                            military.birthdate = result['birthdate']
+                            military.mather = result['mather']
+                            military.place_of_birth = result['place_of_birth']
+                            military.nickname = result['nickname']
+                            military.activity_status = result['activity_status']
+                            military.genre = result['genre']
+                            military.email = result['email']
+                            military.marital_status = result['marital_status']
+                            military.phone = result['phone']
+                            military.address = result['address']
+                            military.number = result['number']
+                            military.complement = result['complement']
+                            military.district = result['district']
+                            military.city = result['city']
+                            military.state = result['state']
+                            military.zipcode = result['zipcode']
+                            military.register = result['register']
+                            military.cpf = result['cpf']
+                            if result['image']:
+                                military.url_image = result['image']
+                            else:
+                                military.url_image = 'https://imgur.com/jS8iL9p'
+                            military.save()
+
+                            # Saving user from military
+                            user = User.objects.filter(
+                                username=military.cpf).first()
+                            if user:
+                                military.user = user
+
+                            # Saving image from military
+                            image_file = getMilitaryImageFile(result['image'])
+                            if image_file:
+                                military.image.save("{}.jpg".format(
+                                    military.cpf), files.File(open(image_file[0], 'rb')))
 
                         MilitaryHistoryTransfer = HistoryTransfer.objects.filter(
                             military__register=result['register'])
@@ -129,7 +153,18 @@ def task_get_military_from_portal(self):
                             zipcode=result['zipcode'],
                             register=result['register'],
                             cpf=result['cpf'],
-                            url_image=result['url_image'])
+                            url_image=result['image'])
+
+                        # Saving user from military
+                        user = User.objects.filter(
+                            username=military.cpf).first()
+                        if user:
+                            military.user = user
+
+                        # Saving image from military
+                        image_file = getMilitaryImageFile(result['image'])
+                        military.image.save("{}.jpg".format(
+                            military.cpf), files.File(open(image_file[0], 'rb')))
 
                         HistoryTransfer.objects.create(
                             military=military, entity=unit, date_start=date.now(), obs="Primeiro cadastro")
@@ -139,7 +174,8 @@ def task_get_military_from_portal(self):
 
                 datas = get_data_military_api_portal(i * 10)
                 total_percents = ((i / 10) * 100)
-                progress_recorder.set_progress(i + 1, 10, f'Concluído {total_percents}%')
+                progress_recorder.set_progress(
+                    i + 1, 10, f'Concluído {total_percents}%')
 
-    else: 
+    else:
         progress_recorder.set_progress(0, 0, f'Concluído 100%')
