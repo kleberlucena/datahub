@@ -1,13 +1,10 @@
 from django import forms
-
 from .models import *
 
 def adiciona_atributo_classe_ao_widget(aponta_para_o_objecto_da_classe, campo, novo_attrs1, novo_attrs2):
     aponta_para_o_objecto_da_classe.fields[campo].widget.attrs.update({
         'class': str(novo_attrs1) + '_escolha ' +  str(novo_attrs2)
     })
-
-    
 
 camposCheckboxesChecklist = [
         'baterias_carregadas',
@@ -51,29 +48,32 @@ class MissaoFormulario(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
+        
+        self.fields['aeronave'].queryset = Aeronave.objects.filter(em_uso=False)
+        
         campos = ['titulo', 'piloto_observador', 'local', 'aeronave', 'usuario']
         
         for campo in campos:
             adiciona_atributo_classe_ao_widget(self, campo, campo, 'form-control')
-        
+    
              
 class RelatorioFormulario(forms.ModelForm):
     status_missao = forms.BooleanField(
         label="Concluir missão?",
     )
-     
+
     class Meta:
         model = Relatorio
         fields = [
             'titulo', 'militar',
             'piloto_observador', 'data',
+            'data_final',
             'horario_inicial', 'horario_final',
             'local', 'arquivo_solicitacao',
             'num_sarpas', 'opm_apoiada',
             'unidade_apoiada', 'natureza_de_voo',
             'tipo_de_operacao', 'aeronave',
-            'relato_da_missao'
+            'relato_da_missao',
         ]
         exclude = ['missao']
         
@@ -87,7 +87,9 @@ class RelatorioFormulario(forms.ModelForm):
             'unidade_apoiada': 'Unidade que foi apoiada',
             'natureza_de_voo': 'Natureza do voo',
             'tipo_de_operacao': 'Tipo de operação',
-            'relato_da_missao': 'Relato da missão'
+            'relato_da_missao': 'Relato da missão',
+            'data': 'Data inicial',
+            'data_final': 'Data final'
         }
         
         widgets = {
@@ -95,19 +97,21 @@ class RelatorioFormulario(forms.ModelForm):
             'horario_inicial': forms.TimeInput(attrs={'type': 'time'}),
             'horario_final': forms.TimeInput(attrs={'type': 'time'}),
             'data': forms.DateInput(attrs={'type': 'date'}),
+            'data_final': forms.DateInput(attrs={'type': 'date'}),
             'num_sarpas': forms.Textarea(attrs={
                 'placeholder': 'Informe o Protocolo ou nº SARPAS',
                 'rows': 1}),
             'relato_da_missao': forms.Textarea(attrs={'placeholder': 'Descreva a alteração'})
         }
-        
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
         campos = [
             'titulo', 
             'piloto_observador', 
-            'data', 
+            'data',
+            'data_final', 
             'horario_inicial', 
             'horario_final', 
             'local', 
@@ -127,6 +131,11 @@ class RelatorioFormulario(forms.ModelForm):
         
         self.fields['status_missao'].widget.attrs.update({
             'class': 'form-check form-switch', 
+        })
+
+        self.fields['arquivo_solicitacao'].widget.attrs.update({
+            'class': 'p-3',
+            'accept': "application/pdf", 
         })
 
                 
@@ -157,13 +166,14 @@ class AeronavesForm(forms.ModelForm):
 
     class Meta:
         model = Aeronave
-        # fields = '__all__'
-        exclude = ['maleta']
+        fields = ['prefixo', 'modelo',
+                  'marca', 'local',
+                  'em_uso']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        campos = ['prefixo', 'modelo', 'marca', 'local']
+        campos = ['prefixo', 'modelo', 'marca', 'local', 'em_uso']
 
         for campo in campos:
             adiciona_atributo_classe_ao_widget(self, campo, campo, 'form-control')

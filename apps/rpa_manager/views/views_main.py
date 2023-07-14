@@ -54,7 +54,8 @@ class RelatoriosView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        relatorios = Relatorio.objects.all().order_by('-horario_inicial', '-data')
+        relatorios = Relatorio.objects.all().order_by('-data', '-horario_inicial', )
+        print(relatorios)
         form = formulario_missao(self.request)
 
         context['relatorios'] = relatorios

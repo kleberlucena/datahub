@@ -42,6 +42,7 @@
             <th scope="col">Modelo</th>
             <th scope="col">Marca</th>
             <th scope="col">Local de operação</th>
+            <th scope="col">Status</th>
             <th class="removerDoPdf" scope="col">Ações</th>
           </tr>
         </thead>
@@ -52,6 +53,7 @@
             <td>{{ aeronave.modelo }}</td>
             <td>{{ aeronave.marca }}</td>
             <td>{{ aeronave.local }}</td>
+            <td>{{ aeronave.em_uso }}</td>
             <td>
               <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
                 <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown"

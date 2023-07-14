@@ -33,6 +33,7 @@
           {% csrf_token %}
           <div class="form-row">
             <div class="form-group col-md-12 mb-0">
+              <p class="Aeronave" ></p>
               {{ form }}
             </div>
           </div>
@@ -66,6 +67,6 @@
   <script>
     $(document).ready(function () {
       $('.local_escolha').select2()
-    })
+    });
   </script>
   {% endblock %}

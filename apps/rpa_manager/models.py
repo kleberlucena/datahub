@@ -75,7 +75,8 @@ class Aeronave(Base):
     marca = models.CharField(max_length=20)
     maleta = models.ForeignKey(Maleta, on_delete=models.SET_NULL, null=True)
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
-
+    em_uso = models.BooleanField(default=False, null=True, blank=True)
+    
     def __str__(self):
         return self.prefixo
 
@@ -145,6 +146,7 @@ class Relatorio(Base):
     militar = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     piloto_observador = models.ForeignKey(Militar, on_delete=models.SET_NULL, blank=True, null=True)
     data = models.DateField(blank=False, null=False)
+    data_final = models.DateField(blank=True, null=True)
     horario_inicial = models.TimeField()
     horario_final = models.TimeField()
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
