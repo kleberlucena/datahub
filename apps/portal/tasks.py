@@ -3,6 +3,7 @@ from datetime import datetime as date
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import files
 from django.contrib.auth.models import User
+from django.db import IntegrityError
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
 import logging
@@ -25,10 +26,17 @@ def task_get_entity_from_portal(self):
             for i in range(1, quantidade_paginas):
                 results = data['results']
                 for result in results:
-                    Entity.objects.update_or_create(id_portal=result['id'], name=result['name'], code=result['code'], father=result['father'],
-                                                    child_exists=result['child_exists'], category=result['category'],
-                                                    hierarchy=result['hierarchy'])
-
+                    try:
+                        Entity.objects.update_or_create(id_portal=result['id'], name=result['name'], code=result['code'], father=result['father'],
+                                                        child_exists=result['child_exists'], category=result['category'],
+                                                        hierarchy=result['hierarchy'])
+                    except IntegrityError as ie:
+                        Entity.objects.filter(id_portal=result['id']).first().update(name=result['name'], code=result['code'], father=result['father'],
+                                                                                     child_exists=result[
+                                                                                         'child_exists'], category=result['category'],
+                                                                                     hierarchy=result['hierarchy'])
+                    except Exception as e:
+                        logger.error("Error, {}".format(e))
                 data = get_data_entity_api_portal(i * 10)
                 total_percents = ((i / 10) * 100)
                 progress_recorder.set_progress(
