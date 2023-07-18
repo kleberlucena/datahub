@@ -1,75 +1,76 @@
 {% extends "base/base.html" %}
+{% load static %}
 
 <!-- styles -->
 {% block style_sheet %}
-{% load static %}
   {% comment %} bacinf style_sheet {% endcomment %}
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
-  <link rel="stylesheet"
-    href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
   <style>
-        .novo_checklist {
-          display: flex;
-          justify-content: center;
-      }
-      
-      .formulario_checklist_parte1 {
-          display: flex;
-          flex-direction: column;
-          gap: 10px; 
-          max-width: 100%;   
-      }
-      
-      .formulario_checklist_selecao_itens, .formulario_checklist_parte2 {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 5px;
-          max-width: 100%%;
-      }
-      
-      .formulario_checklist_titulo_selecao {
-          margin-top: 50px;
-          margin-bottom: 50px;
-      }
-      
-      .checklist_item {
-          width: 30px;
-          height: 30px;
-      }
-      
-      .formulario_checklist_parte2 > input {
-          margin-left: 100px;
-      }
-      
-      .container_alteracoes_titulo {
-          margin-top: 1rem;
-      }
-      
-      #id_alteracoes {
-          margin-top: 20px;
-      }
-      
-      .edicao_checklist {
-          display: none;
-      }
-      .formulario_checklist_alteracoes {
-        max-width: 100%;
-      }
-      
-      @media (max-width: 768px) {
-      
-          .formulario_checklist_selecao_itens {
-              display: grid;
-              grid-template-columns: 1fr;
-              gap: 5px;
-              max-width: 800px;
-          }
-      }
-  </style>
+      .novo_checklist {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .formulario_checklist_parte1 {
+        display: flex;
+        flex-direction: column;
+        gap: 10px; 
+        max-width: 100%;   
+    }
+    
+    .formulario_checklist_selecao_itens, .formulario_checklist_parte2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        max-width: 100%%;
+    }
+    
+    .formulario_checklist_titulo_selecao {
+        margin-top: 50px;
+        margin-bottom: 50px;
+    }
+    
+    .checklist_item {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .formulario_checklist_parte2 > input {
+        margin-left: 100px;
+    }
+    
+    .container_alteracoes_titulo {
+        margin-top: 1rem;
+    }
+    
+    #id_alteracoes {
+        margin-top: 20px;
+    }
+    
+    .edicao_checklist {
+        display: none;
+    }
+    .formulario_checklist_alteracoes {
+      max-width: 100%;
+    }
+
+    .formulario_checklist_parte2 > input {
+      width: 1rem;
+    } 
+    
+    @media (max-width: 768px) {
+    
+        .formulario_checklist_selecao_itens {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 5px;
+            max-width: 800px;
+        }
+    }
+</style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -172,6 +173,7 @@
           {{ checklist_form.alteracoes }}
         </div>
         <div class="mt-3">
+          {{ checklist_form.errors }}
           <button type="submit" class="btn btn-primary">Salvar</button>
           <a href="{% url 'rpa_manager:checklists' %}">
               <button type="button" class="btn btn-warning">Cancelar</button>
@@ -199,8 +201,105 @@
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
 
-  {% comment %} For checklist form logic {% endcomment %}
-  <script src="{% static 'controle/js/checklist_controle_aeronave.js' %}"></script>
   <script src="{% static 'controle/js/checklist_adiciona_alteracoes.js' %}"></script>
 
+  <script>  
+    $(document).ready(function() { 
+      $(".aeronave_escolha").on('change', function() {
+        let aeronave_selecionada = $(this).val();
+        console.log(aeronave_selecionada);
+        let historico_checklist_dict_json = JSON.parse('{{ historico_checklist_dict_json|escapejs }}');
+        
+        function transformInBooleanValues(notTransformedJson) {
+          let objeto = notTransformedJson;
+
+          for (let chave in notTransformedJson) {
+            if (objeto.hasOwnProperty(chave)) {
+              let subObjeto = objeto[chave];
+        
+              for (let subChave in subObjeto) {
+                if (subObjeto.hasOwnProperty(subChave)) {
+                  let valor = subObjeto[subChave];
+        
+                  if (valor === 'False') {
+                    subObjeto[subChave] = false;
+                  } else if (valor === 'True') {
+                    subObjeto[subChave] = true;
+                  }
+                }
+              }
+            }
+          }
+          return objeto;
+        }
+
+        let historico_checklist_json = transformInBooleanValues(historico_checklist_dict_json);
+        console.log(historico_checklist_json);
+        let dadosAeronave = historico_checklist_json[aeronave_selecionada];
+        
+        if(dadosAeronave) {
+          $('input[name="num_helices"]').val(dadosAeronave.num_helices);
+          $('input[name="num_baterias"]').val(dadosAeronave.num_baterias); 
+          $('input[name="baterias_carregadas"]').prop('checked', dadosAeronave.baterias_carregadas);
+          $('input[name="bateria_controle_carregada"]').prop('checked', dadosAeronave.bateria_controle_carregada);
+          $('input[name="corpo"]').prop('checked', dadosAeronave.corpo);
+          $('input[name="hastes_motor"]').prop('checked', dadosAeronave.hastes_motor);
+          $('input[name="helices"]').prop('checked', dadosAeronave.helices);
+          $('input[name="gimbal"]').prop('checked', dadosAeronave.gimbal);
+          $('input[name="holofote"]').prop('checked', dadosAeronave.holofote);
+          $('input[name="auto_falante"]').prop('checked', dadosAeronave.auto_falante);
+          $('input[name="luz_estroboscopica"]').prop('checked', dadosAeronave.luz_estroboscopica);
+          $('input[name="cabos"]').prop('checked', dadosAeronave.cabos);
+          $('input[name="carregador"]').prop('checked', dadosAeronave.carregador);
+          $('input[name="fonte"]').prop('checked', dadosAeronave.fonte);
+          $('input[name="smart_controller"]').prop('checked', dadosAeronave.smart_controller);
+          $('input[name="controle"]').prop('checked', dadosAeronave.controle);
+          $('input[name="cartao_sd"]').prop('checked', dadosAeronave.cartao_sd);
+          $('input[name="IMU"]').prop('checked', dadosAeronave.IMU);
+          $('input[name="compass"]').prop('checked', dadosAeronave.compass);
+          $('input[name="sinal_transmissao"]').prop('checked', dadosAeronave.sinal_transmissao);
+          $('input[name="sistema_rtk_ppk"]').prop('checked', dadosAeronave.sistema_rtk_ppk);
+          $('input[name="sinal_de_video"]').prop('checked', dadosAeronave.sinal_de_video);
+          $('input[name="telemetria"]').prop('checked', dadosAeronave.telemetria);
+          $('input[name="paraquedas"]').prop('checked', dadosAeronave.paraquedas);
+          $('textarea[name="alteracoes"]').val(dadosAeronave.alteracoes);
+        }
+        
+        if (aeronave_selecionada === '1') {
+            console.log("Aeronave 68 selecionada");
+            $('input[name="holofote"]').show();
+            $('label[for="id_holofote"]').show();
+
+            $('input[name="auto_falante"]').show();
+            $('label[for="id_auto_falante"]').show();
+
+            $('input[name="luz_estroboscopica"]').show();
+            $('label[for="id_luz_estroboscopica"]').show();
+
+            $('input[name="smart_controller"]').show();
+            $('label[for="id_smart_controller"]').show();
+
+            $('input[name="controle"]').hide();
+            $('label[for="id_controle"]').hide();
+        } else {
+            $('input[name="holofote"]').hide();
+            $('label[for="id_holofote"]').hide();
+
+            $('input[name="auto_falante"]').hide();
+            $('label[for="id_auto_falante"]').hide();
+
+            $('input[name="luz_estroboscopica"]').hide();
+            $('label[for="id_luz_estroboscopica"]').hide();
+
+            $('input[name="smart_controller"]').hide();
+            $('label[for="id_smart_controller"]').hide();
+
+            $('input[name="controle"]').show();
+            $('label[for="id_controle"]').show();
+        }
+      });
+        
+    });
+
+  </script>
 {% endblock %}

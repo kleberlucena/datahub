@@ -1,4 +1,7 @@
 import uuid
+import string
+import random
+from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -78,7 +81,46 @@ class Aeronave(Base):
     em_uso = models.BooleanField(default=False, null=True, blank=True)
     
     def __str__(self):
-        return self.prefixo
+        return "{} - {} - {}".format(self.prefixo, self.modelo, self.marca)
+
+
+def generate_hex_code():
+    characters = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choice(characters) for _ in range(25))
+
+
+class HistoricoAlteracoesAeronave(models.Model):
+    aeronave = models.ForeignKey(Aeronave, on_delete=models.CASCADE)
+    data = models.DateTimeField(default=timezone.now)
+    codigo = models.CharField(max_length=25, unique=True, default=generate_hex_code)
+    num_helices = models.IntegerField(default=4, null=False)
+    num_baterias = models.IntegerField(default=4, null=False)
+    baterias_carregadas = models.BooleanField(default=True)
+    bateria_controle_carregada = models.BooleanField(default=True)
+    corpo = models.BooleanField(default=True)
+    hastes_motor = models.BooleanField(default=True)
+    helices = models.BooleanField(default=True)
+    gimbal = models.BooleanField(default=True)
+    holofote = models.BooleanField(default=True)
+    auto_falante = models.BooleanField(default=True)
+    luz_estroboscopica = models.BooleanField(default=True)
+    cabos = models.BooleanField(default=True)
+    carregador = models.BooleanField(default=True)
+    fonte = models.BooleanField(default=True)
+    smart_controller = models.BooleanField(default=True)
+    controle = models.BooleanField(default=True)
+    cartao_sd = models.BooleanField(default=True)
+    IMU = models.BooleanField(default=True)
+    compass = models.BooleanField(default=True)
+    sinal_transmissao = models.BooleanField(default=True)
+    sistema_rtk_ppk = models.BooleanField(default=True)
+    sinal_de_video = models.BooleanField(default=True)
+    telemetria = models.BooleanField(default=True)
+    paraquedas = models.BooleanField(default=True)
+    alteracoes = models.TextField()
+
+    def __str__(self):
+        return f"Histórico de Alterações - Aeronave {self.aeronave.prefixo} - Data {self.data}"
 
 
 class Missao(Base):

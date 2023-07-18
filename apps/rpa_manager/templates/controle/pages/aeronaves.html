@@ -53,7 +53,15 @@
             <td>{{ aeronave.modelo }}</td>
             <td>{{ aeronave.marca }}</td>
             <td>{{ aeronave.local }}</td>
-            <td>{{ aeronave.em_uso }}</td>
+
+            <td>
+              {% if aeronave.em_uso is True %}
+                <span class="badge badge-warning">Em operação</span>
+              {% else %}
+                <span class="badge badge-success">Disponível</span>
+              {% endif %}
+            </td>
+
             <td>
               <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
                 <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown"

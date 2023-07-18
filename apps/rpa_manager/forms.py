@@ -226,7 +226,6 @@ class ChecklistForm(forms.ModelForm):
             'num_helices': 'Número de hélices',
         }
         widgets = {'piloto': forms.HiddenInput()}
-        
                 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

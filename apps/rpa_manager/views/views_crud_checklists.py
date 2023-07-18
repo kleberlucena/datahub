@@ -1,10 +1,12 @@
 from django.views.generic import DetailView, UpdateView, DeleteView
-from apps.rpa_manager.forms import ChecklistForm
-from apps.rpa_manager.models import Checklist
+from apps.rpa_manager.forms import ChecklistForm, Aeronave
+from apps.rpa_manager.models import Checklist, HistoricoAlteracoesAeronave
 from django.urls import reverse_lazy
 from django.views import View
 from django.shortcuts import render, redirect
+import json
 
+from .utils.getLastRegistedChecklistData import getLastRegistedChecklistData
 
 class VerChecklistView(DetailView):
     model = Checklist
@@ -24,30 +26,69 @@ class VerChecklistView(DetailView):
         return context
 
 
-class ChecklistFormView(View):
+class ChecklistFormView(View):    
     def get(self, request):
-        dados_checklist = {
-            'piloto': request.user,
-            'alteracoes': 'Sem alteração',
-        }
+        piloto = request.user
+        historico_checklist_dict = {}
+
+        getLastRegistedChecklistData(historico_checklist_dict)
+       
+        historico_checklist_dict_json = json.dumps(historico_checklist_dict)
         
+        dados_checklist = {
+            'piloto': piloto,
+        }
+            
         checklist_form = ChecklistForm(initial=dados_checklist)
-        context = {'checklist_form': checklist_form}
+        context = {
+            'checklist_form': checklist_form,
+            'historico_checklist_dict_json': historico_checklist_dict_json
+            }
         return render(request, 'controle/pages/checklist_form.html', context)
     
     def post(self, request):
         dados_checklist = {
             'piloto': request.user,
-            'alteracoes': 'Sem alteração',
         }
         
         checklist_form = ChecklistForm(request.POST, initial=dados_checklist)
         if checklist_form.is_valid():
-            checklist_form.save()
+            checklist = checklist_form.save()
+            
+            # Salvar as informações no histórico de alterações
+            HistoricoAlteracoesAeronave.objects.create(
+                aeronave=checklist.aeronave,
+                num_helices = checklist.num_helices,  
+                num_baterias = checklist.num_baterias, 
+                baterias_carregadas = checklist.baterias_carregadas, 
+                bateria_controle_carregada = checklist.bateria_controle_carregada, 
+                corpo = checklist.corpo, 
+                hastes_motor = checklist.hastes_motor, 
+                helices = checklist.helices, 
+                gimbal = checklist.gimbal, 
+                holofote = checklist.holofote, 
+                auto_falante = checklist.auto_falante, 
+                luz_estroboscopica= checklist.luz_estroboscopica, 
+                cabos = checklist.cabos, 
+                carregador = checklist.carregador, 
+                fonte = checklist.fonte, 
+                smart_controller = checklist.smart_controller, 
+                controle = checklist.controle, 
+                cartao_sd = checklist.cartao_sd, 
+                IMU = checklist.IMU, 
+                compass = checklist.compass, 
+                sinal_transmissao = checklist.sinal_transmissao, 
+                sistema_rtk_ppk = checklist.sistema_rtk_ppk, 
+                sinal_de_video = checklist.sinal_de_video, 
+                telemetria = checklist.telemetria, 
+                paraquedas = checklist.paraquedas,                
+                alteracoes = checklist.alteracoes
+            )
+            
             return redirect('rpa_manager:checklists')
         
         context = {
-            'checklist_form': checklist_form
+            'checklist_form': checklist_form,
         }
         return render(request, 'controle/pages/checklist_form.html', context)
 
@@ -65,8 +106,6 @@ class EditarChecklistView(UpdateView):
         context["edicao_checklist"] = True
         return context
     
-    
-
 
 class DeletarChecklistView(DeleteView):
     model = Checklist
