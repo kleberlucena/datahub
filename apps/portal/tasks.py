@@ -27,11 +27,22 @@ def task_get_entity_from_portal(self):
                 results = data['results']
                 for result in results:
                     try:
-                        Entity.objects.update_or_create(id_portal=result['id'], name=result['name'], code=result['code'], father=result['father'],
+                        entity = Entity.objects.get(id_portal=result['id'])
+                        entity.name = result['name']
+                        entity.code = result['code']
+                        entity.father = result['father']
+                        entity.child_exists = result['child_exists']
+                        entity.category = result['category']
+                        entity.hierarchy = result['hierarchy']
+                        entity.save()
+                    except Entity.DoesNotExist:
+                        logger.info('Unidade nova vinda do portal - {}'.format(result['id']))
+                        Entity.objects.create(id_portal=result['id'], name=result['name'], code=result['code'], father=result['father'],
                                                         child_exists=result['child_exists'], category=result['category'],
                                                         hierarchy=result['hierarchy'])
                     except IntegrityError as ie:
-                        Entity.objects.filter(id_portal=result['id']).first().update(name=result['name'], code=result['code'], father=result['father'],
+                        logger.error('Unidade com erro de integridade - {}'.format(ie))
+                        Entity.objects.filter(id_portal=result['id']).update(name=result['name'], code=result['code'], father=result['father'],
                                                                                      child_exists=result[
                                                                                          'child_exists'], category=result['category'],
                                                                                      hierarchy=result['hierarchy'])
@@ -57,12 +68,22 @@ def task_get_military_from_portal(self):
                 results = datas['results']
 
                 for result in results:
-                    unit = Entity.objects.get(code=result['unit'])
-                    militaryInSai = Military.objects.filter(
+                    unit = None
+                    url_image = None
+                    try:
+                        unit = Entity.objects.get(code=result['unit'])
+                    except Exception as e:
+                        unit = None
+                    if result['image']:
+                        url_image = result['image']
+                    else:
+                        url_image = 'https://imgur.com/jS8iL9p'
+                        
+                    militaryInBacinf = Military.objects.filter(
                         register=result['register'])
-                    if militaryInSai.exists():
+                    if militaryInBacinf.exists():
                         print('Unidade anterir')
-                        print(militaryInSai)
+                        print(militaryInBacinf)
                         print('__________________')
                         military = Military.objects.filter(
                             register=result['register']).first()
@@ -89,10 +110,7 @@ def task_get_military_from_portal(self):
                             military.zipcode = result['zipcode']
                             military.register = result['register']
                             military.cpf = result['cpf']
-                            if result['image']:
-                                military.url_image = result['image']
-                            else:
-                                military.url_image = 'https://imgur.com/jS8iL9p'
+                            military.url_image = url_image
                             military.save()
 
                             # Saving user from military
@@ -119,12 +137,16 @@ def task_get_military_from_portal(self):
                                 military__register=result['register'], date_finish__isnull=True).update(
                                 date_finish=date.now(),
                                 obs="Militar saiu da unidade")
-
-                            unit = Entity.objects.get(code=result['unit'])
-                            mili = Military.objects.get(
-                                register=result['register'])
-                            HistoryTransfer.objects.create(
-                                military=mili, entity=unit, date_start=date.now(), obs="Militar mudou de unidade")
+                            try:
+                                unit = Entity.objects.get(code=result['unit'])
+                                mili = Military.objects.get(
+                                    register=result['register'])
+                                HistoryTransfer.objects.create(
+                                    military=mili, entity=unit, date_start=date.now(), obs="Militar mudou de unidade")
+                            except Entity.DoesNotExist:
+                                logger.error('Unidade não encotrada - {}'.format(result['unit']))
+                            except Military.DoesNotExist:
+                                logger.error('Militar não encontrado - {}'.format(result['register']))
 
                         MilitaryPromotion = Promotion.objects.filter(
                             military__register=result['register'])
@@ -161,7 +183,7 @@ def task_get_military_from_portal(self):
                             zipcode=result['zipcode'],
                             register=result['register'],
                             cpf=result['cpf'],
-                            url_image=result['image'])
+                            url_image=url_image)
 
                         # Saving user from military
                         user = User.objects.filter(
@@ -170,9 +192,13 @@ def task_get_military_from_portal(self):
                             military.user = user
 
                         # Saving image from military
-                        image_file = getMilitaryImageFile(result['image'])
-                        military.image.save("{}.jpg".format(
-                            military.cpf), files.File(open(image_file[0], 'rb')))
+                        try:
+                            if url_image is not None:
+                                image_file = getMilitaryImageFile(url_image)
+                                military.image.save("{}.jpg".format(
+                                military.cpf), files.File(open(image_file[0], 'rb')))
+                        except Exception as e:
+                            logger.error('Erro de inesperado ao salvar imagem - {}'.format(e))
 
                         HistoryTransfer.objects.create(
                             military=military, entity=unit, date_start=date.now(), obs="Primeiro cadastro")
