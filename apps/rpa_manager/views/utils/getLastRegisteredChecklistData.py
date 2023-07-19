@@ -2,7 +2,7 @@ import json
 from apps.rpa_manager.models import Aeronave, HistoricoAlteracoesAeronave
 
 # recieve a empty dictionary to be filled with data and returns json
-def getLastRegistedChecklistData(historico_checklist_dict):
+def getLastRegisteredChecklistData(historico_checklist_dict):
     aeronaves = Aeronave.objects.all()
     for aeronave in aeronaves:
         ultimo_registro = HistoricoAlteracoesAeronave.objects.filter(aeronave=aeronave).order_by('-data').first()

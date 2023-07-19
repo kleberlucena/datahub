@@ -5,8 +5,9 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.shortcuts import render, redirect
 import json
-
-from .utils.getLastRegistedChecklistData import getLastRegistedChecklistData
+from django.http import HttpResponseRedirect
+from .utils.saveNewChecklistInAircraftHistoric import saveNewChecklistInAircraftHistoric
+from .utils.getLastRegisteredChecklistData import getLastRegisteredChecklistData
 
 class VerChecklistView(DetailView):
     model = Checklist
@@ -31,9 +32,7 @@ class ChecklistFormView(View):
         piloto = request.user
         historico_checklist_dict = {}
 
-        getLastRegistedChecklistData(historico_checklist_dict)
-       
-        historico_checklist_dict_json = json.dumps(historico_checklist_dict)
+        historico_checklist_dict_json = getLastRegisteredChecklistData(historico_checklist_dict)
         
         dados_checklist = {
             'piloto': piloto,
@@ -53,37 +52,8 @@ class ChecklistFormView(View):
         
         checklist_form = ChecklistForm(request.POST, initial=dados_checklist)
         if checklist_form.is_valid():
-            checklist = checklist_form.save()
             
-            # Salvar as informações no histórico de alterações
-            HistoricoAlteracoesAeronave.objects.create(
-                aeronave=checklist.aeronave,
-                num_helices = checklist.num_helices,  
-                num_baterias = checklist.num_baterias, 
-                baterias_carregadas = checklist.baterias_carregadas, 
-                bateria_controle_carregada = checklist.bateria_controle_carregada, 
-                corpo = checklist.corpo, 
-                hastes_motor = checklist.hastes_motor, 
-                helices = checklist.helices, 
-                gimbal = checklist.gimbal, 
-                holofote = checklist.holofote, 
-                auto_falante = checklist.auto_falante, 
-                luz_estroboscopica= checklist.luz_estroboscopica, 
-                cabos = checklist.cabos, 
-                carregador = checklist.carregador, 
-                fonte = checklist.fonte, 
-                smart_controller = checklist.smart_controller, 
-                controle = checklist.controle, 
-                cartao_sd = checklist.cartao_sd, 
-                IMU = checklist.IMU, 
-                compass = checklist.compass, 
-                sinal_transmissao = checklist.sinal_transmissao, 
-                sistema_rtk_ppk = checklist.sistema_rtk_ppk, 
-                sinal_de_video = checklist.sinal_de_video, 
-                telemetria = checklist.telemetria, 
-                paraquedas = checklist.paraquedas,                
-                alteracoes = checklist.alteracoes
-            )
+            saveNewChecklistInAircraftHistoric(request.POST, dados_checklist)
             
             return redirect('rpa_manager:checklists')
         
@@ -99,13 +69,24 @@ class EditarChecklistView(UpdateView):
     template_name = 'controle/pages/editar_checklist.html'
     success_url = reverse_lazy('rpa_manager:checklists')
     context_object_name = 'form'
+    
+    def form_valid(self, form):
+        checklist = form.save(commit=False)
+        aeronave = checklist.aeronave
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-    
-        context["edicao_checklist"] = True
-        return context
-    
+        # Verificar se o checklist atual é o mais recente para a aeronave associada
+        ultimo_checklist = Checklist.objects.filter(aeronave=aeronave).order_by('-data', '-horario').first()
+        if checklist == ultimo_checklist:
+            # Atualizar o objeto de histórico mais recente relacionado à aeronave
+            historico = HistoricoAlteracoesAeronave.objects.filter(aeronave=aeronave).order_by('-data').first()
+            if historico:
+                historico.alteracoes = checklist.alteracoes
+                historico.num_helices = checklist.num_helices
+                historico.num_baterias = checklist.num_baterias
+                # Atualize outros campos de histórico, se necessário
+                historico.save()
+
+        return super().form_valid(form)
 
 class DeletarChecklistView(DeleteView):
     model = Checklist

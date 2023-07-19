@@ -4,76 +4,73 @@
 <!-- styles -->
 {% block style_sheet %}
   {% comment %} bacinf style_sheet {% endcomment %}
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
-  <link rel="stylesheet"
-    href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
   <style>
-        .novo_checklist {
-          display: flex;
-          justify-content: center;
-      }
-      
-      .formulario_checklist_parte1 {
-          display: flex;
-          flex-direction: column;
-          gap: 10px; 
-          max-width: 100%;   
-      }
-      
-      .formulario_checklist_selecao_itens, .formulario_checklist_parte2 {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 5px;
-          max-width: 100%%;
-      }
-      
-      .formulario_checklist_titulo_selecao {
-          margin-top: 50px;
-          margin-bottom: 50px;
-      }
-      
-      .checklist_item {
-          width: 30px;
-          height: 30px;
-      }
-      
-      .formulario_checklist_parte2 > input {
-          margin-left: 100px;
-      }
-      
-      .container_alteracoes_titulo {
-          margin-top: 1rem;
-      }
-      
-      #id_alteracoes {
-          margin-top: 20px;
-      }
-      
-      .edicao_checklist {
-          display: none;
-      }
-      .formulario_checklist_alteracoes {
-        max-width: 100%;
-      }
+      .novo_checklist {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .formulario_checklist_parte1 {
+        display: flex;
+        flex-direction: column;
+        gap: 10px; 
+        max-width: 100%;   
+    }
+    
+    .formulario_checklist_selecao_itens, .formulario_checklist_parte2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        max-width: 100%%;
+    }
+    
+    .formulario_checklist_titulo_selecao {
+        margin-top: 50px;
+        margin-bottom: 50px;
+    }
+    
+    .checklist_item {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .formulario_checklist_parte2 > input {
+        margin-left: 100px;
+    }
+    
+    .container_alteracoes_titulo {
+        margin-top: 1rem;
+    }
+    
+    #id_alteracoes {
+        margin-top: 20px;
+    }
+    
+    .edicao_checklist {
+        display: none;
+    }
+    .formulario_checklist_alteracoes {
+      max-width: 100%;
+    }
 
-      .formulario_checklist_parte2 > input {
-        width: 1rem;
-      } 
-      
-      @media (max-width: 768px) {
-      
-          .formulario_checklist_selecao_itens {
-              display: grid;
-              grid-template-columns: 1fr;
-              gap: 5px;
-              max-width: 800px;
-          }
-      }
-  </style>
+    .formulario_checklist_parte2 > input {
+      width: 1rem;
+    } 
+    
+    @media (max-width: 768px) {
+    
+        .formulario_checklist_selecao_itens {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 5px;
+            max-width: 800px;
+        }
+    }
+</style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -84,28 +81,32 @@
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{% url 'rpa_manager:principal' %}">Principal</a></li>
-<li class="breadcrumb-item active">Editar checklist</li>
+  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:painel' %}">Painel</a></li>
+  <li class="breadcrumb-item active">Editar checklist</li>
 {% endblock %}
 
 <!-- main container -->
 {% block content %}
 
-{% comment %} <div class="row"> {% endcomment %}
+<div class="row">
   <div class="col-md-12">
     <div class="card card-primary card-outline">
       <div class="card-header">
-        <h3 class="card-title">Editar novo relatório</h3>
+        <h3 class="card-title">Editar checklist</h3>
       </div>
       <form  class="p-3" method='post' enctype="multipart/form-data">
         {% csrf_token %}
-        <p class="edicao_checklist">{{ edicao_checklist }}</p>
+
+        {% comment %} Esta variavel verifica se o form esta sendo editado e carrega {% endcomment %}
+        {% comment %} a lista de itens a serem avaliados {% endcomment %}
+        <p class="edicao_checklist">{{ edicao_checklist }}</p> 
 
         <div class="container formulario_checklist_parte1">
           {{ form.piloto }}
           <label for="id_aeronave">Aeronave</label>
           Selecione uma aeronave para iniciar o checklist
           {{ form.aeronave }}
+          <input type="hidden" name="aeronave_id" value="{{ form.aeronave.value }}">
           <label for="id_num_helices">Número de hélices</label>
           {{ form.num_helices }}
           <label for="id_num_baterias">Número de baterias</label>
@@ -173,6 +174,7 @@
           {{ form.alteracoes }}
         </div>
         <div class="mt-3">
+          {{ form.errors }}
           <button type="submit" class="btn btn-primary">Salvar</button>
           <a href="{% url 'rpa_manager:checklists' %}">
               <button type="button" class="btn btn-warning">Cancelar</button>
@@ -180,7 +182,7 @@
         </div>
       </form>
     </div>
-  
+  </div>
 {% endblock content %}
 
 <!-- javascripts -->
@@ -200,8 +202,48 @@
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
 
-  {% comment %} For checklist form logic {% endcomment %}
-  <script src="{% static 'controle/js/checklist_controle_aeronave.js' %}"></script>
   <script src="{% static 'controle/js/checklist_adiciona_alteracoes.js' %}"></script>
+  <script>  
+    $(document).ready(function() { 
+      $(".aeronave_escolha").on('change', function() {
+        let aeronave_selecionada = $(this).val();
+        console.log(aeronave_selecionada);
+        
+        if (aeronave_selecionada === '1') {
+            console.log("Aeronave 68 selecionada");
+            $('input[name="holofote"]').show();
+            $('label[for="id_holofote"]').show();
 
+            $('input[name="auto_falante"]').show();
+            $('label[for="id_auto_falante"]').show();
+
+            $('input[name="luz_estroboscopica"]').show();
+            $('label[for="id_luz_estroboscopica"]').show();
+
+            $('input[name="smart_controller"]').show();
+            $('label[for="id_smart_controller"]').show();
+
+            $('input[name="controle"]').hide();
+            $('label[for="id_controle"]').hide();
+        } else {
+            $('input[name="holofote"]').hide();
+            $('label[for="id_holofote"]').hide();
+
+            $('input[name="auto_falante"]').hide();
+            $('label[for="id_auto_falante"]').hide();
+
+            $('input[name="luz_estroboscopica"]').hide();
+            $('label[for="id_luz_estroboscopica"]').hide();
+
+            $('input[name="smart_controller"]').hide();
+            $('label[for="id_smart_controller"]').hide();
+
+            $('input[name="controle"]').show();
+            $('label[for="id_controle"]').show();
+        }
+      });
+        
+    });
+
+  </script>
 {% endblock %}
