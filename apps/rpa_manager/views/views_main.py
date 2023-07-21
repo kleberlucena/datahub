@@ -1,20 +1,21 @@
 
 from django.contrib.auth.models import User
 from django.shortcuts import render
-
+from django.views.generic import TemplateView, ListView
+from .views_crud_aeronaves import *
+from .views_crud_baterias import *
+from .views_crud_checklists import *
+from .views_crud_efetivo import *
+from .views_crud_missao import *
+from .views_crud_relatorio import *
+from .views_funcoes_auxiliares import *
+from apps.rpa_manager.forms import AeronaveSelectForm
 from apps.rpa_manager.models import (Aeronave, Bateria, 
                                      Checklist, Militar, 
-                                     Missao, Relatorio
+                                     Missao, Relatorio,
+                                     HistoricoAlteracoesAeronave
                                      )
-from . views_crud_aeronaves import *
-from . views_crud_baterias import *
-from . views_crud_checklists import *
-from . views_crud_efetivo import *
-from . views_crud_missao import *
-from . views_crud_relatorio import *
-from . views_funcoes_auxiliares import *
 
-from django.views.generic import TemplateView
 
 def home(request):
     return render(request, 'controle/pages/base.html')
@@ -114,4 +115,22 @@ class BateriasView(TemplateView):
         context['form'] = form
 
         return context
-    
+
+
+class HistoricosPorAeronaveView(ListView):
+    model = HistoricoAlteracoesAeronave
+    template_name = 'controle/pages/aircraft_historic.html'
+    context_object_name = 'aircraft_historic'
+    form_class = AeronaveSelectForm
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        aeronave_id = self.request.GET.get('aeronave')
+        if aeronave_id:
+            queryset = queryset.filter(aeronave__id=aeronave_id)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form_class(self.request.GET or None)
+        return context

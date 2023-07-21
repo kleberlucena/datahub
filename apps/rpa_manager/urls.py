@@ -15,14 +15,16 @@ from .views.views_main import (
     CriarNovaAeronaveView, EditarAeronaveView,
     DeletarAeronaveView, VerBateriaView,
     CriarNovaBateriaView, EditarBateriaView,
-    DeletarBateriaView, MilitaryListJson )
+    DeletarBateriaView, MilitaryListJson,
+    HistoricosPorAeronaveView )
 
 app_name = "rpa_manager"
 
 urlpatterns = [
     path('painel/', PainelView.as_view(), name="painel"),
     path('principal/', PrincipalView.as_view(), name="principal"),
-
+    path('historico/', HistoricosPorAeronaveView.as_view(), name='historico'),
+    
     path('ver_missao/<int:pk>/', VerMissaoView.as_view(), name="ver_missao"),
     path('criar_nova_missao/', CriarNovaMissaoView.as_view(), name="criar_nova_missao"),
     path('editar_missao/<int:pk>/', EditarMissaoView.as_view(), name="editar_missao"),

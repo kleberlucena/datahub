@@ -1,0 +1,136 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% comment %} bacinf style_sheet {% endcomment %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    .aircraft_selection {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .selection_btn {
+      width: 150px;
+    }
+  </style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Histórico da Aeronave {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Configurações - Histórico da Aeronave {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:painel' %}">Painel</a></li>
+  <li class="breadcrumb-item active">Histórico da Aeronave</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+  {% if aircraft_historic %}
+  <h2>Históricos de alterações</h2>
+  <div class="card card-primary card-outline">
+    <form method="get">
+      {% csrf_token %}
+      <div class="p-3 aircraft_selection">
+        {{ form }} 
+        <button type="submit" class="btn btn-outline-info mt-3 selection_btn" id="fileButton">Filtrar</button>
+      </div>
+    </form>
+  <div class="card-header">
+    <h3 class="card-title">Histórico</h3>
+  </div>
+
+  <div class="card-body">
+    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+      <table id="objects_list" class="table table-bordered table-striped dataTable dtr-inline" role="grid"
+        aria-describedby="objects_list_info" width="100%">
+        <thead>
+          <tr>
+            <th>Aeronave</th>
+            <th>Data</th>
+            <th>Número de Hélices</th>
+            <th>Número de Baterias</th>
+            <th>Alterações</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          {% for historico in aircraft_historic %}
+          <tr>
+            <td>{{ historico.aeronave }}</td>
+            <td>{{ historico.data }}</td>
+            <td>{{ historico.num_helices }}</td>
+            <td>{{ historico.num_baterias }}</td>
+            <td>{{ historico.alteracoes }}</td>
+
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+      {% endblock content %}
+
+      <!-- javascripts -->
+      {% block js %}
+      <!-- DataTables  & Plugins -->
+      <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+      <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+      <script
+        src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+      <script
+        src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+      <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+      <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+      <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+      <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+      <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+      <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+      <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+      <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+      <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+      <script>
+        var table = $('#objects_list').DataTable({
+          lengthChange: false,
+          buttons: [ 'pageLength',
+            {
+              extend: 'excel',
+              text: 'Excel',
+              exportOptions: {
+                columns: ':not(.removerDoPdf)'
+              }
+            },
+            {
+              extend: 'pdf',
+              text: 'PDF',
+              exportOptions: {
+                columns: ':not(.removerDoPdf)'
+              }
+            },
+            {
+              extend: 'print',
+              text: 'Imprimir',
+              exportOptions: {
+                columns: ':not(.removerDoPdf)'
+              }
+            },
+            'colvis'
+          ],
+          dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+          language: { "url": "//cdn.datatables.net/plug-ins/1.11.1/i18n/pt_br.json" },
+          responsive: true,
+          searching: true,
+          processing: true,
+          columnDefs: [{ "width": "350px", targets: [-1] }],
+          order: [[1, 'desc']]
+        });
+  </script>
+{% endblock %}

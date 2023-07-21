@@ -2,11 +2,18 @@
 
 {% block style_sheet %}
   {% load static %}
-  {% comment %} bacinf style_sheet {% endcomment %}
-  <link rel="stylesheet"
-    href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+     .piloto_observador,
+     .quem_solicitou,
+     .quem_autorizou,
+     .local,
+     .aeronave{
+      margin-top: 10px;
+    } 
+  </style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -33,8 +40,21 @@
           {% csrf_token %}
           <div class="form-row">
             <div class="form-group col-md-12 mb-0">
-              <p class="Aeronave" ></p>
-              {{ form }}
+              <label for="id_titulo" class="titulo_operacao">Título da operação</label>
+              {{ form.titulo }}
+              <label for="id_titulo" class="piloto_observador">Piloto Observador</label>
+              {{ form.piloto_observador }}
+              <label for="id_quem_solicitou" class="quem_solicitou">Quem solicitou</label>
+              {{ form.quem_solicitou }}
+              <label for="id_quem_autorizou" class="quem_autorizou">Quem autorizou</label>
+              {{ form.quem_autorizou }}
+              <label for="id_local" class="local">Local</label>
+              {{ form.local }}
+              <label for="id_aeronave" class="aeronave">Aeronave</label>
+              {{ form.aeronave }}
+
+              {{ form.usuario }}
+
             </div>
           </div>
           <div class="mt-3">

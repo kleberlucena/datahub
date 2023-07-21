@@ -24,6 +24,8 @@ class CriarNovoRelatorioView(CreateView):
             'titulo': missao.titulo,
             'militar': self.request.user,
             'piloto_observador': missao.piloto_observador,
+            'quem_solicitou': missao.quem_solicitou,
+            'quem_autorizou': missao.quem_autorizou,
             'local': missao.local,
             'relato_da_missao': 'Sem alteração',
             'aeronave': missao.aeronave,

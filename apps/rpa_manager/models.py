@@ -126,6 +126,8 @@ class HistoricoAlteracoesAeronave(models.Model):
 class Missao(Base):
     titulo = models.CharField(max_length=100)
     piloto_observador = models.ForeignKey(Militar, on_delete=models.SET_NULL, blank=True, null=True)
+    quem_autorizou = models.CharField(max_length=100, null=True, blank=True)
+    quem_solicitou = models.CharField(max_length=100, null=True, blank=True)
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
     horario = models.TimeField(auto_now_add=True)
     data = models.DateField(auto_now_add=True)
@@ -182,16 +184,24 @@ class Checklist(Base):
     def __str__(self):
         return "Piloto: {} | {} | {} ".format(self.piloto, self.aeronave, self.data)
 
-
+""" 
+Inclua as coordenadas de latitude antes da longitude.
+Verifique se o primeiro número da coordenada de latitude está entre -90 e 90.
+Verifique se o primeiro número da coordenada de longitude está entre -180 e 180.
+"""        
 class Relatorio(Base):
     titulo = models.CharField(max_length=250, null=False, blank=False, default='')
     militar = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     piloto_observador = models.ForeignKey(Militar, on_delete=models.SET_NULL, blank=True, null=True)
+    quem_autorizou = models.CharField(max_length=100, null=True, blank=True)
+    quem_solicitou = models.CharField(max_length=100, null=True, blank=True)
     data = models.DateField(blank=False, null=False)
     data_final = models.DateField(blank=True, null=True)
     horario_inicial = models.TimeField()
     horario_final = models.TimeField()
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
+    latitude = models.CharField(max_length=50, null=True, blank=True)
+    longitude = models.CharField(max_length=50, null=True, blank=True)
     arquivo_solicitacao = models.FileField(upload_to='uploads/%Y/%m/%d/',blank=True, null=True)
     num_sarpas = models.CharField(max_length=20, blank=True, null=True)
     opm_apoiada = models.ForeignKey(OPM, on_delete=models.SET_NULL, null=True)

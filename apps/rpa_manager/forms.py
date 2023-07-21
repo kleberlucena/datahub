@@ -1,10 +1,11 @@
 from django import forms
 from .models import *
 
-def adiciona_atributo_classe_ao_widget(aponta_para_o_objecto_da_classe, campo, novo_attrs1, novo_attrs2):
-    aponta_para_o_objecto_da_classe.fields[campo].widget.attrs.update({
-        'class': str(novo_attrs1) + '_escolha ' +  str(novo_attrs2)
+def adiciona_atributo_classe_ao_widget(this_obj, campo, attrs1 = '', attrs2 = '', attrs3 = ''):
+    this_obj.fields[campo].widget.attrs.update({
+        'class': str(attrs1) + '_escolha ' +  str(attrs2) + str(attrs3)
     })
+
 
 camposCheckboxesChecklist = [
         'baterias_carregadas',
@@ -35,7 +36,14 @@ class MissaoFormulario(forms.ModelForm):
     
     class Meta:
         model = Missao
-        fields = ['titulo', 'piloto_observador', 'local', 'aeronave', 'usuario']
+        fields = ['titulo', 
+                  'piloto_observador', 
+                  'quem_solicitou', 
+                  'quem_autorizou', 
+                  'local', 
+                  'aeronave', 
+                  'usuario'
+                  ]
         
         labels = {
             'usuario': '',
@@ -50,13 +58,31 @@ class MissaoFormulario(forms.ModelForm):
         super().__init__(*args, **kwargs)
         
         self.fields['aeronave'].queryset = Aeronave.objects.filter(em_uso=False)
+        self.fields['titulo'].widget.attrs.update({
+            'placeholder': 'Informe um título para operação'
+        })
+        self.fields['quem_autorizou'].widget.attrs.update({
+            'placeholder': 'Informe quem autorizou a operação'
+        })
+        self.fields['quem_solicitou'].widget.attrs.update({
+            'placeholder': 'Informe quem solicitou a operação'
+        })
+        self.fields['aeronave'].widget.attrs.update({
+            'class': 'aeronave_escolha'
+        })
         
-        campos = ['titulo', 'piloto_observador', 'local', 'aeronave', 'usuario']
+        campos = ['titulo', 
+                  'piloto_observador', 
+                  'quem_solicitou',
+                  'quem_autorizou', 
+                  'local', 
+                  'aeronave', 
+                  'usuario']
         
         for campo in campos:
             adiciona_atributo_classe_ao_widget(self, campo, campo, 'form-control')
+            
     
-             
 class RelatorioFormulario(forms.ModelForm):
     status_missao = forms.BooleanField(
         label="Concluir missão?",
@@ -66,7 +92,8 @@ class RelatorioFormulario(forms.ModelForm):
         model = Relatorio
         fields = [
             'titulo', 'militar',
-            'piloto_observador', 'data',
+            'piloto_observador', 'quem_solicitou', 
+            'quem_autorizou','data',
             'data_final',
             'horario_inicial', 'horario_final',
             'local', 'arquivo_solicitacao',
@@ -109,7 +136,9 @@ class RelatorioFormulario(forms.ModelForm):
         
         campos = [
             'titulo', 
-            'piloto_observador', 
+            'piloto_observador',
+            'quem_solicitou',
+            'quem_autorizou', 
             'data',
             'data_final', 
             'horario_inicial', 
@@ -177,6 +206,16 @@ class AeronavesForm(forms.ModelForm):
 
         for campo in campos:
             adiciona_atributo_classe_ao_widget(self, campo, campo, 'form-control')
+
+
+class AeronaveSelectForm(forms.Form):
+    aeronave = forms.ModelChoiceField(queryset=Aeronave.objects.all(), empty_label='Selecione uma aeronave')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.fields['aeronave'].widget.attrs.update({'class': 'form-control aircraft_selection_form'})
+        
         
 class BateriaForm(forms.ModelForm):
     
