@@ -5,7 +5,7 @@ from django.views.generic import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
-
+from apps.rpa_manager.utils.create_json_for_coordinates import create_json_for_coordinates
 
 class VerRelatorioView(DetailView):
     model = Relatorio
@@ -13,12 +13,13 @@ class VerRelatorioView(DetailView):
     context_object_name = 'relatorio'
     
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+            context = super().get_context_data(**kwargs)
+            relatorio = self.get_object()
+            coordinates_json = {}
+            context['coordinates_json'] = create_json_for_coordinates(coordinates_json, relatorio)
 
-        relatorio = context['relatorio']
+            return context
         
-        return context
-
 class CriarNovoRelatorioView(CreateView):
     model = Relatorio
     form_class = RelatorioFormulario

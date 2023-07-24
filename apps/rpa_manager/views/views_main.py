@@ -10,6 +10,7 @@ from .views_crud_missao import *
 from .views_crud_relatorio import *
 from .views_funcoes_auxiliares import *
 from apps.rpa_manager.forms import AeronaveSelectForm
+from apps.rpa_manager.utils.create_json_for_coordinates import create_json_for_coordinates
 from apps.rpa_manager.models import (Aeronave, Bateria, 
                                      Checklist, Militar, 
                                      Missao, Relatorio,
@@ -27,13 +28,8 @@ class PainelView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         coordinates_dict = {}
-        
         ultimo_relatorio = Relatorio.objects.latest('id')
-        coordinates_dict['titulo'] = ultimo_relatorio.titulo
-        coordinates_dict['latitude'] = ultimo_relatorio.latitude
-        coordinates_dict['longitude'] = ultimo_relatorio.longitude
-        
-        coordinates_json = json.dumps(coordinates_dict)
+        coordinates_json = create_json_for_coordinates(coordinates_dict, ultimo_relatorio)
         context['coordinates_json'] = coordinates_json
 
         return context

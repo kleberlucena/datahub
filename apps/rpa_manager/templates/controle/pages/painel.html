@@ -126,7 +126,6 @@
 						attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 				}).addTo(map);
 				
-				console.log(coordinatesJson)
 				// Adicionando um marcador no mapa
 				var marker = L.marker(centerCoordinates).addTo(map);
 
@@ -139,6 +138,8 @@
 					fillOpacity: 0.1,
 					radius: 500
 			}).addTo(map);
+
+			
 		});
 	</script>
 {% endblock %}
