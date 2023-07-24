@@ -6,8 +6,8 @@ from django.views import View
 from django.shortcuts import render, redirect
 import json
 from django.http import HttpResponseRedirect
-from .utils.saveNewChecklistInAircraftHistoric import saveNewChecklistInAircraftHistoric
-from .utils.getLastRegisteredChecklistData import getLastRegisteredChecklistData
+from apps.rpa_manager.utils.saveNewChecklistInAircraftHistoric import saveNewChecklistInAircraftHistoric
+from apps.rpa_manager.utils.getLastRegisteredChecklistData import getLastRegisteredChecklistData
 
 class VerChecklistView(DetailView):
     model = Checklist

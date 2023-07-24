@@ -6,18 +6,25 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 
+
 class VerRelatorioView(DetailView):
     model = Relatorio
     template_name = 'controle/pages/ver_relatorio.html'
     context_object_name = 'relatorio'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
+        relatorio = context['relatorio']
+        
+        return context
 
 class CriarNovoRelatorioView(CreateView):
     model = Relatorio
     form_class = RelatorioFormulario
     template_name = 'controle/pages/criar_novo_relatorio.html'
     success_url = reverse_lazy('rpa_manager:relatorios')
-
+    
     def get_initial(self):
         missao = get_object_or_404(Missao, pk=self.kwargs['pk'])
         return {
@@ -30,8 +37,13 @@ class CriarNovoRelatorioView(CreateView):
             'relato_da_missao': 'Sem alteração',
             'aeronave': missao.aeronave,
         }
-
+        
     def form_valid(self, form):
+        self.object = self.get_context_data()
+        print(self.object)
+        evento_obj = form.save(commit=False)
+        print(evento_obj.latitude)
+        print(evento_obj.longitude)
         missao = get_object_or_404(Missao, pk=self.kwargs['pk'])
         missao.concluida = True
         missao.save()

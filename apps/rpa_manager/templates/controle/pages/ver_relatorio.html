@@ -4,19 +4,43 @@
 <!-- styles -->
 {% block style_sheet %}
   {% comment %} bacinf style_sheet {% endcomment %}
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+<style>
+  .detail_report {
+    display: flex;
+    gap: 10px;
+  }
+  .report_details_card {
+    width: 400px;
+  }
+  .detail_report_map {
+    height: 800px;
+  }
+  @media (max-width: 768px) {
+    
+    .detail_report {
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: start;
+      width: 100%;
+    }
+    .detail_report_map {
+      height: 300px;
+    }
+  }
+</style>
+
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Ver Relatório {% endblock %}
+{% block title %} Detalhes Relatório {% endblock %}
 
 <!-- context title -->
-{% block title-header %} Ver Relatório {% endblock %}
+{% block title-header %} Detalhes Relatório {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
@@ -25,75 +49,82 @@
 
 <!-- main container -->
 {% block content %}
-<div class="card card-primary card-outline">
-  <div class="card-header">
-    <h3 class="card-title">Ver relatório </h3>
-  </div>
-  <div class="card-body">
-    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
-      {% comment %} code here {% endcomment %}
-      <div class="container">
-        <dl class="row">
-          <dt class="col-sm-3">Título</dt>
-          <dd class="col-sm-9">{{ relatorio.titulo }}</dd>
-          <dt class="col-sm-3">Piloto remoto</dt>
-          <dd class="col-sm-9">{{ relatorio.militar }}</dd>
-          <dt class="col-sm-3">Piloto observador</dt>
 
-          {% if relatorio.piloto_observador == None %}
-            <dd class="col-sm-9"> -- </dd>
-          {% else %}
-            <dd class="col-sm-9"> {{ relatorio.piloto_observador }} </dd>
-          {% endif %}
+<div class="detail_report">
+  <div class="card card-primary col-md-4">
+    <div class="card-header">
+      <h3 class="card-title">Detalhes relatório</h3>
+    </div>
 
-          <dt class="col-sm-3">Data</dt>
-          <dd class="col-sm-9">{{ relatorio.data | date:"d/m/Y"}}</dd>
-          <dt class="col-sm-3">Horário inicial</dt>
-          <dd class="col-sm-9">{{ relatorio.horario_inicial }}</dd>
-          <dt class="col-sm-3">Horário final</dt>
-          <dd class="col-sm-9">{{ relatorio.horario_final }}</dd>
-          <dt class="col-sm-3">Localidade</dt>
-          <dd class="col-sm-9">{{ relatorio.local }}</dd>
-          <dt class="col-sm-3">Número Sarpas</dt>
-          <dd class="col-sm-9">
-            {{ relatorio.num_sarpas }}
+    <div class="card-body">
+      <strong>Título: </strong> {{ relatorio.titulo }}
+      <hr>
+      <strong>Piloto remoto: </strong> {{ relatorio.militar }}
+      <hr>
+      <strong>Piloto observador: </strong>
+      {% if relatorio.piloto_observador == None %}
+        sem registro
+      {% else %}
+        {{ relatorio.piloto_observador }} 
+      {% endif %}
+      <hr>
+      <strong>Data inicial: </strong> {{ relatorio.data | date:"d/m/Y"}}
+      <hr>
+      <strong>Data final: </strong> 
+      {% if relatorio.data_final == None %}
+        sem registro
+    {% else %}
+      {{ relatorio.data_final | date:"d/m/Y"}}
+    {% endif %}
+      <hr>
+      <strong>Horário inicial: </strong> {{ relatorio.horario_inicial }}
+      <hr>
+      <strong>Horário final: </strong> {{ relatorio.horario_final }}
+      <hr>
+      <strong>Localidade: </strong> {{ relatorio.local }}
+      <hr>
+      <strong>Latitude: </strong> {{ relatorio.latitude|stringformat:"s" }}
+      <hr>
+      <strong>Longitude: </strong> {{ relatorio.longitude|stringformat:"s" }}
+      <hr>
+      <strong>Número Sarpas: </strong> 
+      {{ relatorio.num_sarpas }}
             <a href="https://sarpas.decea.mil.br/consulta-protocolo" target="_blank"><i
                 class="fa-solid fa-magnifying-glass"></i> Consultar</a>
-          </dd>
-
-          <dt class="col-sm-3">Arquivo solicitação</dt>
-          {% if relatorio.arquivo_solicitacao != '' %}
-            <dd class="col-sm-9"><a href="/media/{{ relatorio.arquivo_solicitacao }}/" download>Baixar solicitação <i
-                class="fas fa-file-pdf"></i> </a></dd>
-          {% else %}
-            <dd class="col-sm-9"> -- </dd>
-          {% endif %}
-
-          <dt class="col-sm-3">OPM apoiada</dt>
-          <dd class="col-sm-9">{{ relatorio.opm_apoiada }}</dd>
-          <dt class="col-sm-3">Unidade apoiada</dt>
-          <dd class="col-sm-9">{{ relatorio.unidade_apoiada }}</dd>
-          <dt class="col-sm-3">Natureza do voo</dt>
-          <dd class="col-sm-9">{{ relatorio.natureza_de_voo }}</dd>
-          <dt class="col-sm-3">Tipo de operação</dt>
-          <dd class="col-sm-9">{{ relatorio.tipo_de_operacao }}</dd>
-          <dt class="col-sm-3">Aeronave utilizada</dt>
-          <dd class="col-sm-9">{{ relatorio.aeronave }}</dd>
-          <dt class="col-sm-3">Relato da missão</dt>
-          <dd class="col-sm-9">{{ relatorio.relato_da_missao }}</dd>
-          <a href="{% url 'rpa_manager:relatorios' %}">
-            <button type="button" class="btn btn-primary">Voltar</button>
-          </a>
-        </dl>
-      </div>
+      <hr>
+      <strong>Arquivo de solicitação: </strong> 
+      {% if relatorio.arquivo_solicitacao != '' %}
+        <a href="/media/{{ relatorio.arquivo_solicitacao }}/" download>Baixar solicitação <i
+              class="fas fa-file-pdf"></i> </a>
+        {% else %}
+         sem registro
+      {% endif %}
+      <hr>
+      <strong>OPM apiado: </strong> {{ relatorio.opm_apoiada }}
+      <hr>
+      <strong>Unidade apoiada: </strong> {{ relatorio.unidade_apoiada }}
+      <hr>
+      <strong>Natureza de voo: </strong> {{ relatorio.natureza_de_voo }}
+      <hr>
+      <strong>Tipo de operação: </strong> {{ relatorio.tipo_de_operacao }}
+      <hr>
+      <strong>Aeronave utilizada: </strong> {{ relatorio.aeronave }}
+      <hr>
+      <strong>Relato da operação: </strong> {{ relatorio.relato_da_missao }}
+      <hr>
     </div>
   </div>
+
+  <div class="col-md-8">
+    <div id="map" class="detail_report_map"></div>
+  </div>
 </div>
+
 {% endblock content %}
 
 <!-- javascripts -->
 {% block js %}
-<!-- DataTables  & Plugins -->
+  <!-- DataTables  & Plugins -->
   <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
@@ -107,4 +138,26 @@
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script src="{% static 'leaflet/leaflet.js' %}"></script>
+  <script type="text/javascript">
+    // Função que será executada quando o documento estiver pronto
+    document.addEventListener('DOMContentLoaded', function () {
+        // Coordenadas do centro do mapa (latitude, longitude)
+        var centerCoordinates = [-22.9068, -43.1729];
+
+        // Criação do mapa no elemento div com o ID 'map'
+        var map = L.map('map').setView(centerCoordinates, 13);
+
+        // Adicionando uma camada de mapa (neste caso, o OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Adicionando um marcador no mapa
+        var marker = L.marker(centerCoordinates).addTo(map);
+
+        // Adicionando um popup ao marcador
+        marker.bindPopup("Olá, eu sou um marcador!").openPopup();
+    });
+</script>
 {% endblock %}

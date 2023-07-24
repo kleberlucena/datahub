@@ -11,12 +11,29 @@
   <style>
     .aircraft_selection {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      align-items: center;
+      width: 600px;
     }
 
     .selection_btn {
+      margin-left: 10px;
       width: 150px;
     }
+    @media (max-width: 768px) {
+    
+      .aircraft_selection {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        width: 100%;
+      }
+      .selection_btn {
+        margin-top: 10px;
+        margin-left: 0;
+        width: 100%;
+      }
+  }
   </style>
 {% endblock style_sheet %}
 
@@ -41,12 +58,12 @@
     <form method="get">
       {% csrf_token %}
       <div class="p-3 aircraft_selection">
-        {{ form }} 
-        <button type="submit" class="btn btn-outline-info mt-3 selection_btn" id="fileButton">Filtrar</button>
+        {{ form.aeronave }} 
+        <button type="submit" class="btn btn-outline-info selection_btn" id="fileButton">Filtrar</button>
       </div>
     </form>
   <div class="card-header">
-    <h3 class="card-title">Histórico</h3>
+    {% comment %} <h3 class="card-title">Histórico</h3> {% endcomment %}
   </div>
 
   <div class="card-body">

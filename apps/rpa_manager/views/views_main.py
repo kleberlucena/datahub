@@ -20,8 +20,24 @@ from apps.rpa_manager.models import (Aeronave, Bateria,
 def home(request):
     return render(request, 'controle/pages/base.html')
 
+
 class PainelView(TemplateView):
     template_name = 'controle/pages/painel.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        coordinates_dict = {}
+        
+        ultimo_relatorio = Relatorio.objects.latest('id')
+        coordinates_dict['titulo'] = ultimo_relatorio.titulo
+        coordinates_dict['latitude'] = ultimo_relatorio.latitude
+        coordinates_dict['longitude'] = ultimo_relatorio.longitude
+        
+        coordinates_json = json.dumps(coordinates_dict)
+        context['coordinates_json'] = coordinates_json
+
+        return context
+
 
 class PrincipalView(TemplateView):
     template_name = 'controle/pages/operacoes.html'

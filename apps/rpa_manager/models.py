@@ -4,6 +4,8 @@ import random
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
 
 class Base(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -200,8 +202,8 @@ class Relatorio(Base):
     horario_inicial = models.TimeField()
     horario_final = models.TimeField()
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
-    latitude = models.CharField(max_length=50, null=True, blank=True)
-    longitude = models.CharField(max_length=50, null=True, blank=True)
+    latitude = models.FloatField("Latitude", default=0.0, null=True, blank=True)
+    longitude = models.FloatField("Longitude", default=0.0, null=True, blank=True)
     arquivo_solicitacao = models.FileField(upload_to='uploads/%Y/%m/%d/',blank=True, null=True)
     num_sarpas = models.CharField(max_length=20, blank=True, null=True)
     opm_apoiada = models.ForeignKey(OPM, on_delete=models.SET_NULL, null=True)
