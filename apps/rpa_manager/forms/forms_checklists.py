@@ -2,6 +2,7 @@ from django import forms
 from apps.rpa_manager.models import Checklist
 from apps.rpa_manager.utils.add_class_and_form_control import add_class_and_form_control
 
+
 class ChecklistForm(forms.ModelForm):
     camposCheckboxesChecklist = [
         'baterias_carregadas',

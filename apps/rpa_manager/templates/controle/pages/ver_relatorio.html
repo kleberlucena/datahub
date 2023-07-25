@@ -42,7 +42,7 @@
 {% block title %} Detalhes Relatório {% endblock %}
 
 <!-- context title -->
-{% block title-header %} Detalhes Relatório {% endblock %}
+{% block title-header %} Operações aéreas {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
@@ -52,79 +52,87 @@
 <!-- main container -->
 {% block content %}
 
-<div class="detail_report">
-  <div class="card card-primary col-md-4">
-    <div class="card-header">
-      <h3 class="card-title">Detalhes relatório</h3>
-    </div>
+<div class="card card-primary card-outline">
+  <div class="card-header">
+    <h3 class="card-title">Dados do relatório</h3>
+  </div> 
 
-    <div class="card-body">
-      <strong>Título: </strong> {{ relatorio.titulo }}
-      <hr>
-      <strong>Piloto remoto: </strong> {{ relatorio.militar }}
-      <hr>
-      <strong>Piloto observador: </strong>
-      {% if relatorio.piloto_observador == None %}
-        sem registro
-      {% else %}
-        {{ relatorio.piloto_observador }} 
-      {% endif %}
-      <hr>
-      <strong>Data inicial: </strong> {{ relatorio.data | date:"d/m/Y"}}
-      <hr>
-      <strong>Data final: </strong> 
-      {% if relatorio.data_final == None %}
-        sem registro
-    {% else %}
-      {{ relatorio.data_final | date:"d/m/Y"}}
-    {% endif %}
-      <hr>
-      <strong>Horário inicial: </strong> {{ relatorio.horario_inicial }}
-      <hr>
-      <strong>Horário final: </strong> {{ relatorio.horario_final }}
-      <hr>
-      <strong>Localidade: </strong> {{ relatorio.local }}
-      <hr>
-      <strong>Coordenadas: </strong> 
-      
-      {% if relatorio.latitude != None or relatorio.longitude != None %}
-        {{ relatorio.latitude|stringformat:"s" }}, {{ relatorio.longitude|stringformat:"s" }}
-      {% else %}
-        sem registro
-      {% endif %}
-      <hr>
-      <strong>Número Sarpas: </strong> 
-      {{ relatorio.num_sarpas }}
-            <a href="https://sarpas.decea.mil.br/consulta-protocolo" target="_blank"><i
-                class="fa-solid fa-magnifying-glass"></i> Consultar</a>
-      <hr>
-      <strong>Arquivo de solicitação: </strong> 
-      {% if relatorio.arquivo_solicitacao != None %}
-        <a href="/media/{{ relatorio.arquivo_solicitacao }}/" download>Baixar solicitação <i
-              class="fas fa-file-pdf"></i> </a>
+  <div class="detail_report">
+    <div class="card card-primary col-md-4 mt-3">
+      {% comment %} <div class="card-header">
+        <h3 class="card-title">Detalhes relatório</h3>
+      </div> {% endcomment %}
+  
+      <div class="card-body">
+        <strong>Título: </strong> {{ relatorio.titulo }}
+        <hr>
+        <strong>Piloto remoto: </strong> {{ relatorio.militar }}
+        <hr>
+        <strong>Piloto observador: </strong>
+        {% if relatorio.piloto_observador == None %}
+          sem registro
         {% else %}
-         sem registro
-      {% endif %}
-      <hr>
-      <strong>OPM apiado: </strong> {{ relatorio.opm_apoiada }}
-      <hr>
-      <strong>Unidade apoiada: </strong> {{ relatorio.unidade_apoiada }}
-      <hr>
-      <strong>Natureza de voo: </strong> {{ relatorio.natureza_de_voo }}
-      <hr>
-      <strong>Tipo de operação: </strong> {{ relatorio.tipo_de_operacao }}
-      <hr>
-      <strong>Aeronave utilizada: </strong> {{ relatorio.aeronave }}
-      <hr>
-      <strong>Relato da operação: </strong> {{ relatorio.relato_da_missao }}
-      <hr>
+          {{ relatorio.piloto_observador }} 
+        {% endif %}
+        <hr>
+        <strong>Data inicial: </strong> {{ relatorio.data | date:"d/m/Y"}}
+        <hr>
+        <strong>Data final: </strong> 
+        {% if relatorio.data_final == None %}
+          sem registro
+        {% else %}
+          {{ relatorio.data_final | date:"d/m/Y"}}
+        {% endif %}
+        <hr>
+        <strong>Horário inicial: </strong> {{ relatorio.horario_inicial }}
+        <hr>
+        <strong>Horário final: </strong> {{ relatorio.horario_final }}
+        <hr>
+        <strong>Localidade: </strong> {{ relatorio.local }}
+        <hr>
+        <strong>Coordenadas: </strong> 
+        
+        {% if relatorio.latitude != None or relatorio.longitude != None %}
+          {{ relatorio.latitude|stringformat:"s" }}, {{ relatorio.longitude|stringformat:"s" }}
+        {% else %}
+          sem registro
+        {% endif %}
+        <hr>
+        <strong>Número Sarpas: </strong> 
+        {{ relatorio.num_sarpas }}
+              <a href="https://sarpas.decea.mil.br/consulta-protocolo" target="_blank"><i
+                  class="fa-solid fa-magnifying-glass"></i> Consultar</a>
+        <hr>
+        <strong>Arquivo de solicitação: </strong> 
+        {% if relatorio.arquivo_solicitacao != None %}
+          <a href="/media/{{ relatorio.arquivo_solicitacao }}/" download>Baixar solicitação <i
+                class="fas fa-file-pdf"></i> </a>
+          {% else %}
+           sem registro
+        {% endif %}
+        <hr>
+        <strong>OPM apiado: </strong> {{ relatorio.opm_apoiada }}
+        <hr>
+        <strong>Unidade apoiada: </strong> {{ relatorio.unidade_apoiada }}
+        <hr>
+        <strong>Natureza de voo: </strong> {{ relatorio.natureza_de_voo }}
+        <hr>
+        <strong>Tipo de operação: </strong> {{ relatorio.tipo_de_operacao }}
+        <hr>
+        <strong>Aeronave utilizada: </strong> {{ relatorio.aeronave }}
+        <hr>
+        <strong>Relato da operação: </strong> {{ relatorio.relato_da_missao }}
+        <hr>
+      </div>
+    </div>
+  
+    <div class="col-md-8">
+      <div id="map" class="detail_report_map mt-3 mr-3"><h3 id="errorMessage"></h3></div>
     </div>
   </div>
 
-  <div class="col-md-8">
-    <div id="map" class="detail_report_map"><h3 id="errorMessage"></h3></div>
-  </div>
 </div>
+
 
 {% endblock content %}
 

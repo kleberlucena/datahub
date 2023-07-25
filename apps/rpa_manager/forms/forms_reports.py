@@ -1,7 +1,6 @@
 from django import forms
 from apps.rpa_manager.models import Relatorio
 from apps.rpa_manager.utils.add_class_and_form_control import add_class_and_form_control
-from django.contrib.gis import forms as gis_forms
 from django.contrib.gis.geos import Point
 
 
