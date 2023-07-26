@@ -1,4 +1,5 @@
 
+from typing import List, Dict
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView
@@ -27,10 +28,29 @@ class PainelView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        coordinates_dict = {}
+        coordinates_dict: Dict = {}
+        report_by_date_list: List = []
+        
         ultimo_relatorio = Relatorio.objects.latest('id')
+        
+        default_month: int = 1
+        default_year: int = 2023
+        month: int = int(self.request.GET.get('month', default_month))  
+        year: int = int(self.request.GET.get('year', default_year))  
+        
+        report_by_date = Relatorio.objects.filter(data__month=month, data__year=year)
+        for report in report_by_date:
+            report_by_date_list.append({
+                'titulo': report.titulo,
+                'latitude': report.latitude,
+                'longitude': report.longitude
+                })
+        
+        coordinates_by_date_json = json.dumps(report_by_date_list, indent=4)
+        
         coordinates_json = create_json_for_coordinates(coordinates_dict, ultimo_relatorio)
         context['coordinates_json'] = coordinates_json
+        context['coordinates_by_date_json'] = coordinates_by_date_json
 
         return context
 
@@ -67,8 +87,9 @@ class RelatoriosView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        relatorios = Relatorio.objects.all().order_by('-data', '-horario_inicial', )
-        print(relatorios)
+        
+        relatorios = Relatorio.objects.all().order_by('-data', 'horario_inicial')
+
         form = formulario_missao(self.request)
 
         context['relatorios'] = relatorios

@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import Point
+
 
 class Base(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -92,7 +92,7 @@ def generate_hex_code():
 
 
 class HistoricoAlteracoesAeronave(models.Model):
-    aeronave = models.ForeignKey(Aeronave, on_delete=models.CASCADE)
+    aeronave = models.ForeignKey(Aeronave, on_delete=models.SET_NULL, null=True)
     data = models.DateTimeField(default=timezone.now)
     codigo = models.CharField(max_length=25, unique=True, default=generate_hex_code)
     num_helices = models.IntegerField(default=4, null=False)

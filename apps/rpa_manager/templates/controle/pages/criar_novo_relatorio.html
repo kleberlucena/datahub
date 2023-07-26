@@ -43,7 +43,7 @@
               {% for field in form %}
                 {% if field.label == "Arquivo de solicitação" %}
                   <label for="{{ field.id_for_label }}" class="field_label">{{ field.label }}</label>
-                    <button type="button" class="btn btn-outline-info ml-3" id="fileButton">Selecionar Arquivo</button>
+                    <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
                     <p id="fileName"></p>
                   
                   {% else %}

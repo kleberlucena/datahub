@@ -8,6 +8,21 @@
 	<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
 	<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
 	<link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+  <style>
+    .select_date_form {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px; 
+      margin-bottom: 10px;
+    }
+    .select_date_btn {
+      height: 40px;
+      width: 120px;
+      margin-top: 32px;
+    }
+    
+  </style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -90,7 +105,48 @@
 		</div> 
 </div>
 
-<div id="map" style="height: 500px;"></div>
+<div class="card card-primary card-outline">
+  <div class="card-header">
+    <h3 class="card-title">Voos realizados</h3>
+  </div> 
+      <div class="card-body">
+        <form id="coordinatesForm" method='GET'>
+          {% csrf_token %}
+          <div class="select_date_form">
+            <div class="select_month">
+              <label for="month">Mês:</label>
+              <select id="month" class="form-control row-md-4" name="month">
+                <option value="1">Janeiro</option>
+                <option value="2">Fevereiro</option>
+                <option value="3">Março</option>
+                <option value="4">Abril</option>
+                <option value="5">Maio</option>
+                <option value="6">Junho</option>
+                <option value="7">Julho</option>
+                <option value="8">Agosto</option>
+                <option value="9">Setembro</option>
+                <option value="10">Outubro</option>
+                <option value="11">Novembro</option>
+                <option value="12">Dezemrbo</option>
+              </select>
+            </div>
+          
+            <div class="select_year">
+              <label for="year">Ano:</label>
+              <select id="year" class="form-control row-md-3" name="year">
+              <option value="2023">2023</option>
+              <option value="2022">2022</option>
+              <option value="2021">2021</option>
+              </select>
+            </div>
+              <button type="submit" class="btn btn-outline-primary ml-3 select_date_btn">Filtrar</button>
+          </div>
+
+        </form>
+        <div id="map" style="height: 500px;"></div>
+      </div>
+
+</div>
 
 {% endblock content %}
 
@@ -114,32 +170,38 @@
 	<script type="text/javascript">
 		// Função que será executada quando o documento estiver pronto
 		document.addEventListener('DOMContentLoaded', function () {
-				coordinatesJson = {{ coordinates_json|safe }}
-				// Coordenadas do centro do mapa (latitude, longitude)
-				var centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude]
+				coordinatesJson = {{ coordinates_json | safe }}
+        coordinatesByDate = {{ coordinates_by_date_json | safe }}
+        let centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude];
+        let zoomLevel = 8;
 
-				// Criação do mapa no elemento div com o ID 'map'
-				var map = L.map('map').setView(centerCoordinates, 14);
+				let map = L.map('map').setView(centerCoordinates, zoomLevel);
+        let marker = new L.marker(centerCoordinates)
+        .addTo(map)
+        .bindPopup(coordinatesJson.titulo + '<br>' +  coordinatesJson.latitude + ',' + coordinatesJson.longitude).openPopup();
 
-				// Adicionando uma camada de mapa (neste caso, o OpenStreetMap)
-				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-						attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-				}).addTo(map);
 				
-				// Adicionando um marcador no mapa
-				var marker = L.marker(centerCoordinates).addTo(map);
+        for (let i = 0; i < coordinatesByDate.length; i++) {
+          titulo = coordinatesByDate[i].titulo
+          latitude = coordinatesByDate[i].latitude !== null ? coordinatesByDate[i].latitude : 0.0
+          longitude = coordinatesByDate[i].longitude !== null ? coordinatesByDate[i].longitude : 0.0
 
-				// Adicionando um popup ao marcador
-				marker.bindPopup(coordinatesJson.titulo + '<br>' +  coordinatesJson.latitude + ',' + coordinatesJson.longitude).openPopup();
+          if(latitude !== 0.0 && longitude !== 0.0) {
+            let marker = new L.marker([latitude, longitude])
+            .addTo(map)
+            .bindPopup(titulo + '<br>' +  latitude + ',' + longitude).openPopup();
+          }
+        } 
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-				var circle = L.circle(centerCoordinates, {
+				let circle = L.circle(centerCoordinates, {
 					color: 'red',
 					fillColor: '#f03',
 					fillOpacity: 0.1,
 					radius: 500
-			}).addTo(map);
-
-			
+			  }).addTo(map); 
 		});
 	</script>
 {% endblock %}
