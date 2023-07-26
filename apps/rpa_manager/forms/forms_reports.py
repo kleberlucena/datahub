@@ -1,7 +1,6 @@
 from django import forms
 from apps.rpa_manager.models import Relatorio
 from apps.rpa_manager.utils.add_class_and_form_control import add_class_and_form_control
-from django.contrib.gis.geos import Point
 
 
 class RelatorioFormulario(forms.ModelForm):
@@ -18,8 +17,8 @@ class RelatorioFormulario(forms.ModelForm):
             'data_final',
             'horario_inicial', 'horario_final',
             'local', 'latitude', 'longitude', 'arquivo_solicitacao',
-            'num_sarpas', 'opm_apoiada',
-            'unidade_apoiada', 'natureza_de_voo',
+            'num_sarpas', 'entidade_apoiada',
+            'natureza_de_voo',
             'tipo_de_operacao', 'aeronave',
             'relato_da_missao',
         ]
@@ -32,9 +31,8 @@ class RelatorioFormulario(forms.ModelForm):
             'latitude': 'Latitude',
             'longitude': 'Longitude',
             'arquivo_solicitacao': 'Arquivo de solicitação',
+            'entidade apoiada': 'Entidade apoiada',
             'num_sarpas': 'Número SARPAS/Protocolo',
-            'opm_apoiada': 'OPM que foi apoiada',
-            'unidade_apoiada': 'Unidade que foi apoiada',
             'natureza_de_voo': 'Natureza do voo',
             'tipo_de_operacao': 'Tipo de operação',
             'relato_da_missao': 'Relato da missão',
@@ -70,9 +68,8 @@ class RelatorioFormulario(forms.ModelForm):
             'local',
             'latitude',
             'longitude', 
-            'num_sarpas', 
-            'opm_apoiada', 
-            'unidade_apoiada', 
+            'num_sarpas',
+            'entidade_apoiada', 
             'natureza_de_voo', 
             'tipo_de_operacao', 
             'aeronave', 

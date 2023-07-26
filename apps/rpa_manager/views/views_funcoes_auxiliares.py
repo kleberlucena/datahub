@@ -4,7 +4,7 @@ from django.db.models.functions import TruncMonth
 from django.shortcuts import redirect, render
 
 from apps.rpa_manager.forms import MissaoFormulario
-from apps.rpa_manager.models import Relatorio, CidadesPB, OPM, Unidades, Bateria
+from apps.rpa_manager.models import Relatorio, CidadesPB, Bateria
 
 
 def obtem_localidade_com_maior_apoio():

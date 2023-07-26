@@ -1,6 +1,22 @@
 from django.contrib import admin
 
-from apps.rpa_manager.models import *
+from apps.rpa_manager.models import (
+    Missao,
+    Aeronave,
+    Militar,
+    Checklist,
+    Relatorio,
+    HistoricoAlteracoesAeronave,
+    Maleta,
+    Bateria,
+    NaturezaDeVoo,
+    TipoDeOperacao,
+    CidadesPB,
+    Roles,
+    Guarnicao,
+    Incidentes,
+    Entidades,
+)
 
 
 class MissaoAdmin(admin.ModelAdmin):
@@ -32,9 +48,11 @@ admin.site.register(Relatorio, RelatorioAdmin)
 admin.site.register(HistoricoAlteracoesAeronave, HistoricoAlteracoesAeronaveAdmin)
 admin.site.register(Maleta)
 admin.site.register(Bateria)
-admin.site.register(OPM)
-admin.site.register(Unidades)
 admin.site.register(NaturezaDeVoo)
 admin.site.register(TipoDeOperacao)
 admin.site.register(CidadesPB)
 admin.site.register(Roles)
+admin.site.register(Guarnicao)
+admin.site.register(Incidentes)
+admin.site.register(Entidades)
+

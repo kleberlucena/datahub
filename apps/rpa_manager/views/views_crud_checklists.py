@@ -1,6 +1,6 @@
 from django.views.generic import DetailView, UpdateView, DeleteView
 from apps.rpa_manager.forms import ChecklistForm, Aeronave
-from apps.rpa_manager.models import Checklist, HistoricoAlteracoesAeronave
+from apps.rpa_manager.models import Checklist, HistoricoAlteracoesAeronave, Guarnicao, CidadesPB
 from django.urls import reverse_lazy
 from django.views import View
 from django.shortcuts import render, redirect
@@ -8,6 +8,8 @@ import json
 from django.http import HttpResponseRedirect
 from apps.rpa_manager.utils.saveNewChecklistInAircraftHistoric import saveNewChecklistInAircraftHistoric
 from apps.rpa_manager.utils.getLastRegisteredChecklistData import getLastRegisteredChecklistData
+from datetime import date
+
 
 class VerChecklistView(DetailView):
     model = Checklist
@@ -31,17 +33,15 @@ class ChecklistFormView(View):
     def get(self, request):
         piloto = request.user
         historico_checklist_dict = {}
-
+        
         historico_checklist_dict_json = getLastRegisteredChecklistData(historico_checklist_dict)
         
-        dados_checklist = {
-            'piloto': piloto,
-        }
+        dados_checklist = { 'piloto': piloto, }
             
         checklist_form = ChecklistForm(initial=dados_checklist)
         context = {
             'checklist_form': checklist_form,
-            'historico_checklist_dict_json': historico_checklist_dict_json
+            'historico_checklist_dict_json': historico_checklist_dict_json,
             }
         return render(request, 'controle/pages/checklist_form.html', context)
     

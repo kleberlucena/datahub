@@ -1,11 +1,15 @@
 import uuid
 import string
 import random
+from django.core.exceptions import ValidationError
+from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.gis.db import models
-
+from datetime import datetime
+from stdimage.models import StdImageField
+from django_minio_backend import MinioBackend
 
 class Base(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -14,18 +18,18 @@ class Base(models.Model):
 
     class Meta:
         abstract = True
-    
-class OPM(Base):
-    opm = models.CharField(max_length=100)
+
+def validate_tamanho_arquivo(arquivo):
+    tamanho_max = 10 * 1024 * 1024  # 10 MB em bytes
+    if arquivo.size > tamanho_max:
+        raise ValidationError('O tamanho máximo do arquivo é de 10 MB.')
+
+
+class Entidades(Base):
+    entidade = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.opm
-
-class Unidades(Base):
-    unidades = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.unidades
+        return self.entidade
 
 class NaturezaDeVoo(Base):
     natureza = models.CharField(max_length=300)
@@ -50,7 +54,18 @@ class Roles(Base):
 
     def __str__(self):
         return self.role
-    
+
+class Guarnicao(models.Model):
+    motorista = models.CharField(max_length=100)
+    piloto_remoto = models.CharField(max_length=100)
+    piloto_observador = models.CharField(max_length=100)
+    telefone = models.CharField(max_length=20)
+    local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
+    data = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.piloto_remoto} | {self.data} | {self.local}'
+
 class Militar(Base):  
     nome_de_guerra = models.CharField(max_length=100, null=False)
     total_de_horas_voo = models.IntegerField(default=0, null=False)
@@ -186,11 +201,7 @@ class Checklist(Base):
     def __str__(self):
         return "Piloto: {} | {} | {} ".format(self.piloto, self.aeronave, self.data)
 
-""" 
-Inclua as coordenadas de latitude antes da longitude.
-Verifique se o primeiro número da coordenada de latitude está entre -90 e 90.
-Verifique se o primeiro número da coordenada de longitude está entre -180 e 180.
-"""        
+     
 class Relatorio(Base):
     titulo = models.CharField(max_length=250, null=False, blank=False, default='')
     militar = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -206,8 +217,7 @@ class Relatorio(Base):
     longitude = models.FloatField("Longitude", default=0.0, null=True, blank=True)
     arquivo_solicitacao = models.FileField(upload_to='uploads/%Y/%m/%d/',blank=True, null=True)
     num_sarpas = models.CharField(max_length=20, blank=True, null=True)
-    opm_apoiada = models.ForeignKey(OPM, on_delete=models.SET_NULL, null=True)
-    unidade_apoiada = models.ForeignKey(Unidades, on_delete=models.SET_NULL, null=True)
+    entidade_apoiada = models.ForeignKey(Entidades, on_delete=models.SET_NULL, null=True)
     natureza_de_voo = models.ForeignKey(NaturezaDeVoo, on_delete=models.SET_NULL, null=True)
     tipo_de_operacao = models.ForeignKey(TipoDeOperacao, on_delete=models.SET_NULL, null=True)
     aeronave = models.ForeignKey(Aeronave, on_delete=models.SET_NULL, null=True)
@@ -215,4 +225,24 @@ class Relatorio(Base):
     
     def __str__(self):
         return self.titulo
+
+
+class Incidentes(models.Model):
+    operacao = models.ForeignKey(Relatorio, on_delete=models.SET_NULL, null=True)
+    relato = models.TextField()
+    localizacao = models.TextField()
+    data = models.DateTimeField()
+    imageIncidente = StdImageField(
+        'Imagem',
+        storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
+        upload_to='imagens',
+        variations={
+            'large': {'width': 720, 'height': 720, 'crop': True},
+            'medium': {'width': 480, 'height': 480, 'crop': True},
+            'thumbnail': {'width': 128, 'height': 128, 'crop': True},
+        }, delete_orphans=True, blank=True, null=True
+    )
+
+    def __str__(self):
+        return f'{self.operacao} | {self.data}'
 

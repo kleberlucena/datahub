@@ -5,4 +5,4 @@ from .forms_checklists import *
 from .forms_militaries import *
 from .forms_operations import *
 from .forms_reports import *
-
+from .forms_guarnicao import *

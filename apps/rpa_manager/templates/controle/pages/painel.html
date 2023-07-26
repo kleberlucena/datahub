@@ -11,7 +11,8 @@
   <style>
     .select_date_form {
       display: flex;
-      flex-direction: row;
+      flex-direction: row-reverse;
+	  justify-content: end;
       align-items: center;
       gap: 10px; 
       margin-bottom: 10px;
@@ -21,7 +22,6 @@
       width: 120px;
       margin-top: 32px;
     }
-    
   </style>
 {% endblock style_sheet %}
 
@@ -38,71 +38,23 @@
 
 <!-- main container -->
 {% block content %}
-	
-	<div class="grid-container">
-		<div class="row">
-			<div class="col-lg-3 col-6">
-				<div class="small-box bg-info">
-					<div class="inner">
-						<h3>150</h3>
-						<p>New Orders</p>
-					</div>
-					<div class="icon">
-						<i class="ion ion-bag"></i>
-					</div>
-					<a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-				</div>
+
+<div class="card card-primary card-outline">
+	<div class="card-header">
+	  <h3 class="card-title">Guarnições cadastradas</h3>
+	</div> 
+
+	<div class="card-body">
+		<div class="container-fluid">
+			<div class="row" id="equipes-container">
+				<!-- Os cards serão adicionados aqui via script js -->
 			</div>
 
-			<div class="col-lg-3 col-6">
-
-				<div class="small-box bg-success">
-					<div class="inner">
-						<h3>53<sup style="font-size: 20px">%</sup></h3>
-						<p>Bounce Rate</p>
-					</div>
-					<div class="icon">
-						<i class="ion ion-stats-bars"></i>
-					</div>
-					<a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-				</div>
+			<div class="row" id="mensagem-container">
+				<!-- A mensagem será exibida aqui caso o JSON esteja vazio -->
 			</div>
-
-			<div class="col-lg-3 col-6">
-
-				<div class="small-box bg-warning">
-					<div class="inner">
-						<h3>44</h3>
-						<p>User Registrations</p>
-					</div>
-					<div class="icon">
-						<i class="ion ion-person-add"></i>
-					</div>
-					<a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-				</div>
-			</div>
-
-			<div class="col-lg-3 col-6">
-
-				<div class="small-box bg-danger">
-					<div class="inner">
-						<h3>65</h3>
-						<p>Unique Visitors</p>
-					</div>
-					<div class="icon">
-						<i class="ion ion-pie-graph"></i>
-					</div>
-					<a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-				</div>
-			</div>
-
 		</div>
-
-
-		<div class="callout callout-info">
-			<h5>I am an info callout!</h5>
-			<p>Follow the steps to continue to payment.</p>
-		</div> 
+	</div>
 </div>
 
 <div class="card card-primary card-outline">
@@ -113,24 +65,6 @@
         <form id="coordinatesForm" method='GET'>
           {% csrf_token %}
           <div class="select_date_form">
-            <div class="select_month">
-              <label for="month">Mês:</label>
-              <select id="month" class="form-control row-md-4" name="month">
-                <option value="1">Janeiro</option>
-                <option value="2">Fevereiro</option>
-                <option value="3">Março</option>
-                <option value="4">Abril</option>
-                <option value="5">Maio</option>
-                <option value="6">Junho</option>
-                <option value="7">Julho</option>
-                <option value="8">Agosto</option>
-                <option value="9">Setembro</option>
-                <option value="10">Outubro</option>
-                <option value="11">Novembro</option>
-                <option value="12">Dezemrbo</option>
-              </select>
-            </div>
-          
             <div class="select_year">
               <label for="year">Ano:</label>
               <select id="year" class="form-control row-md-3" name="year">
@@ -139,6 +73,26 @@
               <option value="2021">2021</option>
               </select>
             </div>
+
+			<div class="select_month">
+				<label for="month">Mês:</label>
+				<select id="month" class="form-control row-md-4" name="month">
+				  <option value="1">Janeiro</option>
+				  <option value="2">Fevereiro</option>
+				  <option value="3">Março</option>
+				  <option value="4">Abril</option>
+				  <option value="5">Maio</option>
+				  <option value="6">Junho</option>
+				  <option value="7">Julho</option>
+				  <option value="8">Agosto</option>
+				  <option value="9">Setembro</option>
+				  <option value="10">Outubro</option>
+				  <option value="11">Novembro</option>
+				  <option value="12">Dezemrbo</option>
+				</select>
+			  </div>
+
+
               <button type="submit" class="btn btn-outline-primary ml-3 select_date_btn">Filtrar</button>
           </div>
 
@@ -203,5 +157,62 @@
 					radius: 500
 			  }).addTo(map); 
 		});
+	</script>
+
+	<script>
+		const jsonEquipes = {{ guarnicoes_json | safe }};
+	
+		// Função para criar a estrutura HTML para uma equipe (card)
+		function criarEquipeCard(equipe) {
+			return `
+			<div class="col-md-3">
+				<div class="card card-primary">
+					<div class="card-header">
+						<h3 class="card-title">${equipe.local}</h3>
+					</div>
+					<div class="card-body">
+						<p><strong>Motorista:</strong> ${equipe.motorista}</p>
+						<p><strong>Piloto Remoto:</strong> ${equipe.piloto_remoto}</p>
+						<p><strong>Piloto Observador:</strong> ${equipe.piloto_observadro}</p>
+						<p><strong>Contato:</strong> ${equipe.telefone}</p>
+					</div>
+				</div>
+			</div>
+			`;
+		}
+
+		function exibirMensagem() {
+			document.getElementById('mensagem-container').innerHTML = '<h2>Nenhuma guarnição disponível.</h2>';
+		}
+
+		// Verificando se o JSON está vazio
+		if (jsonEquipes.length === 0) {
+			exibirMensagem();
+		} else {
+			// Obtendo todas as localidades presentes no JSON
+			const localidades = [...new Set(jsonEquipes.map(equipe => equipe.local))];
+		
+			// Criando o HTML completo para todas as localidades e equipes
+			const localidadesHTML = localidades.map(localidade => {
+				// Filtrando as equipes para a localidade atual
+				const equipesLocalidade = jsonEquipes.filter(equipe => equipe.local === localidade);
+		
+				// Criando os cards para as equipes da localidade atual
+				const equipesCardsHTML = equipesLocalidade.map(equipe => criarEquipeCard(equipe)).join('');
+		
+				// Criando o card para a localidade com as equipes
+				return `
+					<div class="col-md-12">
+						<h2>${localidade} (${equipesLocalidade.length})</h2>
+						<div class="row">
+							${equipesCardsHTML}
+						</div>
+					</div>
+				`;
+			}).join('');
+		
+			// Adicionando o HTML criado ao elemento com o id 'equipes-container'
+			document.getElementById('equipes-container').innerHTML = localidadesHTML;
+		}
 	</script>
 {% endblock %}

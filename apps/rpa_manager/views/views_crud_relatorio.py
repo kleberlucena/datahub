@@ -1,6 +1,5 @@
 from apps.rpa_manager.forms import RelatorioFormulario
 from apps.rpa_manager.models import Missao, Relatorio
-from django.views import View
 from django.views.generic import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
