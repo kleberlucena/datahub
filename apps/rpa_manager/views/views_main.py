@@ -30,6 +30,7 @@ class PainelView(TemplateView):
         coordinates_dict: Dict = {}
         report_by_date_list: List = []
         lista_de_guarnicoes = []
+        guarnicoes_ids = []
         
         ultimo_relatorio = Relatorio.objects.latest('id')
         
@@ -46,27 +47,30 @@ class PainelView(TemplateView):
                 'longitude': report.longitude
                 })
         
+        
         localidades = CidadesPB.objects.all()
         for local in localidades:
-            guarnicoes = Guarnicao.objects.filter(local=local, data__date=date.today())
+            # data__date=date.today()
+            guarnicoes = Guarnicao.objects.filter(local=local)
+            print(guarnicoes)
             for guarnicao in guarnicoes:
                 lista_de_guarnicoes.append({
+                    'id': guarnicao.id,
                     'motorista': guarnicao.motorista,
-                    'piloto_remoto': guarnicao.piloto_remoto,
-                    'piloto_observadro': guarnicao.piloto_observador,
+                    'piloto_remoto': guarnicao.piloto_remoto.username,
+                    'piloto_observador': guarnicao.piloto_observador.nome_de_guerra,
                     'local': guarnicao.local.cidades_pb,
                     'telefone': guarnicao.telefone,
                 })
-        
+                
         guarnicoes_json = json.dumps(lista_de_guarnicoes, indent=4, ensure_ascii=False)
-        print(guarnicoes_json)
-        
+        # print(guarnicoes_json)
         coordinates_by_date_json = json.dumps(report_by_date_list, indent=4)
         coordinates_json = create_json_for_coordinates(coordinates_dict, ultimo_relatorio)
         context['coordinates_json'] = coordinates_json
         context['coordinates_by_date_json'] = coordinates_by_date_json
         context['guarnicoes_json'] = guarnicoes_json
-
+        context['guarnicoes'] = guarnicoes
         return context
 
 

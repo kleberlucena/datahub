@@ -51,10 +51,11 @@
 
 <!-- main container -->
 {% block content %}
-
   {% if aircraft_historic %}
-  <h2>Históricos de alterações</h2>
   <div class="card card-primary card-outline">
+    <div class="card-header">
+      <h3 class="card-title">Históricos de alterações</h3>
+    </div>
     <form method="get">
       {% csrf_token %}
       <div class="p-3 aircraft_selection">

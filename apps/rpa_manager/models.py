@@ -55,16 +55,6 @@ class Roles(Base):
     def __str__(self):
         return self.role
 
-class Guarnicao(models.Model):
-    motorista = models.CharField(max_length=100)
-    piloto_remoto = models.CharField(max_length=100)
-    piloto_observador = models.CharField(max_length=100)
-    telefone = models.CharField(max_length=20)
-    local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
-    data = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f'{self.piloto_remoto} | {self.data} | {self.local}'
 
 class Militar(Base):  
     nome_de_guerra = models.CharField(max_length=100, null=False)
@@ -74,6 +64,19 @@ class Militar(Base):
 
     def __str__(self):
         return self.nome_de_guerra
+
+
+class Guarnicao(models.Model):
+    motorista = models.CharField(max_length=100, null=True, blank=True)
+    piloto_remoto = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    piloto_observador = models.ForeignKey(Militar, on_delete=models.SET_NULL, blank=True, null=True)
+    telefone = models.CharField(max_length=20, null=False, blank=False)
+    local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
+    data = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.piloto_remoto} | {self.data} | {self.local}'
+
 
 class Maleta(Base):
     nome = models.CharField(max_length=20)

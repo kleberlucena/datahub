@@ -36,12 +36,16 @@ class ChecklistFormView(View):
         
         historico_checklist_dict_json = getLastRegisteredChecklistData(historico_checklist_dict)
         
-        dados_checklist = { 'piloto': piloto, }
+        ultima_guarnicao = Guarnicao.objects.latest('data')
+        
+        dados_checklist = { 'piloto': piloto,
+                           'guarnicao': ultima_guarnicao, }
             
         checklist_form = ChecklistForm(initial=dados_checklist)
         context = {
             'checklist_form': checklist_form,
             'historico_checklist_dict_json': historico_checklist_dict_json,
+            'guarnicao': ultima_guarnicao,
             }
         return render(request, 'controle/pages/checklist_form.html', context)
     

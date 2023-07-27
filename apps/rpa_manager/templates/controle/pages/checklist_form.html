@@ -59,7 +59,14 @@
 
     .formulario_checklist_parte2 > input {
       width: 1rem;
-    } 
+    }
+    
+    .select2-selection, .select2-selection--single{
+      height: 38px !important;
+    }
+    #select2-id_aeronave-container {
+      height: 38px !important;
+    }
     
     @media (max-width: 768px) {
     
@@ -77,7 +84,7 @@
 {% block title %} Novo checklist {% endblock %}
 
 <!-- context title -->
-{% block title-header %} Novo checklist {% endblock %}
+{% block title-header %} Operações aéreas {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
@@ -92,10 +99,45 @@
   <div class="col-md-12">
     <div class="card card-primary card-outline">
       <div class="card-header">
-        <h3 class="card-title">Editar checklist</h3>
+        <h3 class="card-title">Novo checklist</h3>
       </div>
 
-
+      {% if guarnicao %}
+      
+        <div class="card-body">
+          <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
+            <div class="card bg-light d-flex flex-fill">
+              <div class="card-header text-muted border-bottom-0">
+                <i class="fas fa-lg fa-building"></i> {{ guarnicao.local.cidades_pb }}
+              </div>
+              <div class="card-body pt-0">
+                <div class="row">
+                  <div class="col-7">
+                    <h2 class="lead"><i class="fa fa-car"></i> <b>Motorista:</b> {{ guarnicao.motorista }} </h2>
+                    <h2 class="lead"><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> {{ guarnicao.piloto_remoto }} </h2>
+                    <h2 class="lead"><i class="fa fa-binoculars"></i> <b>Piloto observador:</b> {{ guarnicao.piloto_observador }}</h2>
+                    <h2 class="lead"><i class="fa fa-phone"></i> <b>Contato:</b> {{ guarnicao.telefone }} <i class="fa fa-fw fa-whatsapp"></i></h2>
+                    
+                    </ul>
+                  </div>
+                  <div class="col-5 text-center">
+                    <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <div class="text-right">
+                  <a href="#" class="btn btn-sm bg-teal">
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <a href="{% url 'rpa_manager:guarnicao_edit' guarnicao.pk %}">
+            <button type="button" style="display: inline;" class="btn btn-block btn-primary mt-3 col-md-4"><i class="fa fa-pen"></i> Editar guarnição </button>
+          </a>
+        </div>
+      {% endif %}
 
       <form  class="p-3" method='post' enctype="multipart/form-data">
         {% csrf_token %}
@@ -206,8 +248,11 @@
 
   <script src="{% static 'controle/js/checklist_adiciona_alteracoes.js' %}"></script>
 
+
   <script>  
     $(document).ready(function() { 
+      $('.aeronave_escolha').select2();
+
       $(".aeronave_escolha").on('change', function() {
         let aeronave_selecionada = $(this).val();
         console.log(aeronave_selecionada);

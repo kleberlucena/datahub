@@ -36,27 +36,37 @@
         <div class="card-header">
           <h3 class="card-title">Criar nova operação</h3>
         </div>
+
         <form class="p-3" method='post' enctype="multipart/form-data">
           {% csrf_token %}
           <div class="form-row">
             <div class="form-group col-md-12 mb-0">
+              <label for="id_piloto_remoto" class="piloto_remoto">Piloto remoto</label>
+              <br>{{ user.username }}<br><hr>
               <label for="id_titulo" class="titulo_operacao">Título da operação</label>
               {{ form.titulo }}
+              {{ form.titulo.errors }}
+              
               <label for="id_titulo" class="piloto_observador">Piloto Observador</label>
               {{ form.piloto_observador }}
+              {{ form.piloto_observador.errors }}
               <label for="id_quem_solicitou" class="quem_solicitou">Quem solicitou</label>
               {{ form.quem_solicitou }}
+              {{ form.quem_solicitou.errors }}
               <label for="id_quem_autorizou" class="quem_autorizou">Quem autorizou</label>
               {{ form.quem_autorizou }}
+              {{ form.quem_autorizou.errors }}
               <label for="id_local" class="local">Local</label>
               {{ form.local }}
+              {{ form.local.errors }}
               <label for="id_aeronave" class="aeronave">Aeronave</label>
               {{ form.aeronave }}
+              {{ form.aeronave.errors }}
 
               {{ form.usuario }}
-
             </div>
           </div>
+
           <div class="mt-3">
             <button type="submit" class="btn btn-primary">Salvar</button>
             <a href="{% url 'rpa_manager:principal' %}">
@@ -87,6 +97,13 @@
   <script>
     $(document).ready(function () {
       $('.local_escolha').select2()
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var selectField = document.getElementById("id_usuario");
+      selectField.readonly = true;
     });
   </script>
   {% endblock %}

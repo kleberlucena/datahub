@@ -3,26 +3,28 @@
 
 <!-- styles -->
 {% block style_sheet %}
-	{% comment %} bacinf style_sheet {% endcomment %}
-	<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
-	<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
-	<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
-	<link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
-  <style>
-    .select_date_form {
-      display: flex;
-      flex-direction: row-reverse;
-	  justify-content: end;
-      align-items: center;
-      gap: 10px; 
-      margin-bottom: 10px;
-    }
-    .select_date_btn {
-      height: 40px;
-      width: 120px;
-      margin-top: 32px;
-    }
-  </style>
+{% comment %} bacinf style_sheet {% endcomment %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet"
+  href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+<style>
+  .select_date_form {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: end;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .select_date_btn {
+    height: 40px;
+    width: 120px;
+    margin-top: 32px;
+  }
+</style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -39,169 +41,186 @@
 <!-- main container -->
 {% block content %}
 
-<div class="card card-primary card-outline">
-	<div class="card-header">
-	  <h3 class="card-title">Guarnições cadastradas</h3>
-	</div> 
-
-	<div class="card-body">
-		<div class="container-fluid">
-			<div class="row" id="equipes-container">
-				<!-- Os cards serão adicionados aqui via script js -->
-			</div>
-
-			<div class="row" id="mensagem-container">
-				<!-- A mensagem será exibida aqui caso o JSON esteja vazio -->
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class="card card-primary card-outline">
+<div class="card card-primary card-outline" style="margin-bottom: 30px;">
   <div class="card-header">
     <h3 class="card-title">Voos realizados</h3>
-  </div> 
-      <div class="card-body">
-        <form id="coordinatesForm" method='GET'>
-          {% csrf_token %}
-          <div class="select_date_form">
-            <div class="select_year">
-              <label for="year">Ano:</label>
-              <select id="year" class="form-control row-md-3" name="year">
-              <option value="2023">2023</option>
-              <option value="2022">2022</option>
-              <option value="2021">2021</option>
-              </select>
-            </div>
+  </div>
+  <div class="card-body">
+    <form id="coordinatesForm" method='GET'>
+      {% csrf_token %}
+      <div class="select_date_form">
+        <div class="select_year">
+          <label for="year">Ano:</label>
+          <select id="year" class="form-control row-md-3" name="year">
+            <option value="2023">2023</option>
+            <option value="2022">2022</option>
+            <option value="2021">2021</option>
+          </select>
+        </div>
 
-			<div class="select_month">
-				<label for="month">Mês:</label>
-				<select id="month" class="form-control row-md-4" name="month">
-				  <option value="1">Janeiro</option>
-				  <option value="2">Fevereiro</option>
-				  <option value="3">Março</option>
-				  <option value="4">Abril</option>
-				  <option value="5">Maio</option>
-				  <option value="6">Junho</option>
-				  <option value="7">Julho</option>
-				  <option value="8">Agosto</option>
-				  <option value="9">Setembro</option>
-				  <option value="10">Outubro</option>
-				  <option value="11">Novembro</option>
-				  <option value="12">Dezemrbo</option>
-				</select>
-			  </div>
+        <div class="select_month">
+          <label for="month">Mês:</label>
+          <select id="month" class="form-control row-md-4" name="month">
+            <option value="1">Janeiro</option>
+            <option value="2">Fevereiro</option>
+            <option value="3">Março</option>
+            <option value="4">Abril</option>
+            <option value="5">Maio</option>
+            <option value="6">Junho</option>
+            <option value="7">Julho</option>
+            <option value="8">Agosto</option>
+            <option value="9">Setembro</option>
+            <option value="10">Outubro</option>
+            <option value="11">Novembro</option>
+            <option value="12">Dezemrbo</option>
+          </select>
+        </div>
 
 
-              <button type="submit" class="btn btn-outline-primary ml-3 select_date_btn">Filtrar</button>
-          </div>
-
-        </form>
-        <div id="map" style="height: 500px;"></div>
+        <button type="submit" class="btn btn-outline-primary ml-3 select_date_btn">Filtrar</button>
       </div>
+    </form>
+    
+    <div id="map" style="height: 500px;"></div>
+  </div>
+</div>
+  
+<div class="card card-primary card-outline">
+  <div class="card-header">
+    <h3 class="card-title">Guarnições cadastradas</h3>
+  </div>
 
+  <div class="card-body">
+    <div class="container-fluid">
+      <div class="row" id="equipes-container">
+        <!-- Os cards serão adicionados aqui via script js -->
+      </div>
+      <div class="row" id="mensagem-container">
+        <!-- A mensagem será exibida aqui caso o JSON esteja vazio -->
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock content %}
 
 <!-- javascripts -->
 {% block js %}
-	<!-- DataTables  & Plugins -->
-	<script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
-	<script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
-	<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
-	<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
-	<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
-	<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
-	<script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
-	<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
-	<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
-	<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
-	<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
-	<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
-	<script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
-	<script src="{% static 'leaflet/leaflet.js' %}"></script>
-	<script type="text/javascript">
-		// Função que será executada quando o documento estiver pronto
-		document.addEventListener('DOMContentLoaded', function () {
-				coordinatesJson = {{ coordinates_json | safe }}
-        coordinatesByDate = {{ coordinates_by_date_json | safe }}
-        let centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude];
-        let zoomLevel = 8;
+  <!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script src="{% static 'leaflet/leaflet.js' %}"></script>
+  <script type="text/javascript">
+    // Função que será executada quando o documento estiver pronto
+    document.addEventListener('DOMContentLoaded', function () {
+      coordinatesJson = {{ coordinates_json | safe }}
+    
+      coordinatesByDate = {{ coordinates_by_date_json | safe }}
+      let centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude];
+      let zoomLevel = 8;
 
-				let map = L.map('map').setView(centerCoordinates, zoomLevel);
-        let marker = new L.marker(centerCoordinates)
-        .addTo(map)
-        .bindPopup(coordinatesJson.titulo + '<br>' +  coordinatesJson.latitude + ',' + coordinatesJson.longitude).openPopup();
+      let map = L.map('map').setView(centerCoordinates, zoomLevel);
+      let marker = new L.marker(centerCoordinates)
+      .addTo(map)
+      .bindPopup(coordinatesJson.titulo + '<br>' + coordinatesJson.latitude + ',' + coordinatesJson.longitude).openPopup();
 
-				
-        for (let i = 0; i < coordinatesByDate.length; i++) {
-          titulo = coordinatesByDate[i].titulo
-          latitude = coordinatesByDate[i].latitude !== null ? coordinatesByDate[i].latitude : 0.0
-          longitude = coordinatesByDate[i].longitude !== null ? coordinatesByDate[i].longitude : 0.0
 
-          if(latitude !== 0.0 && longitude !== 0.0) {
-            let marker = new L.marker([latitude, longitude])
+      for (let i = 0; i < coordinatesByDate.length; i++) {
+        titulo = coordinatesByDate[i].titulo
+        latitude = coordinatesByDate[i].latitude !== null ? coordinatesByDate[i].latitude : 0.0
+        longitude = coordinatesByDate[i].longitude !== null ? coordinatesByDate[i].longitude : 0.0
+
+        if (latitude !== 0.0 && longitude !== 0.0) {
+          let marker = new L.marker([latitude, longitude])
             .addTo(map)
-            .bindPopup(titulo + '<br>' +  latitude + ',' + longitude).openPopup();
-          }
-        } 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+            .bindPopup(titulo + '<br>' + latitude + ',' + longitude).openPopup();
+        }
+      }
+      
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
 
-				let circle = L.circle(centerCoordinates, {
-					color: 'red',
-					fillColor: '#f03',
-					fillOpacity: 0.1,
-					radius: 500
-			  }).addTo(map); 
-		});
-	</script>
+      let circle = L.circle(centerCoordinates, {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.1,
+        radius: 500
+      }).addTo(map); 
+    });
+  </script>
+/*
+<script>
+  const jsonEquipes = {{ guarnicoes_json | safe }};
 
-	<script>
-		const jsonEquipes = {{ guarnicoes_json | safe }};
-	
-		// Função para criar a estrutura HTML para uma equipe (card)
-		function criarEquipeCard(equipe) {
-			return `
-			<div class="col-md-3">
-				<div class="card card-primary">
-					<div class="card-header">
-						<h3 class="card-title">${equipe.local}</h3>
+  // Função para criar a estrutura HTML para uma equipe (card)
+  function criarEquipeCard(equipe) {
+    return `
+			<div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
+				<div class="card bg-light d-flex flex-fill">
+					<div class="card-header text-muted border-bottom-0">
+						<i class="fas fa-lg fa-building"></i> ${equipe.local}
+					</div> 
+					<div class="card-body pt-0">
+						<div class="row">
+							<div class="col-7">
+								<h2 class="lead"><i class="fa fa-car"></i> <b>Motorista:</b> ${equipe.motorista} </h2>
+								<h2 class="lead"><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> ${equipe.piloto_remoto} </h2>
+								<h2 class="lead"><i class="fa fa-binoculars"></i> <b>Piloto observador:</b> ${equipe.piloto_observador} </h2>
+								<h2 class="lead"><i class="fa fa-phone"></i> <b>Contato:</b> ${equipe.telefone} <i class="fa fa-fw fa-whatsapp"></i></h2>
+								
+								</ul>
+							</div>
+							<div class="col-5 text-center">
+								<img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
+							</div>
+						</div>
 					</div>
-					<div class="card-body">
-						<p><strong>Motorista:</strong> ${equipe.motorista}</p>
-						<p><strong>Piloto Remoto:</strong> ${equipe.piloto_remoto}</p>
-						<p><strong>Piloto Observador:</strong> ${equipe.piloto_observadro}</p>
-						<p><strong>Contato:</strong> ${equipe.telefone}</p>
+					<div class="card-footer">
+						<div class="text-right">
+              {% if user == request.user %}
+                <a href="{% url 'rpa_manager:descadastrar_guarnicao' %}"> Descadastrar</a>
+              {% endif %}
+						</div>
 					</div>
 				</div>
 			</div>
 			`;
-		}
+  }
 
-		function exibirMensagem() {
-			document.getElementById('mensagem-container').innerHTML = '<h2>Nenhuma guarnição disponível.</h2>';
-		}
 
-		// Verificando se o JSON está vazio
-		if (jsonEquipes.length === 0) {
-			exibirMensagem();
-		} else {
-			// Obtendo todas as localidades presentes no JSON
-			const localidades = [...new Set(jsonEquipes.map(equipe => equipe.local))];
-		
-			// Criando o HTML completo para todas as localidades e equipes
-			const localidadesHTML = localidades.map(localidade => {
-				// Filtrando as equipes para a localidade atual
-				const equipesLocalidade = jsonEquipes.filter(equipe => equipe.local === localidade);
-		
-				// Criando os cards para as equipes da localidade atual
-				const equipesCardsHTML = equipesLocalidade.map(equipe => criarEquipeCard(equipe)).join('');
-		
-				// Criando o card para a localidade com as equipes
-				return `
+  function exibirMensagem() {
+    document.getElementById('mensagem-container').innerHTML = '<h2>Nenhuma guarnição disponível.</h2>';
+  }
+
+  // Verificando se o JSON está vazio
+  if (jsonEquipes.length === 0) {
+    exibirMensagem();
+  } else {
+    // Obtendo todas as localidades presentes no JSON
+    const localidades = [...new Set(jsonEquipes.map(equipe => equipe.local))];
+
+    // Criando o HTML completo para todas as localidades e equipes
+    const localidadesHTML = localidades.map(localidade => {
+      // Filtrando as equipes para a localidade atual
+      const equipesLocalidade = jsonEquipes.filter(equipe => equipe.local === localidade);
+
+      // Criando os cards para as equipes da localidade atual
+      const equipesCardsHTML = equipesLocalidade.map(equipe => criarEquipeCard(equipe)).join('');
+
+      // Criando o card para a localidade com as equipes
+      return `
 					<div class="col-md-12">
 						<h2>${localidade} (${equipesLocalidade.length})</h2>
 						<div class="row">
@@ -209,10 +228,10 @@
 						</div>
 					</div>
 				`;
-			}).join('');
-		
-			// Adicionando o HTML criado ao elemento com o id 'equipes-container'
-			document.getElementById('equipes-container').innerHTML = localidadesHTML;
-		}
-	</script>
+    }).join('');
+
+    // Adicionando o HTML criado ao elemento com o id 'equipes-container'
+    document.getElementById('equipes-container').innerHTML = localidadesHTML;
+  }
+</script>
 {% endblock %}

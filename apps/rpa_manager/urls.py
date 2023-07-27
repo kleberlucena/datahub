@@ -1,5 +1,10 @@
 from django.urls import path
-from.views.views_guarnicao import GuarnicaoCreateView
+from.views.views_guarnicao import (
+    GuarnicaoCreateView, 
+    GuarnicaoUpdateView,
+    GuarnicaoDeleteView,
+    DescadastrarGuarnicao,
+    )
 from .views.views_main import (
     PainelView, PrincipalView,
     ChecklistsView, RelatoriosView,
@@ -17,7 +22,8 @@ from .views.views_main import (
     DeletarAeronaveView, VerBateriaView,
     CriarNovaBateriaView, EditarBateriaView,
     DeletarBateriaView, MilitaryListJson,
-    HistoricosPorAeronaveView,  )
+    HistoricosPorAeronaveView, 
+    )
 
 app_name = "rpa_manager"
 
@@ -25,7 +31,11 @@ urlpatterns = [
     path('painel/', PainelView.as_view(), name="painel"),
     path('principal/', PrincipalView.as_view(), name="principal"),
     path('historico/', HistoricosPorAeronaveView.as_view(), name='historico'),
+    
+    path('descadastrar/', DescadastrarGuarnicao.as_view(), name='descadastrar_guarnicao'),
     path('guarnicao_form', GuarnicaoCreateView.as_view(), name="guarnicao_form"),
+    path('guarnicao/edit/<int:pk>/', GuarnicaoUpdateView.as_view(), name='guarnicao_edit'),
+    path('guarnicao/delete/<int:pk>', GuarnicaoDeleteView.as_view(), name='guarnicao_delete'),
     
     path('ver_missao/<int:pk>/', VerMissaoView.as_view(), name="ver_missao"),
     path('criar_nova_missao/', CriarNovaMissaoView.as_view(), name="criar_nova_missao"),
