@@ -149,6 +149,8 @@ class Missao(Base):
     quem_autorizou = models.CharField(max_length=100, null=True, blank=True)
     quem_solicitou = models.CharField(max_length=100, null=True, blank=True)
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
+    latitude = models.FloatField("Latitude", default=0.0, null=True, blank=True)
+    longitude = models.FloatField("Longitude", default=0.0, null=True, blank=True)
     horario = models.TimeField(auto_now_add=True)
     data = models.DateField(auto_now_add=True)
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -157,7 +159,7 @@ class Missao(Base):
 
     def __str__(self):
         return self.titulo
-
+    
 
 class Bateria(Base):
     numeracao = models.CharField(max_length=20, unique=True)
@@ -249,3 +251,12 @@ class Incidentes(models.Model):
     def __str__(self):
         return f'{self.operacao} | {self.data}'
 
+
+class PontosDeInteresse(models.Model):
+    operacao = models.ForeignKey(Relatorio, on_delete=models.SET_NULL, null=True)
+    descricao = models.TextField()
+    latitude = models.FloatField("Latitude", default=0.0, null=True, blank=True)
+    longitude = models.FloatField("Longitude", default=0.0, null=True, blank=True)
+
+    def __str__(self):
+        return self.descricao

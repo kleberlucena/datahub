@@ -49,16 +49,22 @@ class PainelView(TemplateView):
         
         localidades = CidadesPB.objects.all()
         for local in localidades:
-            # data__date=date.today()
             guarnicoes = Guarnicao.objects.filter(local=local)
             for guarnicao in guarnicoes:
                 lista_de_guarnicoes.append({
-                    'id': guarnicao.id,
-                    'motorista': guarnicao.motorista,
-                    'piloto_remoto': guarnicao.piloto_remoto.username,
-                    'piloto_observador': guarnicao.piloto_observador.nome_de_guerra,
-                    'local': guarnicao.local.cidades_pb,
-                    'telefone': guarnicao.telefone,
+                    'id':  
+                        guarnicao.id if(guarnicao.id != None) else 'sem registro',
+                    'motorista': 
+                        guarnicao.motorista if(guarnicao.motorista != None) else 'sem registro',
+                    'piloto_remoto': 
+                        guarnicao.piloto_remoto.username if(guarnicao.piloto_remoto != None) else 'sem registro',
+                    'piloto_observador': 
+                        guarnicao.piloto_observador.nome_de_guerra 
+                        if(guarnicao.piloto_observador != None) else 'sem registro',
+                    'local': 
+                        guarnicao.local.cidades_pb if(guarnicao.local.cidades_pb != None) else 'sem registro',
+                    'telefone': 
+                        guarnicao.telefone if(guarnicao.id != None) else 'sem registro',
                 })
                 
         guarnicoes_json = json.dumps(lista_de_guarnicoes, indent=4, ensure_ascii=False)

@@ -1,10 +1,14 @@
 from django.urls import path
-from.views.views_guarnicao import (
+from .views.views_guarnicao import (
     GuarnicaoCreateView, 
     GuarnicaoUpdateView,
     GuarnicaoDeleteView,
     DescadastrarGuarnicao,
     )
+from .views.views_points_of_interest import (
+    AddPointOfInterest    
+)
+
 from .views.views_main import (
     PainelView, PrincipalView,
     ChecklistsView, RelatoriosView,
@@ -31,6 +35,8 @@ urlpatterns = [
     path('painel/', PainelView.as_view(), name="painel"),
     path('principal/', PrincipalView.as_view(), name="principal"),
     path('historico/', HistoricosPorAeronaveView.as_view(), name='historico'),
+    
+    path('add_point/', AddPointOfInterest.as_view(), name='add_point'),
     
     path('descadastrar/', DescadastrarGuarnicao.as_view(), name='descadastrar_guarnicao'),
     path('guarnicao_form', GuarnicaoCreateView.as_view(), name="guarnicao_form"),

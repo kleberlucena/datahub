@@ -5,6 +5,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from apps.rpa_manager.utils.create_json_for_coordinates import create_json_for_coordinates
+from django.urls import reverse
 
 class VerRelatorioView(DetailView):
     model = Relatorio
@@ -23,7 +24,7 @@ class CriarNovoRelatorioView(CreateView):
     model = Relatorio
     form_class = RelatorioFormulario
     template_name = 'controle/pages/criar_novo_relatorio.html'
-    success_url = reverse_lazy('rpa_manager:relatorios')
+    success_url = reverse_lazy('rpa_manager:add_point')
     
     def get_initial(self):
         missao = get_object_or_404(Missao, pk=self.kwargs['pk'])
@@ -34,6 +35,8 @@ class CriarNovoRelatorioView(CreateView):
             'quem_solicitou': missao.quem_solicitou,
             'quem_autorizou': missao.quem_autorizou,
             'local': missao.local,
+            'latitude': missao.latitude,
+            'longitude': missao.longitude,
             'relato_da_missao': 'Sem alteração',
             'aeronave': missao.aeronave,
         }
@@ -55,6 +58,12 @@ class CriarNovoRelatorioView(CreateView):
         form.instance.missao = missao
         return super().form_valid(form)
 
+    # def get_success_url(self):
+    #     # Redireciona para a página de detalhes do relatório recém-criado
+    #     relatorio_id = self.object.id
+    #     return reverse('rpa_manager:add_point', kwargs={'pk': relatorio_id})
+    
+    
 class EditarRelatorioView(UpdateView):
     model = Relatorio
     form_class = RelatorioFormulario

@@ -12,6 +12,8 @@ class MissaoFormulario(forms.ModelForm):
                   'quem_solicitou', 
                   'quem_autorizou', 
                   'local', 
+                  'latitude', 
+                  'longitude', 
                   'aeronave', 
                   'usuario'
                   ]
@@ -48,6 +50,8 @@ class MissaoFormulario(forms.ModelForm):
                   'quem_solicitou',
                   'quem_autorizou', 
                   'local', 
+                  'latitude',
+                  'longitude',
                   'aeronave', 
                   'usuario']
         

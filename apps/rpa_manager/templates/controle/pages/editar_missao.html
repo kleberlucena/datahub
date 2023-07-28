@@ -1,12 +1,60 @@
 {% extends "base/base.html" %}
 
 {% block style_sheet %}
-{% load static %}
-{% comment %} bacinf style_sheet {% endcomment %}
-<link rel="stylesheet"
-  href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
-<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
-<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  {% load static %}
+    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+    <link rel="stylesheet" href="{% static 'rpa_manager/css/fix_select2_h.css' %}">
+  <style>
+     .piloto_observador,
+     .quem_solicitou,
+     .quem_autorizou,
+     .local,
+     .aeronave{
+      margin-top: 10px;
+    }
+    
+    .map_options {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Estilo para o ícone "x" */
+    .input-container {
+      position: relative;
+      width: 400px;
+    }
+    .clear-icon {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      cursor: pointer;
+    }
+
+    /* fix select2 field height */
+    .select2-selection, .select2-selection--single{
+      height: 38px !important;
+    }
+  
+    #select2-id_aeronave-container {
+      height: 38px !important;
+    }
+
+    @media (max-width: 768px) {
+      .map_options {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .input-container {
+        position: relative;
+        width: 100%;
+      }
+  }
+
+  </style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -14,7 +62,7 @@
 
 
 <!-- context title -->
-{% block title-header %} Editar Operação {% endblock %}
+{% block title-header %} Operações aéreas {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
@@ -23,30 +71,69 @@
 
 <!-- main container -->
 {% block content %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-primary card-outline">
+        <div class="card-header">
+          <h3 class="card-title">Editar operação</h3>
+        </div>
 
-  <div class="col-md-12">
-    <div class="card card-primary card-outline">
-      <div class="card-header">
-        <h3 class="card-title">Editar novo relatório</h3>
-      </div>
-    
-      <form class="p-3" method='post'>
-        {% csrf_token %}
-        <div class="form-row">
-          <div class="form-group col-md-12 mb-0">
-            {{ form }}
+        <form class="p-3" method='post' enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group col-md-12 mb-0">
+              <label for="id_piloto_remoto" class="piloto_remoto">Piloto remoto</label>
+              <br>{{ user.username }}<br><hr>
+              <label for="id_titulo" class="titulo_operacao">Título da operação</label>
+              {{ form.titulo }}
+              {{ form.titulo.errors }}
+              
+              <label for="id_titulo" class="piloto_observador">Piloto Observador</label>
+              {{ form.piloto_observador }}
+              {{ form.piloto_observador.errors }}
+              <label for="id_quem_solicitou" class="quem_solicitou">Quem solicitou</label>
+              {{ form.quem_solicitou }}
+              {{ form.quem_solicitou.errors }}
+              <label for="id_quem_autorizou" class="quem_autorizou">Quem autorizou</label>
+              {{ form.quem_autorizou }}
+              {{ form.quem_autorizou.errors }}
+              <label for="id_aeronave" class="aeronave">Aeronave</label>
+              {{ form.aeronave }}
+              {{ form.aeronave.errors }}
+              <label for="id_local" class="local">Local</label>
+              {{ form.local }}
+              {{ form.local.errors }}
+              <br>
+              <label for="id_latitude" class="local">Ponto de decolagem: </label><br>
+              <label for="id_latitude" class="local">Latitude</label>
+              {{ form.latitude }}
+              {{ form.latitude.errors }}
+              <label for="id_longitude" class="local">Longitude</label>
+              {{ form.longitude }}
+              {{ form.longitude.errors }}
+              {{ form.usuario }}
+            </div>
           </div>
-        </div>
-        <div class="mt-3">
-          <button type="submit" class="btn btn-primary">Salvar</button>
-          <a href="{% url 'rpa_manager:principal' %}">
-            <button type="button" class="btn btn-warning">Cancelar</button>
-          </a>
-        </div>
-      </form>
-    </div>
-  </div>
 
+          <div class="map_options">
+            <button type="button" class="btn btn-outline-primary mt-3" onclick="inserirPontoDecolagem();">Inserir Ponto de Decolagem</button>
+            <div class="input-container mt-3">
+              <input type="text" class="form-control" id="endereco" placeholder="Digite o endereço" />
+              <i class="fas fa-times-circle clear-icon" onclick="limparCampo()"></i>
+            </div>
+            <button type="button" class="btn btn-outline-info mt-3" onclick="pesquisarEndereco()">Pesquisar Endereço</button>
+          </div>
+          <div id="map" class="mt-3" style="height: 400px;"></div>
+
+          <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'rpa_manager:principal' %}">
+              <button type="button" class="btn btn-warning">Cancelar</button>
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
   {% endblock content %}
 
   <!-- javascripts -->
@@ -65,11 +152,91 @@
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script src="{% static 'leaflet/leaflet.js' %}"></script>
+  <script>
+    // Inicializar o mapa
+    let zoomLevel = 10;
+    let map = L.map('map').setView([-7.015104, -35.402316], zoomLevel);
+    var latitude = document.getElementById('id_latitude');
+    var longitude = document.getElementById('id_longitude');
+    var marcacao;
+
+    // Adicionar camada do mapa (pode ser substituído por outras camadas como OpenStreetMap, Mapbox, etc.)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Adicionar evento de clique no mapa
+    map.on('click', function (e) {
+      var lat = e.latlng.lat;
+      var lng = e.latlng.lng;    
+      latitude.value = lat;
+      longitude.value = lng;
+      
+      if (marcacao) {
+        map.removeLayer(marcacao);
+      }
+      marcacao = L.marker([lat, lng]).addTo(map);
+      });
+
+    function inserirPontoDecolagem() {  
+      var lat = parseFloat(latitude.value);
+      var lng = parseFloat(longitude.value);
+
+      if (marcacao) {
+        map.removeLayer(marcacao);
+      }
+
+      if (!isNaN(lat) && !isNaN(lng)) {
+
+        marcacao = L.marker([lat, lng]).addTo(map);
+        map.setView([lat, lng], 13);
+        
+      } else {
+        alert('Coordenadas inválidas. Certifique-se de inserir valores numéricos válidos para latitude e longitude.');
+      }
+    }
+
+    function pesquisarEndereco() {
+      var enderecoInput = document.getElementById('endereco');
+      var endereco = enderecoInput.value;
+
+      fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(endereco))
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          if (data.length > 0) {
+            var lat = parseFloat(data[0].lat);
+            var lng = parseFloat(data[0].lon);
+            let zoom = 17
+            map.setView([lat, lng], zoom);
+          } else {
+            alert('Endereço não encontrado. Certifique-se de digitar um endereço válido.');
+          }
+        })
+        .catch(function (error) {
+          console.log('Erro ao pesquisar o endereço:', error);
+        });
+    }
+
+    function limparCampo() {
+      var enderecoInput = document.getElementById('endereco');
+      enderecoInput.value = '';
+    }
+  </script>
+
+
   <script>
     $(document).ready(function () {
-      $('.aeronave_escolha').select2()
-      $('.piloto_observador_escolha').select2()
       $('.local_escolha').select2()
-    })
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var selectField = document.getElementById("id_usuario");
+      selectField.readonly = true;
+    });
   </script>
   {% endblock %}

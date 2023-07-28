@@ -61,11 +61,29 @@
       width: 1rem;
     }
     
+    /* Correção da altura do campo selec2 */
     .select2-selection, .select2-selection--single{
       height: 38px !important;
     }
+
     #select2-id_aeronave-container {
       height: 38px !important;
+    }
+
+    #equipes-container {
+      width: 100rem;
+    }
+  
+    .card_content {
+      display: grid;
+      grid-template-columns: auto auto;
+      gap: 30px;
+    }
+  
+    .card_user_image {
+      display: grid;
+      grid-template-columns: auto auto;
+      gap: 10px;
     }
     
     @media (max-width: 768px) {
@@ -103,6 +121,7 @@
       </div>
 
       {% if guarnicao %}
+
       
         <div class="card-body">
           <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
@@ -111,24 +130,23 @@
                 <i class="fas fa-lg fa-building"></i> {{ guarnicao.local.cidades_pb }}
               </div>
               <div class="card-body pt-0">
-                <div class="row">
-                  <div class="col-7">
+                <div class="card_content">
+                  <div class="card_gu_info">
                     <h2 class="lead"><i class="fa fa-car"></i> <b>Motorista:</b> {{ guarnicao.motorista }} </h2>
                     <h2 class="lead"><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> {{ guarnicao.piloto_remoto }} </h2>
                     <h2 class="lead"><i class="fa fa-binoculars"></i> <b>Piloto observador:</b> {{ guarnicao.piloto_observador }}</h2>
                     <h2 class="lead"><i class="fa fa-phone"></i> <b>Contato:</b> {{ guarnicao.telefone }} <i class="fa fa-fw fa-whatsapp"></i></h2>
-                    
-                    </ul>
                   </div>
-                  <div class="col-5 text-center">
-                    <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
+                  <div class="card_user_image">
+                      <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
+                      <img src="{% static 'adminlte-3.1.0/img/user7-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
+                      <img src="{% static 'adminlte-3.1.0/img/user6-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
+                      <img src="{% static 'adminlte-3.1.0/img/user5-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
                   </div>
-                </div>
               </div>
               <div class="card-footer">
                 <div class="text-right">
-                  <a href="#" class="btn btn-sm bg-teal">
-                  </a>
+
                 </div>
               </div>
             </div>

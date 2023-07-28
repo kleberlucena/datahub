@@ -16,6 +16,7 @@ from apps.rpa_manager.models import (
     Guarnicao,
     Incidentes,
     Entidades,
+    PontosDeInteresse
 )
 
 
@@ -58,4 +59,5 @@ admin.site.register(CidadesPB)
 admin.site.register(Roles)
 admin.site.register(Incidentes)
 admin.site.register(Entidades)
+admin.site.register(PontosDeInteresse)
 

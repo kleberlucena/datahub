@@ -4,11 +4,10 @@
 <!-- styles -->
 {% block style_sheet %}
 {% comment %} bacinf style_sheet {% endcomment %}
-<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
-<link rel="stylesheet"
-  href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
-<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
-<link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet"href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
 <style>
   .select_date_form {
     display: flex;
@@ -23,6 +22,62 @@
     height: 40px;
     width: 120px;
     margin-top: 32px;
+  }
+  
+  #equipes-container {
+    width: 100rem;
+    max-width: 100%;
+  }
+
+  .card_content {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 30px;
+    /*align-items: center;
+    grid-auto-flow: column;
+    align-items: start; */
+  }
+
+  .card_gu_info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    max-height: 200px; /* Defina o limite de altura desejado aqui */
+    
+  }
+  .card_user_image {
+    display: grid;
+    grid-template-columns: 80px 80px;
+    grid-template-columns: 80px 80px;
+    gap: 10px;
+    align-items: center;
+    max-height: 200px; /* Defina o limite de altura desejado aqui */
+  }
+
+  /* Make the alignment of images */
+  .grid-container_for-images {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* Três colunas com mesmo tamanho */
+    gap: 10px; /* Espaçamento entre as divs (opcional) */
+  }  
+  .large-image {
+    grid-column: 1 / span 3; /* A primeira imagem ocupa três colunas */
+  }
+  
+  .img-circle {
+    border-radius: 50%; /* Para deixar as imagens redondas (opcional) */
+  }
+  
+  .img-fluid {
+    width: 100%; /* Para ocupar todo o espaço disponível na div */
+  }
+
+  .hover-zoom {
+    transition: transform 0.3s ease; /* Adiciona uma transição suave para o efeito hover */
+  }
+  
+  .hover-zoom:hover {
+    transform: scale(3.0); /* Aumenta o tamanho da imagem em 20% no hover */
   }
 </style>
 {% endblock style_sheet %}
@@ -75,8 +130,6 @@
             <option value="12">Dezemrbo</option>
           </select>
         </div>
-
-
         <button type="submit" class="btn btn-outline-primary ml-3 select_date_btn">Filtrar</button>
       </div>
     </form>
@@ -184,9 +237,22 @@
       descadastroButton = `
       <a href="{% url 'rpa_manager:descadastrar_guarnicao' %}">
         <button type="button" class="btn btn-outline-danger ml-3">Descadastrar</button>
-      </a>
-      `
-    } 
+      </a>`
+    } else {
+      descadastroButton = `<button type="button" class="btn btn-outline-secondary ml-3 desabled">Descadastrar</button>`
+    }
+
+    let motorista = equipe.motorista !== 'sem registro' ? 
+    `<h5 class=""><i class="fa fa-car"></i> <b>Motorista:</b> ${equipe.motorista} </h5>` : ''
+    let piloto_remoto = equipe.piloto_remoto !== 'sem registro' ? 
+    `<h5 class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> ${equipe.piloto_remoto} </h5>` : ''
+    let piloto_observador = equipe.piloto_observador !== 'sem registro' ? 
+    `<h5 class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b> ${equipe.piloto_observador} </h5>` : ''
+    let telefone = equipe.telefone !== 'sem registro' ? 
+    `<h5 class=""><i class="fa fa-phone"></i> <b>Contato:</b> ${equipe.telefone} </h5>` : ''
+
+    console.log(motorista)
+    
     return `
 			<div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
 				<div class="card bg-light d-flex flex-fill">
@@ -194,19 +260,35 @@
 						<i class="fas fa-lg fa-building"></i> ${equipe.local}
 					</div> 
 					<div class="card-body pt-0">
-						<div class="row">
-							<div class="col-7">
-								<h2 class="lead"><i class="fa fa-car"></i> <b>Motorista:</b> ${equipe.motorista} </h2>
-								<h2 class="lead"><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> ${equipe.piloto_remoto} </h2>
-								<h2 class="lead"><i class="fa fa-binoculars"></i> <b>Piloto observador:</b> ${equipe.piloto_observador} </h2>
-								<h2 class="lead"><i class="fa fa-phone"></i> <b>Contato:</b> ${equipe.telefone} <i class="fa fa-fw fa-whatsapp"></i></h2>
-								
-								</ul>
-							</div>
-							<div class="col-5 text-center">
-								<img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
-							</div>
-						</div>
+						<div class="card_content">
+              <div class="card_gu_info">
+                  ${motorista}
+                  ${piloto_remoto} 
+                  ${piloto_observador}
+                  ${telefone}
+              </div>
+              <div class="grid-container_for-images">
+                  <div class="grid-item large-image">
+                    <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid small-image">
+                  </div>
+                  <div class="grid-item">
+                    <img src="{% static 'adminlte-3.1.0/img/user7-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
+                  </div>
+                  <div class="grid-item">
+                    <img src="{% static 'adminlte-3.1.0/img/user6-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
+                  </div>
+                  <div class="grid-item">
+                    <img src="{% static 'adminlte-3.1.0/img/user5-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
+                  </div>
+                </div>
+
+              <!-- <div class="card_user_image">
+                  <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
+                  <img src="{% static 'adminlte-3.1.0/img/user7-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
+                  <img src="{% static 'adminlte-3.1.0/img/user6-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
+                  <img src="{% static 'adminlte-3.1.0/img/user5-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
+              </div> -->
+            </div>
 					</div>
 					<div class="card-footer">
 						<div class="text-right">
@@ -217,7 +299,6 @@
 			</div>
 			`;
   }
-
 
   function exibirMensagem() {
     document.getElementById('mensagem-container').innerHTML = '<h2>Nenhuma guarnição disponível.</h2>';

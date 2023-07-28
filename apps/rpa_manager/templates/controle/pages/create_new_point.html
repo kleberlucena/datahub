@@ -1,0 +1,127 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block style_sheet %}
+    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+  <style>
+     .piloto_observador,
+     .quem_solicitou,
+     .quem_autorizou,
+     .local,
+     .aeronave{
+      margin-top: 10px;
+    }
+    
+    .map_options {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Estilo para o ícone "x" */
+    .input-container {
+      position: relative;
+      width: 400px;
+    }
+    .clear-icon {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      cursor: pointer;
+    }
+
+    /* fix select2 field height */
+    .select2-selection, .select2-selection--single{
+      height: 38px !important;
+    }
+  
+    #select2-id_aeronave-container {
+      height: 38px !important;
+    }
+
+    @media (max-width: 768px) {
+      .map_options {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .input-container {
+        position: relative;
+        width: 100%;
+      }
+  }
+
+  </style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Inserir ponto {% endblock %}
+
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-primary card-outline">
+        <div class="card-header">
+          <h3 class="card-title">Inserir ponto de interesse</h3>
+        </div>
+
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">Adicionar</button>
+        </form>
+        <div id="map" style="height: 500px;"></div>
+        
+      </div>
+    </div>
+  {% endblock content %}
+
+  <!-- javascripts -->
+  {% block js %}
+  <!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script src="{% static 'leaflet/leaflet.js' %}"></script>
+  <script>
+    let latitude = {{ latitude | safe }}
+    let longitude = {{ longitude | safe }}
+    var map = L.map('map').setView([latitude, longitude], 17);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    var marker;
+
+    map.on('click', function (e) {
+        if (marker) {
+            map.removeLayer(marker);
+        }
+
+        marker = L.marker(e.latlng).addTo(map);
+        document.getElementById('id_latitude').value = e.latlng.lat;
+        document.getElementById('id_longitude').value = e.latlng.lng;
+    });
+  </script>
+{% endblock %}

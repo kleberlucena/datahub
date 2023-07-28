@@ -9,3 +9,4 @@ from .views_dashboard_cards import *
 from .views_funcoes_auxiliares import *
 from .views_main import *
 from .views_send_email import *
+from .views_points_of_interest import *
