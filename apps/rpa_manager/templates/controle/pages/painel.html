@@ -125,18 +125,30 @@
     // Função que será executada quando o documento estiver pronto
     document.addEventListener('DOMContentLoaded', function () {
       coordinatesJson = {{ coordinates_json | safe }}
-    
       coordinatesByDate = {{ coordinates_by_date_json | safe }}
       let centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude];
       let zoomLevel = 8;
 
       let map = L.map('map').setView(centerCoordinates, zoomLevel);
+      let staticUrl = "{% static 'leaflet/images/marker-icon.png' %}"
+      console.log(staticUrl)
+
+      let defaultIcon = L.icon({
+        iconUrl: staticUrl,
+        iconSize: [64, 64],
+        iconAnchor: [32, 64],
+      });
+
       let marker = new L.marker(centerCoordinates)
       .addTo(map)
-      .bindPopup(coordinatesJson.titulo + '<br>' + coordinatesJson.latitude + ',' + coordinatesJson.longitude).openPopup();
+      .bindPopup(coordinatesJson.usuario + '<br>' + 
+                 coordinatesJson.titulo + '<br>' + 
+                 coordinatesJson.latitude + ',' + 
+                 coordinatesJson.longitude).openPopup();
 
 
       for (let i = 0; i < coordinatesByDate.length; i++) {
+        usuario = coordinatesByDate[i].usuario
         titulo = coordinatesByDate[i].titulo
         latitude = coordinatesByDate[i].latitude !== null ? coordinatesByDate[i].latitude : 0.0
         longitude = coordinatesByDate[i].longitude !== null ? coordinatesByDate[i].longitude : 0.0
@@ -144,7 +156,7 @@
         if (latitude !== 0.0 && longitude !== 0.0) {
           let marker = new L.marker([latitude, longitude])
             .addTo(map)
-            .bindPopup(titulo + '<br>' + latitude + ',' + longitude).openPopup();
+            .bindPopup(usuario + '<br>' + titulo + '<br>' + latitude + ',' + longitude).openPopup();
         }
       }
       
@@ -163,9 +175,18 @@
 /*
 <script>
   const jsonEquipes = {{ guarnicoes_json | safe }};
-
+  const user = "{{ request.user | stringformat:"s" | safe }}"; // Get the logged-in user's username
   // Função para criar a estrutura HTML para uma equipe (card)
   function criarEquipeCard(equipe) {
+    const isCurrentUserCreator = equipe.piloto_remoto === user; // Check if the logged-in user is the creator of the Guarnicao
+    let descadastroButton = ``
+    if (isCurrentUserCreator) {
+      descadastroButton = `
+      <a href="{% url 'rpa_manager:descadastrar_guarnicao' %}">
+        <button type="button" class="btn btn-outline-danger ml-3">Descadastrar</button>
+      </a>
+      `
+    } 
     return `
 			<div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
 				<div class="card bg-light d-flex flex-fill">
@@ -189,9 +210,7 @@
 					</div>
 					<div class="card-footer">
 						<div class="text-right">
-              {% if user == request.user %}
-                <a href="{% url 'rpa_manager:descadastrar_guarnicao' %}"> Descadastrar</a>
-              {% endif %}
+              ${descadastroButton}
 						</div>
 					</div>
 				</div>

@@ -7,10 +7,12 @@ from django.views import View
 from django.views.generic import DetailView
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
-from django.views.generic.edit import (UpdateView,
-                                       DeleteView,)
+from django.views.generic.edit import (UpdateView,)
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class VerMissaoView(DetailView):
+
+class VerMissaoView(LoginRequiredMixin, DetailView):
     model = Missao
     template_name = "controle/pages/ver_missao.html"
     context_object_name = 'missao'

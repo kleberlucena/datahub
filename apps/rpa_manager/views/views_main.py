@@ -30,10 +30,8 @@ class PainelView(TemplateView):
         coordinates_dict: Dict = {}
         report_by_date_list: List = []
         lista_de_guarnicoes = []
-        guarnicoes_ids = []
         
         ultimo_relatorio = Relatorio.objects.latest('id')
-        
         default_month: int = 1
         default_year: int = 2023
         month: int = int(self.request.GET.get('month', default_month))  
@@ -42,6 +40,7 @@ class PainelView(TemplateView):
         report_by_date = Relatorio.objects.filter(data__month=month, data__year=year)
         for report in report_by_date:
             report_by_date_list.append({
+                'usuario': report.militar.username,
                 'titulo': report.titulo,
                 'latitude': report.latitude,
                 'longitude': report.longitude
@@ -52,7 +51,6 @@ class PainelView(TemplateView):
         for local in localidades:
             # data__date=date.today()
             guarnicoes = Guarnicao.objects.filter(local=local)
-            print(guarnicoes)
             for guarnicao in guarnicoes:
                 lista_de_guarnicoes.append({
                     'id': guarnicao.id,
@@ -64,23 +62,29 @@ class PainelView(TemplateView):
                 })
                 
         guarnicoes_json = json.dumps(lista_de_guarnicoes, indent=4, ensure_ascii=False)
-        # print(guarnicoes_json)
+       
         coordinates_by_date_json = json.dumps(report_by_date_list, indent=4)
         coordinates_json = create_json_for_coordinates(coordinates_dict, ultimo_relatorio)
+        print(coordinates_json)
         context['coordinates_json'] = coordinates_json
         context['coordinates_by_date_json'] = coordinates_by_date_json
         context['guarnicoes_json'] = guarnicoes_json
-        context['guarnicoes'] = guarnicoes
         return context
 
 
-class PrincipalView(TemplateView):
+class PrincipalView(LoginRequiredMixin, TemplateView):
     template_name = 'controle/pages/operacoes.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        missoes = Missao.objects.all().order_by('-data', '-horario')
         form = formulario_missao(self.request)
+
+        # Verifica se o usuário é um superuser
+        if self.request.user.is_superuser:
+            missoes = Missao.objects.all().order_by('-data', '-horario')
+        else:
+            # Filtra os objetos para exibir apenas os que foram criados pelo usuário atual
+            missoes = Missao.objects.filter(usuario=self.request.user).order_by('-data', '-horario')
 
         context['missoes'] = missoes
         context['form'] = form

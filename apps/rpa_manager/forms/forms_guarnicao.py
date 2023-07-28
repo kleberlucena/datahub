@@ -11,7 +11,7 @@ class GuarnicaoForm(forms.ModelForm):
                   'piloto_remoto', 
                   'piloto_observador', 
                   'telefone', 
-                  'local'
+                  'local',
                   ]
         
         widgets = {

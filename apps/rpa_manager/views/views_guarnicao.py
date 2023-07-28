@@ -5,12 +5,24 @@ from apps.rpa_manager.forms import GuarnicaoForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.shortcuts import render, redirect
+from datetime import datetime, date
 
 class GuarnicaoCreateView(CreateView):
     model = Guarnicao
     form_class = GuarnicaoForm
     template_name = 'controle/pages/guarnicao_register.html'
     success_url = reverse_lazy('rpa_manager:checklist_form')
+    
+    def form_valid(self, form):
+        # Verificar se já existe uma guarnição para o usuário logado no mesmo dia
+        user = self.request.user
+        guarnicoes_no_dia = Guarnicao.objects.filter(piloto_remoto=user)
+        
+        if guarnicoes_no_dia.exists():
+            form.add_error(None, 'Já existe uma guarnição criada por este usuário no mesmo dia.')
+            return self.form_invalid(form)
+
+        return super().form_valid(form)
     
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
