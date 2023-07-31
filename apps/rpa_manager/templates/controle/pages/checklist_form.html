@@ -151,9 +151,17 @@
               </div>
             </div>
           </div>
-          <a href="{% url 'rpa_manager:guarnicao_edit' guarnicao.pk %}">
-            <button type="button" style="display: inline;" class="btn btn-block btn-primary mt-3 col-md-4"><i class="fa fa-pen"></i> Editar guarnição </button>
-          </a>
+          
+          {% if request.user == guarnicao.piloto_remoto %}
+            <a href="{% url 'rpa_manager:guarnicao_edit' guarnicao.pk %}">
+              <button type="button" style="display: inline;" class="btn btn-block btn-primary mt-3 col-md-4"><i class="fa fa-pen"></i> Editar guarnição </button>
+            </a>
+          {% else %}
+            <a href="{% url 'rpa_manager:guarnicao_edit' guarnicao.pk %}">
+              <button type="button" style="display: inline; cursor: not-allowed;" class="btn btn-block btn-secondary mt-3 col-md-4"><i class="fa fa-pen"></i> Editar guarnição </button>
+            </a>
+          {% endif %}
+            
         </div>
       {% endif %}
 

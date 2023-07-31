@@ -1,14 +1,11 @@
 from django.views.generic import DetailView, UpdateView, DeleteView
-from apps.rpa_manager.forms import ChecklistForm, Aeronave
+from apps.rpa_manager.forms import ChecklistForm
 from apps.rpa_manager.models import Checklist, HistoricoAlteracoesAeronave, Guarnicao, CidadesPB
 from django.urls import reverse_lazy
 from django.views import View
 from django.shortcuts import render, redirect
-import json
-from django.http import HttpResponseRedirect
 from apps.rpa_manager.utils.saveNewChecklistInAircraftHistoric import saveNewChecklistInAircraftHistoric
 from apps.rpa_manager.utils.getLastRegisteredChecklistData import getLastRegisteredChecklistData
-from datetime import date
 
 
 class VerChecklistView(DetailView):

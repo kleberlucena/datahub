@@ -33,9 +33,6 @@
     display: grid;
     grid-template-columns: auto auto;
     gap: 30px;
-    /*align-items: center;
-    grid-auto-flow: column;
-    align-items: start; */
   }
 
   .card_gu_info {
@@ -60,6 +57,7 @@
     grid-template-columns: 1fr 1fr 1fr; /* Três colunas com mesmo tamanho */
     gap: 10px; /* Espaçamento entre as divs (opcional) */
   }  
+
   .large-image {
     grid-column: 1 / span 3; /* A primeira imagem ocupa três colunas */
   }
@@ -225,113 +223,114 @@
       }).addTo(map); 
     });
   </script>
-/*
-<script>
-  const jsonEquipes = {{ guarnicoes_json | safe }};
-  const user = "{{ request.user | stringformat:"s" | safe }}"; // Get the logged-in user's username
-  // Função para criar a estrutura HTML para uma equipe (card)
-  function criarEquipeCard(equipe) {
-    const isCurrentUserCreator = equipe.piloto_remoto === user; // Check if the logged-in user is the creator of the Guarnicao
-    let descadastroButton = ``
-    if (isCurrentUserCreator) {
-      descadastroButton = `
-      <a href="{% url 'rpa_manager:descadastrar_guarnicao' %}">
-        <button type="button" class="btn btn-outline-danger ml-3">Descadastrar</button>
-      </a>`
-    } else {
-      descadastroButton = `<button type="button" class="btn btn-outline-secondary ml-3 desabled">Descadastrar</button>`
+  
+  <script>
+    const jsonEquipes = {{ guarnicoes_json | safe }};
+    const user = "{{ request.user | stringformat:"s" | safe }}"; // Get the logged-in user's username
+    // Função para criar a estrutura HTML para uma equipe (card)
+    function criarEquipeCard(equipe) {
+      const isCurrentUserCreator = equipe.piloto_remoto === user; // Check if the logged-in user is the creator of the Guarnicao
+      let descadastroButton = ``
+      if (isCurrentUserCreator) {
+        descadastroButton = `
+        <a href="{% url 'rpa_manager:descadastrar_guarnicao' %}">
+          <button type="button" class="btn btn-outline-danger ml-3">Descadastrar</button>
+        </a>`
+      } else {
+        descadastroButton = 
+        `<button type="button" style="cursor: not-allowed;"class="btn btn-outline-secondary ml-3 desabled">Descadastrar</button>`
+      }
+
+      let motorista = equipe.motorista !== 'sem registro' ? 
+      `<h5 class=""><i class="fa fa-car"></i> <b>Motorista:</b> ${equipe.motorista} </h5>` : ''
+      let piloto_remoto = equipe.piloto_remoto !== 'sem registro' ? 
+      `<h5 class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> ${equipe.piloto_remoto} </h5>` : ''
+      let piloto_observador = equipe.piloto_observador !== 'sem registro' ? 
+      `<h5 class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b> ${equipe.piloto_observador} </h5>` : ''
+      let telefone = equipe.telefone !== 'sem registro' ? 
+      `<h5 class=""><i class="fa fa-phone"></i> <b>Contato:</b> ${equipe.telefone} </h5>` : ''
+
+      console.log(motorista)
+      
+      return `
+        <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
+          <div class="card bg-light d-flex flex-fill">
+            <div class="card-header text-muted border-bottom-0">
+              <i class="fas fa-lg fa-building"></i> ${equipe.local}
+            </div> 
+            <div class="card-body pt-0">
+              <div class="card_content">
+                <div class="card_gu_info">
+                    ${motorista}
+                    ${piloto_remoto} 
+                    ${piloto_observador}
+                    ${telefone}
+                </div>
+                <div class="grid-container_for-images">
+                    <div class="grid-item large-image">
+                      <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid small-image">
+                    </div>
+                    <div class="grid-item">
+                      <img src="{% static 'adminlte-3.1.0/img/user7-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
+                    </div>
+                    <div class="grid-item">
+                      <img src="{% static 'adminlte-3.1.0/img/user6-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
+                    </div>
+                    <div class="grid-item">
+                      <img src="{% static 'adminlte-3.1.0/img/user5-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
+                    </div>
+                  </div>
+
+                <!-- <div class="card_user_image">
+                    <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
+                    <img src="{% static 'adminlte-3.1.0/img/user7-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
+                    <img src="{% static 'adminlte-3.1.0/img/user6-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
+                    <img src="{% static 'adminlte-3.1.0/img/user5-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
+                </div> -->
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="text-right">
+                ${descadastroButton}
+              </div>
+            </div>
+          </div>
+        </div>
+        `;
     }
 
-    let motorista = equipe.motorista !== 'sem registro' ? 
-    `<h5 class=""><i class="fa fa-car"></i> <b>Motorista:</b> ${equipe.motorista} </h5>` : ''
-    let piloto_remoto = equipe.piloto_remoto !== 'sem registro' ? 
-    `<h5 class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> ${equipe.piloto_remoto} </h5>` : ''
-    let piloto_observador = equipe.piloto_observador !== 'sem registro' ? 
-    `<h5 class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b> ${equipe.piloto_observador} </h5>` : ''
-    let telefone = equipe.telefone !== 'sem registro' ? 
-    `<h5 class=""><i class="fa fa-phone"></i> <b>Contato:</b> ${equipe.telefone} </h5>` : ''
+    function exibirMensagem() {
+      document.getElementById('mensagem-container').innerHTML = '<h2>Nenhuma guarnição disponível.</h2>';
+    }
 
-    console.log(motorista)
-    
-    return `
-			<div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
-				<div class="card bg-light d-flex flex-fill">
-					<div class="card-header text-muted border-bottom-0">
-						<i class="fas fa-lg fa-building"></i> ${equipe.local}
-					</div> 
-					<div class="card-body pt-0">
-						<div class="card_content">
-              <div class="card_gu_info">
-                  ${motorista}
-                  ${piloto_remoto} 
-                  ${piloto_observador}
-                  ${telefone}
+    // Verificando se o JSON está vazio
+    if (jsonEquipes.length === 0) {
+      exibirMensagem();
+    } else {
+      // Obtendo todas as localidades presentes no JSON
+      const localidades = [...new Set(jsonEquipes.map(equipe => equipe.local))];
+
+      // Criando o HTML completo para todas as localidades e equipes
+      const localidadesHTML = localidades.map(localidade => {
+        // Filtrando as equipes para a localidade atual
+        const equipesLocalidade = jsonEquipes.filter(equipe => equipe.local === localidade);
+
+        // Criando os cards para as equipes da localidade atual
+        const equipesCardsHTML = equipesLocalidade.map(equipe => criarEquipeCard(equipe)).join('');
+
+        // Criando o card para a localidade com as equipes
+        return `
+            <div class="col-md-12">
+              <h2>${localidade} (${equipesLocalidade.length})</h2>
+              <div class="row">
+                ${equipesCardsHTML}
               </div>
-              <div class="grid-container_for-images">
-                  <div class="grid-item large-image">
-                    <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid small-image">
-                  </div>
-                  <div class="grid-item">
-                    <img src="{% static 'adminlte-3.1.0/img/user7-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
-                  </div>
-                  <div class="grid-item">
-                    <img src="{% static 'adminlte-3.1.0/img/user6-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
-                  </div>
-                  <div class="grid-item">
-                    <img src="{% static 'adminlte-3.1.0/img/user5-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
-                  </div>
-                </div>
-
-              <!-- <div class="card_user_image">
-                  <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
-                  <img src="{% static 'adminlte-3.1.0/img/user7-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
-                  <img src="{% static 'adminlte-3.1.0/img/user6-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
-                  <img src="{% static 'adminlte-3.1.0/img/user5-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid">
-              </div> -->
             </div>
-					</div>
-					<div class="card-footer">
-						<div class="text-right">
-              ${descadastroButton}
-						</div>
-					</div>
-				</div>
-			</div>
-			`;
-  }
+          `;
+      }).join('');
 
-  function exibirMensagem() {
-    document.getElementById('mensagem-container').innerHTML = '<h2>Nenhuma guarnição disponível.</h2>';
-  }
-
-  // Verificando se o JSON está vazio
-  if (jsonEquipes.length === 0) {
-    exibirMensagem();
-  } else {
-    // Obtendo todas as localidades presentes no JSON
-    const localidades = [...new Set(jsonEquipes.map(equipe => equipe.local))];
-
-    // Criando o HTML completo para todas as localidades e equipes
-    const localidadesHTML = localidades.map(localidade => {
-      // Filtrando as equipes para a localidade atual
-      const equipesLocalidade = jsonEquipes.filter(equipe => equipe.local === localidade);
-
-      // Criando os cards para as equipes da localidade atual
-      const equipesCardsHTML = equipesLocalidade.map(equipe => criarEquipeCard(equipe)).join('');
-
-      // Criando o card para a localidade com as equipes
-      return `
-					<div class="col-md-12">
-						<h2>${localidade} (${equipesLocalidade.length})</h2>
-						<div class="row">
-							${equipesCardsHTML}
-						</div>
-					</div>
-				`;
-    }).join('');
-
-    // Adicionando o HTML criado ao elemento com o id 'equipes-container'
-    document.getElementById('equipes-container').innerHTML = localidadesHTML;
-  }
+      // Adicionando o HTML criado ao elemento com o id 'equipes-container'
+      document.getElementById('equipes-container').innerHTML = localidadesHTML;
+    }
 </script>
 {% endblock %}

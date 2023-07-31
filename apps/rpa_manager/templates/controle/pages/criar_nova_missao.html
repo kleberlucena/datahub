@@ -1,13 +1,11 @@
 {% extends "base/base.html" %}
+{% load static %}
 
 {% block style_sheet %}
-{% load static %}
-<link rel="stylesheet"
-  href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
-<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
-<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
-<link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
-<link rel="stylesheet" href="{% static 'rpa_manager/css/fix_select2_h.css' %}">
+  <link rel="stylesheet"href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
 <style>
   .piloto_observador,
   .quem_solicitou,
@@ -45,9 +43,19 @@
     height: 38px !important;
   }
 
-  .ponto-atendimento div > p:nth-child(even) {
-    background: lightblue !important;
+  
+  /* Menu collapse para pontos de interesse */
+  .card_atendimento:hover {
+    background-color: rgba(220, 220, 220, 1) !important;
+    color: #FFF;
+    font-weight: bold;
+    cursor: pointer;
   }
+  .card_atendimento:nth-child(even) {
+    background-color: rgba(220, 220, 220, 0.3);
+  }
+  
+  
 
   @media (max-width: 768px) {
     .map_options {
@@ -133,28 +141,28 @@
             Endereço</button>
         </div>
 
-        <section class="content mt-3 ml-0">
+        <section class="content mt-3">
           <div class="container-fluid">
             <div class="row">
               <div class="col-12">
-        
                 <div class="card">
                   <div class="card-header">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse" onclick="collapseCard()">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                     <h3 class="card-title" style="color: black;">Pontos de atenção</h3>
                     </button>
                     <div class="card-tools">
-                      <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse" onclick="collapseCard()">
-                        <i class="fas fa-minus"></i>
-                      </button>
                     </div>
                   </div>
                   {% for point in points %}
-                    <div class="card-body collapse" aria-expanded="false" id="pontosCadastrados">
-                        <div class="ponto-atendimento" data-lat="{{ point.latitude }}" data-lng="{{ point.longitude }}">
-                          <p style="font-size: 0.8rem">{{ point.descricao }}</p>
-                        </div>
-                    </div>
+                  <div class="card-body collapse card_atendimento" aria-expanded="false" id="pontosCadastrados">
+                      <div class="ponto-atendimento" data-lat="{{ point.latitude }}" data-lng="{{ point.longitude }}">
+                        <p class="point_of_interest" style="font-size: 0.8rem">
+                          {{ point.descricao }}
+                          <a href="{% url 'rpa_manager:edit_point' point.id %}" style="padding-left: 10px"><i class="fa fa-pen"></i></a>
+                          <a href="{% url 'rpa_manager:delete_point' point.id %}" style="padding-left: 10px"><i class="fa fa-trash"></i></a>
+                        </p>
+                      </div>
+                  </div>
                   {% endfor %}
                 </div>
               </div>
@@ -200,7 +208,6 @@
     var longitude = document.getElementById('id_longitude');
     var marcacao;
     let dadosMarcadores = {{ points_json | safe }}
-    console.log(dadosMarcadores)
 
     // Adicionar camada do mapa (pode ser substituído por outras camadas como OpenStreetMap, Mapbox, etc.)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -269,40 +276,33 @@
       enderecoInput.value = '';
     }
 
-
-    const trianguloVertices = []
+    const urlLocalImg = "{% static '/sti/img/attention.png' %}"
+    // Define the custom icon
+    var attentionIcon = L.icon({
+      iconUrl: urlLocalImg,
+      iconSize: [32, 32], // Adjust the size as per your image dimensions
+      iconAnchor: [16, 32], // The point of the icon which corresponds to the marker's location
+      popupAnchor: [0, -32] // The point from which the popup should open relative to the iconAnchor
+    });
 
     dadosMarcadores.forEach((dados) => {
       const lat = dados.latitude;
       const lng = dados.longitude;
       const descricao = dados.descricao;
+      var marker = L.marker([lat, lng], { icon: attentionIcon }).addTo(map);
+      marker.bindPopup(descricao); // Adiciona uma caixa de texto (popup) ao círculo
+    });
 
-      const circulo = L.circle([lat, lng], {
-        color: 'red',
-        fillColor: 'red',
-        fillOpacity: 0.3,
-        radius: 50 // Defina o raio do círculo aqui (em metros)
-      }).addTo(map);
-
-      circulo.bindPopup(descricao); // Adiciona uma caixa de texto (popup) ao círculo
-
-      circulo.on('click', function () {
-        circulo.openPopup(); // Abre a caixa de texto (popup) ao clicar no círculo
+    const pontosAtendimento = document.querySelectorAll('.ponto-atendimento');
+    
+    pontosAtendimento.forEach(ponto => {
+      ponto.addEventListener('click', function() {
+        const lat = parseFloat(this.getAttribute('data-lat').replace(',', '.'));
+        const lng = parseFloat(this.getAttribute('data-lng').replace(',', '.'));
+        map.setView([lat, lng], 18);
       });
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
-      const pontosAtendimento = document.querySelectorAll('.ponto-atendimento');
-      
-      pontosAtendimento.forEach(ponto => {
-        ponto.addEventListener('click', function() {
-          const lat = parseFloat(this.getAttribute('data-lat').replace(',', '.'));
-          const lng = parseFloat(this.getAttribute('data-lng').replace(',', '.'));
-          console.log(lat, lng)
-          map.setView([lat, lng], 13);
-        });
-      });
-    });
   </script>
 
 
@@ -317,5 +317,16 @@
       var selectField = document.getElementById("id_usuario");
       selectField.readonly = true;
     });
+  </script>
+
+  <script>
+    const pointOfInterestElements = document.querySelectorAll('.point_of_interest');
+
+    pointOfInterestElements.forEach((point) => {
+      point.addEventListener('click', function() {
+        var targetElement = document.getElementById('map');
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      });
+    });  
   </script>
 {% endblock %}

@@ -160,12 +160,15 @@
     var latitude = document.getElementById('id_latitude');
     var longitude = document.getElementById('id_longitude');
     var marcacao;
-
     // Adicionar camada do mapa (pode ser substituído por outras camadas como OpenStreetMap, Mapbox, etc.)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    // Adiciona marcador no mapa
+    L.marker([latitude.value, longitude.value]).addTo(map);
+    map.setView([latitude.value, longitude.value], 16);
+    
     // Adicionar evento de clique no mapa
     map.on('click', function (e) {
       var lat = e.latlng.lat;

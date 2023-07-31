@@ -6,7 +6,9 @@ from .views.views_guarnicao import (
     DescadastrarGuarnicao,
     )
 from .views.views_points_of_interest import (
-    AddPointOfInterest    
+    AddPointOfInterest,
+    UpdatePointOfInterest,
+    DeletePointOfInterest    
 )
 
 from .views.views_main import (
@@ -37,6 +39,8 @@ urlpatterns = [
     path('historico/', HistoricosPorAeronaveView.as_view(), name='historico'),
     
     path('add_point/', AddPointOfInterest.as_view(), name='add_point'),
+    path('edit_point/<int:pk>/', UpdatePointOfInterest.as_view(), name='edit_point'),
+    path('delete_point/<int:pk>/', DeletePointOfInterest.as_view(), name='delete_point'),
     
     path('descadastrar/', DescadastrarGuarnicao.as_view(), name='descadastrar_guarnicao'),
     path('guarnicao_form', GuarnicaoCreateView.as_view(), name="guarnicao_form"),
