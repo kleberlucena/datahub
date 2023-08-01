@@ -99,6 +99,16 @@ class Aeronave(Base):
     maleta = models.ForeignKey(Maleta, on_delete=models.SET_NULL, null=True)
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
     em_uso = models.BooleanField(default=False, null=True, blank=True)
+    imagem_aeronave = StdImageField(
+        'Imagem',
+        storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
+        upload_to='imagens',
+        variations={
+            'large': {'width': 720, 'height': 720, 'crop': True},
+            'medium': {'width': 480, 'height': 480, 'crop': True},
+            'thumbnail': {'width': 128, 'height': 128, 'crop': True},
+        }, delete_orphans=True, blank=True, null=True
+    )
     
     def __str__(self):
         return "{} - {} - {}".format(self.prefixo, self.modelo, self.marca)

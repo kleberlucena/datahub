@@ -1,3 +1,4 @@
+from typing import Any, Dict
 from django.shortcuts import redirect, render
 from django.conf import settings
 from django.shortcuts import get_object_or_404
@@ -12,11 +13,18 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 import json
 
+
 class VerMissaoView(LoginRequiredMixin, DetailView):
     model = Missao
     template_name = "controle/pages/ver_missao.html"
     context_object_name = 'missao'
-
+    
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['latitude'] = str(self.object.latitude)
+        context['longitude'] = str(self.object.longitude)
+        return super().get_context_data(**kwargs)
+    
     
 class CriarNovaMissaoView(View):
     def get(self, request):

@@ -40,7 +40,6 @@
     flex-direction: column;
     justify-content: space-around;
     max-height: 200px; /* Defina o limite de altura desejado aqui */
-    
   }
   .card_user_image {
     display: grid;
@@ -76,6 +75,31 @@
   
   .hover-zoom:hover {
     transform: scale(3.0); /* Aumenta o tamanho da imagem em 20% no hover */
+  }
+
+  @media (max-width: 768px) {
+    .select_date_form {
+      display: flex;
+      flex-direction: row;
+      justify-content: start;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .select_year{
+      width: 100px;
+    }
+
+    .card_gu_info {
+      display: flex;
+      flex-direction: column;
+      margin-top: 30px;
+    }
+
+    .grid-container_for-images {
+      display: flex;
+      flex-direction: column;
+    }  
   }
 </style>
 {% endblock style_sheet %}
@@ -250,7 +274,6 @@
       let telefone = equipe.telefone !== 'sem registro' ? 
       `<h5 class=""><i class="fa fa-phone"></i> <b>Contato:</b> ${equipe.telefone} </h5>` : ''
 
-      console.log(motorista)
       
       return `
         <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">

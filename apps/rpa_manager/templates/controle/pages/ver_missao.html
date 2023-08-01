@@ -10,7 +10,33 @@
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
-
+  <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+  <style>
+    .detail_report {
+      display: flex;
+      gap: 10px;
+    }
+    .report_details_card {
+      width: 400px;
+    }
+    .detail_report_map {
+      height: 800px;
+    }
+    .mapBehaviorWhenError {
+      border: 1px solid black;
+    }
+    @media (max-width: 768px) {
+      .detail_report {
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: start;
+        width: 100%;
+      }
+      .detail_report_map {
+        height: 300px;
+      }
+    }
+  </style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -29,64 +55,88 @@
 
 <div class="card card-primary card-outline">
   <div class="card-header">
-    <h3 class="card-title"></h3>
-  </div>
-  <div class="card-body">
-    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
-      {% comment %} code here {% endcomment %}
-      <div class="container">
-        <h2 class="ver_missao_title"> Ver Operação </h2>
-        <dl class="row">
-          <dt class="col-sm-3">Usuário</dt>
-          <dd class="col-sm-9">{{ missao.usuario }}</dd>
-          <dt class="col-sm-3">Título</dt>
-          <dd class="col-sm-9">{{ missao.titulo }}</dd>
-          <dt class="col-sm-3">Local</dt>
-          <dd class="col-sm-9">{{ missao.local }}</dd>
-          <dt class="col-sm-3">Horário</dt>
-          <dd class="col-sm-9">{{ missao.horario }}</dd>
-          <dt class="col-sm-3">Data</dt>
-          <dd class="col-sm-9">{{ missao.data }}</dd>
-          <dt class="col-sm-3">Piloto remoto</dt>
-          <dd class="col-sm-9">{{ missao.usuario }}</dd>
-          <dt class="col-sm-3">Aeronave</dt>
-          <dd class="col-sm-9">{{ missao.aeronave }}</dd>
-          <dt class="col-sm-3">Status</dt>
+    <h3 class="card-title">Dados da operação</h3>
+  </div> 
 
-          {% if missao.concluida %}
-          <dd class="col-sm-9">
-            <span class="badge badge-success">Encerrada</span><br>
-          </dd>
+  <div class="detail_report">
+    <div class="card card-primary col-md-4 mt-3">
+
+      <div class="card-body">
+        <strong>Título: </strong> {{ missao.titulo }} 
+        <hr>
+        <strong>Piloto remoto: </strong> {{ missao.usuario }}
+        <hr>
+        <strong>Piloto Observador: </strong> 
+          {% if piloto_observador == None %}
+            sem registro
           {% else %}
-          <dd class="col-sm-9">
-            <span class="badge badge-warning">Em andamento</span><br>
-          </dd>
+            {{ missao.piloto_observador }}
           {% endif %}
-
-          <a href="{% url 'rpa_manager:principal' %}">
-            <button type="button" class="btn btn-primary">Voltar</button>
-          </a>
-        </dl>
+        <hr>
+        <strong>Quem autorizou: </strong> {{ missao.quem_autorizou }}
+        <hr>
+        <strong>Quem solicitou: </strong> {{ missao.quem_solicitou }}
+        <hr>
+        <strong>Local: </strong> {{ missao.local }}
+        <hr>
+        <strong>Latitude: </strong> {{ missao.latitude }}
+        <hr>
+        <strong>Longitude: </strong> {{ missao.longitude }}
+        <hr>
+        <strong>Horário: </strong> {{ missao.horario }}
+        <hr>
+        <strong>Data: </strong> {{ missao.data }}
+        <hr>
+        <strong>Aeronave: </strong> {{ missao.aeronave }}
+        <hr>
+        <strong>Conclusão: </strong> 
+          {% if missao.concluida is True %}
+              <span class="badge badge-success">Encerrada</span>
+            {% else %}
+              <span class="badge badge-warning">Em andamento</span>
+          {% endif %}
+        <hr>
       </div>
     </div>
-  </div>
+    
+    <div class="col-md-8">
+      <div id="map" class="detail_report_map mt-3 mr-3"><h3 id="errorMessage"></h3></div>
+    </div>
 </div>
 {% endblock content %}
 
 <!-- javascripts -->
 {% block js %}
-<!-- DataTables  & Plugins -->
-<script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
-<script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script src="{% static 'leaflet/leaflet.js' %}"></script>
+  <script>
+    		// Função que será executada quando o documento estiver pronto
+		document.addEventListener('DOMContentLoaded', function () {
+      var latitude = {{ missao.latitude | safe }}
+      var longitude = {{ missao.longitude | safe }}
+     
+      let map = L.map('map').setView([latitude, longitude], 16);
+
+      // Adicionando uma camada de mapa (neste caso, o OpenStreetMap)
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+      
+      // Adicionando um marcador no mapa
+      let marker = L.marker([latitude, longitude]).addTo(map);
+    });
+  </script>
 {% endblock %}

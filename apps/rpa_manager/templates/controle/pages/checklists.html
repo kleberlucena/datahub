@@ -42,6 +42,7 @@
             <th scope="col">Piloto</th>
             <th scope="col">Aeronave</th>
             <th scope="col">Data</th>
+            <th scope="col">Horário</th>
             <th class="removerDoPdf" scope="col">Ações</th>
           </tr>
         </thead>
@@ -51,7 +52,8 @@
           <tr>
             <td>{{ checklist.piloto }}</td>
             <td>{{ checklist.aeronave }}</td>
-            <td>{{ checklist.data | date:"d/m/Y" }}</td>
+            <td data-sort='YYYYMMDD'>{{ checklist.data | date:"d/m/Y" }}</td>
+            <td>{{ checklist.horario }}</td>
 
             <td>
               <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
@@ -135,7 +137,10 @@
       responsive: true,
       searching: true,
       processing: true,
-      columnDefs: [{ "width": "150px", targets: [-1] }]
+      columnDefs: [{ "width": "150px", targets: [-1] }],
+      order: [
+        [2, 'desc']
+      ]
     });
   </script>
 {% endblock %}

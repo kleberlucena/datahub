@@ -59,7 +59,7 @@
             <tr>
               <td>{{ relatorio.titulo }}</td>
               <td>{{ relatorio.militar }}</td>
-              <td>{{ relatorio.data}}</td>
+              <td data-sort='YYYYMMDD'>{{ relatorio.data | date:"d/m/Y" }}</td>
               <td>{{ relatorio.horario_inicial }}</td>
               <td>{{ relatorio.local }}</td>
               <td>{{ relatorio.aeronave }}</td>
@@ -137,7 +137,6 @@
     columnDefs: [{ "width": "200px", targets: [-1] }],
     order: [
       [2, 'desc'],
-      [3, 'desc']
     ]
   });
 </script>

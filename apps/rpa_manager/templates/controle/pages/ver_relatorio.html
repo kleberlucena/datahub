@@ -154,7 +154,7 @@
   <script type="text/javascript">
 		// Função que será executada quando o documento estiver pronto
 		document.addEventListener('DOMContentLoaded', function () {
-				coordinatesJson = {{ coordinates_json|safe }}
+				var coordinatesJson = {{ coordinates_json|safe }}
 				// Coordenadas do centro do mapa (latitude, longitude)
 				let centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude];
         

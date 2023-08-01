@@ -85,7 +85,7 @@
           {% for historico in aircraft_historic %}
           <tr>
             <td>{{ historico.aeronave }}</td>
-            <td>{{ historico.data }}</td>
+            <td data-sort='YYYYMMDD'>{{ historico.data  | date:'d/m/Y'}}</td>
             <td>{{ historico.num_helices }}</td>
             <td>{{ historico.num_baterias }}</td>
             <td>{{ historico.alteracoes }}</td>

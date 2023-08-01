@@ -10,13 +10,45 @@
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    .detail_aircraft {
+      display: flex;
+      gap: 10px;
+    }
+    .report_details_card {
+      width: 400px;
+    }
+    .detail_aircraft_img {
+      height: 800px;
+      margin: 0 auto;
+    }
+    .aircraft_img {
+      width: 1000px;
+      height: 783px;
+      border-radius: 5px;
+    }
+    @media (max-width: 768px) {
+      .detail_aircraft {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        width: 100%;
+      }
+
+      .aircraft_img {
+        width: 345px;
+        height: 400px;
+        border-radius: 5px;
+      }
+    }
+  </style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Ver Aeronave {% endblock %}
+{% block title %} Operações aéreas {% endblock %}
 
 <!-- context title -->
-{% block title-header %} Ver Aeronave {% endblock %}
+{% block title-header %} Operações aéreas {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
@@ -27,30 +59,38 @@
 {% block content %}
 <div class="card card-primary card-outline">
   <div class="card-header">
-    <h3 class="card-title"></h3>
-  </div>
-  <div class="card-body">
-    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
-      <div class="container">
-        <dl class="row">
-          <dt class="col-sm-3">Aeronave</dt>
-          <dd class="col-sm-9">{{ aeronave.prefixo }}</dd>
-          <dt class="col-sm-3">Modelo</dt>
-          <dd class="col-sm-9">{{ aeronave.modelo }}</dd>
-          <dt class="col-sm-3">Marca</dt>
-          <dd class="col-sm-9">{{ aeronave.marca }}</dd>
-          <dt class="col-sm-3">Local de operação</dt>
-          <dd class="col-sm-9">{{ aeronave.local }}</dd>
+    <h3 class="card-title">Dados aeronave</h3>
+  </div> 
 
-          <a href="{% url 'rpa_manager:aeronaves' %}">
-            <button type="button" class="btn btn-primary">Voltar</button>
-          </a>
-        </dl>
+  <div class="detail_aircraft">
+    <div class="card card-primary col-md-4 mt-3">
+      <div class="card-body">
+        <strong>Prefixo: </strong> {{ aeronave.prefixo }} 
+        <hr>
+        <strong>Modelo: </strong> {{ aeronave.modelo }}
+        <hr>
+        <strong>Marca: </strong> {{ aeronave.marca }}
+        <hr>
+        <strong>Local: </strong> {{ aeronave.local }}
+        <hr>
+        <strong>Disponibilidade: </strong> 
+        {% if aeronave.em_uso is True %}
+          <span class="badge badge-warning">Em operação</span>
+          <hr>
+        {% elif aeronave.em_uso == None %}
+          <span class="badge badge-danger">Indisponível</span>
+          <hr>
+        {% else %}
+          <span class="badge badge-success">Disponível</span>
+          <hr>
+        {% endif %}
       </div>
     </div>
-  </div>
+    
+    <div class="col-md-8">
+      <div class="detail_aircraft_img mt-3 mr-3"><img class="aircraft_img" src="{{ aeronave.imagem_aeronave.url }}" alt="mavic enterprise">`</div>
+    </div>
 </div>
-
 {% endblock content %}
 
 <!-- javascripts -->
