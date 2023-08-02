@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'django.contrib.postgres',
 
-    'auth_oidc',  # O APP auth must come before allauth to load templates
+    'auth.auth_oidc',  # O APP auth must come before allauth to load templates
     'oauth2',  # Include authenticate token
 
     # Necessary to allauth
@@ -88,6 +88,7 @@ INSTALLED_APPS = [
 
     # Apps
     'base',
+    'auth.api_oidc_provider',
     'apps.portal',
     'apps.cortex',
     'apps.person',
@@ -214,6 +215,7 @@ SOCIALACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_STORE_TOKENS = True  # Necessary to logout
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 ACCOUNT_LOGOUT_REDIRECT_URL = env('KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL')
 LOGIN_REDIRECT_URL = '/'
@@ -230,15 +232,17 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-response_sso = requests.get(f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/")
+SOCIALACCOUNT_ADAPTER = 'auth.auth_oidc.adapter.PMPBSocialAccountAdapter'
+
+""" response_sso = requests.get(f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/")
 sso_public_key = json.loads(response_sso.text)["public_key"]
 KEYCLOAK_SERVER_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n{}\n-----END PUBLIC KEY-----".format(
-    sso_public_key)
+    sso_public_key) """
 
 # Python Social Auth https://github.com/coriolinus/oauth2-article
 SOCIAL_AUTH_KEYCLOAK_KEY = env('SOCIAL_AUTH_KEYCLOAK_KEY')
 SOCIAL_AUTH_KEYCLOAK_SECRET = env('SOCIAL_AUTH_KEYCLOAK_SECRET')
-SOCIAL_AUTH_KEYCLOAK_PUBLIC_KEY = sso_public_key
+# SOCIAL_AUTH_KEYCLOAK_PUBLIC_KEY = sso_public_key
 SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL = env(
     'SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL')
 SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL = env(
@@ -296,14 +300,15 @@ SERVICES_TOKEN = env('SERVICES_TOKEN')
 
 # Global login required middleware
 PUBLIC_VIEWS = [
-    'auth_oidc.views.logout'
+    'auth.auth_oidc.views.logout'
 ]
 PUBLIC_PATHS = [
     r'^/accounts/.*',  # allow public access to all django-allauth views
     r'^/health_check',
     r'^/auth/logout/',
+    r'^/info_user_inactivate/',
     r'^/api/v1/.*',
-    r'/api/token/refresh/',
+    r'^/api/token/refresh/',
     r'^/watermark/.*',
     # Descomentar para expor rota adminitrativa (só para ajustes de configurações do keycloak)
     r'^/admin/.*',
