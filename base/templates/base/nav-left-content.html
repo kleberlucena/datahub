@@ -147,6 +147,23 @@
             </li>
           </ul>
         </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-sync-alt nav-icon"></i>
+            <p>
+              AUTH-OIDC
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview" style="display: none;">
+            <li class="nav-item">
+              <a href="{% url 'auth_oidc:command_auth_oidc' %}" class="nav-link">
+                <i class="fas fa-terminal nav-icon"></i>
+                <p>Comandos Disponíveis</p>
+              </a>
+            </li>
+          </ul>
+        </li>
         {% endif %}
         <li class="nav-header">INFORMAÇÕES</li>
         <li class="nav-item">

@@ -1,4 +1,11 @@
 {% load static %}
+<style>
+  .center-img {
+    margin: 0 0 0 12px;
+    border-radius: 3px;
+
+  }
+</style>
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <!-- Brand Logo -->
@@ -10,12 +17,11 @@
   <!-- Sidebar -->
   <div class="sidebar">
     <!-- Sidebar user (optional) -->
-    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-      <div class="image">
-        <img src="{{ user.military.image.url }}" class="img-circle elevation-2" alt="User Image">
-      </div>
-      <div class="info">
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center h-100">
+      <img src="{{ user.military.image.url }}" class="center-img align-items-stretch" alt="User Image">
+      <div class="info align-items-center h-100">
         <a href="#" class="d-block">{{ user.first_name }} {{ user.last_name }} </a>
+        
       </div>
     </div>
 

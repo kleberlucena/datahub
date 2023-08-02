@@ -1,6 +1,5 @@
 import catch as catch
 from django.contrib.auth.models import Group
-from django.contrib.auth.signals import user_logged_in
 import logging
 from allauth.socialaccount.models import SocialAccount
 
@@ -8,18 +7,23 @@ from allauth.socialaccount.models import SocialAccount
 logger = logging.getLogger(__name__)
 
 
-def synchronize_permissions(user, mapa_of_permissions):
+def synchronize_oidc_permission(user, request, **kwargs):
     try:
-        clients = list(mapa_of_permissions.keys())  # get the first key in the dictionary which is the client
+        data = SocialAccount.objects.get(
+            user_id=user.id).extra_data['resource_access']
+        # get the first key in the dictionary which is the client
+        clients = list(data.keys())
         if 'bacinf' in clients:
-            roles_oidc = mapa_of_permissions['bacinf']['roles']
+            roles_oidc = data['bacinf']['roles']
         else:
             roles_oidc = []
         roles_oidc_to_analyze = []  # list of roles not existing in user
-        groups_all = [group.name for group in Group.objects.all()]  # groups from system local
+        # groups from system local
+        groups_all = [group.name for group in Group.objects.all()]
         groups_user = user.groups.all()
 
-        groups_analytics = {group.name: False for group in groups_user}  # temp list from user groups
+        # temp list from user groups
+        groups_analytics = {group.name: False for group in groups_user}
 
         # Analyze current user groups
         for role in roles_oidc:
@@ -39,20 +43,15 @@ def synchronize_permissions(user, mapa_of_permissions):
                 group = Group.objects.get(name=role)
                 user.groups.add(group)
             else:
-                logger.warning("Attempt to enter permissions that do not exist in the system.", role)
+                logger.warning(
+                    "Attempt to enter permissions that do not exist in the system.", role)
 
         logger.info("[synchronize_oidc_permission] - sync permissions")
 
-    except Exception as err:
-        logger.error(f"Failed when trying to sync permissions: {err}")
+    except SocialAccount.DoesNotExist as e:
+        logger.error(
+            f"Failed when trying to sync permissions with SocialAccount: {e}")
 
-
-def synchronize_oidc_permission(sender, user, request, **kwargs):
-    try:
-        data = SocialAccount.objects.get(user_id=user.id).extra_data['resource_access']
-        synchronize_permissions(user, data)
     except Exception as err:
-        logger.error(f"Failed when trying to sync permissions with provider: {err}", exc_info=True)
-        
-        
-user_logged_in.connect(synchronize_oidc_permission)
+        logger.error(
+            f"Failed when trying to sync permissions with provider: {err}")

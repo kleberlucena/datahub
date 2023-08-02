@@ -65,7 +65,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/v1/auth/validate/<str:backend>/', exchange_token),
     path('api/v1/auth/logout/', expire_token),
-    path('', include('auth_oidc.urls'), name='auth_oidc'),
+    path('', include('auth.auth_oidc.urls'), name='auth_oidc'),
     path('', include('base.urls'), name='base'),
     path('api/v1/alert/', include('apps.alert.api.v1.urls'), name='alert'),
     path('api/v1/bnmp/', include('apps.bnmp.api.v1.urls'), name='bnmp'),
