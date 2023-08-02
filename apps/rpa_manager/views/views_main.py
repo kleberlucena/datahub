@@ -181,6 +181,7 @@ class BateriasView(TemplateView):
         return context
 
 
+
 class HistoricosPorAeronaveView(ListView):
     model = HistoricoAlteracoesAeronave
     template_name = 'controle/pages/aircraft_historic.html'

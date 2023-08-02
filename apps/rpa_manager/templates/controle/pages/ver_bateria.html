@@ -10,13 +10,45 @@
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    .detail_battery {
+      display: flex;
+      gap: 10px;
+    }
+    .report_details_card {
+      width: 400px;
+    }
+    .detail_battery_img {
+      height: 800px;
+      margin: 0 auto;
+    }
+    .battery_img {
+      width: 1000px;
+      height: 783px;
+      border-radius: 5px;
+    }
+    @media (max-width: 768px) {
+      .detail_battery {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        width: 100%;
+      }
+
+      .battery_img {
+        width: 345px;
+        height: 400px;
+        border-radius: 5px;
+      }
+    }
+  </style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Ver Bateria {% endblock %}
+{% block title %} Operações aéreas {% endblock %}
 
 <!-- context title -->
-{% block title-header %} Ver Bateria {% endblock %}
+{% block title-header %} Operações aéreas {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
@@ -27,26 +59,31 @@
 {% block content %}
 <div class="card card-primary card-outline">
   <div class="card-header">
-    <h3 class="card-title">Dados checklist</h3>
+    <h3 class="card-title">Dados bateria</h3>
   </div> 
 
-  <div class="detail_aircraft">
+  <div class="detail_battery">
     <div class="card card-primary col-md-4 mt-3">
       <div class="card-body">
         <strong>Numeração: </strong> {{ bateria.numeracao }} 
         <hr>
-        <strong>Ciclos: </strong> 
-        {% if bateria.num_ciclos > bateria.ciclos_maximo %}
-          <span class="badge badge-danger">{{ bateria.num_ciclos }}</span>
-        {% else %}
-          {{ bateria.num_ciclos }}
-        {% endif %}
+        <strong>Ciclos: </strong> {{ bateria.num_ciclos }}
         <hr>
-        <strong>Limite ciclos: </strong> {{ bateria.ciclos_maximo }}
+        <strong>Tipo: </strong> {{ bateria.ciclos_maximo }}
+        <hr>
+        <strong>Ciclos recomendado </strong> {{ bateria.ciclos_maximo.recommended_cicles }}
+        <hr>
+        <strong>Ciclos alerta: </strong> {{ bateria.ciclos_maximo.alert_cicles }}
+        <hr>
+        <strong>Ciclos crítico: </strong> {{ bateria.ciclos_maximo.critical_cicles }}
         <hr>
         <strong>Associada a aeronave: </strong> {{ bateria.aeronave }}
         <hr>
       </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="detail_battery_img mt-3 mr-3"><img class="battery_img" src="{{ bateria.imagem_bateria.url }}" alt="bateria enterprise">`</div>
     </div>
 </div>
 {% endblock content %}

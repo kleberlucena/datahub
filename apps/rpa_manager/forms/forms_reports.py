@@ -20,6 +20,7 @@ class RelatorioFormulario(forms.ModelForm):
             'num_sarpas', 'entidade_apoiada',
             'natureza_de_voo',
             'tipo_de_operacao', 'aeronave',
+            'numero_ficha_oc',  
             'relato_da_missao',
         ]
         exclude = ['missao']
@@ -37,7 +38,8 @@ class RelatorioFormulario(forms.ModelForm):
             'tipo_de_operacao': 'Tipo de operação',
             'relato_da_missao': 'Relato da missão',
             'data': 'Data inicial',
-            'data_final': 'Data final'
+            'data_final': 'Data final',
+            'numero_ficha_oc': 'Número ficha ocorrência CIOP'
         }
         
         widgets = {
@@ -73,6 +75,7 @@ class RelatorioFormulario(forms.ModelForm):
             'natureza_de_voo', 
             'tipo_de_operacao', 
             'aeronave', 
+            'numero_ficha_oc',
             'relato_da_missao'
         ]
         

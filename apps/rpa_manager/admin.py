@@ -7,7 +7,6 @@ from apps.rpa_manager.models import (
     Checklist,
     Relatorio,
     HistoricoAlteracoesAeronave,
-    Maleta,
     Bateria,
     NaturezaDeVoo,
     TipoDeOperacao,
@@ -30,7 +29,7 @@ class HistoricoAlteracoesAeronaveAdmin(admin.ModelAdmin):
     list_display = ('aeronave', 'alteracoes', 'data', 'codigo')
 
 class AeronaveAdmin(admin.ModelAdmin):
-    list_display = ('prefixo', 'modelo', 'marca', 'maleta')
+    list_display = ('prefixo', 'modelo', 'marca')
 
 class ChecklistAdmin(admin.ModelAdmin):
     list_display = ('aeronave', 'piloto', 'data', 'alteracoes')
@@ -51,7 +50,6 @@ admin.site.register(Checklist, ChecklistAdmin)
 admin.site.register(Relatorio, RelatorioAdmin)
 admin.site.register(HistoricoAlteracoesAeronave, HistoricoAlteracoesAeronaveAdmin)
 admin.site.register(Guarnicao, GuarnicaoAdmin)
-admin.site.register(Maleta)
 admin.site.register(Bateria)
 admin.site.register(NaturezaDeVoo)
 admin.site.register(TipoDeOperacao)

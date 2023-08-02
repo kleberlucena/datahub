@@ -7,14 +7,17 @@ class AeronavesForm(forms.ModelForm):
 
     class Meta:
         model = Aeronave
-        fields = ['prefixo', 'modelo',
-                  'marca', 'local',
+        fields = ['prefixo', 
+                  'modelo',
+                  'marca',
+                  'imagem_aeronave',
+                  'local',
                   'em_uso']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        campos = ['prefixo', 'modelo', 'marca', 'local', 'em_uso']
+        campos = ['prefixo', 'modelo', 'marca','imagem_aeronave' , 'local', 'em_uso']
 
         for campo in campos:
             add_class_and_form_control(self, campo, campo, 'form-control')

@@ -93,7 +93,7 @@
         <strong>Coordenadas: </strong> 
         
         {% if relatorio.latitude != None or relatorio.longitude != None %}
-          {{ relatorio.latitude|stringformat:"s" }}, {{ relatorio.longitude|stringformat:"s" }}
+          {{ relatorio.latitude|stringformat:"s" }},{{ relatorio.longitude|stringformat:"s" }}
         {% else %}
           sem registro
         {% endif %}
@@ -119,8 +119,16 @@
         <hr>
         <strong>Aeronave utilizada: </strong> {{ relatorio.aeronave }}
         <hr>
+        <strong>Número ficha ocorrência CIOP: </strong> 
+        {% if relatorio.numero_ficha_oc %}
+          {{ relatorio.numero_ficha_oc }}
+        {% else %}
+          sem registro
+        {% endif %}
+        <hr>
         <strong>Relato da operação: </strong> {{ relatorio.relato_da_missao }}
         <hr>
+        
       </div>
     </div>
   

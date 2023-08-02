@@ -63,9 +63,6 @@
         <button type="submit" class="btn btn-outline-info selection_btn" id="fileButton">Filtrar</button>
       </div>
     </form>
-  <div class="card-header">
-    {% comment %} <h3 class="card-title">Histórico</h3> {% endcomment %}
-  </div>
 
   <div class="card-body">
     <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
@@ -73,25 +70,33 @@
         aria-describedby="objects_list_info" width="100%">
         <thead>
           <tr>
-            <th>Aeronave</th>
+            <th>Situação</th>
+            <th>Título aeronave</th>
             <th>Data</th>
             <th>Número de Hélices</th>
             <th>Número de Baterias</th>
             <th>Alterações</th>
-
           </tr>
         </thead>
         <tbody>
-          {% for historico in aircraft_historic %}
-          <tr>
-            <td>{{ historico.aeronave }}</td>
-            <td data-sort='YYYYMMDD'>{{ historico.data  | date:'d/m/Y'}}</td>
-            <td>{{ historico.num_helices }}</td>
-            <td>{{ historico.num_baterias }}</td>
-            <td>{{ historico.alteracoes }}</td>
-
-          </tr>
-          {% endfor %}
+          
+          {% if aircraft_historic %}
+            {% for historico in aircraft_historic %}
+            <tr>
+              
+              {% if historico.aeronave == None %}
+                <td>Desativada</td>
+              {% else %}
+                <td>Em atividade</td>
+              {% endif %}
+              <td>{{ historico.titulo_aeronave }}</td>
+              <td data-sort='YYYYMMDD'>{{ historico.data  | date:'d/m/Y'}}</td>
+              <td>{{ historico.num_helices }}</td>
+              <td>{{ historico.num_baterias }}</td>
+              <td>{{ historico.alteracoes }}</td>
+            </tr>
+            {% endfor %}
+          {% endif %}
         </tbody>
       </table>
       {% endif %}
@@ -148,7 +153,7 @@
           searching: true,
           processing: true,
           columnDefs: [{ "width": "350px", targets: [-1] }],
-          order: [[1, 'desc']]
+          order: [[2, 'desc']]
         });
   </script>
 {% endblock %}

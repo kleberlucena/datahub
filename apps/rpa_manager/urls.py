@@ -11,6 +11,10 @@ from .views.views_points_of_interest import (
     DeletePointOfInterest    
 )
 
+from .views.views_typeofbattery import (
+    TypeOfBatteryCreateView
+)
+
 from .views.views_main import (
     PainelView, PrincipalView,
     ChecklistsView, RelatoriosView,
@@ -37,6 +41,10 @@ urlpatterns = [
     path('painel/', PainelView.as_view(), name="painel"),
     path('principal/', PrincipalView.as_view(), name="principal"),
     path('historico/', HistoricosPorAeronaveView.as_view(), name='historico'),
+    
+    
+    path('add_typeofbattery/', TypeOfBatteryCreateView.as_view(), name='add_typeofbattery'),
+    
     
     path('add_point/', AddPointOfInterest.as_view(), name='add_point'),
     path('edit_point/<int:pk>/', UpdatePointOfInterest.as_view(), name='edit_point'),

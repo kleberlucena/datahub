@@ -7,9 +7,10 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.gis.db import models
-from datetime import datetime
 from stdimage.models import StdImageField
 from django_minio_backend import MinioBackend
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 class Base(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -76,27 +77,12 @@ class Guarnicao(models.Model):
 
     def __str__(self):
         return f'{self.piloto_remoto} | {self.data} | {self.local}'
-
-
-class Maleta(Base):
-    nome = models.CharField(max_length=20)
-    num_baterias = models.IntegerField(null=False)
-    controle = models.IntegerField(null=False)
-    fonte = models.IntegerField(null=False)
-    hub = models.IntegerField(null=False)
-    cabo_usb = models.IntegerField(null=False)
-    cabo_energia = models.IntegerField(null=False)
-    helices = models.IntegerField(null=False)
     
-    def __str__(self):
-        return self.nome
-
-
+    
 class Aeronave(Base):
     prefixo = models.CharField(max_length=20, unique=True)
     modelo = models.CharField(max_length=20)
     marca = models.CharField(max_length=20)
-    maleta = models.ForeignKey(Maleta, on_delete=models.SET_NULL, null=True)
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
     em_uso = models.BooleanField(default=False, null=True, blank=True)
     imagem_aeronave = StdImageField(
@@ -118,9 +104,9 @@ def generate_hex_code():
     characters = string.ascii_letters + string.digits + string.punctuation
     return ''.join(random.choice(characters) for _ in range(25))
 
-
 class HistoricoAlteracoesAeronave(models.Model):
     aeronave = models.ForeignKey(Aeronave, on_delete=models.SET_NULL, null=True)
+    titulo_aeronave = models.CharField(max_length=45, null=True, unique=True)
     data = models.DateTimeField(default=timezone.now)
     codigo = models.CharField(max_length=25, unique=True, default=generate_hex_code)
     num_helices = models.IntegerField(default=4, null=False)
@@ -150,7 +136,12 @@ class HistoricoAlteracoesAeronave(models.Model):
     alteracoes = models.TextField()
 
     def __str__(self):
-        return f"Histórico de Alterações - Aeronave {self.aeronave.prefixo} - Data {self.data}"
+        return f"Histórico de Alterações - Aeronave {self.titulo_aeronave} - Data {self.data}"
+    
+@receiver(pre_save, sender=HistoricoAlteracoesAeronave)
+def update_titulo_aeronave(sender, instance, **kwargs):
+    instance.titulo_aeronave = instance.aeronave.prefixo
+
 
 
 class Missao(Base):
@@ -169,14 +160,33 @@ class Missao(Base):
 
     def __str__(self):
         return self.titulo
+
+
+class TypeOfBattery(models.Model):
+    name = models.CharField(max_length=45, null=False, default='', unique=True)
+    recommended_cicles = models.IntegerField(null=False, default=45)
+    alert_cicles = models.IntegerField(null=False, default=35)
+    critical_cicles = models.IntegerField(null=False, default=50)
     
+    def __str__(self):
+        return f'{self.name}'
+
 
 class Bateria(Base):
     numeracao = models.CharField(max_length=20, unique=True)
     num_ciclos = models.IntegerField(null=False)
-    ciclos_maximo = models.IntegerField(null=False, default=45)
+    ciclos_maximo = models.ForeignKey(TypeOfBattery, on_delete=models.SET_NULL, null=True)
     aeronave = models.ForeignKey(Aeronave, on_delete=models.SET_NULL, null=True)
-    maleta = models.ForeignKey(Maleta, on_delete=models.SET_NULL, null=True)
+    imagem_bateria = StdImageField(
+        'Imagem',
+        storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
+        upload_to='imagens',
+        variations={
+            'large': {'width': 720, 'height': 720, 'crop': True},
+            'medium': {'width': 480, 'height': 480, 'crop': True},
+            'thumbnail': {'width': 128, 'height': 128, 'crop': True},
+        }, delete_orphans=True, blank=True, null=True
+    )
 
     def __str__(self):
         return self.numeracao
@@ -236,6 +246,7 @@ class Relatorio(Base):
     natureza_de_voo = models.ForeignKey(NaturezaDeVoo, on_delete=models.SET_NULL, null=True)
     tipo_de_operacao = models.ForeignKey(TipoDeOperacao, on_delete=models.SET_NULL, null=True)
     aeronave = models.ForeignKey(Aeronave, on_delete=models.SET_NULL, null=True)
+    numero_ficha_oc = models.CharField(max_length=100, null=True, default='')
     relato_da_missao = models.TextField(max_length=500)
     
     def __str__(self):

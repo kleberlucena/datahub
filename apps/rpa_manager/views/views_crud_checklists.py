@@ -56,7 +56,7 @@ class ChecklistFormView(View):
             
             saveNewChecklistInAircraftHistoric(request.POST, dados_checklist)
             
-            return redirect('rpa_manager:checklists')
+            return redirect('rpa_manager:painel')
         
         context = {
             'checklist_form': checklist_form,

@@ -30,7 +30,7 @@
 
 <div class="card card-primary card-outline">
   <div class="card-header">
-    <h3 class="card-title">Checklists</h3>
+    <h3 class="card-title">Baterias</h3>
   </div>
 
   <div class="card-body">
@@ -40,8 +40,11 @@
         <thead>
           <tr>
             <th scope="col">Numereção</th>
-            <th scope="col">Número de ciclos</th>
-            <th scope="col">Limite de ciclos</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Ciclos atual</th>
+            <th scope="col">Ciclos recomendado</th>
+            <th scope="col">Ciclos alerta</th>
+            <th scope="col">Ciclos crítico</th>
             <th scope="col">Em uso na aeronave</th>
             <th class="removerDoPdf" scope="col">Ações</th>
           </tr>
@@ -52,14 +55,11 @@
             <td {% if bateria.id in ids_baterias_nivel_critico %} class="critical_value" {% endif %}>
               <span> {{ bateria.numeracao }} </span>
             </td>
-            <td> 
-              {% if bateria.num_ciclos > bateria.ciclos_maximo %}
-                <span class="badge badge-danger">{{ bateria.num_ciclos }}</span>
-              {% else %}
-                {{ bateria.num_ciclos }}
-              {% endif %}
-            </td>
             <td>{{ bateria.ciclos_maximo }}</td>
+            <td> {{ bateria.num_ciclos }}</td>
+            <td>{{ bateria.ciclos_maximo.recommended_cicles }}</td>
+            <td>{{ bateria.ciclos_maximo.alert_cicles }}</td>
+            <td>{{ bateria.ciclos_maximo.critical_cicles }}</td>
             <td>{{ bateria.aeronave }}</td>
             <td>
               <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
@@ -82,11 +82,15 @@
         </tbody>
       </table>
     </div>
-    <div style="width: 10rem">
+    <div style=" display: flex; flex-direction: row; gap: 10px;">
       <a href="{% url 'rpa_manager:criar_nova_bateria' %}">
         <button type="button" style="display: inline" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i>
           Nova Bateria </button>
-      </a>
+        </a>
+        <a href="{% url 'rpa_manager:add_typeofbattery' %}">
+          <button type="button" style="display: inline" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i>
+            Novo tipo bateria </button>
+        </a>
     </div>
   </div>
 </div>

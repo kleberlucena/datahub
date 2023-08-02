@@ -1,3 +1,4 @@
+from typing import Any, Dict
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from apps.rpa_manager.forms import BateriaForm
@@ -16,7 +17,7 @@ class CriarNovaBateriaView(CreateView):
     form_class = BateriaForm
     template_name = 'controle/pages/criar_nova_bateria.html'
     success_url = reverse_lazy('rpa_manager:baterias')
-
+    
 
 class EditarBateriaView(UpdateView):
     model = Bateria

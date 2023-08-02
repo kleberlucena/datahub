@@ -79,9 +79,8 @@
         <hr>
         <strong>Local: </strong> {{ missao.local }}
         <hr>
-        <strong>Latitude: </strong> {{ missao.latitude }}
-        <hr>
-        <strong>Longitude: </strong> {{ missao.longitude }}
+        <strong>Coordenadas: </strong> 
+        {{ missao.latitude |stringformat:"s" }},{{ missao.longitude |stringformat:"s" }}
         <hr>
         <strong>Horário: </strong> {{ missao.horario }}
         <hr>
