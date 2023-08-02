@@ -1,5 +1,3 @@
-from dataclasses import fields
-from numpy import source
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 from drf_extra_fields.geo_fields import PointField
@@ -7,6 +5,7 @@ from guardian.shortcuts import get_perms
 
 from apps.person.models import *
 from base import helpers
+from base.models import Registry
 from .serializers import RegistryCortexSerializer, PhysicalSerializer
 from apps.address.api.serializers import AddressSerializer
 from apps.image.api.serializers import ImageListSerializer
@@ -69,6 +68,28 @@ class TattooListSerializer(serializers.ModelSerializer):
         fields = ('uuid', 'label', 'point', 'thumbnail', 'created_at', 'updated_at', 'permissions')
 
 
+class RegistryPersonSerializer(serializers.ModelSerializer):
+    type = serializers.SerializerMethodField('_get_type')
+
+    def _get_type(self, object):
+        if object.polymorphic_ctype:
+            return object.polymorphic_ctype.model
+        return None
+
+    class Meta:
+        model = Registry
+        fields =  ('uuid', 'created_at', 'updated_at', 'polymorphic_ctype_id', 'type')
+
+
+""" class RegistryPolymorphicSerializer(PolymorphicSerializer):
+    model_serializer_mapping = {
+        Registry: RegistryPersonSerializer,
+        RegistryCortex: RegistryCortexSerializer,
+        RegistryBNMP: RegistryBNMPSerializer,
+        RegistryVehicleCortex: RegistryVehicleCortexSerializer
+    } """
+
+
 class PersonListSerializer(serializers.ModelSerializer):
     nicknames = NicknameListSerializer(many=True, required=False)
     faces = FaceListSerializer(many=True, required=False)
@@ -77,8 +98,9 @@ class PersonListSerializer(serializers.ModelSerializer):
     tattoos = TattooListSerializer(many=True, required=False)
     physicals = PhysicalSerializer(many=True, required=False)
     documents = DocumentListSerializer(many=True, required=False)
-    registers = RegistryCortexSerializer(many=True, read_only=True, required=False, allow_null=True)
+    registers = RegistryPersonSerializer(many=True, read_only=True, required=False, allow_null=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
+    entity = serializers.SerializerMethodField('_get_entity')
     
     def _get_permissions(self, object):
         request = self.context.get('request', None)
@@ -86,11 +108,16 @@ class PersonListSerializer(serializers.ModelSerializer):
             perms = get_perms(request.user, object)
             return perms
 
+    def _get_entity(self, object):
+        if object.entity:
+            return object.entity.name
+        return None
+
     class Meta:
         model = Person
         fields = (
             'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals',
-            'created_at', 'updated_at', 'registers', 'permissions')
+            'created_at', 'updated_at', 'entity', 'registers', 'permissions')
 
 
 class IntermediatePersonListSerializer(serializers.ModelSerializer):

@@ -53,8 +53,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
+    'django.contrib.postgres',
 
-    'auth_oidc',  # O APP auth must come before allauth to load templates
+    'auth.auth_oidc',  # O APP auth must come before allauth to load templates
     'oauth2',  # Include authenticate token
 
     # Necessary to allauth
@@ -77,6 +78,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'widget_tweaks',
     'localflavor',
+    'django_filters',
     'django_celery_results',
     'django_celery_beat',
     'celery_progress',
@@ -86,6 +88,8 @@ INSTALLED_APPS = [
 
     # Apps
     'base',
+    'auth.api_oidc_provider',
+    'apps.portal',
     'apps.cortex',
     'apps.person',
     'apps.image',
@@ -95,6 +99,8 @@ INSTALLED_APPS = [
     'apps.bnmp',
     'apps.vehicle',
     'apps.watermark',
+    'apps.fact',
+    'apps.police_report',
 
 ]
 MIDDLEWARE = [
@@ -191,6 +197,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
     ],
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
@@ -208,12 +215,14 @@ SOCIALACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_STORE_TOKENS = True  # Necessary to logout
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 ACCOUNT_LOGOUT_REDIRECT_URL = env('KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL')
 LOGIN_REDIRECT_URL = '/'
 KEYCLOAK_URL = env('KEYCLOAK_URL')
 KEYCLOAK_REALM = env('KEYCLOAK_REALM')
-OIDC_OP_LOGOUT_ENDPOINT = KEYCLOAK_URL + '/realms/' + KEYCLOAK_REALM + "/protocol/openid-connect/logout"
+OIDC_OP_LOGOUT_ENDPOINT = KEYCLOAK_URL + '/realms/' + \
+    KEYCLOAK_REALM + "/protocol/openid-connect/logout"
 OIDC_OP_LOGOUT_URL_METHOD = "auth.views.logout"
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -223,16 +232,21 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+SOCIALACCOUNT_ADAPTER = 'auth.auth_oidc.adapter.PMPBSocialAccountAdapter'
+
 response_sso = requests.get(f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/")
 sso_public_key = json.loads(response_sso.text)["public_key"]
-KEYCLOAK_SERVER_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n{}\n-----END PUBLIC KEY-----".format(sso_public_key)
+KEYCLOAK_SERVER_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n{}\n-----END PUBLIC KEY-----".format(
+    sso_public_key)
 
-# Python Social Auth https://github.com/coriolinus/oauth2-article 
+# Python Social Auth https://github.com/coriolinus/oauth2-article
 SOCIAL_AUTH_KEYCLOAK_KEY = env('SOCIAL_AUTH_KEYCLOAK_KEY')
 SOCIAL_AUTH_KEYCLOAK_SECRET = env('SOCIAL_AUTH_KEYCLOAK_SECRET')
 SOCIAL_AUTH_KEYCLOAK_PUBLIC_KEY = sso_public_key
-SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL = env('SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL') 
-SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL = env('SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL')
+SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL = env(
+    'SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL')
+SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL = env(
+    'SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL')
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 SOCIAL_AUTH_KEYCLOAK_SCOPE = ['email', 'openid']
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
@@ -242,7 +256,8 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.auth_allowed',
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
-    'social_core.pipeline.social_auth.associate_by_email',  # <- this line not included by default
+    # <- this line not included by default
+    'social_core.pipeline.social_auth.associate_by_email',
     'social_core.pipeline.user.create_user',
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
@@ -252,6 +267,8 @@ SOCIAL_AUTH_PIPELINE = (
 # Portal
 PORTAL_TOKEN = env('PORTAL_TOKEN')
 PORTAL_URL_BASE = env('PORTAL_URL_BASE')
+PORTAL_RELATIVE_URL_LIST_MILITARY = env('PORTAL_RELATIVE_URL_LIST_MILITARY')
+PORTAL_RELATIVE_URL_LIST_ENTITY = env('PORTAL_RELATIVE_URL_LIST_ENTITY')
 
 SELF_URL_BASE = env('SELF_URL_BASE')
 
@@ -276,23 +293,25 @@ MINIO_BUCKET_CHECK_ON_SAVE = True
 # Config debug toolbar
 INTERNAL_IPS = ["127.0.0.1",]
 
-# Services 
+# Services
 SERVICES_URL = env('SERVICES_URL')
 SERVICES_ENDPOINT_MARK = env('SERVICES_ENDPOINT_MARK')
 SERVICES_TOKEN = env('SERVICES_TOKEN')
 
 # Global login required middleware
 PUBLIC_VIEWS = [
-    'auth_oidc.views.logout'
+    'auth.auth_oidc.views.logout'
 ]
 PUBLIC_PATHS = [
     r'^/accounts/.*',  # allow public access to all django-allauth views
     r'^/health_check',
     r'^/auth/logout/',
+    r'^/info_user_inactivate/',
     r'^/api/v1/.*',
-    r'/api/token/refresh/',
+    r'^/api/token/refresh/',
     r'^/watermark/.*',
-    r'^/admin/.*',  # Descomentar para expor rota adminitrativa (só para ajustes de configurações do keycloak)
+    # Descomentar para expor rota adminitrativa (só para ajustes de configurações do keycloak)
+    r'^/admin/.*',
 ]
 
 # Celery Configuration Options
@@ -320,4 +339,5 @@ if DEBUG:
     PROJECT_PORT = env("PROJECT_PORT")
     # INSTALLED_APPS.append('debug_toolbar')  # module to debug
     # MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
-    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append('rest_framework.authentication.SessionAuthentication')
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append(
+        'rest_framework.authentication.SessionAuthentication')

@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from guardian.shortcuts import assign_perm
 from django.shortcuts import get_object_or_404
 
+from apps.portal.models import Entity, Military
 from apps.document.models import Document, DocumentImage, DocumentType
 from apps.document.api.serializers import DocumentSerializer, DocumentImageSerializer, DocumentTypeSerializer
 
@@ -18,12 +19,15 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         if serializer.is_valid():
-            instance = serializer.save(created_by=self.request.user)
+            user = self.request.user
+            military = Military.objects.get(cpf=user.username)
+            entity = Entity.objects.get(id=military.entity.id)
+            instance = serializer.save(entity=entity, created_by=user)
             assign_perm("change_document", self.request.user, instance)
             assign_perm("delete_document", self.request.user, instance)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     def perform_update(self, serializer):
         if serializer.is_valid():
@@ -52,7 +56,16 @@ class ImageViewSet(viewsets.ModelViewSet):
     serializer_class = DocumentImageSerializer
 
     def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+        if serializer.is_valid():
+            user = self.request.user
+            military = Military.objects.get(cpf=user.username)
+            entity = Entity.objects.get(id=military.entity.id)
+            instance = serializer.save(entity=entity, created_by=user)
+            assign_perm("change_documentimage", self.request.user, instance)
+            assign_perm("delete_documentimage", self.request.user, instance)
+            return Response(serializer.data, status=201)
+        else:
+            return Response(serializer.errors, status=422)
 
     def perform_update(self, serializer):
         serializer.save(updated_by=self.request.user)

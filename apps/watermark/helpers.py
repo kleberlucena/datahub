@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from django.utils import timezone
 from PIL import Image, ImageDraw, ImageFont
 import urllib.request
 import requests
@@ -45,7 +45,7 @@ TEMPLATES_MARKS = {
 def handle(image_url, user_id):
     uuid_temp = uuid.uuid4()
     url_temp = "{}/api/v1/watermark/{}/{}/".format(settings.SELF_URL_BASE, user_id, uuid_temp)
-    url_temporary = tasks.create_temporary_url_task.delay(user_id, uuid_temp, url_temp)
+    tasks.create_temporary_url_task.delay(user_id, uuid_temp, url_temp)
     tasks.process_watermark.delay(user_id, uuid_temp, image_url)
     return url_temp
     
@@ -120,8 +120,8 @@ def create_watermark_template_user(mark_text, img_width, img_height):
 
 
 def add_watermark_image(image_url, mark):
-    urllib.request.urlretrieve(image_url, 'file_name')
-    img = Image.open('file_name')
+    response = urllib.request.urlopen(image_url)
+    img = Image.open(io.BytesIO(response.read()))
     img_width, img_height = img.size
     
     if img_width == 128:
@@ -161,7 +161,7 @@ def create_temporary_url(user_id, uuid_temp=None, url_temp=None):
         uuid_temp = uuid.uuid4()
     if not url_temp:
         url_temp = "{}/api/v1/watermark/{}/{}/".format(settings.SELF_URL_BASE, user_id, uuid_temp)
-    time_expiration = datetime.now() + timedelta(minutes=10)
+    time_expiration = timezone.now() + timezone.timedelta(minutes=10)
     new_temporary_url = models.TemporaryURL.objects.create(uuid=uuid_temp, temporary_url=url_temp, expiration_date=time_expiration)
     return new_temporary_url
 
@@ -186,11 +186,11 @@ def get_mark_services(enjoyer):
     except Exception as e:
         raise logger.error('Error while get by razao - {}'.format(e))
 
-
+# Fazer um endpoint que retorna essa função com a marca dagua do user 
 def get_mark_user(user_id):
     ''' Get text mark from user request'''
     try:
-        mark_user = models.UserMark.objects.get(user__pk=user_id, active=True)
+        mark_user = models.UserMark.objects.filter(user__pk=user_id, active=True).latest('created_at')
         if mark_user:
             return mark_user
     except Exception as e:

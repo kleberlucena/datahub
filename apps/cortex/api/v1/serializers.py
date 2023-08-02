@@ -19,7 +19,7 @@ class PersonToSerializer(serializers.ModelSerializer):
     physicals = PhysicalSerializer(many=True, required=False)
     documents = DocumentSerializer(many=True, required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
-    
+
     def _get_permissions(self, object):
         request = self.context.get('request', None)
         if request:
@@ -39,14 +39,18 @@ class RegistrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Registry
-        fields =  ('uuid', 'created_at', 'updated_at', 'person')
+        fields = ('uuid', 'created_at', 'updated_at', 'person')
 
-        
 
+class BasicPersonCortexSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PersonCortex
+        fields = ("numeroCPF", "nomeCompleto", "nomeMae", "dataNascimento", "sexo",
+                  "nomeSocial", "anoObito", "dataAtualizacao", "created_at", "updated_at")
 
 
 class PersonCortexSerializer(serializers.ModelSerializer):
-    dataAtualizacao = serializers.DateTimeField(format=None)
     registers = RegistrySerializer(many=True, read_only=True)
 
     class Meta:
@@ -55,4 +59,4 @@ class PersonCortexSerializer(serializers.ModelSerializer):
                   "paisResidencia", "sexo", "nomeSocial", "naturezaOcupacao", "ocupacaoPrincipal", "anoExercicioOcupacao", "tipoLogradouro",
                   "logradouro", "numeroLogradouro", "complementoLogradouro", "bairro", "cep", "uf", "municipio", "ddd",
                   "telefone", "regiaoFiscal", "anoObito", "indicadorEstrangeiro", "indicadorMoradorEstrangeiro", "dataAtualizacao", "tituloEleitor",
-                  "latitudeAproximadaLocal", "longitudeAproximadaLocal", "registers", "created_at", "updated_at")
+                  "latitudeAproximadaLocal", "longitudeAproximadaLocal", "indiceNacionalPessoas", "registers", "created_at", "updated_at")

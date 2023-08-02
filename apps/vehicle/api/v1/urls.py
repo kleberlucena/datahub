@@ -6,7 +6,8 @@ app_name = 'apps.vehicle'
 
 urlpatterns = [
     path('', viewsets.AddVehicleListView.as_view(), name='vehicle_json'),
-    path('<uuid:uuid>/', viewsets.VehicleRetrieveUpdateDestroyView.as_view(), name='retrieve_json'),
+    path('<uuid:uuid>/', viewsets.VehicleRetrieveDestroyView.as_view(), name='retrieve_destroy_json'),
+    path('<uuid:uuid>/update/', viewsets.VehicleUpdateView.as_view(), name='vehicle_update_json'),
     path('<uuid:uuid>/owner/', viewsets.VehicleAddOwnerView.as_view(), name='add_owner_json'),
     path('<uuid:uuid>/custodian/', viewsets.VehicleAddCustodianView.as_view(), name='add_custodian_json'),
     path('<uuid:uuid>/renter/', viewsets.VehicleAddRenterView.as_view(), name='add_renter_json'),

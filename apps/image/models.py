@@ -1,3 +1,4 @@
+import uuid
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.urls import reverse_lazy
@@ -6,7 +7,8 @@ from stdimage.models import StdImageField
 from django_minio_backend import MinioBackend
 from safedelete import SOFT_DELETE_CASCADE
 from safedelete.models import SafeDeleteModel
-import uuid
+
+from apps.portal.models import Entity
 
 
 class Base(models.Model):
@@ -43,6 +45,13 @@ class Image(Base, SoftDelete):
             'thumbnail': {'width': 128, 'height': 128, 'crop': True},
         }, delete_orphans=True
     )
+    entity = models.ForeignKey(
+        Entity, 
+        related_name='images_entity', 
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True
+    )
     updated_by = models.ForeignKey(
         User,
         related_name='image_updater',
@@ -68,9 +77,6 @@ class Image(Base, SoftDelete):
     
     def __str__(self):
         return f"{self.uuid}"
-
-    def get_absolute_url(self):
-        return reverse_lazy('image:image_detail', kwargs={'uuid': self.uuid})
 
     class Meta:
         verbose_name = "Imagem"

@@ -1,30 +1,63 @@
 from django.http import HttpResponse, Http404
+from django.db import transaction
 from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, filters, mixins, status
 from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied, NotFound, ValidationError
 from rest_framework.decorators import action
-from guardian.decorators import permission_required_or_403
-from guardian.shortcuts import assign_perm, get_objects_for_user
+from guardian.shortcuts import assign_perm
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from apps.person.api.v1 import serializers, list_serializers
+from apps.person.api.v1 import serializers
 from apps.address.api.serializers import AddressSerializer
 from apps.image.api.serializers import ImageSerializer
 from apps.document.api.serializers import DocumentSerializer
 from apps.person.models import *
-from apps.person import helpers, tasks
+from apps.person import helpers
+from apps.bnmp import helpers as helpers_bnmp
 from apps.cortex import helpers as helpers_cortex
-from apps.cortex.models import PersonCortex
+from apps.cortex.models import RegistryCortex
+from apps.portal.models import Entity, Military
+from base import helpers as base_helpers
 import logging
 
 
-document_name = openapi.Parameter('document_name', openapi.IN_QUERY, description="param nome do documento da pessoa", type=openapi.TYPE_STRING)
-document_number = openapi.Parameter('document_number', openapi.IN_QUERY, description="param número do documento da pessoa", type=openapi.TYPE_STRING)
-cpf = openapi.Parameter('cpf', openapi.IN_QUERY, description="param número do CPF da pessoa", type=openapi.TYPE_STRING)
-nickname_label = openapi.Parameter('nickname_label', openapi.IN_QUERY, description="param alcunha da pessoa", type=openapi.TYPE_STRING)
+my = openapi.Parameter('my', openapi.IN_QUERY,
+                       description="param meus, que filtra os cadastros de pessoa pelo usuário", type=openapi.TYPE_BOOLEAN)
+address_city = openapi.Parameter('address_city', openapi.IN_QUERY,
+                                 description="param cidade do endereço da pessoa", type=openapi.TYPE_STRING)
+address_neighborhood = openapi.Parameter('address_neighborhood', openapi.IN_QUERY,
+                                         description="param bairro do endereço da pessoa", type=openapi.TYPE_STRING)
+address_street = openapi.Parameter('address_street', openapi.IN_QUERY,
+                                   description="param rua do endereço da pessoa", type=openapi.TYPE_STRING)
+address_complement = openapi.Parameter('address_complement', openapi.IN_QUERY,
+                                       description="param complemento do endereço da pessoa", type=openapi.TYPE_STRING)
+address_reference = openapi.Parameter('address_reference', openapi.IN_QUERY,
+                                      description="param referência do endereço da pessoa", type=openapi.TYPE_STRING)
+address_zipcode = openapi.Parameter('address_zipcode', openapi.IN_QUERY,
+                                    description="param CEP do endereço da pessoa", type=openapi.TYPE_STRING)
+document_name = openapi.Parameter('document_name', openapi.IN_QUERY,
+                                  description="param nome do documento da pessoa", type=openapi.TYPE_STRING)
+document_mother = openapi.Parameter('document_mother', openapi.IN_QUERY,
+                                    description="param mãe do documento da pessoa", type=openapi.TYPE_STRING)
+document_father = openapi.Parameter('document_father', openapi.IN_QUERY,
+                                    description="param pai do documento da pessoa", type=openapi.TYPE_STRING)
+document_birth_date = openapi.Parameter(
+    'document_birth_date', openapi.IN_QUERY, description="FORMAT: YYYY-MM-DD", type=openapi.FORMAT_DATE)
+document_number = openapi.Parameter('document_number', openapi.IN_QUERY,
+                                    description="param número do documento da pessoa", type=openapi.TYPE_STRING)
+cpf = openapi.Parameter('cpf', openapi.IN_QUERY,
+                        description="param número do CPF da pessoa", type=openapi.TYPE_STRING)
+nickname_label = openapi.Parameter(
+    'nickname_label', openapi.IN_QUERY, description="param alcunha da pessoa", type=openapi.TYPE_STRING)
+tattoo_label = openapi.Parameter('tattoo_label', openapi.IN_QUERY,
+                                 description="param tatuagem da pessoa", type=openapi.TYPE_STRING)
+entity_name = openapi.Parameter('entity_name', openapi.IN_QUERY,
+                                description="param Unidade do usuário", type=openapi.TYPE_STRING)
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -32,7 +65,7 @@ logger = logging.getLogger(__name__)
 
 class PersonByCpfViewSet(generics.ListAPIView):
     queryset = Person.objects.all()
-    #serializer_class = serializers.PersonSerializer
+    # serializer_class = serializers.PersonSerializer
     permission_classes = [DjangoModelPermissions, DjangoObjectPermissions]
 
     def get_serializer_class(self):
@@ -42,7 +75,7 @@ class PersonByCpfViewSet(generics.ListAPIView):
             return serializers.IntermediatePersonSerializer
         elif self.request.user.groups.filter(name='profile:person_basic').exists():
             return serializers.BasicPersonSerializer
-        raise Http404 
+        raise Http404
 
     def get_queryset(self):
         queryset = Person.objects.get_queryset()
@@ -57,13 +90,14 @@ class PersonByCpfViewSet(generics.ListAPIView):
     @action(detail=True, methods=['GET'])
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
-    
+
     def list(self, request):
         # obtenha a lista de resultados usando o queryset do viewset
         queryset = self.get_queryset()
         cpf = self.request.query_params.get('cpf')
         try:
-            person_cortex = helpers_cortex.process_cortex_consult(username=request.user.username, cpf=cpf)
+            person_cortex = helpers_cortex.process_cortex_consult(
+                username=request.user.username, cpf=cpf)
             documents = helpers_cortex.validate_document(number=cpf)
             if documents is None or len(documents) == 0:
                 logger.info('Without documents - {}'.format(documents))
@@ -83,134 +117,160 @@ class PersonByCpfViewSet(generics.ListAPIView):
 
 class AddPersonListView(generics.ListCreateAPIView):
     permission_classes = [DjangoObjectPermissions, DjangoModelPermissions]
-    serializer_class = serializers.PersonSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at', 'updated_at']
-
     queryset = Person.objects.all()
 
     def get_serializer_class(self):
-        if self.request.method in ['POST']:
+        if self.request.user.groups.filter(name__icontains='profile:person').exists():
             return serializers.PersonSerializer
-        elif self.request.user.groups.filter(name='profile:person_advanced').exists():
-            return list_serializers.PersonListSerializer
-        elif self.request.user.groups.filter(name='profile:person_intermediate').exists():
-            return list_serializers.IntermediatePersonListSerializer
-        elif self.request.user.groups.filter(name='profile:person_basic').exists():
-            return list_serializers.BasicPersonListSerializer
-        raise Http404  
+        else:
+            raise PermissionDenied
 
     @action(detail=True, methods=['GET'], permission_classes=DjangoObjectPermissions)
     def list(self, request, *args, **kwargs):
-        self.permission_classes = [DjangoModelPermissions]
-        queryset = self.filter_queryset(self.get_queryset())
-        # queryset = get_objects_for_user(self.request.user, 'person.view_person')
+        probable_cpf = self.request.query_params.get('document_number')
         try:
-            page = self.paginate_queryset(queryset)
-            if page is not None:
-                serializer = self.get_serializer(page, many=True)
-                return self.get_paginated_response(serializer.data)
-        
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data)
+            if probable_cpf:
+                cpf = base_helpers.validate_cpf(probable_cpf)
+                if cpf:
+                    person_cortex = helpers_cortex.process_cortex_consult(
+                        username=request.user.username, cpf=cpf)
+                    if person_cortex:
+                        documents = helpers_cortex.validate_document(cpf)
+                        if documents is None:
+                            helpers_cortex.create_person_and_document(
+                                person_cortex)
+                        else:
+                            helpers_cortex.update_registers(
+                                documents=documents, person_cortex=person_cortex)
+                    helpers_bnmp.process_bnmp_consult(
+                        username=request.user.username, cpf=cpf)
         except Exception as e:
-            logger.error('Error while serialize person - {}'.format(e))
-            return Response(status=403)
+            logger.error('Error while getting person_cortex - {}'.format(e))
+
+        queryset = self.get_queryset().filter(
+            self.build_filter_conditions()
+        )
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(
+            page, many=True) if page is not None else self.get_serializer(queryset, many=True)
+        return self.get_paginated_response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        try:
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        except Exception as e:
-            logger.error('Error while serialize person - {}'.format(e))
-            return Response(status=403)
-
-    def get_queryset(self):
-        """
-        Optionally restricts the returned person_list to a given user,
-        by filtering against a `username` query parameter in the URL.
-        Optionally restricts the returned list_person to a given document,
-        by filtering against a `document_name` or a `document_number` query parameter in the URL.
-        """
-        queryset = Person.objects.all()
-        my = self.request.query_params.get('my')
-        has_my = Q()
-        document_name = self.request.query_params.get('document_name')
-        has_name = Q()
-        document_number = self.request.query_params.get('document_number')
-        has_number = Q()
-        nickname_label = self.request.query_params.get('nickname_label')
-        has_nickname = Q()
-        if document_name is not None:
-            has_name = Q(documents__name__icontains=document_name)
-        if document_number is not None:
-            has_number = Q(documents__number__icontains=document_number)
-        if nickname_label is not None:
-            has_nickname = Q(nicknames__label__icontains=nickname_label)
-        if my is not None:
-            has_my = Q(created_by=self.request.user)
-        return queryset.filter(has_my & has_nickname & has_number & has_name)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return self.perform_create(serializer)
 
     def perform_create(self, serializer):
-        try:
-            if serializer.is_valid():
-                instance = serializer.save(created_by=self.request.user)
-                nicknames = instance.nicknames.all()
-                for nickname in nicknames:
-                    nickname.created_by = self.request.user
-                    nickname.save()
-                    assign_perm("change_nickname", self.request.user, nickname)
-                    assign_perm("delete_nickname", self.request.user, nickname)
-                for tattoo in instance.tattoos.all():
-                    tattoo.created_by = self.request.user
-                    tattoo.save()
-                    assign_perm("change_tattoo", self.request.user, tattoo)
-                    assign_perm("delete_tattoo", self.request.user, tattoo)
-                for address in instance.addresses.all():
-                    address.created_by = self.request.user
-                    address.save()
-                    assign_perm("change_address", self.request.user, address)
-                    assign_perm("delete_address", self.request.user, address)
-                for physical in instance.physicals.all():
-                    physical.created_by = self.request.user
-                    physical.save()
-                    assign_perm("change_physical", self.request.user, physical)
-                    assign_perm("delete_physical", self.request.user, physical)
-                for document in instance.documents.all():
-                    document.created_by = self.request.user
-                    document.save()
-                    if document.type.label == 'CPF':
-                        helpers.process_external_consult(id_person=instance.id, username=self.request.user.username, cpf=document.number)
-                    assign_perm("change_document", self.request.user, document)
-                    assign_perm("delete_document", self.request.user, document)
-                for face in instance.faces.all():
-                    face.created_by = self.request.user
-                    face.save()
-                    assign_perm("change_face", self.request.user, face)
-                    assign_perm("delete_face", self.request.user, face)
-                for image in instance.images.all():
-                    image.created_by = self.request.user
-                    image.save()
-                    assign_perm("change_image", self.request.user, image)
-                    assign_perm("delete_image", self.request.user, image)
-                assign_perm("change_person", self.request.user, instance)
-                assign_perm("delete_person", self.request.user, instance)
-                return Response(serializer.data, status=201)
-        except Exception as e:
-            return Response(serializer.errors, status=400)
+        with transaction.atomic():
+            try:
+                user = self.request.user
+                military = Military.objects.get(cpf=user.username)
+                entity = Entity.objects.get(id=military.entity.id)
+                instance = serializer.save(created_by=user, entity=entity)
+
+                self.update_related_objects(instance, entity, user)
+
+                assign_perm("change_person", user, instance)
+                assign_perm("delete_person", user, instance)
+
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                logger.warn('Warning while saving person - {}'.format(e))
+                transaction.set_rollback(True)
+                raise e
+
+    def update_related_objects(self, instance, entity, user):
+        for related_object in ['nicknames', 'tattoos', 'addresses', 'physicals', 'documents', 'faces', 'images']:
+            logger.info('Info object - {}'.format(related_object))
+            for related_instance in getattr(instance, related_object).all():
+                object_name = type(related_instance).__name__.lower()
+                print(object_name)
+                related_instance.entity = entity
+                related_instance.created_by = user
+                related_instance.save()
+                assign_perm("change_{}".format(object_name),
+                            user, related_instance)
+                assign_perm("delete_{}".format(object_name),
+                            user, related_instance)
+                if related_object == 'documents' and related_instance.type.label == 'CPF':
+                    try:
+                        cpf = base_helpers.validate_cpf(
+                            value=related_instance.number)
+                        helpers.process_cortex_consult(
+                            username=self.request.user.username, cpf=cpf, person=instance)
+                        helpers.process_bnmp_consult(
+                            username=self.request.user.username, cpf=cpf, person=instance)
+                    except ValidationError as e:
+                        logger.warn('Warning CPF is no valid - {}'.format(e))
+                if related_object == 'documents':
+                    for image in related_instance.images.all():
+                        image.entity = entity
+                        image.created_by = user
+                        image.save()
+                        assign_perm("change_documentimage", user, image)
+                        assign_perm("delete_documentimage", user, image)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
-    @swagger_auto_schema(method='get', manual_parameters=[document_name, document_number, nickname_label])
+    @swagger_auto_schema(method='get',
+                         manual_parameters=[my,
+                                            address_city,
+                                            address_neighborhood,
+                                            address_street,
+                                            address_complement,
+                                            address_reference,
+                                            address_zipcode,
+                                            document_name,
+                                            document_mother,
+                                            document_father,
+                                            document_birth_date,
+                                            document_number,
+                                            nickname_label,
+                                            tattoo_label,
+                                            entity_name])
     @action(detail=True, methods=['GET'])
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+    def handle_exception(self, exc):
+        if isinstance(exc, ValidationError):
+            return Response({"detail": "Erro na validação dos dados."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        if isinstance(exc, PermissionDenied):
+            return Response({"detail": "Você não tem permissão para acessar este recurso."}, status=status.HTTP_403_FORBIDDEN)
+        if isinstance(exc, NotFound):
+            return Response({"detail": "Recurso não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        if isinstance(exc, ObjectDoesNotExist):
+            return Response({"detail": "Objeto não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        return super().handle_exception(exc)
+
+    def build_filter_conditions(self):
+        print('No filtro personalizado...')
+        filters = Q()
+        query_params = self.request.query_params
+
+        filters &= Q(created_by=self.request.user) if query_params.get(
+            'my') or self.request.user.groups.filter(name='profile:person_basic').exists() else Q()
+
+        query_dict = {'address_city': 'addresses__city', 'address_neighborhood': 'addresses__neighborhood', 'address_street': 'addresses__street',
+                      'address_complement': 'addresses__complement', 'address_reference': 'addresses__reference', 'address_zipcode': 'addresses__zipcode',
+                      'document_name': 'documents__name', 'document_mother': 'documents__mother', 'document_father': 'documents__father',
+                      'document_birth_date': 'documents__birth_date', 'document_number': 'documents__number', 'nickname_label': 'nicknames__label',
+                      'tattoo_label': 'tattoos__label', 'entity_name': 'entity__name'}
+
+        for field, flag in query_dict.items():
+            if value := query_params.get(field):
+                q = Q(**{f"{flag}__unaccent__icontains": value}) if field in ['address_city', 'address_neighborhood', 'address_street',
+                                                                              'address_complement', 'address_reference', 'address_zipcode'] else Q(
+                    **{f"{flag}__unaccent__iexact": value})
+                filters &= q
+        print(filters)
+
+        return filters
 
 
 class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
@@ -264,20 +324,33 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
             return Response(status=403)
 
 
+# views to Add attributes of person
+
 class PersonAddFaceView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Face.objects.all()
     serializer_class = serializers.FaceSerializer
     permission_classes = [DjangoObjectPermissions]
 
+    @transaction.atomic
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(person=person, created_by=self.request.user)
-            assign_perm("change_face", self.request.user, instance)
-            assign_perm("delete_face", self.request.user, instance)
-            person.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            try:
+                with transaction.atomic():
+                    user = self.request.user
+                    military = Military.objects.get(cpf=user.username)
+                    entity = Entity.objects.get(id=military.entity.id)
+                    instance = serializer.save(
+                        person=person, entity=entity, created_by=user)
+                    assign_perm("change_face", self.request.user, instance)
+                    assign_perm("delete_face", self.request.user, instance)
+                    person.save()
+                    return Response(serializer.data, status=201)
+            except Exception as e:
+                logger.warn('Warning while save face - {}'.format(e))
+                transaction.set_rollback(True)
+                raise e
+        return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -290,15 +363,26 @@ class PersonAddTattooView(mixins.CreateModelMixin, generics.GenericAPIView):
     serializer_class = serializers.TattooSerializer
     permission_classes = [DjangoObjectPermissions]
 
+    @transaction.atomic
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(person=person, created_by=self.request.user)
-            assign_perm("change_tattoo", self.request.user, instance)
-            assign_perm("delete_tattoo", self.request.user, instance)
-            person.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            try:
+                with transaction.atomic():
+                    user = self.request.user
+                    military = Military.objects.get(cpf=user.username)
+                    entity = Entity.objects.get(id=military.entity.id)
+                    instance = serializer.save(
+                        person=person, entity=entity, created_by=user)
+                    assign_perm("change_tattoo", self.request.user, instance)
+                    assign_perm("delete_tattoo", self.request.user, instance)
+                    person.save()
+                    return Response(serializer.data, status=201)
+            except Exception as e:
+                logger.warn('Warning while save Tattoo - {}'.format(e))
+                transaction.set_rollback(True)
+                raise e
+        return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -311,15 +395,26 @@ class PersonAddNicknameView(mixins.CreateModelMixin, generics.GenericAPIView):
     serializer_class = serializers.NicknameSerializer
     permission_classes = [DjangoObjectPermissions]
 
+    @transaction.atomic
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(person=person, created_by=self.request.user)
-            assign_perm("change_nickname", self.request.user, instance)
-            assign_perm("delete_nickname", self.request.user, instance)
-            person.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            try:
+                with transaction.atomic():
+                    user = self.request.user
+                    military = Military.objects.get(cpf=user.username)
+                    entity = Entity.objects.get(id=military.entity.id)
+                    instance = serializer.save(
+                        person=person, entity=entity, created_by=user)
+                    assign_perm("change_nickname", self.request.user, instance)
+                    assign_perm("delete_nickname", self.request.user, instance)
+                    person.save()
+                    return Response(serializer.data, status=201)
+            except Exception as e:
+                logger.warn('Warning while save Nickname - {}'.format(e))
+                transaction.set_rollback(True)
+                return Response(status=403)
+        return Response(serializer.errors, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -332,15 +427,26 @@ class PersonAddPhysicalView(mixins.CreateModelMixin, generics.GenericAPIView):
     serializer_class = serializers.PhysicalSerializer
     permission_classes = [DjangoObjectPermissions]
 
+    @transaction.atomic
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(person=person, created_by=self.request.user)
-            assign_perm("change_physical", self.request.user, instance)
-            assign_perm("delete_physical", self.request.user, instance)
-            person.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            try:
+                with transaction.atomic():
+                    user = self.request.user
+                    military = Military.objects.get(cpf=user.username)
+                    entity = Entity.objects.get(id=military.entity.id)
+                    instance = serializer.save(
+                        person=person, entity=entity, created_by=user)
+                    assign_perm("change_physical", self.request.user, instance)
+                    assign_perm("delete_physical", self.request.user, instance)
+                    person.save()
+                    return Response(serializer.data, status=201)
+            except Exception as e:
+                logger.warn('Warning while save Physical - {}'.format(e))
+                transaction.set_rollback(True)
+                return Response(status=403)
+        return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -353,16 +459,34 @@ class PersonAddDocumentView(mixins.CreateModelMixin, generics.GenericAPIView):
     serializer_class = DocumentSerializer
     permission_classes = [DjangoObjectPermissions]
 
+    @transaction.atomic
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(created_by=self.request.user)
-            person.documents.add(instance)
-            assign_perm("change_document", self.request.user, instance)
-            assign_perm("delete_document", self.request.user, instance)
-            person.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            try:
+                with transaction.atomic():
+                    user = self.request.user
+                    military = Military.objects.get(cpf=user.username)
+                    entity = Entity.objects.get(id=military.entity.id)
+                    instance = serializer.save(entity=entity, created_by=user)
+                    for image in instance.images.all():
+                        image.entity = entity
+                        image.created_by = user
+                        image.save()
+                        assign_perm("change_documentimage",
+                                    self.request.user, image)
+                        assign_perm("delete_documentimage",
+                                    self.request.user, image)
+                    person.documents.add(instance)
+                    assign_perm("change_document", self.request.user, instance)
+                    assign_perm("delete_document", self.request.user, instance)
+                    person.save()
+                    return Response(serializer.data, status=201)
+            except Exception as e:
+                logger.warn('Warning while save Document - {}'.format(e))
+                transaction.set_rollback(True)
+                return Response(status=403)
+        return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -375,15 +499,25 @@ class PersonAddAddressView(mixins.CreateModelMixin, generics.GenericAPIView):
     serializer_class = AddressSerializer
     permission_classes = [DjangoObjectPermissions]
 
+    @transaction.atomic
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(created_by=self.request.user)
-            person.addresses.add(instance)
-            assign_perm("change_address", self.request.user, instance)
-            assign_perm("delete_address", self.request.user, instance)
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            try:
+                with transaction.atomic():
+                    user = self.request.user
+                    military = Military.objects.get(cpf=user.username)
+                    entity = Entity.objects.get(id=military.entity.id)
+                    instance = serializer.save(entity=entity, created_by=user)
+                    person.addresses.add(instance)
+                    assign_perm("change_address", self.request.user, instance)
+                    assign_perm("delete_address", self.request.user, instance)
+                    return Response(serializer.data, status=201)
+            except Exception as e:
+                logger.warn('Warning while save Address - {}'.format(e))
+                transaction.set_rollback(True)
+                return Response(status=403)
+        return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -396,16 +530,26 @@ class PersonAddImageView(mixins.CreateModelMixin, generics.GenericAPIView):
     serializer_class = ImageSerializer
     permission_classes = [DjangoObjectPermissions]
 
+    @transaction.atomic
     def perform_create(self, serializer):
         person = get_object_or_404(Person, uuid=self.kwargs['uuid'])
         if serializer.is_valid():
-            instance = serializer.save(created_by=self.request.user)
-            person.images.add(instance)
-            assign_perm("change_image", self.request.user, instance)
-            assign_perm("delete_image", self.request.user, instance)
-            person.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            try:
+                with transaction.atomic():
+                    user = self.request.user
+                    military = Military.objects.get(cpf=user.username)
+                    entity = Entity.objects.get(id=military.entity.id)
+                    instance = serializer.save(entity=entity, created_by=user)
+                    person.images.add(instance)
+                    assign_perm("change_image", self.request.user, instance)
+                    assign_perm("delete_image", self.request.user, instance)
+                    person.save()
+                    return Response(serializer.data, status=201)
+            except Exception as e:
+                logger.warn('Warning while save Image - {}'.format(e))
+                transaction.set_rollback(True)
+                return Response(status=403)
+        return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='post')
     @action(detail=True, methods=['POST'])
@@ -413,7 +557,7 @@ class PersonAddImageView(mixins.CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-# view to Update or Delete attributes of person
+# views to recovery, Update or Delete attributes of person
 
 class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Face.objects.all()
@@ -427,12 +571,13 @@ class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = get_object_or_404(Face, uuid=kwargs['uuid'])
-        serializer = self.serializer_class(instance, data=request.data, partial=True)
+        serializer = self.serializer_class(
+            instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save(updated_by=self.request.user)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     @swagger_auto_schema(method='DELETE')
     @action(detail=True, methods=['DELETE'])
@@ -444,7 +589,7 @@ class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             return Response('Success', status=204)
         else:
             return Response('Unauthorized', status=401)
-        
+
     @swagger_auto_schema(method='DELETE')
     @action(detail=True, methods=['DELETE'])
     def post(self, request, *args, **kwargs):
@@ -463,12 +608,13 @@ class TattooUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = get_object_or_404(Tattoo, uuid=kwargs['uuid'])
-        serializer = self.serializer_class(instance, data=request.data, partial=True)
+        serializer = self.serializer_class(
+            instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save(updated_by=self.request.user)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Tattoo, uuid=kwargs['uuid'])
@@ -492,12 +638,13 @@ class NicknameUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = get_object_or_404(Nickname, uuid=kwargs['uuid'])
-        serializer = self.serializer_class(instance, data=request.data, partial=True)
+        serializer = self.serializer_class(
+            instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save(updated_by=self.request.user)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Nickname, uuid=kwargs['uuid'])
@@ -521,12 +668,13 @@ class PhysicalUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = get_object_or_404(Physical, uuid=kwargs['uuid'])
-        serializer = self.serializer_class(instance, data=request.data, partial=True)
+        serializer = self.serializer_class(
+            instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save(updated_by=self.request.user)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Physical, uuid=kwargs['uuid'])
@@ -550,12 +698,13 @@ class DocumentUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         instance = get_object_or_404(Document, uuid=kwargs['uuid'])
-        serializer = self.serializer_class(instance, data=request.data, partial=True)
+        serializer = self.serializer_class(
+            instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save(updated_by=self.request.user)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Document, uuid=kwargs['uuid'])
@@ -580,12 +729,13 @@ class AddressUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         instance = get_object_or_404(Address, uuid=kwargs['uuid'])
 
-        serializer = self.serializer_class(instance, data=request.data, partial=True)
+        serializer = self.serializer_class(
+            instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save(updated_by=self.request.user)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Address, uuid=kwargs['uuid'])
@@ -610,12 +760,13 @@ class ImageUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         instance = get_object_or_404(Image, uuid=kwargs['uuid'])
 
-        serializer = self.serializer_class(instance, data=request.data, partial=True)
+        serializer = self.serializer_class(
+            instance, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save(updated_by=self.request.user)
             return Response(serializer.data, status=201)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors, status=422)
 
     def destroy(self, request, *args, **kwargs):
         instance = get_object_or_404(Image, uuid=kwargs['uuid'])

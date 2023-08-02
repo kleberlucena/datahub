@@ -7,6 +7,15 @@ from django_minio_backend import MinioBackend
 
 from base.models import Base, SoftDelete, Registry
 from apps.person.models import Person
+from apps.portal.models import Entity, Military
+
+
+""" def get_entity_from_created_by(obj):
+    # Recupera a entity a partir do user que criou o objeto
+    user = obj.created_by
+    military = Military.objects.get(cpf=user.username)
+    entity = Entity.objects.get(id=military.entity.id)
+    return entity """
 
 
 class PersonRenavamCortex(Base, SoftDelete):
@@ -35,13 +44,26 @@ class PersonRenavamCortex(Base, SoftDelete):
 class VehicleCortex(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     placa = models.CharField(max_length=11, unique=True)
-    dataEmplacamento = models.DateTimeField(null=True, blank=True)
+    placaPreMercosul = models.CharField(max_length=11, null=True, blank=True)
+    dataPreCadastro = models.CharField(max_length=50, null=True, blank=True)
+    dataEmplacamento = models.CharField(max_length=50, null=True, blank=True)
     chassi = models.CharField(max_length=30, null=True, blank=True)
-    tipoDocumentoFaturado = models.CharField(max_length=30, null=True, blank=True)
-    numeroIdentificacaoFaturado = models.CharField(max_length=50, null=True, blank=True)
-    ufFatura = models.CharField(max_length=50, null=True, blank=True)
-    tipoDocumentoProprietario = models.CharField(max_length=30, null=True, blank=True)
+    identificadorUnicoVeiculo = models.CharField(
+        max_length=30, null=True, blank=True)
+    tipoDocumentoFaturado = models.CharField(
+        max_length=30, null=True, blank=True)
+    mesFabricacaoVeiculo = models.CharField(
+        max_length=30, null=True, blank=True)
+    ufDestinoVeiculoFaturado = models.CharField(
+        max_length=30, null=True, blank=True)
+    numeroIdentificacaoFaturado = models.CharField(
+        max_length=50, null=True, blank=True)
+    ufFatura = models.CharField(max_length=20, null=True, blank=True)
+    ufJurisdicaoVeiculo = models.CharField(
+        max_length=20, null=True, blank=True)
     ufEmplacamento = models.CharField(max_length=50, null=True, blank=True)
+    tipoDocumentoProprietario = models.CharField(
+        max_length=30, null=True, blank=True)
     municipioPlaca = models.CharField(max_length=255, null=True, blank=True)
     anoFabricacao = models.CharField(max_length=5, null=True, blank=True)
     anoModelo = models.CharField(max_length=5, null=True, blank=True)
@@ -56,56 +78,93 @@ class VehicleCortex(Base, SoftDelete):
     potencia = models.CharField(max_length=50, null=True, blank=True)
     cilindrada = models.CharField(max_length=50, null=True, blank=True)
     lotacao = models.CharField(max_length=50, null=True, blank=True)
-    capacidadeMaximaCarga = models.CharField(max_length=50, null=True, blank=True)
-    pesoBrutoTotal = models.CharField(max_length=50, null=True, blank=True)        
-    capacidadeMaximaTracao = models.CharField(max_length=17, null=True, blank=True)
+    capacidadeMaximaCarga = models.CharField(
+        max_length=50, null=True, blank=True)
+    pesoBrutoTotal = models.CharField(max_length=50, null=True, blank=True)
+    capacidadeMaximaTracao = models.CharField(
+        max_length=17, null=True, blank=True)
     indicadorRemarcacaoChassi = models.BooleanField(null=True, blank=True)
     numeroCaixaCambio = models.CharField(max_length=255, null=True, blank=True)
     quantidadeEixo = models.CharField(max_length=255, null=True, blank=True)
-    numeroEixoTraseiro = models.CharField(max_length=255, null=True, blank=True)
-    numeroEixoAuxiliar = models.CharField(max_length=255, null=True, blank=True)
+    numeroEixoTraseiro = models.CharField(
+        max_length=255, null=True, blank=True)
+    numeroEixoAuxiliar = models.CharField(
+        max_length=255, null=True, blank=True)
     numeroMotor = models.CharField(max_length=255, null=True, blank=True)
     tipoMontagem = models.CharField(max_length=255, null=True, blank=True)
-    numeroIdentificacaoImportador = models.CharField(max_length=255, null=True, blank=True)
-    numeroDeclaracaoImportacao = models.CharField(max_length=255, null=True, blank=True)
-    dataDeclaracaoImportacao = models.DateTimeField(null=True, blank=True)
+    numeroIdentificacaoImportador = models.CharField(
+        max_length=255, null=True, blank=True)
+    numeroDeclaracaoImportacao = models.CharField(
+        max_length=255, null=True, blank=True)
+    dataDeclaracaoImportacao = models.CharField(
+        max_length=50, null=True, blank=True)
     codigoOrgaoSRF = models.CharField(max_length=255, null=True, blank=True)
-    dataDeclaracaoImportacao = models.DateTimeField(null=True, blank=True)
+    descricaoOrgaoRegiaoFiscal = models.CharField(
+        max_length=255, null=True, blank=True)
+    dataLimiteRestricaoTributaria = models.CharField(
+        max_length=50, null=True, blank=True)
     restricaoVeiculo1 = models.CharField(max_length=255, null=True, blank=True)
     restricaoVeiculo2 = models.CharField(max_length=255, null=True, blank=True)
     restricaoVeiculo3 = models.CharField(max_length=255, null=True, blank=True)
     restricaoVeiculo4 = models.CharField(max_length=255, null=True, blank=True)
-    dataLimiteRestricaoTributaria = models.DateField(null=True, blank=True)
-    indicadorVeiculoLicenciadoCirculacao = models.CharField(max_length=255, null=True, blank=True)
+    dataLimiteRestricaoTributaria = models.CharField(
+        max_length=50, null=True, blank=True)
+    indicadorVeiculoLicenciadoCirculacao = models.CharField(
+        max_length=255, null=True, blank=True)
     renavam = models.CharField(max_length=255, null=True, blank=True)
-    codigoMunicipioEmplacamento = models.CharField(max_length=50, null=True, blank=True)
-    dataAtualizacaoRouboFurto = models.DateField(null=True, blank=True)
-    dataAtualizacaoAlarme = models.DateField(null=True, blank=True)
+    codigoMunicipioEmplacamento = models.CharField(
+        max_length=50, null=True, blank=True)
+    dataAtualizacaoRouboFurto = models.CharField(
+        max_length=50, null=True, blank=True)
+    dataAtualizacaoAlarme = models.CharField(
+        max_length=50, null=True, blank=True)
     indicadorVeiculoNacional = models.BooleanField(null=True, blank=True)
-    numeroLicencaUsoConfiguracaoVeiculosMotor = models.CharField(max_length=50, null=True, blank=True)
+    numeroLicencaUsoConfiguracaoVeiculosMotor = models.CharField(
+        max_length=50, null=True, blank=True)
     categoria = models.CharField(max_length=50, null=True, blank=True)
     codigoCategoria = models.IntegerField(null=True, blank=True)
-    dataEmissaoUltimoCRV = models.DateField(null=True, blank=True)
-    dataAtualizacaoVeiculo = models.DateTimeField(null=True, blank=True)
-    dataHoraAtualizacaoVeiculo = models.DateTimeField(null=True, blank=True)
-    numeroProcessoImportacao = models.CharField(max_length=50, null=True, blank=True)
-    paisTransferenciaVeiculo = models.CharField(max_length=50, null=True, blank=True)
+    dataEmissaoUltimoCRV = models.CharField(
+        max_length=50, null=True, blank=True)
+    numeroSequenciaCRV = models.CharField(max_length=50, null=True, blank=True)
+    numeroCRV = models.CharField(max_length=50, null=True, blank=True)
+    numeroViaCRV = models.IntegerField(null=True, blank=True)
+    codigoSegurancaCRV = models.CharField(max_length=50, null=True, blank=True)
+    numeroTipoCRLV = models.CharField(max_length=50, null=True, blank=True)
+    dataEmissaoCRLV = models.CharField(max_length=50, null=True, blank=True)
+    numeroViaCRLV = models.IntegerField(null=True, blank=True)
+    anoUltimoLicenciamnento = models.IntegerField(null=True, blank=True)
+    mesAnoValidadeLicenciamento = models.IntegerField(null=True, blank=True)
+    valorIPVA = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True)
+    dataAtualizacaoVeiculo = models.CharField(
+        max_length=50, null=True, blank=True)
+    dataHoraAtualizacaoVeiculo = models.CharField(
+        max_length=50, null=True, blank=True)
+    numeroProcessoImportacao = models.CharField(
+        max_length=50, null=True, blank=True)
+    paisTransferenciaVeiculo = models.CharField(
+        max_length=50, null=True, blank=True)
     origemPossuidor = models.CharField(max_length=255, null=True, blank=True)
-    quaantidadeRestricoesBaseEmplacamento = models.CharField(max_length=50, null=True, blank=True)
+    quantidadeRestricoesBaseEmplacamento = models.CharField(
+        max_length=50, null=True, blank=True)
     registroAduaneiro = models.CharField(max_length=50, null=True, blank=True)
     situacaoVeiculo = models.CharField(max_length=50, null=True, blank=True)
     codigoMarcaModelo = models.IntegerField(null=True, blank=True)
     codigoEspecie = models.IntegerField(null=True, blank=True)
     codigoTipoVeiculo = models.IntegerField(null=True, blank=True)
     codigoCor = models.IntegerField(null=True, blank=True)
+    codigoCarroceira = models.IntegerField(null=True, blank=True)
     restricao = models.JSONField(null=True)
-    """ nomeProprietario  = models.CharField(max_length=255, null=True, blank=True)
-    nomePossuidor = models.CharField(max_length=255, null=True, blank=True)
-    nomeArrendatario = models.CharField(max_length=255, null=True, blank=True) """
-    proprietario = models.ForeignKey(PersonRenavamCortex, related_name='veiculos_proprio', on_delete=models.CASCADE, null=True, blank=True)
-    possuidor = models.ForeignKey(PersonRenavamCortex, related_name='veiculos_em_posse', on_delete=models.CASCADE, null=True, blank=True)
-    arrendatario = models.ForeignKey(PersonRenavamCortex, related_name='veiculos_arrendado', on_delete=models.CASCADE, null=True, blank=True)
-    
+    indiceNacionalVeiculos = models.JSONField(null=True)
+    dataReplicacao = models.CharField(max_length=50, null=True, blank=True)
+    flagAtivo = models.BooleanField(null=True, blank=True)
+    proprietario = models.ForeignKey(
+        PersonRenavamCortex, related_name='veiculos_proprio', on_delete=models.CASCADE, null=True, blank=True)
+    possuidor = models.ForeignKey(
+        PersonRenavamCortex, related_name='veiculos_em_posse', on_delete=models.CASCADE, null=True, blank=True)
+    arrendatario = models.ForeignKey(
+        PersonRenavamCortex, related_name='veiculos_arrendado', on_delete=models.CASCADE, null=True, blank=True)
+
     def soft_delete_cascade_policy_action(self, **kwargs):
         # Insert here custom pre delete logic
         user = kwargs['deleted_by']
@@ -123,7 +182,8 @@ class VehicleCortex(Base, SoftDelete):
 
 
 class RegistryVehicleCortex(Registry):
-    person_renavam_cortex = models.ForeignKey(PersonRenavamCortex, related_name='registers', on_delete=models.CASCADE)
+    person_renavam_cortex = models.ForeignKey(
+        PersonRenavamCortex, related_name='registers', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.uuid}"
@@ -135,7 +195,8 @@ class RegistryVehicleCortex(Registry):
 
 class Vehicle(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    signal = models.CharField('PLACA', max_length=11, unique=True)
+    signal = models.CharField('PLACA', max_length=11,
+                              null=True, blank=True, unique=True)
     chassi = models.CharField(max_length=30, null=True, blank=True)
     brand = models.CharField(max_length=100, null=True, blank=True)
     model = models.CharField(max_length=100, null=True, blank=True)
@@ -144,11 +205,11 @@ class Vehicle(Base, SoftDelete):
     model_year = models.CharField(max_length=5, null=True, blank=True)
     manufactured_year = models.CharField(max_length=5, null=True, blank=True)
     owner = models.ForeignKey(Person, related_name='own_vehicles', null=True,
-        blank=True, on_delete=models.RESTRICT)
+                              blank=True, on_delete=models.RESTRICT)
     custodian = models.ForeignKey(Person, related_name='custody_vehicles', null=True,
-        blank=True, on_delete=models.RESTRICT)
+                                  blank=True, on_delete=models.RESTRICT)
     renter = models.ForeignKey(Person, related_name='rented_vehicles', null=True,
-        blank=True, on_delete=models.RESTRICT)
+                               blank=True, on_delete=models.RESTRICT)
     updated_by = models.ForeignKey(
         User,
         related_name='vehicle_updater',
@@ -160,6 +221,13 @@ class Vehicle(Base, SoftDelete):
         User,
         related_name='vehicle_creator',
         on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    entity = models.ForeignKey(
+        Entity,
+        related_name='vehicles_entity',
+        on_delete=models.PROTECT,
         null=True,
         blank=True
     )
@@ -178,7 +246,7 @@ class Vehicle(Base, SoftDelete):
     class Meta:
         verbose_name = "Veículo"
         verbose_name_plural = "Veículos"
-    
+
 
 class VehicleImage(Base, SoftDelete):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -193,7 +261,8 @@ class VehicleImage(Base, SoftDelete):
             'thumbnail': {'width': 128, 'height': 128, 'crop': True},
         }, delete_orphans=True, blank=True
     )
-    vehicle = models.ForeignKey(Vehicle, related_name='images', on_delete=models.CASCADE)
+    vehicle = models.ForeignKey(
+        Vehicle, related_name='images', on_delete=models.CASCADE)
     updated_by = models.ForeignKey(
         User,
         related_name='images_vehicle_updater',
@@ -205,6 +274,13 @@ class VehicleImage(Base, SoftDelete):
         User,
         related_name='images_vehicle_creator',
         on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    entity = models.ForeignKey(
+        Entity,
+        related_name='vehicleimages_entity',
+        on_delete=models.PROTECT,
         null=True,
         blank=True
     )
