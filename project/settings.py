@@ -234,15 +234,15 @@ SOCIALACCOUNT_PROVIDERS = {
 
 SOCIALACCOUNT_ADAPTER = 'auth.auth_oidc.adapter.PMPBSocialAccountAdapter'
 
-""" response_sso = requests.get(f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/")
+response_sso = requests.get(f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/")
 sso_public_key = json.loads(response_sso.text)["public_key"]
 KEYCLOAK_SERVER_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n{}\n-----END PUBLIC KEY-----".format(
-    sso_public_key) """
+    sso_public_key)
 
 # Python Social Auth https://github.com/coriolinus/oauth2-article
 SOCIAL_AUTH_KEYCLOAK_KEY = env('SOCIAL_AUTH_KEYCLOAK_KEY')
 SOCIAL_AUTH_KEYCLOAK_SECRET = env('SOCIAL_AUTH_KEYCLOAK_SECRET')
-# SOCIAL_AUTH_KEYCLOAK_PUBLIC_KEY = sso_public_key
+SOCIAL_AUTH_KEYCLOAK_PUBLIC_KEY = sso_public_key
 SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL = env(
     'SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL')
 SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL = env(
