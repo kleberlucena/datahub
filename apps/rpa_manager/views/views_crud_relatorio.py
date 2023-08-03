@@ -43,10 +43,7 @@ class CriarNovoRelatorioView(CreateView):
         
     def form_valid(self, form):
         self.object = self.get_context_data()
-        print(self.object)
         evento_obj = form.save(commit=False)
-        print(evento_obj.latitude)
-        print(evento_obj.longitude)
         missao = get_object_or_404(Missao, pk=self.kwargs['pk'])
         missao.concluida = True
         missao.save()
@@ -58,11 +55,6 @@ class CriarNovoRelatorioView(CreateView):
         form.instance.missao = missao
         return super().form_valid(form)
 
-    # def get_success_url(self):
-    #     # Redireciona para a página de detalhes do relatório recém-criado
-    #     relatorio_id = self.object.id
-    #     return reverse('rpa_manager:add_point', kwargs={'pk': relatorio_id})
-    
     
 class EditarRelatorioView(UpdateView):
     model = Relatorio

@@ -1,12 +1,16 @@
 from django.views.generic import DetailView, UpdateView, DeleteView
 from apps.rpa_manager.forms import ChecklistForm
-from apps.rpa_manager.models import Checklist, HistoricoAlteracoesAeronave, Guarnicao, CidadesPB
 from django.urls import reverse_lazy
 from django.views import View
 from django.shortcuts import render, redirect
 from apps.rpa_manager.utils.saveNewChecklistInAircraftHistoric import saveNewChecklistInAircraftHistoric
 from apps.rpa_manager.utils.getLastRegisteredChecklistData import getLastRegisteredChecklistData
-
+from django.http import JsonResponse
+from apps.rpa_manager.models import (Checklist, 
+                                     HistoricoAlteracoesAeronave, 
+                                     Guarnicao, 
+                                     Aeronave,
+                                     Bateria)
 
 class VerChecklistView(DetailView):
     model = Checklist
@@ -27,11 +31,13 @@ class VerChecklistView(DetailView):
 
 
 class ChecklistFormView(View):    
-    def get(self, request):
+    
+    def get(self, request, *args, **kwargs):
         piloto = request.user
         historico_checklist_dict = {}
         
         historico_checklist_dict_json = getLastRegisteredChecklistData(historico_checklist_dict)
+        baterias = Bateria.objects.all()
         
         ultima_guarnicao = Guarnicao.objects.latest('data')
         
@@ -43,6 +49,7 @@ class ChecklistFormView(View):
             'checklist_form': checklist_form,
             'historico_checklist_dict_json': historico_checklist_dict_json,
             'guarnicao': ultima_guarnicao,
+            'baterias': baterias
             }
         return render(request, 'controle/pages/checklist_form.html', context)
     
@@ -50,20 +57,18 @@ class ChecklistFormView(View):
         dados_checklist = {
             'piloto': request.user,
         }
-        
         checklist_form = ChecklistForm(request.POST, initial=dados_checklist)
         if checklist_form.is_valid():
             
             saveNewChecklistInAircraftHistoric(request.POST, dados_checklist)
             
-            return redirect('rpa_manager:painel')
+            return redirect('rpa_manager:update_all_batteries')
         
         context = {
             'checklist_form': checklist_form,
         }
         return render(request, 'controle/pages/checklist_form.html', context)
-
-
+    
 class EditarChecklistView(UpdateView):
     model = Checklist
     form_class = ChecklistForm

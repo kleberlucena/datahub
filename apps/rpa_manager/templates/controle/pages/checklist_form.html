@@ -121,8 +121,6 @@
       </div>
 
       {% if guarnicao %}
-
-      
         <div class="card-body">
           <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
             <div class="card bg-light d-flex flex-fill">
@@ -167,9 +165,6 @@
 
       <form  class="p-3" method='post' enctype="multipart/form-data">
         {% csrf_token %}
-
-        {% comment %} Esta variavel verifica se o form esta sendo editado e carrega {% endcomment %}
-        {% comment %} a lista de itens a serem avaliados {% endcomment %}
         <p class="edicao_checklist">{{ edicao_checklist }}</p> 
 
         <div class="container formulario_checklist_parte1">
@@ -281,7 +276,6 @@
 
       $(".aeronave_escolha").on('change', function() {
         let aeronave_selecionada = $(this).val();
-        console.log(aeronave_selecionada);
         let historico_checklist_dict_json = JSON.parse('{{ historico_checklist_dict_json|escapejs }}');
         
         function transformInBooleanValues(notTransformedJson) {
@@ -308,7 +302,6 @@
         }
 
         let historico_checklist_json = transformInBooleanValues(historico_checklist_dict_json);
-        console.log(historico_checklist_json);
         let dadosAeronave = historico_checklist_json[aeronave_selecionada];
         
         if(dadosAeronave) {
@@ -340,7 +333,6 @@
         }
         
         if (aeronave_selecionada === '1') {
-            console.log("Aeronave 68 selecionada");
             $('input[name="holofote"]').show();
             $('label[for="id_holofote"]').show();
 

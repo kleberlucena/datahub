@@ -106,7 +106,7 @@ def generate_hex_code():
 
 class HistoricoAlteracoesAeronave(models.Model):
     aeronave = models.ForeignKey(Aeronave, on_delete=models.SET_NULL, null=True)
-    titulo_aeronave = models.CharField(max_length=45, null=True, unique=True)
+    titulo_aeronave = models.CharField(max_length=45, null=True)
     data = models.DateTimeField(default=timezone.now)
     codigo = models.CharField(max_length=25, unique=True, default=generate_hex_code)
     num_helices = models.IntegerField(default=4, null=False)

@@ -10,11 +10,10 @@ from .views.views_points_of_interest import (
     UpdatePointOfInterest,
     DeletePointOfInterest    
 )
-
 from .views.views_typeofbattery import (
     TypeOfBatteryCreateView
 )
-
+from .views.views_crud_baterias import UpdateAllBateriasView
 from .views.views_main import (
     PainelView, PrincipalView,
     ChecklistsView, RelatoriosView,
@@ -42,7 +41,6 @@ urlpatterns = [
     path('principal/', PrincipalView.as_view(), name="principal"),
     path('historico/', HistoricosPorAeronaveView.as_view(), name='historico'),
     
-    
     path('add_typeofbattery/', TypeOfBatteryCreateView.as_view(), name='add_typeofbattery'),
     
     
@@ -51,7 +49,7 @@ urlpatterns = [
     path('delete_point/<int:pk>/', DeletePointOfInterest.as_view(), name='delete_point'),
     
     path('descadastrar/', DescadastrarGuarnicao.as_view(), name='descadastrar_guarnicao'),
-    path('guarnicao_form', GuarnicaoCreateView.as_view(), name="guarnicao_form"),
+    path('guarnicao_form/', GuarnicaoCreateView.as_view(), name="guarnicao_form"),
     path('guarnicao/edit/<int:pk>/', GuarnicaoUpdateView.as_view(), name='guarnicao_edit'),
     path('guarnicao/delete/<int:pk>', GuarnicaoDeleteView.as_view(), name='guarnicao_delete'),
     
@@ -73,6 +71,7 @@ urlpatterns = [
     path('ver_bateria/<int:pk>/', VerBateriaView.as_view(), name="ver_bateria"),
     path('criar_nova_bateria/',  CriarNovaBateriaView.as_view(), name="criar_nova_bateria"),
     path('editar_bateria/<int:pk>/', EditarBateriaView.as_view(), name="editar_bateria"),
+    path('update_all_batteries/', UpdateAllBateriasView.as_view(), name='update_all_batteries'),
     path('deletar_bateria/<int:pk>/', DeletarBateriaView.as_view(), name="deletar_bateria"),
 
     path('ver_checklist/<int:pk>/', VerChecklistView.as_view(), name="ver_checklist"),

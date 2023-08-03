@@ -1,0 +1,142 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block style_sheet %}
+	<link rel="stylesheet"href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+	<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+	<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+	<link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+	<style>
+		.list_of_aircrafts {
+			display: none;
+		}
+
+		.visible {
+			display: block;
+		}
+
+		.hidden {
+			display: none;
+		}
+	</style>
+
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Operações aéreas {% endblock %}
+
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="card card-primary card-outline">
+			<div class="card-header">
+				<h3 class="card-title">Atualizar ciclos das baterias</h3>
+			</div>
+			<form method="post">
+				<div class="form-row">
+          <div class="form-group col-md-12 mb-0">
+						{% csrf_token %}
+						<div class="list_of_aircrafts">
+							{% for bateria in baterias %}
+							<p>{{ bateria.aeronave.prefixo }}</p>
+							{% endfor %}
+						</div>
+
+						<div class="ml-3 mr-3">
+							<label for="aeronave">Aeronave:</label>
+							<select name="aeronave" id="select_aircraft" class="form-control"></select>
+						</div>
+
+						{% for bateria in baterias %}
+						<section class="aircraft_battery_choices ml-3 mr-3">
+							<div class="{{ bateria.aeronave }}">
+								<label for="">{{ bateria.aeronave.prefixo }} - Bateria {{ bateria.numeracao }}: </label>
+								<input class=" form-control" type="number" name="{{ bateria.id }}" value="{{ bateria.num_ciclos }}">
+							</div>
+						</section>
+						{% endfor %}
+
+						<div class="mt-3 mb-3 ml-3">
+							<button type="submit" class="btn btn-primary">Salvar</button>
+							<a href="{% url 'rpa_manager:principal' %}">
+								<button type="button" class="btn btn-warning">Cancelar</button>
+							</a>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+	<!-- DataTables  & Plugins -->
+	<script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+	<script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+	<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+	<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+	<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+	<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+	<script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+	<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+	<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+	<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+	<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+	<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+	<script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+	<script src="{% static 'leaflet/leaflet.js' %}"></script>
+	<script>
+		const divConteudo = document.querySelector('.list_of_aircrafts');
+		const arrayWithContent = extractContentToArray(divConteudo);
+		const arrayWithContentNoRepeats = Array.from(new Set(arrayWithContent));
+		const select_aircraft = document.querySelector("#select_aircraft");
+		const aircraft_battery_choices = document.querySelectorAll('.aircraft_battery_choices div');
+		console.log(aircraft_battery_choices[0].className.includes("PP"))
+
+		aircraft_battery_choices.forEach(element => element.classList.add('hidden'));
+
+		// Função para extrair o conteúdo de todas as tags <p> dentro de um elemento
+		function extractContentToArray(elemento) {
+			const arrayConteudo = [];
+			const paragrafos = elemento.getElementsByTagName('p');
+
+			for (const paragrafo of paragrafos) {
+				arrayConteudo.push(paragrafo.textContent);
+			}
+			return arrayConteudo;
+		}
+		// cria os campos option do select de acordo com arrays de aeronaves
+		arrayWithContentNoRepeats.forEach((item) => {
+			const option = document.createElement('option');
+			option.text = item;
+			option.value = item;
+			select_aircraft.add(option);
+		});
+
+		select_aircraft.addEventListener('change', () => {
+			console.log(select_aircraft.value)
+			for(const choice of aircraft_battery_choices) {
+				if(choice.className.includes(select_aircraft.value)) {
+					choice.classList.add('visible');
+					choice.classList.remove('hidden');
+				} else {
+					choice.classList.add('hidden');
+					choice.classList.remove('visible');
+				}
+			}
+		});
+
+	</script>
+{% endblock %}

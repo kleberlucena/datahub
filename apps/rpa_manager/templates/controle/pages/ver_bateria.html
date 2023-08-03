@@ -83,7 +83,11 @@
     </div>
 
     <div class="col-md-8">
-      <div class="detail_battery_img mt-3 mr-3"><img class="battery_img" src="{{ bateria.imagem_bateria.url }}" alt="bateria enterprise">`</div>
+      
+      {% if bateria.imagem_bateria %}
+        <div class="detail_battery_img mt-3 mr-3"><img class="battery_img" src="{{ bateria.imagem_bateria.url }}" alt="bateria enterprise">`</div>
+      {% endif %}
+        
     </div>
 </div>
 {% endblock content %}
