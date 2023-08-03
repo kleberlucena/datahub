@@ -240,13 +240,13 @@ class Relatorio(Base):
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
     latitude = models.FloatField("Latitude", default=0.0, null=True, blank=True)
     longitude = models.FloatField("Longitude", default=0.0, null=True, blank=True)
-    arquivo_solicitacao = models.FileField(upload_to='uploads/%Y/%m/%d/',blank=True, null=True)
+    arquivo_solicitacao = models.FileField(upload_to='protocolos/%Y/%m/%d/',blank=True, null=True)
     num_sarpas = models.CharField(max_length=20, blank=True, null=True)
     entidade_apoiada = models.ForeignKey(Entidades, on_delete=models.SET_NULL, null=True)
     natureza_de_voo = models.ForeignKey(NaturezaDeVoo, on_delete=models.SET_NULL, null=True)
     tipo_de_operacao = models.ForeignKey(TipoDeOperacao, on_delete=models.SET_NULL, null=True)
     aeronave = models.ForeignKey(Aeronave, on_delete=models.SET_NULL, null=True)
-    numero_ficha_oc = models.CharField(max_length=100, null=True, default='')
+    numero_ficha_oc = models.CharField(max_length=100, null=True, blank=True, default='')
     relato_da_missao = models.TextField(max_length=500)
     
     def __str__(self):

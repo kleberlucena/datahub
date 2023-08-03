@@ -105,7 +105,7 @@
         <hr>
         <strong>Arquivo de solicitação: </strong> 
         {% if relatorio.arquivo_solicitacao != None %}
-          <a href="/media/{{ relatorio.arquivo_solicitacao }}/" download>Baixar solicitação <i
+          <a href="{{ relatorio.arquivo_solicitacao.url }}/">Baixar solicitação <i
                 class="fas fa-file-pdf"></i> </a>
           {% else %}
            sem registro
