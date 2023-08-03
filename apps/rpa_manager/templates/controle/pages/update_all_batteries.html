@@ -53,8 +53,9 @@
 						</div>
 
 						<div class="ml-3 mr-3">
-							<label for="aeronave">Aeronave:</label>
-							<select name="aeronave" id="select_aircraft" class="form-control"></select>
+							<label for="aeronave">Aeronave:</label><br>
+							<small>Selecione uma aeronave para atualizar as baterias</small>
+							<select name="aeronave" id="select_aircraft" class="form-control mt-1"></select>
 						</div>
 
 						{% for bateria in baterias %}
@@ -103,7 +104,6 @@
 		const arrayWithContentNoRepeats = Array.from(new Set(arrayWithContent));
 		const select_aircraft = document.querySelector("#select_aircraft");
 		const aircraft_battery_choices = document.querySelectorAll('.aircraft_battery_choices div');
-		console.log(aircraft_battery_choices[0].className.includes("PP"))
 
 		aircraft_battery_choices.forEach(element => element.classList.add('hidden'));
 
@@ -117,6 +117,12 @@
 			}
 			return arrayConteudo;
 		}
+		// cria uma opção em vazio
+		const empty_option = document.createElement('option');
+		empty_option.text = '---'
+		empty_option.value = ''
+		select_aircraft.add(empty_option);
+
 		// cria os campos option do select de acordo com arrays de aeronaves
 		arrayWithContentNoRepeats.forEach((item) => {
 			const option = document.createElement('option');

@@ -73,9 +73,11 @@
         <hr>
         <strong>Local: </strong> {{ aeronave.local }}
         <hr>
-        <strong>Disponibilidade: </strong> 
+        <small>Aeronave está em: operação, disponível ou indisponível</small>
+        <br>
+        <strong>Status: </strong>
         {% if aeronave.em_uso is True %}
-          <span class="badge badge-warning">Em operação</span>
+        <span class="badge badge-warning">Em operação</span>
           <hr>
         {% elif aeronave.em_uso == None %}
           <span class="badge badge-danger">Indisponível</span>
@@ -83,7 +85,7 @@
         {% else %}
           <span class="badge badge-success">Disponível</span>
           <hr>
-        {% endif %}
+          {% endif %}
       </div>
     </div>
     
