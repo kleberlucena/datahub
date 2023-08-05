@@ -35,6 +35,12 @@
 				<p>Relatórios</p>
 			</a>
 		</li>
+		<li class="nav-item">
+			<a href="{% url 'rpa_manager:incidentes' %}" class="nav-link">
+				<i class="far fa-circle nav-icon"></i>
+				<p>Incidentes</p>
+			</a>
+		</li>
 
 		{% if user.is_superuser %}
 			<li class="nav-item menu-item">

@@ -15,9 +15,9 @@ from apps.rpa_manager.models import (
     Guarnicao,
     Incidentes,
     Entidades,
-    PontosDeInteresse
+    PontosDeInteresse,
+    ImagensIncidente
 )
-
 
 class MissaoAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'usuario','concluida', 'horario', 'data')
@@ -58,4 +58,5 @@ admin.site.register(Roles)
 admin.site.register(Incidentes)
 admin.site.register(Entidades)
 admin.site.register(PontosDeInteresse)
+admin.site.register(ImagensIncidente)
 

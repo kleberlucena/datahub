@@ -1,0 +1,215 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block style_sheet %}
+  <link rel="stylesheet"href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
+  <style>
+    .hidden {
+      display: none;
+    }
+    #id_imageIncidente {
+      display: none;
+    }
+    #fileList {
+      display: none;
+    }
+    .temp_images_view {
+      display: flex;
+      flex-wrap: nowrap;
+      max-height: 200px; /* Adjust the max height to control overflow */
+      overflow-x: auto;
+    }
+    
+    .temp_images_view img {
+      margin: 5px;
+      max-width: 150px; /* Adjust the max width of each image as needed */
+      max-height: 150px; /* Adjust the max height of each image as needed */
+    }
+    
+    .temp_images_view_edit {
+      display: flex;
+      flex-wrap: nowrap;
+      max-height: 200px; /* Adjust the max height to control overflow */
+      overflow-x: auto;
+    }
+    .temp_images_view_edit img {
+      margin: 5px;
+      max-width: 150px; /* Adjust the max width of each image as needed */
+      max-height: 150px; /* Adjust the max height of each image as needed */
+    }
+  </style>
+  {% endblock style_sheet %}
+
+  <!-- browser title -->
+{% block title %} Operações aéreas {% endblock %}
+
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="card card-primary card-outline">
+      <div class="card-header">
+        <h3 class="card-title">{% if request.resolver_match.url_name == 'create_incidente' %}Novo Incidente{% else %}Editar Incidente{% endif %}</h3>
+      </div>
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="ml-3 mr-3 mt-3">
+          <label for="id_operacao">Operação</label>
+          {{ form.operacao}}
+        </div>
+        <div class="ml-3 mr-3 mt-3">
+          <label for="id_operacao">Aeronave</label>
+          {{ form.aeronave}}
+        </div>
+        <div class="ml-3 mr-3 mt-3">
+          <label for="id_operacao">Local</label>
+          {{ form.local}}
+        </div>
+        <div class="form-group ml-3 mr-3 mt-1">
+          <label for="id_data">Data e Hora</label>
+          <div class="input-group date" id="datetimepicker" data-target-input="nearest">
+            {{ form.data }}
+            <div class="input-group-append" data-target="#datetimepicker" data-toggle="datetimepicker">
+              <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+            </div>
+          </div>
+        </div>
+        <div class="ml-3 mr-3 mt-3">
+          <label for="id_operacao">Imagens do incidente</label>
+          <input type="file" id="id_imageIncidente", name="imagens" multiple>
+          <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
+          <p id="fileName"></p>
+          <p id="fileList"></p>
+          <div class="temp_images_view"></div>
+          {% if request.resolver_match.url_name == 'update_incidente' %}
+
+          
+          {% if images %}
+            <label for="">Imagens carregadas</label>
+
+          {% else %}
+            <label for="">Não há Imagens carregadas</label>
+          {% endif %}
+            
+
+          <div class="temp_images_view_edit">
+            
+            {% if images %}
+              {% for img in images %}
+              {{ img.pk}}
+              <a href="{% url 'rpa_manager:delete_image' img.pk %} ">
+                <img src="{{ img.imageIncidente.url }}" alt="Image">
+              </a>
+              {% endfor %}
+            {% else %}
+            {% endif %}
+                
+          </div>
+          {% else %}
+            
+          {% endif %}
+        </div>
+        <div class="ml-3 mr-3 mt-3">
+          <label for="id_operacao">Ponto de referência</label>
+          {{ form.ponto_de_referencia}}
+        </div>
+        <div class="ml-3 mr-3 mt-3">
+          <label for="id_operacao">Relato do incidente</label>
+          {{ form.relato}}
+        </div>
+
+        <div class="ml-3 mr-3 mt-3 mb-3">
+          <button type="submit" class="btn btn-primary">Salvar</button>
+          <a href="{% url 'rpa_manager:painel' %}">
+            <button type="button" class="btn btn-warning">Cancelar</button>
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endblock content %}
+
+  <!-- javascripts -->
+  {% block js %}
+  <!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/moment/moment.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+  <script>
+    $(function () {
+      $('#datetimepicker').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss',
+        icons: {
+          time: 'fa fa-clock',
+        }
+      });
+    });
+  </script>
+
+  <script>
+    const fileInput = document.getElementById("id_imageIncidente");
+    const fileList = document.getElementById('fileList');
+    const tempImagesView = document.querySelector('.temp_images_view');
+  
+    document.getElementById("fileButton").addEventListener("click", function() {
+      fileInput.click();
+    });
+  
+    fileInput.addEventListener("change", function() {
+
+      const files = fileInput.files;
+      let fileListText = '';
+  
+      for (let i = 0; i < files.length; i++) {
+        fileListText += files[i].name + '<br>';
+      }
+  
+      fileList.innerHTML = fileListText;
+  
+      // Remove previous images from the tempImagesView
+      tempImagesView.innerHTML = '';
+  
+      // Display image previews
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+  
+        reader.onload = function(e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.alt = file.name;
+          tempImagesView.appendChild(img);
+        };
+  
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+
+{% endblock %}  

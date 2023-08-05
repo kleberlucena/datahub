@@ -14,8 +14,8 @@ from apps.rpa_manager.utils.create_json_for_coordinates import create_json_for_c
 from apps.rpa_manager.models import (Aeronave, Bateria, 
                                      Checklist, Militar, 
                                      Missao, Relatorio,
-                                     HistoricoAlteracoesAeronave
-                                     )
+                                     HistoricoAlteracoesAeronave,
+                                     Incidentes)
 
 
 def home(request):
@@ -161,6 +161,15 @@ class AeronavesView(TemplateView):
         context['aeronaves'] = aeronaves
         context['form'] = form
 
+        return context
+    
+class IncidentesView(TemplateView):
+    template_name = 'controle/pages/incidentes.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        incidentes = Incidentes.objects.all()
+        context['incidentes'] = incidentes
         return context
 
 

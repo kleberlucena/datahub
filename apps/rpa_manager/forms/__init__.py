@@ -8,3 +8,4 @@ from .forms_reports import *
 from .forms_guarnicao import *
 from .forms_points_interests import *
 from .forms_typeofbattery import *
+from .forms_incidentes import *

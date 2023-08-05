@@ -240,7 +240,7 @@ class Relatorio(Base):
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
     latitude = models.FloatField("Latitude", default=0.0, null=True, blank=True)
     longitude = models.FloatField("Longitude", default=0.0, null=True, blank=True)
-    arquivo_solicitacao = models.FileField(upload_to='protocolos/%Y/%m/%d/',blank=True, null=True)
+    arquivo_solicitacao = models.FileField(upload_to='protocolos', storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET), blank=True, null=True)
     num_sarpas = models.CharField(max_length=20, blank=True, null=True)
     entidade_apoiada = models.ForeignKey(Entidades, on_delete=models.SET_NULL, null=True)
     natureza_de_voo = models.ForeignKey(NaturezaDeVoo, on_delete=models.SET_NULL, null=True)
@@ -255,9 +255,18 @@ class Relatorio(Base):
 
 class Incidentes(models.Model):
     operacao = models.ForeignKey(Relatorio, on_delete=models.SET_NULL, null=True)
+    aeronave = models.ForeignKey(Aeronave, on_delete=models.SET_NULL, null=True)
     relato = models.TextField()
-    localizacao = models.TextField()
+    local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
+    ponto_de_referencia = models.TextField()
     data = models.DateTimeField()
+
+    def __str__(self):
+        return f'{self.operacao} | {self.data}'
+
+
+class ImagensIncidente(models.Model):
+    incidente = models.ForeignKey(Incidentes, on_delete=models.CASCADE)
     imageIncidente = StdImageField(
         'Imagem',
         storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
@@ -269,10 +278,7 @@ class Incidentes(models.Model):
         }, delete_orphans=True, blank=True, null=True
     )
 
-    def __str__(self):
-        return f'{self.operacao} | {self.data}'
-
-
+    
 class PontosDeInteresse(models.Model):
     operacao = models.ForeignKey(Relatorio, on_delete=models.SET_NULL, null=True)
     descricao = models.TextField()

@@ -1,4 +1,12 @@
 from django.urls import path
+from .views.views_crud_baterias import UpdateAllBateriasView
+from .views.views_incidentes import (
+    IncidentesCreateView,
+    IncidentesUpdateView,
+    IncidentesDeleteView,
+    IncidentesDetailView,
+    IncidenteImageDeleteView,
+)
 from .views.views_guarnicao import (
     GuarnicaoCreateView, 
     GuarnicaoUpdateView,
@@ -13,7 +21,6 @@ from .views.views_points_of_interest import (
 from .views.views_typeofbattery import (
     TypeOfBatteryCreateView
 )
-from .views.views_crud_baterias import UpdateAllBateriasView
 from .views.views_main import (
     PainelView, PrincipalView,
     ChecklistsView, RelatoriosView,
@@ -31,7 +38,7 @@ from .views.views_main import (
     DeletarAeronaveView, VerBateriaView,
     CriarNovaBateriaView, EditarBateriaView,
     DeletarBateriaView, MilitaryListJson,
-    HistoricosPorAeronaveView, 
+    HistoricosPorAeronaveView, IncidentesView
     )
 
 app_name = "rpa_manager"
@@ -40,6 +47,13 @@ urlpatterns = [
     path('painel/', PainelView.as_view(), name="painel"),
     path('principal/', PrincipalView.as_view(), name="principal"),
     path('historico/', HistoricosPorAeronaveView.as_view(), name='historico'),
+    
+    path('create_incidente/', IncidentesCreateView.as_view(), name='create_incidente'),
+    path('incidentes_detail/<int:pk>/', IncidentesDetailView.as_view(), name='incidentes_detail'),
+    path('update_incidente/<int:pk>/', IncidentesUpdateView.as_view(), name='update_incidente'),
+    path('delete_incidentes/<int:pk>/', IncidentesDeleteView.as_view(), name='delete_incidente'),
+    path('delete_image/<int:pk>/', IncidenteImageDeleteView.as_view(), name='delete_image'),
+    
     
     path('add_typeofbattery/', TypeOfBatteryCreateView.as_view(), name='add_typeofbattery'),
     
@@ -89,6 +103,7 @@ urlpatterns = [
     path('aeronaves/', AeronavesView.as_view(), name="aeronaves"),
     path('relatorios/', RelatoriosView.as_view(), name="relatorios"),
     path('baterias/', BateriasView.as_view(), name="baterias"),
+    path('incidentes/', IncidentesView.as_view(), name="incidentes"),
 
     # API externa (vem do app portal)
     path('api-v1/military_list_json/', MilitaryListJson.as_view(), name='military_list_json'),
