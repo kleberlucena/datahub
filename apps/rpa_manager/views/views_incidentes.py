@@ -4,7 +4,9 @@ from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 from apps.rpa_manager.models import Incidentes, ImagensIncidente
 from apps.rpa_manager.forms import IncidentesForm
 from django.urls import reverse
-
+from django.http import JsonResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 class IncidentesCreateView(CreateView):
     model = Incidentes
@@ -12,34 +14,46 @@ class IncidentesCreateView(CreateView):
     template_name = 'controle/pages/create_incidente.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
 
+    
+    def get_initial(self):
+        return {
+            'piloto': self.request.user
+        }
+    
+    # o metodo abaixo buscar o usuario logado para passar para
+    # uma query no forms desse model e pegar apenas objetos que
+    # o usuario logado criou
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  
+        return kwargs
+    
     def form_valid(self, form):
-        # Get the images from the form's input field
         images = self.request.FILES.getlist('imagens')
-        
-        # Save the incident first to get its primary key
         self.object = form.save()
-
-        # Associate the images with the incident
         for image in images:
            ImagensIncidente.objects.create(incidente=self.object, imageIncidente=image)
 
         return redirect(self.get_success_url())
     
     
-class IncidentesUpdateView(UpdateView):
+class IncidentesUpdateView(PermissionRequiredMixin, UpdateView):
     model = Incidentes
     form_class = IncidentesForm
     template_name = 'controle/pages/create_incidente.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
-
+    permission_required = 'rpa_manager.edit_incidente'
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  
+        return kwargs
+    
     def form_valid(self, form):
-        # Get the images from the form's input field
         images = self.request.FILES.getlist('imagens')
         
-        # Save the incident first to get its primary key
         self.object = form.save()
 
-        # Associate the images with the incident
         for image in images:
             ImagensIncidente.objects.create(incidente=self.object, imageIncidente=image)
 
@@ -49,13 +63,10 @@ class IncidentesUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # Get the Incidentes instance
         incidente = self.get_object()
 
-        # Get all related images for the incidente
         images = ImagensIncidente.objects.filter(incidente=incidente)
         
-        # Extract the image URLs and include them in the context
         image_urls = [image.imageIncidente.url for image in images]
         context['image_urls'] = image_urls
         context['images'] = images
@@ -63,11 +74,11 @@ class IncidentesUpdateView(UpdateView):
         return context
     
     
-class IncidentesDeleteView(DeleteView):
+class IncidentesDeleteView(PermissionRequiredMixin, DeleteView):
     model = Incidentes
     template_name = 'controle/pages/delete_incidente.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
-
+    permission_required = 'rpa_manager.delete_incidente'
 
 class IncidentesDetailView(DetailView):
     model = Incidentes
@@ -76,14 +87,10 @@ class IncidentesDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # Get the Incidentes instance
         incidente = self.get_object()
 
-        # Get all related images for the incidente
         images = ImagensIncidente.objects.filter(incidente=incidente)
         
-        
-        # Extract the image URLs and include them in the context
         image_urls = [image.imageIncidente.url for image in images]
         context['image_urls'] = image_urls
         
@@ -95,6 +102,11 @@ class IncidenteImageDeleteView(DeleteView):
     template_name = 'controle/pages/delete_image.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
     
-    
-
+    def delete(self, request, *args, **kwargs):
+        imagem = self.get_object()
+        if imagem:
+            imagem.delete()
+            return JsonResponse({'message': 'Imagem excluída com sucesso.'})
+        else:
+            return JsonResponse({'error': 'Imagem não encontrada.'}, status=404)
     

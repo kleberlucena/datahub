@@ -256,6 +256,7 @@ class Relatorio(Base):
 class Incidentes(models.Model):
     operacao = models.ForeignKey(Relatorio, on_delete=models.SET_NULL, null=True)
     aeronave = models.ForeignKey(Aeronave, on_delete=models.SET_NULL, null=True)
+    piloto = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     relato = models.TextField()
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
     ponto_de_referencia = models.TextField()
@@ -284,6 +285,9 @@ class PontosDeInteresse(models.Model):
     descricao = models.TextField()
     latitude = models.FloatField("Latitude", default=0.0, null=True, blank=True)
     longitude = models.FloatField("Longitude", default=0.0, null=True, blank=True)
+    is_temporary = models.BooleanField(default=False)
+    date_initial = models.DateTimeField(null=True, blank=True)
+    date_final = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.descricao

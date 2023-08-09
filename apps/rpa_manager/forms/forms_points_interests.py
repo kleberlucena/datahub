@@ -7,6 +7,9 @@ class PointsOfInterestForm(forms.ModelForm):
     class Meta:
         model = PontosDeInteresse
         fields = ['operacao', 
+                  'is_temporary',
+                  'date_initial',
+                  'date_final',
                   'descricao', 
                   'latitude', 
                   'longitude']
@@ -23,6 +26,9 @@ class PointsOfInterestForm(forms.ModelForm):
         })
         
         campos = ['operacao', 
+                  'is_temporary',
+                  'date_initial',
+                  'date_final',
                   'descricao', 
                   'latitude', 
                   'longitude']

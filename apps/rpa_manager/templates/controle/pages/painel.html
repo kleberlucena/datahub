@@ -208,13 +208,15 @@
       let staticUrl = "{% static 'leaflet/images/marker-icon.png' %}"
       console.log(staticUrl)
 
-      let defaultIcon = L.icon({
-        iconUrl: staticUrl,
-        iconSize: [64, 64],
-        iconAnchor: [32, 64],
+      const urlLocalImg = "{% static '/sti/img/drone.png' %}"
+      var droneMarkerIcon = L.icon({
+        iconUrl: urlLocalImg,
+        iconSize: [32, 32], 
+        iconAnchor: [16, 32], 
+        popupAnchor: [0, -32] 
       });
 
-      let marker = new L.marker(centerCoordinates)
+      let marker = new L.marker(centerCoordinates, {icon: droneMarkerIcon})
       .addTo(map)
       .bindPopup(coordinatesJson.usuario + '<br>' + 
                  coordinatesJson.titulo + '<br>' + 
@@ -229,7 +231,7 @@
         longitude = coordinatesByDate[i].longitude !== null ? coordinatesByDate[i].longitude : 0.0
 
         if (latitude !== 0.0 && longitude !== 0.0) {
-          let marker = new L.marker([latitude, longitude])
+          let marker = new L.marker([latitude, longitude], {icon: droneMarkerIcon})
             .addTo(map)
             .bindPopup(usuario + '<br>' + titulo + '<br>' + latitude + ',' + longitude).openPopup();
         }

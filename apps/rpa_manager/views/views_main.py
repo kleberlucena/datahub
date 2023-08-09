@@ -119,7 +119,11 @@ class RelatoriosView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        relatorios = Relatorio.objects.all().order_by('-data', '-horario_inicial')
+        if self.request.user.is_superuser:
+            relatorios = Relatorio.objects.all().order_by('-data', '-horario_inicial')
+        else:
+            # Filtra os objetos para exibir apenas os que foram criados pelo usuário atual
+            relatorios = Relatorio.objects.filter(militar=self.request.user).order_by('-data', '-horario_inicial')
 
         form = formulario_missao(self.request)
 
@@ -150,6 +154,7 @@ class EfetivoView(TemplateView):
         context['militares_com_roles'] = militares_com_roles
         return context
 
+
 class AeronavesView(TemplateView):
     template_name = 'controle/pages/aeronaves.html'
 
@@ -163,12 +168,16 @@ class AeronavesView(TemplateView):
 
         return context
     
+    
 class IncidentesView(TemplateView):
     template_name = 'controle/pages/incidentes.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        incidentes = Incidentes.objects.all()
+        if self.request.user.is_superuser:
+            incidentes = Incidentes.objects.all().order_by('-data')
+        else:
+            incidentes = Incidentes.objects.filter(piloto=self.request.user).order_by('-data')
         context['incidentes'] = incidentes
         return context
 

@@ -6,11 +6,15 @@ from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from apps.rpa_manager.utils.create_json_for_coordinates import create_json_for_coordinates
 from django.urls import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
-class VerRelatorioView(DetailView):
+
+class VerRelatorioView(PermissionRequiredMixin, DetailView):
     model = Relatorio
     template_name = 'controle/pages/ver_relatorio.html'
     context_object_name = 'relatorio'
+    permission_required = 'rpa_manager.view_relatorio'
     
     def get_context_data(self, **kwargs):
             context = super().get_context_data(**kwargs)
@@ -20,11 +24,12 @@ class VerRelatorioView(DetailView):
 
             return context
         
-class CriarNovoRelatorioView(CreateView):
+class CriarNovoRelatorioView(PermissionRequiredMixin, CreateView):
     model = Relatorio
     form_class = RelatorioFormulario
     template_name = 'controle/pages/criar_novo_relatorio.html'
     success_url = reverse_lazy('rpa_manager:add_point')
+    permission_required = 'rpa_manager.create_relatorio'
     
     def get_initial(self):
         missao = get_object_or_404(Missao, pk=self.kwargs['pk'])
@@ -56,17 +61,18 @@ class CriarNovoRelatorioView(CreateView):
         return super().form_valid(form)
 
     
-class EditarRelatorioView(UpdateView):
+class EditarRelatorioView(PermissionRequiredMixin, UpdateView):
     model = Relatorio
     form_class = RelatorioFormulario
     template_name = 'controle/pages/criar_novo_relatorio.html'
     success_url = reverse_lazy('rpa_manager:relatorios')
     context_object_name = 'relatorio'
+    permission_required = 'rpa_manager.edit_relatorio'
 
 
-class DeletarRelatorioView(DeleteView):
+class DeletarRelatorioView(PermissionRequiredMixin, DeleteView):
     model = Relatorio
     template_name = 'controle/pages/delete_relatorio.html'
     success_url = reverse_lazy('rpa_manager:relatorios')
     context_object_name = 'obj'
-    
+    permission_required = 'rpa_manager.delete_relatorio'

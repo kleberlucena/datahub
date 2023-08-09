@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
     <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
     <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
     <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
   <style>
      .piloto_observador,
@@ -32,6 +33,11 @@
       cursor: pointer;
     }
 
+    #id_is_temporary {
+      width: 15px;
+      height: 15px;
+    }
+
     /* fix select2 field height */
     .select2-selection, .select2-selection--single{
       height: 38px !important;
@@ -57,7 +63,7 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Inserir ponto {% endblock %}
+{% block title %} Operações aéreas {% endblock %}
 
 
 <!-- context title -->
@@ -70,42 +76,60 @@
 
 <!-- main container -->
 {% block content %}
-<div class="row">
-  <div class="col-md-12">
-    <div class="card card-primary card-outline">
-      <div class="card-header">
-        <h3 class="card-title">Editar ponto de interesse</h3>
-      </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-primary card-outline">
+        <div class="card-header">
+          <h3 class="card-title">Editar ponto de interesse</h3>
+        </div>
 
-
-      <form class="p-3" method='post' enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-row">
-          <div class="form-group col-md-12 mb-0">
-            <label for="id_operacao" class="titulo_operacao">Operação</label>
+        <form class="p-3" method='post' enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group col-md-12 mb-0">
+            <label for="id_operacao" class="title_operacao">Operação</label>
             {{ form.operacao }}
             {{ form.operacao.errors }}
-            <label for="id_descricao" class="titulo_operacao">Descrição</label>
-            {{ form.descricao }}
-            {{ form.descricao.errors }}
-            <label for="id_latitude" class="titulo_operacao">Latitude</label>
-            {{ form.latitude }}
-            {{ form.latitude.errors }}
-            <label for="id_longitude" class="titulo_operacao">Longitude</label>
-            {{ form.longitude }}
-            {{ form.longitude.errors }}
-
-          <div class="mt-3">
-            <button type="submit" class="btn btn-primary">Salvar</button>
-            <a href="{% url 'rpa_manager:criar_nova_missao' %}">
-              <button type="button" class="btn btn-warning">Cancelar</button>
-            </a>
-          </div>
-        </form>
-        <div id="map" class="mt-3" style="height: 500px;"></div>
+              <label for="id_is_temporary" class="title_is_temporary mt-1">O ponto é temporário?</label>
+              {{ form.is_temporary }}
+              {{ form.is_temporary.errors }}
+              <label for="id_date_initial" class="title_date_initial mt-1">Data inicial</label>
+              <div class="input-group date" id="datetimepicker_date_initial" data-target-input="nearest">
+                {{ form.date_initial }}
+                {{ form.date_initial.errors }}
+                <div class="input-group-append" data-target="#datetimepicker_date_initial" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+              <label for="id_date_final" class="title_date_final mt-1">Data final</label>
+              <div class="input-group date" id="datetimepicker_date_final" data-target-input="nearest">
+                {{ form.date_final }}
+                {{ form.date_final.errors }}
+                <div class="input-group-append" data-target="#datetimepicker_date_final" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+              <label for="id_descricao" class="title_descricao mt-1">Descrição</label>
+              {{ form.descricao }}
+              {{ form.descricao.errors }}
+              <label for="id_latitude" class="title_latitude mt-1">Latitude</label>
+              {{ form.latitude }}
+              {{ form.latitude.errors }}
+              <label for="id_longitude" class="title_longitude mt-1">Longitude</label>
+              {{ form.longitude }}
+              {{ form.longitude.errors }}
+  
+            <div class="mt-3">
+              <button type="submit" class="btn btn-primary">Salvar</button>
+              <a href="{% url 'rpa_manager:painel' %}">
+                <button type="button" class="btn btn-warning">Cancelar</button>
+              </a>
+            </div>
+          </form>
+          <div id="map" class="mt-3" style="height: 500px;"></div>
+      </div>
     </div>
   </div>
-</div>
   {% endblock content %}
 
   <!-- javascripts -->
@@ -124,21 +148,39 @@
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/moment/moment.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
   <script src="{% static 'leaflet/leaflet.js' %}"></script>
+  <script>
+    $(function () {
+      $('#datetimepicker_date_initial').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss',
+        icons: {
+          time: 'fa fa-clock',
+        }
+      });
+
+      $('#datetimepicker_date_final').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss',
+        icons: {
+          time: 'fa fa-clock',
+        }
+      });
+    });
+  </script>
   <script>
     let latitude = {{ latitude | safe }}
     let longitude = {{ longitude | safe }}
     var map = L.map('map').setView([latitude, longitude], 17);
-    L.marker([latitude, longitude]).addTo(map);
-    
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-    var marker;
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    var marker = L.marker([latitude, longitude]).addTo(map);
 
     map.on('click', function (e) {
         if (marker) {
             map.removeLayer(marker);
         }
+
         marker = L.marker(e.latlng).addTo(map);
         document.getElementById('id_latitude').value = e.latlng.lat;
         document.getElementById('id_longitude').value = e.latlng.lng;

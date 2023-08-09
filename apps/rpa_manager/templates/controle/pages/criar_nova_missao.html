@@ -155,13 +155,17 @@
                     <div class="card-tools">
                     </div>
                   </div>
+
                   {% for point in points %}
                   <div class="card-body collapse card_atendimento" aria-expanded="false" id="pontosCadastrados">
                       <div class="ponto-atendimento" data-lat="{{ point.latitude }}" data-lng="{{ point.longitude }}">
-                        <p class="point_of_interest" style="font-size: 0.8rem">
-                          <i class="fa fa-exclamation-triangle"></i> {{ point.descricao }}
-                          <a href="{% url 'rpa_manager:edit_point' point.id %}" style="padding-left: 10px"><i class="fa fa-pen"></i></a>
-                          <a href="{% url 'rpa_manager:delete_point' point.id %}" style="padding-left: 10px"><i class="fa fa-trash"></i></a>
+                        <p class="point_of_interest" style="font-size: 0.8rem"> 
+                          <i class="fa fa-exclamation-triangle"></i> {{ point.descricao }} 
+                          {% if point.is_temporary %}
+                          | duração: <strong>{{ point.date_initial|date:"d/m/Y" }} {{ point.date_initial|time:"H:i" }} à {{ point.date_final | date:"d/m/Y" }} {{ point.date_final|time:"H:i" }}</strong>
+                          {% endif %}
+                          <a href="{% url 'rpa_manager:edit_point' point.pk %}" style="padding-left: 10px"><i class="fa fa-pen"></i></a>
+                          <a href="{% url 'rpa_manager:delete_point' point.pk %}" style="padding-left: 10px"><i class="fa fa-trash"></i></a>
                         </p>
                       </div>
                   </div>
@@ -283,20 +287,31 @@
     }
 
     const urlLocalImg = "{% static '/sti/img/attention.png' %}"
-    // Define the custom icon
+    const timedPoint = "{% static '/sti/img/timer.png' %}"
     var attentionIcon = L.icon({
       iconUrl: urlLocalImg,
-      iconSize: [32, 32], // Adjust the size as per your image dimensions
-      iconAnchor: [16, 32], // The point of the icon which corresponds to the marker's location
-      popupAnchor: [0, -32] // The point from which the popup should open relative to the iconAnchor
+      iconSize: [32, 32], 
+      iconAnchor: [16, 32], 
+      popupAnchor: [0, -32] 
+    });
+    var timerIcon = L.icon({
+      iconUrl: timedPoint,
+      iconSize: [35, 35], 
+      iconAnchor: [16, 32], 
+      popupAnchor: [0, -32] 
     });
 
     dadosMarcadores.forEach((dados) => {
       const lat = dados.latitude;
       const lng = dados.longitude;
       const descricao = dados.descricao;
-      var marker = L.marker([lat, lng], { icon: attentionIcon }).addTo(map);
-      marker.bindPopup(descricao); // Adiciona uma caixa de texto (popup) ao círculo
+      if(dados.temporary) {
+        var marker = L.marker([lat, lng], { icon: timerIcon }).addTo(map);
+        marker.bindPopup(descricao + '<br>' + `Evento: ${dados.date_initial} à ${dados.date_final}`); 
+      } else {
+        var marker = L.marker([lat, lng], { icon: attentionIcon }).addTo(map);
+        marker.bindPopup(descricao); 
+      }
     });
 
     const pontosAtendimento = document.querySelectorAll('.ponto-atendimento');

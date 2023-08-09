@@ -2,6 +2,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView
 from apps.rpa_manager.models import PontosDeInteresse, Relatorio
 from apps.rpa_manager.forms import PointsOfInterestForm
 from django.urls import reverse_lazy
+from django.urls import reverse
 
 class AddPointOfInterest(CreateView):
     model = PontosDeInteresse
@@ -45,8 +46,10 @@ class UpdatePointOfInterest(UpdateView):
         return context
 
 
+
 class DeletePointOfInterest(DeleteView):
     model = PontosDeInteresse
     template_name = 'controle/pages/delete_point.html'
     context_object_name = 'form'
     success_url = reverse_lazy('rpa_manager:criar_nova_missao')
+    

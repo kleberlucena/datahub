@@ -1,7 +1,7 @@
 <!-- Módulo Operações aéreas -->
 <li class="nav-item module-item">
 	<a href="#" class="nav-link">
-		<i class="fas fa-cogs nav-icon"></i>
+		<i class="fas fa-rocket nav-icon"></i>
 		<p>
 			Operações Aéreas
 			<i class="fas fa-angle-left right"></i>
@@ -21,6 +21,12 @@
 			<a href="{% url 'rpa_manager:guarnicao_form' %}" class="nav-link">
 				<i class="far fa-circle nav-icon"></i>
 				<p>Início de serviço</p>
+			</a>
+		</li>
+		<li class="nav-item ">
+			<a href="{% url 'rpa_manager:checklists' %}" class="nav-link">
+				<i class="far fa-circle nav-icon"></i>
+				<p>Checklists</p>
 			</a>
 		</li>
 		<li class="nav-item">
@@ -62,12 +68,6 @@
 						<a href="{% url 'rpa_manager:aeronaves' %}" class="nav-link">
 							<i class="far fa-circle nav-icon"></i>
 							<p>Aeronaves</p>
-						</a>
-					</li>
-					<li class="nav-item ">
-						<a href="{% url 'rpa_manager:checklists' %}" class="nav-link">
-							<i class="far fa-circle nav-icon"></i>
-							<p>Checklists</p>
 						</a>
 					</li>
 					<li class="nav-item ">

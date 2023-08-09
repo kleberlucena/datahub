@@ -1,5 +1,5 @@
 from django import forms
-from apps.rpa_manager.models import Incidentes
+from apps.rpa_manager.models import Incidentes, Relatorio
 from apps.rpa_manager.utils.add_class_and_form_control import add_class_and_form_control
 
 
@@ -9,16 +9,26 @@ class IncidentesForm(forms.ModelForm):
         model = Incidentes
         fields = ['operacao', 
                   'aeronave',
+                  'piloto',
                   'local',
                   'ponto_de_referencia',
                   'relato', 
                   'data', 
                   ]
                 
+        widgets = {
+            'piloto': forms.HiddenInput(),
+        }
         
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
+        if user:
+            if user.is_superuser:
+                self.fields['operacao'].queryset = Relatorio.objects.all()
+            else:
+                self.fields['operacao'].queryset = Relatorio.objects.filter(militar=user)
+                
         campos = ['operacao', 
                   'aeronave',
                   'local',
@@ -37,4 +47,3 @@ class IncidentesForm(forms.ModelForm):
             'data-target': "#datetimepicker",
         })
         
-
