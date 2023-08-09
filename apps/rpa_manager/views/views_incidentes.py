@@ -8,12 +8,12 @@ from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
-class IncidentesCreateView(CreateView):
+class IncidentesCreateView(PermissionRequiredMixin, CreateView):
     model = Incidentes
     form_class = IncidentesForm
     template_name = 'controle/pages/create_incidente.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
-
+    permission_required = 'rpa_manager.add_incidente'
     
     def get_initial(self):
         return {
@@ -42,7 +42,7 @@ class IncidentesUpdateView(PermissionRequiredMixin, UpdateView):
     form_class = IncidentesForm
     template_name = 'controle/pages/create_incidente.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
-    permission_required = 'rpa_manager.edit_incidente'
+    permission_required = 'rpa_manager.change_incidente'
     
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -80,10 +80,12 @@ class IncidentesDeleteView(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('rpa_manager:incidentes')
     permission_required = 'rpa_manager.delete_incidente'
 
-class IncidentesDetailView(DetailView):
+
+class IncidentesDetailView(PermissionRequiredMixin, DetailView):
     model = Incidentes
     template_name = 'controle/pages/ver_incidente.html'
-
+    permission_required = 'rpa_manager.view_incidentes'
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         

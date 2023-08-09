@@ -240,7 +240,11 @@ class Relatorio(Base):
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
     latitude = models.FloatField("Latitude", default=0.0, null=True, blank=True)
     longitude = models.FloatField("Longitude", default=0.0, null=True, blank=True)
-    arquivo_solicitacao = models.FileField(upload_to='protocolos', storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET), blank=True, null=True)
+    arquivo_solicitacao = models.FileField(
+        upload_to='protocolos', storage=MinioBackend(
+        bucket_name=settings.MINIO_MEDIA_FILES_BUCKET), 
+        blank=True, 
+        null=True)
     num_sarpas = models.CharField(max_length=20, blank=True, null=True)
     entidade_apoiada = models.ForeignKey(Entidades, on_delete=models.SET_NULL, null=True)
     natureza_de_voo = models.ForeignKey(NaturezaDeVoo, on_delete=models.SET_NULL, null=True)
@@ -250,7 +254,7 @@ class Relatorio(Base):
     relato_da_missao = models.TextField(max_length=500)
     
     def __str__(self):
-        return self.titulo
+        return f'{self.titulo} - {self.militar} - {self.local}'
 
 
 class Incidentes(models.Model):

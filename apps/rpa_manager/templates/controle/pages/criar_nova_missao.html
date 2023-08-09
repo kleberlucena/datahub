@@ -214,7 +214,6 @@
     var longitude = document.getElementById('id_longitude');
     var marcacao;
     let dadosMarcadores = {{ points_json | safe }}
-
     // Adicionar camada do mapa (pode ser substituído por outras camadas como OpenStreetMap, Mapbox, etc.)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

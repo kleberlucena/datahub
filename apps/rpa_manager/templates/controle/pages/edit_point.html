@@ -34,8 +34,23 @@
     }
 
     #id_is_temporary {
+      display: inline;
       width: 15px;
       height: 15px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .visible {
+      display: block;
+    }
+
+    .dateTimeOptions {
+      position: absolute;
+      top: 3px;
+      right: 10px;
     }
 
     /* fix select2 field height */
@@ -56,6 +71,10 @@
       .input-container {
         position: relative;
         width: 100%;
+      }
+
+      .dateTimeOptions {
+        position: static;
       }
   }
 
@@ -82,7 +101,6 @@
         <div class="card-header">
           <h3 class="card-title">Editar ponto de interesse</h3>
         </div>
-
         <form class="p-3" method='post' enctype="multipart/form-data">
           {% csrf_token %}
           <div class="form-row">
@@ -90,35 +108,37 @@
             <label for="id_operacao" class="title_operacao">Operação</label>
             {{ form.operacao }}
             {{ form.operacao.errors }}
-              <label for="id_is_temporary" class="title_is_temporary mt-1">O ponto é temporário?</label>
-              {{ form.is_temporary }}
-              {{ form.is_temporary.errors }}
-              <label for="id_date_initial" class="title_date_initial mt-1">Data inicial</label>
-              <div class="input-group date" id="datetimepicker_date_initial" data-target-input="nearest">
+            <label for="id_is_temporary" class="title_is_temporary mt-3">O ponto é temporário? <small>Se sim, marque a caixa ao lado:</small> </label>
+            {{ form.is_temporary }}
+            {{ form.is_temporary.errors }}
+            <h5 class="evento">Duração do evento:</h5>
+            <div class="row">
+              <div class="col-md-6" style="position: relative">
                 {{ form.date_initial }}
                 {{ form.date_initial.errors }}
-                <div class="input-group-append" data-target="#datetimepicker_date_initial" data-toggle="datetimepicker">
-                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                <div class="dateTimeOptions">
+                  <input type="date" id="dateInitialInput">
+                  <input type="time" id="timeInitialInput">
                 </div>
               </div>
-              <label for="id_date_final" class="title_date_final mt-1">Data final</label>
-              <div class="input-group date" id="datetimepicker_date_final" data-target-input="nearest">
+              <div class="col-md-6" style="position: relative">
                 {{ form.date_final }}
                 {{ form.date_final.errors }}
-                <div class="input-group-append" data-target="#datetimepicker_date_final" data-toggle="datetimepicker">
-                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                <div class="dateTimeOptions">
+                  <input type="date" id="dateFinalInput">
+                  <input type="time" id="timeFinalInput">
                 </div>
               </div>
-              <label for="id_descricao" class="title_descricao mt-1">Descrição</label>
-              {{ form.descricao }}
-              {{ form.descricao.errors }}
-              <label for="id_latitude" class="title_latitude mt-1">Latitude</label>
-              {{ form.latitude }}
-              {{ form.latitude.errors }}
-              <label for="id_longitude" class="title_longitude mt-1">Longitude</label>
-              {{ form.longitude }}
-              {{ form.longitude.errors }}
-  
+            </div>
+            <label for="id_descricao" class="title_descricao mt-1" style="display: block">Descrição</label>
+            {{ form.descricao }}
+            {{ form.descricao.errors }}
+            <label for="id_latitude" class="title_latitude mt-1">Latitude</label>
+            {{ form.latitude }}
+            {{ form.latitude.errors }}
+            <label for="id_longitude" class="title_longitude mt-1">Longitude</label>
+            {{ form.longitude }}
+            {{ form.longitude.errors }}
             <div class="mt-3">
               <button type="submit" class="btn btn-primary">Salvar</button>
               <a href="{% url 'rpa_manager:painel' %}">
@@ -151,6 +171,7 @@
   <script src="{% static 'adminlte-3.1.0/plugins/moment/moment.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
   <script src="{% static 'leaflet/leaflet.js' %}"></script>
+
   <script>
     $(function () {
       $('#datetimepicker_date_initial').datetimepicker({
@@ -168,6 +189,67 @@
       });
     });
   </script>
+
+  <script>
+    const dateInitialInput = document.getElementById('dateInitialInput');
+    const timeInitialInput = document.getElementById('timeInitialInput');
+    const dateFinalInput = document.getElementById('dateFinalInput');
+    const timeFinalInput = document.getElementById('timeFinalInput');
+    const dateInitialDisplay = document.getElementById('id_date_initial');
+    const dateFinalDisplay = document.getElementById('id_date_final');
+    dateInitialInput.addEventListener('change', updateInitialResult);
+    timeInitialInput.addEventListener('change', updateInitialResult);
+    dateFinalInput.addEventListener('change', updateFinalResult);
+    timeFinalInput.addEventListener('change', updateFinalResult);
+    
+    function updateInitialResult() {
+        const selectedDate = dateInitialInput.value;
+        const selectedTime = timeInitialInput.value;
+        const formattedDateTime = formatDateTime(selectedDate, selectedTime);
+        dateInitialDisplay.value = formattedDateTime;
+      }
+      
+      function updateFinalResult() {
+        const selectedDate = dateFinalInput.value;
+        const selectedTime = timeFinalInput.value;
+        const formattedDateTime = formatDateTime(selectedDate, selectedTime);
+        dateFinalDisplay.value = formattedDateTime;
+    }
+    
+    function formatDateTime(date, time) {
+        const dateObj = new Date(date + 'T' + time);
+        
+        const formattedDate = formatDate(dateObj);
+        const formattedTime = formatTime(dateObj);
+        
+        return formattedDate + ' ' + formattedTime;
+    }
+    
+    function formatDate(dateObj) {
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const year = dateObj.getFullYear();
+        
+        if(!isNaN(day)) {
+          return `${day}/${month}/${year}`;
+        } else {
+          return 'selecione a data e a hora';
+        }
+    }
+    
+    function formatTime(dateObj) {
+        const hours = String(dateObj.getHours()).padStart(2, '0');
+        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+        const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+        
+        if(!isNaN(hours)) {
+          return `${hours}:${minutes}:${seconds}`;
+        } else {
+          return '';
+        }
+    }
+  </script>
+
   <script>
     let latitude = {{ latitude | safe }}
     let longitude = {{ longitude | safe }}

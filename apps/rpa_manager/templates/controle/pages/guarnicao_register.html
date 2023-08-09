@@ -10,6 +10,13 @@
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    .errorlist {
+      list-style-type: none;
+      font-size: large;
+      color: red;
+    }
+  </style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -41,13 +48,16 @@
             <br>{{ user.username }}<br><hr>
             <label for="id_piloto_observador" class="quem_solicitou">Piloto observador</label>
             {{ form.piloto_observador}}
+            {{ form.piloto_observador.errors }}
             <label for="id_motorista" class="titulo_operacao">Motorista</label>
             {{ form.motorista }}
+            {{ form.motorista.errors }}
             <label for="id_telefone" class="quem_autorizou">Telefone</label>
             {{ form.telefone }}
             {{ form.telefone.errors }}
             <label for="id_local" class="local">Local</label>
             {{ form.local }}
+            {{ form.local.errors }}
 
             {{ form.piloto_remoto }}
           </div>
@@ -84,4 +94,11 @@
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script>
+    const error = document.getElementsByClassName('errorlist');
+    console.log(error[0].textContent);
+    if(error[0].textContent.includes('_all_')) {
+      error[0].textContent = error[0].textContent.replace('__all__', '')
+    }
+  </script>
 {% endblock %}

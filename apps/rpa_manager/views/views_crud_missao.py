@@ -17,7 +17,6 @@ import json
 from django.utils import timezone
 import pytz
 
-
 def exclude_time_passed_points():
     # Configura o fuso horário "America/Recife"
         tz = pytz.timezone('America/Recife')
@@ -25,8 +24,10 @@ def exclude_time_passed_points():
         
         # Filtra e exclui objetos cuja data final é menor ou igual à data e hora atual
         pontos_excluir = PontosDeInteresse.objects.filter(date_final__lte=current_datetime)
-        pontos_excluir.delete()
         
+        print(current_datetime)
+        print(pontos_excluir)
+        pontos_excluir.delete()
         return tz
 
 @include_toast
@@ -54,18 +55,20 @@ class CriarNovaMissaoView(PermissionRequiredMixin, View):
         
         tz = exclude_time_passed_points()
         
-        def format_time_for_json():
-            for point in points:
-                if point.date_initial and point.date_final:
-                    formatted_date_initial = point.date_initial.astimezone(tz).strftime('%d/%m/%Y %H:%M:%S')
-                    formatted_date_final = point.date_final.astimezone(tz).strftime('%d/%m/%Y %H:%M:%S')
-            return {'date_inicial': formatted_date_initial, 'date_final': formatted_date_final}
-        
-        for point in points:            
+        for point in points: 
+            formatted_date_initial = None
+            formatted_date_final = None
+
+            if point.date_initial:
+                formatted_date_initial = point.date_initial.astimezone(tz).strftime('%d/%m/%Y %H:%M:%S')
+            
+            if point.date_final:
+                formatted_date_final = point.date_final.astimezone(tz).strftime('%d/%m/%Y %H:%M:%S')      
+                     
             points_list.append({
                 'temporary': point.is_temporary,
-                'date_initial': format_time_for_json()['date_inicial'] or '',
-                'date_final': format_time_for_json()['date_final'] or '',
+                'date_initial': formatted_date_initial or '',
+                'date_final': formatted_date_final or '',
                 'descricao': point.descricao,
                 'latitude': point.latitude,
                 'longitude': point.longitude,
@@ -90,6 +93,9 @@ class CriarNovaMissaoView(PermissionRequiredMixin, View):
             aeronave.save()
 
             missao.save()
+            
+            messages.success(request, 'Operação criada com sucesso!')
+            
             return redirect('rpa_manager:principal')
 
         context = {'form': form}
@@ -101,7 +107,7 @@ class EditarMissaoView(PermissionRequiredMixin, UpdateView):
     template_name = "controle/pages/editar_missao.html"
     context_object_name = 'form'
     success_url = reverse_lazy('rpa_manager:principal')
-    permission_required = 'rpa_manager.edit_missao'
+    permission_required = 'rpa_manager.change_missao'
 
     def get(self, request, *args, **kwargs):
         exclude_time_passed_points()

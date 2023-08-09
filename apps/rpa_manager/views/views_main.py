@@ -16,6 +16,7 @@ from apps.rpa_manager.models import (Aeronave, Bateria,
                                      Missao, Relatorio,
                                      HistoricoAlteracoesAeronave,
                                      Incidentes)
+from django.contrib import messages
 
 
 def home(request):
@@ -85,8 +86,10 @@ class PrincipalView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         form = formulario_missao(self.request)
 
+        user = self.request.user
+        
         # Verifica se o usuário é um superuser
-        if self.request.user.is_superuser:
+        if user.is_superuser or user.groups.filter(name='profile:rpa_view').exists():
             missoes = Missao.objects.all().order_by('-data', '-horario')
         else:
             # Filtra os objetos para exibir apenas os que foram criados pelo usuário atual
@@ -102,7 +105,14 @@ class ChecklistsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        checklists = Checklist.objects.all().order_by('-data', '-horario')
+        
+        user = self.request.user
+
+        if user.is_superuser or user.groups.filter(name='profile:rpa_view').exists():
+            checklists = Checklist.objects.all().order_by('-data', '-horario')
+        else:
+            checklists = Checklist.objects.filter(piloto=user).order_by('-data', '-horario')
+
         for checklist in checklists:
             print(checklist.data, checklist.horario)
         form = formulario_missao(self.request)
@@ -119,7 +129,10 @@ class RelatoriosView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        if self.request.user.is_superuser:
+        
+        user = self.request.user
+
+        if user.is_superuser or user.groups.filter(name='profile:rpa_view').exists():
             relatorios = Relatorio.objects.all().order_by('-data', '-horario_inicial')
         else:
             # Filtra os objetos para exibir apenas os que foram criados pelo usuário atual
@@ -174,7 +187,10 @@ class IncidentesView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user.is_superuser:
+        
+        user = self.request.user
+
+        if user.is_superuser or user.groups.filter(name='profile:rpa_view').exists():
             incidentes = Incidentes.objects.all().order_by('-data')
         else:
             incidentes = Incidentes.objects.filter(piloto=self.request.user).order_by('-data')
@@ -197,7 +213,6 @@ class BateriasView(TemplateView):
         context['form'] = form
 
         return context
-
 
 
 class HistoricosPorAeronaveView(ListView):

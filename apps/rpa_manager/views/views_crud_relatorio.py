@@ -29,7 +29,7 @@ class CriarNovoRelatorioView(PermissionRequiredMixin, CreateView):
     form_class = RelatorioFormulario
     template_name = 'controle/pages/criar_novo_relatorio.html'
     success_url = reverse_lazy('rpa_manager:add_point')
-    permission_required = 'rpa_manager.create_relatorio'
+    permission_required = 'rpa_manager.add_relatorio'
     
     def get_initial(self):
         missao = get_object_or_404(Missao, pk=self.kwargs['pk'])

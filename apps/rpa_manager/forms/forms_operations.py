@@ -29,7 +29,6 @@ class MissaoFormulario(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        self.fields['aeronave'].queryset = Aeronave.objects.filter(em_uso=False)
         
         self.fields['titulo'].widget.attrs.update({
             'placeholder': 'Informe um título para operação'
@@ -44,6 +43,7 @@ class MissaoFormulario(forms.ModelForm):
             'class': 'aeronave_escolha'
         })
 
+        self.fields['aeronave'].queryset = Aeronave.objects.filter(em_uso=False)
         
         campos = ['titulo', 
                   'piloto_observador', 

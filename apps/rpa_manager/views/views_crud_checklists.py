@@ -6,16 +6,21 @@ from django.shortcuts import render, redirect
 from apps.rpa_manager.utils.saveNewChecklistInAircraftHistoric import saveNewChecklistInAircraftHistoric
 from apps.rpa_manager.utils.getLastRegisteredChecklistData import getLastRegisteredChecklistData
 from django.http import JsonResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.utils.decorators import method_decorator
+from apps.rpa_manager.handlers import require_permission
 from apps.rpa_manager.models import (Checklist, 
                                      HistoricoAlteracoesAeronave, 
                                      Guarnicao, 
                                      Aeronave,
                                      Bateria)
 
-class VerChecklistView(DetailView):
+class VerChecklistView(PermissionRequiredMixin, DetailView):
     model = Checklist
     template_name = 'controle/pages/ver_checklist.html'
     context_object_name = 'checklist'
+    permission_required = 'rpa_manager.view_checklist'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -30,7 +35,8 @@ class VerChecklistView(DetailView):
         return context
 
 
-class ChecklistFormView(View):    
+class ChecklistFormView(PermissionRequiredMixin, View):    
+    permission_required = 'rpa_manager.add_checklist'
     
     def get(self, request, *args, **kwargs):
         piloto = request.user
@@ -69,12 +75,13 @@ class ChecklistFormView(View):
         }
         return render(request, 'controle/pages/checklist_form.html', context)
     
-class EditarChecklistView(UpdateView):
+class EditarChecklistView(PermissionRequiredMixin, UpdateView):
     model = Checklist
     form_class = ChecklistForm
     template_name = 'controle/pages/editar_checklist.html'
     success_url = reverse_lazy('rpa_manager:checklists')
     context_object_name = 'form'
+    permission_required = 'rpa_manager.change_checklist'
     
     def form_valid(self, form):
         checklist = form.save(commit=False)
@@ -93,9 +100,15 @@ class EditarChecklistView(UpdateView):
                 historico.save()
 
         return super().form_valid(form)
-
-class DeletarChecklistView(DeleteView):
+    
+    
+class DeletarChecklistView(PermissionRequiredMixin, DeleteView):
     model = Checklist
     template_name = 'controle/pages/delete_checklist.html'
     success_url = reverse_lazy('rpa_manager:checklists')
     context_object_name = 'obj'
+    permission_required = 'rpa_manager.delete_checklist'
+
+    @method_decorator(require_permission)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)

@@ -103,14 +103,14 @@
               <a href="https://sarpas.decea.mil.br/consulta-protocolo" target="_blank"><i
                   class="fa-solid fa-magnifying-glass"></i> Consultar</a>
         <hr>
-        <strong>Arquivo de solicitação: </strong> 
+        {% comment %} <strong>Arquivo de solicitação: </strong> 
         {% if relatorio.arquivo_solicitacao != None %}
           <a href="{{ relatorio.arquivo_solicitacao.url }}/">Baixar solicitação <i
                 class="fas fa-file-pdf"></i> </a>
           {% else %}
            sem registro
         {% endif %}
-        <hr>
+        <hr> {% endcomment %}
         <strong>Entidade apoiada: </strong> {{ relatorio.entidade_apoiada }}
         <hr>
         <strong>Natureza de voo: </strong> {{ relatorio.natureza_de_voo }}

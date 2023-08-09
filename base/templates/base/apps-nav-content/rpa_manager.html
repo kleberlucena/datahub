@@ -48,42 +48,46 @@
 			</a>
 		</li>
 
-		{% if user.is_superuser %}
-			<li class="nav-item menu-item">
-				<a href="#" class="nav-link">
-					<i class="fa fa-cog nav-icon" aria-hidden="true"></i>
-					<p>
-						Configurações
-						<i class="fas fa-angle-left right"></i>
-					</p>
-				</a>
-				<ul class="nav nav-treeview" style="display: none;">
-					<li class="nav-item ">
-						<a href="{% url 'rpa_manager:efetivo' %}" class="nav-link">
-							<i class="far fa-circle nav-icon"></i>
-							<p>Efetivo</p>
-						</a>
-					</li>
-					<li class="nav-item ">
-						<a href="{% url 'rpa_manager:aeronaves' %}" class="nav-link">
-							<i class="far fa-circle nav-icon"></i>
-							<p>Aeronaves</p>
-						</a>
-					</li>
-					<li class="nav-item ">
-						<a href="{% url 'rpa_manager:historico' %}" class="nav-link">
-							<i class="far fa-circle nav-icon"></i>
-							<p>Histórico Aeronaves</p>
-						</a>
-					</li>
-					<li class="nav-item ">
-						<a href="{% url 'rpa_manager:baterias' %}" class="nav-link">
-							<i class="far fa-circle nav-icon"></i>
-							<p>Baterias</p>
-						</a>
-					</li>
-				</ul>
-			</li>
+		{% if user.groups.all %}
+		{% for group in user.groups.all %}
+			{% if user.is_superuser or group.name == 'profile:rpa_advanced' %}
+				<li class="nav-item menu-item">
+					<a href="#" class="nav-link">
+						<i class="fa fa-cog nav-icon" aria-hidden="true"></i>
+						<p>
+							Configurações
+							<i class="fas fa-angle-left right"></i>
+						</p>
+					</a>
+					<ul class="nav nav-treeview" style="display: none;">
+						<li class="nav-item ">
+							<a href="{% url 'rpa_manager:efetivo' %}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Efetivo</p>
+							</a>
+						</li>
+						<li class="nav-item ">
+							<a href="{% url 'rpa_manager:aeronaves' %}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Aeronaves</p>
+							</a>
+						</li>
+						<li class="nav-item ">
+							<a href="{% url 'rpa_manager:historico' %}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Histórico Aeronaves</p>
+							</a>
+						</li>
+						<li class="nav-item ">
+							<a href="{% url 'rpa_manager:baterias' %}" class="nav-link">
+								<i class="far fa-circle nav-icon"></i>
+								<p>Baterias</p>
+							</a>
+						</li>
+					</ul>
+				</li>
+			{% endif %}
+		{% endfor %}
 		{% endif %}
 	</ul>
 </li>

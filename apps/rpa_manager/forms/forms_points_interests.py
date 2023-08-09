@@ -1,7 +1,6 @@
 from django import forms
-from apps.rpa_manager.models import PontosDeInteresse
+from apps.rpa_manager.models import PontosDeInteresse, Relatorio
 from apps.rpa_manager.utils.add_class_and_form_control import add_class_and_form_control
-
 
 class PointsOfInterestForm(forms.ModelForm):
     class Meta:
@@ -19,10 +18,18 @@ class PointsOfInterestForm(forms.ModelForm):
             }
         
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        self.user = kwargs.pop('user', None)
+        super(PointsOfInterestForm, self).__init__( *args, **kwargs)
+        
         
         self.fields['descricao'].widget.attrs.update({
             'placeholder': 'Faça uma breve descrição do ponto de interesse.'
+        })
+        self.fields['date_initial'].widget.attrs.update({
+            'placeholder': 'Insira a data inicial do evento.'
+        })
+        self.fields['date_final'].widget.attrs.update({
+            'placeholder': 'Insira a data final do evento'
         })
         
         campos = ['operacao', 
@@ -35,3 +42,5 @@ class PointsOfInterestForm(forms.ModelForm):
         
         for campo in campos:
             add_class_and_form_control(self, campo, campo, 'form-control')
+            
+            
