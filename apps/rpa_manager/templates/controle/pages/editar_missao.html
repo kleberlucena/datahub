@@ -1,12 +1,11 @@
 {% extends "base/base.html" %}
+{% load static %}
 
 {% block style_sheet %}
-  {% load static %}
     <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
     <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
     <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
     <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
-    <link rel="stylesheet" href="{% static 'rpa_manager/css/fix_select2_h.css' %}">
   <style>
      .piloto_observador,
      .quem_solicitou,
@@ -53,7 +52,6 @@
         width: 100%;
       }
   }
-
   </style>
 {% endblock style_sheet %}
 
@@ -87,7 +85,6 @@
               <label for="id_titulo" class="titulo_operacao">Título da operação</label>
               {{ form.titulo }}
               {{ form.titulo.errors }}
-              
               <label for="id_titulo" class="piloto_observador">Piloto Observador</label>
               {{ form.piloto_observador }}
               {{ form.piloto_observador.errors }}

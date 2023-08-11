@@ -5,16 +5,18 @@ from django.views import View
 from django.shortcuts import render, redirect
 from apps.rpa_manager.utils.saveNewChecklistInAircraftHistoric import saveNewChecklistInAircraftHistoric
 from apps.rpa_manager.utils.getLastRegisteredChecklistData import getLastRegisteredChecklistData
-from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
+from django.contrib import messages
 from apps.rpa_manager.models import (Checklist, 
                                      HistoricoAlteracoesAeronave, 
                                      Guarnicao, 
-                                     Aeronave,
                                      Bateria)
+
+
+message_model_name = 'Checklist'
 
 class VerChecklistView(PermissionRequiredMixin, DetailView):
     model = Checklist
@@ -34,6 +36,9 @@ class VerChecklistView(PermissionRequiredMixin, DetailView):
         context['nova_lista_alteracoes'] = nova_lista_alteracoes
         return context
 
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
 class ChecklistFormView(PermissionRequiredMixin, View):    
     permission_required = 'rpa_manager.add_checklist'
@@ -73,7 +78,12 @@ class ChecklistFormView(PermissionRequiredMixin, View):
         context = {
             'checklist_form': checklist_form,
         }
+        
         return render(request, 'controle/pages/checklist_form.html', context)
+    
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
     
 class EditarChecklistView(PermissionRequiredMixin, UpdateView):
     model = Checklist
@@ -87,10 +97,8 @@ class EditarChecklistView(PermissionRequiredMixin, UpdateView):
         checklist = form.save(commit=False)
         aeronave = checklist.aeronave
 
-        # Verificar se o checklist atual é o mais recente para a aeronave associada
         ultimo_checklist = Checklist.objects.filter(aeronave=aeronave).order_by('-data', '-horario').first()
         if checklist == ultimo_checklist:
-            # Atualizar o objeto de histórico mais recente relacionado à aeronave
             historico = HistoricoAlteracoesAeronave.objects.filter(aeronave=aeronave).order_by('-data').first()
             if historico:
                 historico.alteracoes = checklist.alteracoes
@@ -99,8 +107,13 @@ class EditarChecklistView(PermissionRequiredMixin, UpdateView):
                 # Atualize outros campos de histórico, se necessário
                 historico.save()
 
+        messages.success(self.request, f'{message_model_name} editado com sucesso!')
+        
         return super().form_valid(form)
     
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
     
 class DeletarChecklistView(PermissionRequiredMixin, DeleteView):
     model = Checklist
@@ -109,6 +122,11 @@ class DeletarChecklistView(PermissionRequiredMixin, DeleteView):
     context_object_name = 'obj'
     permission_required = 'rpa_manager.delete_checklist'
 
-    @method_decorator(require_permission)
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        messages.success(self.request, f'{message_model_name} excluído com sucesso!')
+        return response
+    
+    @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)

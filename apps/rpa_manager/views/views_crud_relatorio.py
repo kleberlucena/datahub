@@ -8,6 +8,11 @@ from apps.rpa_manager.utils.create_json_for_coordinates import create_json_for_c
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.utils.decorators import method_decorator
+from apps.rpa_manager.handlers import require_permission
+from django.contrib import messages
+
+message_model_name = 'Relatório'
 
 
 class VerRelatorioView(PermissionRequiredMixin, DetailView):
@@ -16,6 +21,7 @@ class VerRelatorioView(PermissionRequiredMixin, DetailView):
     context_object_name = 'relatorio'
     permission_required = 'rpa_manager.view_relatorio'
     
+    
     def get_context_data(self, **kwargs):
             context = super().get_context_data(**kwargs)
             relatorio = self.get_object()
@@ -23,7 +29,11 @@ class VerRelatorioView(PermissionRequiredMixin, DetailView):
             context['coordinates_json'] = create_json_for_coordinates(coordinates_json, relatorio)
 
             return context
-        
+    
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
 class CriarNovoRelatorioView(PermissionRequiredMixin, CreateView):
     model = Relatorio
     form_class = RelatorioFormulario
@@ -58,8 +68,14 @@ class CriarNovoRelatorioView(PermissionRequiredMixin, CreateView):
         aeronave.save()
 
         form.instance.missao = missao
+        
+        messages.success(self.request, f'{message_model_name} criado com sucesso!')
+        
         return super().form_valid(form)
 
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
     
 class EditarRelatorioView(PermissionRequiredMixin, UpdateView):
     model = Relatorio
@@ -68,11 +84,29 @@ class EditarRelatorioView(PermissionRequiredMixin, UpdateView):
     success_url = reverse_lazy('rpa_manager:relatorios')
     context_object_name = 'relatorio'
     permission_required = 'rpa_manager.edit_relatorio'
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'{message_model_name} editado com sucesso!')
+        
+        return response
 
-
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
 class DeletarRelatorioView(PermissionRequiredMixin, DeleteView):
     model = Relatorio
     template_name = 'controle/pages/delete_relatorio.html'
     success_url = reverse_lazy('rpa_manager:relatorios')
     context_object_name = 'obj'
     permission_required = 'rpa_manager.delete_relatorio'
+    
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        messages.success(self.request, f'{message_model_name} excluído com sucesso!')
+        return response
+    
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)

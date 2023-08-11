@@ -7,6 +7,11 @@ from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib import messages
+from django.utils.decorators import method_decorator
+from apps.rpa_manager.handlers import require_permission
+
+message_model_name = 'Guarnição'
 
 
 class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
@@ -17,7 +22,6 @@ class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'rpa_manager.add_guarnicao'
     
     def form_valid(self, form):
-        # Verificar se já existe uma guarnição para o usuário logado no mesmo dia
         user = self.request.user
         guarnicoes_no_dia = Guarnicao.objects.filter(piloto_remoto=user)
         
@@ -25,6 +29,7 @@ class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
             form.add_error(None, 'Já existe uma guarnição criada por este usuário no mesmo dia.')
             return self.form_invalid(form)
 
+        messages.success(self.request, f'{message_model_name} cadastrada com sucesso!')
         return super().form_valid(form)
     
     def get_form_kwargs(self):
@@ -32,6 +37,9 @@ class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
         kwargs['initial'] = {'piloto_remoto': self.request.user}
         return kwargs
     
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
     
 class GuarnicaoUpdateView(PermissionRequiredMixin, UpdateView):
     model = Guarnicao
@@ -43,7 +51,16 @@ class GuarnicaoUpdateView(PermissionRequiredMixin, UpdateView):
     def get_object(self, queryset=None):
         return Guarnicao.objects.latest('data')
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'{message_model_name} editada com sucesso!')
+        
+        return response
 
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
 class GuarnicaoDeleteView(PermissionRequiredMixin, DeleteView):
     model = Guarnicao
     template_name = 'controle/pages/delete_guarnicao.html'
@@ -51,6 +68,9 @@ class GuarnicaoDeleteView(PermissionRequiredMixin, DeleteView):
     context_object_name = 'obj'
     permission_required = 'rpa_manager.delete_guarnicao'
     
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
     
 class DescadastrarGuarnicao(PermissionRequiredMixin, View):
     template_name = 'controle/pages/descadastrar_guarnicao.html'
@@ -69,4 +89,10 @@ class DescadastrarGuarnicao(PermissionRequiredMixin, View):
         last_guarnicao = Guarnicao.objects.filter(piloto_remoto=user).order_by('-id').first()
         if last_guarnicao:
             last_guarnicao.delete()
+            
+        messages.success(self.request, f'{message_model_name} descadastrada com sucesso!')
         return redirect(self.success_url)
+    
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)

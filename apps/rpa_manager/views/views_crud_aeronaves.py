@@ -4,6 +4,11 @@ from apps.rpa_manager.forms import AeronavesForm
 from apps.rpa_manager.models import Aeronave 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib import messages
+from django.utils.decorators import method_decorator
+from apps.rpa_manager.handlers import require_permission
+
+message_model_name = 'Aeronave'
 
 
 class VerAeronaveView(PermissionRequiredMixin, DetailView):
@@ -13,6 +18,11 @@ class VerAeronaveView(PermissionRequiredMixin, DetailView):
     pk_url_kwarg = 'pk'
     permission_required = 'rpa_manager.view_aeronave'
 
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
+
 class CriarNovaAeronaveView(PermissionRequiredMixin, CreateView):
     model = Aeronave
     form_class = AeronavesForm
@@ -20,7 +30,16 @@ class CriarNovaAeronaveView(PermissionRequiredMixin, CreateView):
     success_url = reverse_lazy('rpa_manager:aeronaves')
     permission_required = 'rpa_manager.add_aeronave'
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'{message_model_name} criada com sucesso!')
+        return response
 
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
+    
 class EditarAeronaveView(PermissionRequiredMixin, UpdateView):
     model = Aeronave
     form_class = AeronavesForm
@@ -30,6 +49,16 @@ class EditarAeronaveView(PermissionRequiredMixin, UpdateView):
     success_url = reverse_lazy('rpa_manager:aeronaves')
     permission_required = 'rpa_manager.change_aeronave'
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'{message_model_name} editada com sucesso!')
+        return response
+    
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
+    
 class DeletarAeronaveView(PermissionRequiredMixin, DeleteView):
     model = Aeronave
     template_name = 'controle/pages/delete_aeronave.html'
@@ -37,3 +66,12 @@ class DeletarAeronaveView(PermissionRequiredMixin, DeleteView):
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('rpa_manager:aeronaves')
     permission_required = 'rpa_manager.delete_aeronave'
+    
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        messages.success(self.request, f'{message_model_name} excluída com sucesso!')
+        return response
+    
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)

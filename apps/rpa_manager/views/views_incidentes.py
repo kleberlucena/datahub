@@ -7,6 +7,11 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.utils.decorators import method_decorator
+from apps.rpa_manager.handlers import require_permission
+from django.contrib import messages
+
+message_model_name = 'Incidente'
 
 class IncidentesCreateView(PermissionRequiredMixin, CreateView):
     model = Incidentes
@@ -19,11 +24,13 @@ class IncidentesCreateView(PermissionRequiredMixin, CreateView):
         return {
             'piloto': self.request.user
         }
-    
-    # o metodo abaixo buscar o usuario logado para passar para
-    # uma query no forms desse model e pegar apenas objetos que
-    # o usuario logado criou
+     
     def get_form_kwargs(self):
+        """
+           o metodo abaixo busca o usuario logado para passar para
+           uma query no forms desse model e pegar apenas objetos que
+           o usuario logado criou
+        """
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user  
         return kwargs
@@ -34,8 +41,13 @@ class IncidentesCreateView(PermissionRequiredMixin, CreateView):
         for image in images:
            ImagensIncidente.objects.create(incidente=self.object, imageIncidente=image)
 
+        messages.success(self.request, f'{message_model_name} criado com sucesso!')
+        
         return redirect(self.get_success_url())
     
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
     
 class IncidentesUpdateView(PermissionRequiredMixin, UpdateView):
     model = Incidentes
@@ -57,9 +69,10 @@ class IncidentesUpdateView(PermissionRequiredMixin, UpdateView):
         for image in images:
             ImagensIncidente.objects.create(incidente=self.object, imageIncidente=image)
 
+        messages.success(self.request, f'{message_model_name} editado com sucesso!')
+        
         return redirect(self.get_success_url())
 
-    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
@@ -73,6 +86,9 @@ class IncidentesUpdateView(PermissionRequiredMixin, UpdateView):
         
         return context
     
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
     
 class IncidentesDeleteView(PermissionRequiredMixin, DeleteView):
     model = Incidentes
@@ -80,6 +96,14 @@ class IncidentesDeleteView(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('rpa_manager:incidentes')
     permission_required = 'rpa_manager.delete_incidente'
 
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        messages.success(self.request, f'{message_model_name} excluído com sucesso!')
+        return response
+    
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
 class IncidentesDetailView(PermissionRequiredMixin, DetailView):
     model = Incidentes
@@ -97,6 +121,10 @@ class IncidentesDetailView(PermissionRequiredMixin, DetailView):
         context['image_urls'] = image_urls
         
         return context
+    
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
     
     
 class IncidenteImageDeleteView(DeleteView):
