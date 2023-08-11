@@ -128,9 +128,9 @@
         <div class="select_year">
           <label for="year">Ano:</label>
           <select id="year" class="form-control row-md-3" name="year">
-            <option value="2023">2023</option>
-            <option value="2022">2022</option>
-            <option value="2021">2021</option>
+            {% for year in years %}
+              <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
           </select>
         </div>
 

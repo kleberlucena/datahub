@@ -16,7 +16,7 @@ from apps.rpa_manager.models import (Aeronave, Bateria,
                                      Missao, Relatorio,
                                      HistoricoAlteracoesAeronave,
                                      Incidentes)
-from django.contrib import messages
+from datetime import datetime
 
 
 def home(request):
@@ -31,6 +31,12 @@ class PainelView(TemplateView):
         coordinates_dict: Dict = {}
         report_by_date_list: List = []
         lista_de_guarnicoes = []
+
+        year = datetime.now().year
+        years = []
+        for i in range(year-8, year+1, 1):
+            years.append(i)
+        years = years[::-1]
         
         ultimo_relatorio = Relatorio.objects.latest('id')
         default_month: int = 1
@@ -76,6 +82,7 @@ class PainelView(TemplateView):
         context['coordinates_json'] = coordinates_json
         context['coordinates_by_date_json'] = coordinates_by_date_json
         context['guarnicoes_json'] = guarnicoes_json
+        context['years'] = years
         return context
 
 
