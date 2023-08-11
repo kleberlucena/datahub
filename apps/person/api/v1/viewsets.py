@@ -155,6 +155,7 @@ class AddPersonListView(generics.ListCreateAPIView):
         page = self.paginate_queryset(queryset)
         serializer = self.get_serializer(
             page, many=True) if page is not None else self.get_serializer(queryset, many=True)
+        print(serializer.data)
         return self.get_paginated_response(serializer.data)
 
     def create(self, request, *args, **kwargs):
@@ -264,9 +265,8 @@ class AddPersonListView(generics.ListCreateAPIView):
 
         for field, flag in query_dict.items():
             if value := query_params.get(field):
-                q = Q(**{f"{flag}__unaccent__icontains": value}) if field in ['address_city', 'address_neighborhood', 'address_street',
-                                                                              'address_complement', 'address_reference', 'address_zipcode'] else Q(
-                    **{f"{flag}__unaccent__iexact": value})
+                q = Q(**{f"{flag}__unaccent__iexact": value}) if field in ['document_number', 'document_birth_date'] else Q(
+                    **{f"{flag}__unaccent__icontains": value})
                 filters &= q
         print(filters)
 
