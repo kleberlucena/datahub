@@ -58,11 +58,7 @@
   </div> 
 
   <div class="detail_report">
-    <div class="card card-primary col-md-4 mt-3">
-      {% comment %} <div class="card-header">
-        <h3 class="card-title">Detalhes relatório</h3>
-      </div> {% endcomment %}
-  
+    <div class="card card-primary col-md-4 mt-3">  
       <div class="card-body">
         <strong>Título: </strong> {{ relatorio.titulo }}
         <hr>
@@ -103,14 +99,14 @@
               <a href="https://sarpas.decea.mil.br/consulta-protocolo" target="_blank"><i
                   class="fa-solid fa-magnifying-glass"></i> Consultar</a>
         <hr>
-        {% comment %} <strong>Arquivo de solicitação: </strong> 
-        {% if relatorio.arquivo_solicitacao != None %}
-          <a href="{{ relatorio.arquivo_solicitacao.url }}/">Baixar solicitação <i
+        <strong>Arquivo de solicitação: </strong> 
+        {% if relatorio.arquivo_solicitacao %}
+          <a href="{{ relatorio.arquivo_solicitacao.url }}" download target="_blank">Baixar solicitação <i
                 class="fas fa-file-pdf"></i> </a>
           {% else %}
            sem registro
         {% endif %}
-        <hr> {% endcomment %}
+        <hr>
         <strong>Entidade apoiada: </strong> {{ relatorio.entidade_apoiada }}
         <hr>
         <strong>Natureza de voo: </strong> {{ relatorio.natureza_de_voo }}

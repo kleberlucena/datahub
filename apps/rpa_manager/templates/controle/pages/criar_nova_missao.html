@@ -6,70 +6,62 @@
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
   <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
-<style>
-  .piloto_observador,
-  .quem_solicitou,
-  .quem_autorizou,
-  .local,
-  .aeronave {
-    margin-top: 10px;
-  }
-
-  .map_options {
-    display: flex;
-    gap: 10px;
-  }
-
-  /* Estilo para o ícone "x" */
-  .input-container {
-    position: relative;
-    width: 400px;
-  }
-
-  .clear-icon {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    cursor: pointer;
-  }
-
-  /* fix select2 field height */
-  .select2-selection,
-  .select2-selection--single {
-    height: 38px !important;
-  }
-
-  #select2-id_aeronave-container {
-    height: 38px !important;
-  }
-
-  /* Menu collapse para pontos de interesse */
-  .card_atendimento:hover {
-    background-color: rgba(220, 220, 220, 1) !important;
-    color: #FFF;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .card_atendimento:nth-child(even) {
-    background-color: rgba(220, 220, 220, 0.3);
-  }
-
-  .loading_search {
-    display: none;
-  }
-  
-  @media (max-width: 768px) {
+  <style>
     .map_options {
       display: flex;
-      flex-direction: column;
+      gap: 10px;
     }
 
+    /* Estilo para o ícone "x" */
     .input-container {
       position: relative;
-      width: 100%;
+      width: 400px;
     }
-  }
-</style>
+
+    .clear-icon {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      cursor: pointer;
+    }
+
+    /* fix select2 field height */
+    .select2-selection,
+    .select2-selection--single {
+      height: 38px !important;
+    }
+
+    #select2-id_aeronave-container {
+      height: 38px !important;
+    }
+
+    /* Menu collapse para pontos de interesse */
+    .card_atendimento:hover {
+      background-color: rgba(220, 220, 220, 1) !important;
+      color: #FFF;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .card_atendimento:nth-child(even) {
+      background-color: rgba(220, 220, 220, 0.3);
+    }
+
+    .loading_search {
+      display: none;
+    }
+    
+    @media (max-width: 768px) {
+      .map_options {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .input-container {
+        position: relative;
+        width: 100%;
+      }
+    }
+  </style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -93,92 +85,119 @@
         <h3 class="card-title">Criar nova operação</h3>
       </div>
 
-      <form class="p-3" method='post' enctype="multipart/form-data">
+      <form class="p-3" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-row">
           <div class="form-group col-md-12 mb-0">
-            <label for="id_piloto_remoto" class="piloto_remoto">Piloto remoto</label>
-            <br>{{ user.username }}<br>
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <label for="id_piloto_remoto" class="piloto_remoto">Piloto Remoto</label>
+                <br>{{ user.username }}<br>
+              </div>
+            </div>
             <hr>
-            <label for="id_titulo" class="titulo_operacao">Título da operação</label>
-            {{ form.titulo }}
-            {{ form.titulo.errors }}
-
-            <label for="id_titulo" class="piloto_observador">Piloto Observador</label>
-            {{ form.piloto_observador }}
-            {{ form.piloto_observador.errors }}
-            <label for="id_quem_solicitou" class="quem_solicitou">Quem solicitou</label>
-            {{ form.quem_solicitou }}
-            {{ form.quem_solicitou.errors }}
-            <label for="id_quem_autorizou" class="quem_autorizou">Quem autorizou</label>
-            {{ form.quem_autorizou }}
-            {{ form.quem_autorizou.errors }}
-            <label for="id_aeronave" class="aeronave">Aeronave</label>
-            {{ form.aeronave }}
-            {{ form.aeronave.errors }}
-            <label for="id_local" class="local">Local</label>
-            {{ form.local }}
-            {{ form.local.errors }}
-            <br>
-            <label for="id_latitude" class="local">Ponto de decolagem: </label><br>
-            <label for="id_latitude" class="local">Latitude</label>
-            {{ form.latitude }}
-            {{ form.latitude.errors }}
-            <label for="id_longitude" class="local">Longitude</label>
-            {{ form.longitude }}
-            {{ form.longitude.errors }}
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <label for="id_titulo" class="titulo_operacao">Título da Operação</label>
+                {{ form.titulo }}
+                {{ form.titulo.errors }}
+              </div>
+              <div class="col-md-6">
+                <label for="id_piloto_observador" class="piloto_observador">Piloto Observador</label>
+                {{ form.piloto_observador }}
+                {{ form.piloto_observador.errors }}
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <label for="id_quem_solicitou" class="quem_solicitou">Quem Solicitou</label>
+                {{ form.quem_solicitou }}
+                {{ form.quem_solicitou.errors }}
+              </div>
+              <div class="col-md-6">
+                <label for="id_quem_autorizou" class="quem_autorizou">Quem Autorizou</label>
+                {{ form.quem_autorizou }}
+                {{ form.quem_autorizou.errors }}
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <label for="id_aeronave" class="aeronave">Aeronave</label>
+                {{ form.aeronave }}
+                {{ form.aeronave.errors }}
+              </div>
+              <div class="col-md-6">
+                <label for="id_local" class="local">Local</label>
+                {{ form.local }}
+                {{ form.local.errors }}
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <label for="id_latitude" class="local">Ponto de Decolagem: Latitude</label>
+                {{ form.latitude }}
+                {{ form.latitude.errors }}
+              </div>
+              <div class="col-md-6">
+                <label for="id_longitude" class="local">Ponto de Decolagem: Longitude</label>
+                {{ form.longitude }}
+                {{ form.longitude.errors }}
+              </div>
+            </div>
             {{ form.usuario }}
           </div>
         </div>
+      </form>
+      
 
-        <div class="map_options">
-          <button type="button" class="btn btn-outline-primary mt-3" onclick="inserirPontoDecolagem();">Inserir Ponto de
-            Decolagem</button>
-          <div class="input-container mt-3">
-            <input type="text" class="form-control" id="endereco" placeholder="Digite o endereço" />
-            <i class="fas fa-times-circle clear-icon" onclick="limparCampo()"></i>
-          </div>
-          <button type="button" class="btn btn-outline-info mt-3" onclick="pesquisarEndereco()">Pesquisar
-            Endereço</button>
-          <div class="loading_search"><p style="margin-top: 25px;">Pesquisando...</p></div>
+      <div class="map_options">
+        <button type="button" class="btn btn-outline-primary ml-3 mt-3" onclick="inserirPontoDecolagem();">Inserir Ponto de
+          Decolagem</button>
+        <div class="input-container mt-3">
+          <input type="text" class="form-control" id="endereco" placeholder="Digite o endereço" />
+          <i class="fas fa-times-circle clear-icon" onclick="limparCampo()"></i>
         </div>
+        <button type="button" class="btn btn-outline-info mt-3" onclick="pesquisarEndereco()">Pesquisar
+          Endereço</button>
+        <div class="loading_search"><p style="margin-top: 25px;">Pesquisando...</p></div>
+      </div>
 
-        <section class="content mt-3">
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-12">
-                <div class="card">
-                  <div class="card-header">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                    <h3 class="card-title" style="color: black;">Pontos de atenção</h3>
-                    </button>
-                    <div class="card-tools">
-                    </div>
+      <section class="content mt-3">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <h3 class="card-title" style="color: black;">Pontos de atenção</h3>
+                  </button>
+                  <div class="card-tools">
                   </div>
-
-                  {% for point in points %}
-                  <div class="card-body collapse card_atendimento" aria-expanded="false" id="pontosCadastrados">
-                      <div class="ponto-atendimento" data-lat="{{ point.latitude }}" data-lng="{{ point.longitude }}">
-                        <p class="point_of_interest" style="font-size: 0.8rem"> 
-                          <i class="fa fa-exclamation-triangle"></i> {{ point.descricao }} 
-                          {% if point.is_temporary %}
-                          | duração: <strong>{{ point.date_initial|date:"d/m/Y" }} {{ point.date_initial|time:"H:i" }} à {{ point.date_final | date:"d/m/Y" }} {{ point.date_final|time:"H:i" }}</strong>
-                          {% endif %}
-                          <a href="{% url 'rpa_manager:edit_point' point.pk %}" style="padding-left: 10px"><i class="fa fa-pen"></i></a>
-                          <a href="{% url 'rpa_manager:delete_point' point.pk %}" style="padding-left: 10px"><i class="fa fa-trash"></i></a>
-                        </p>
-                      </div>
-                  </div>
-                  {% endfor %}
                 </div>
+
+                {% for point in points %}
+                <div class="card-body collapse card_atendimento" aria-expanded="false" id="pontosCadastrados">
+                    <div class="ponto-atendimento" data-lat="{{ point.latitude }}" data-lng="{{ point.longitude }}">
+                      <p class="point_of_interest" style="font-size: 0.8rem"> 
+                        <i class="fa fa-exclamation-triangle"></i> {{ point.descricao }} 
+                        {% if point.is_temporary %}
+                        | duração: <strong>{{ point.date_initial|date:"d/m/Y" }} {{ point.date_initial|time:"H:i" }} à {{ point.date_final | date:"d/m/Y" }} {{ point.date_final|time:"H:i" }}</strong>
+                        {% endif %}
+                        <a href="{% url 'rpa_manager:edit_point' point.pk %}" style="padding-left: 10px"><i class="fa fa-pen"></i></a>
+                        <a href="{% url 'rpa_manager:delete_point' point.pk %}" style="padding-left: 10px"><i class="fa fa-trash"></i></a>
+                      </p>
+                    </div>
+                </div>
+                {% endfor %}
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
         
-        <div id="map" class="mt-3" style="height: 400px;"></div>
+      <div id="map" class="ml-3 mr-3 mt-3" style="height: 400px;"></div>
 
-        <div class="mt-3">
+        <div class="ml-3 mb-3 mt-3">
           <button type="submit" class="btn btn-primary">Salvar</button>
           <a href="{% url 'rpa_manager:principal' %}">
             <button type="button" class="btn btn-warning">Cancelar</button>

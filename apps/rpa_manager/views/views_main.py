@@ -83,6 +83,7 @@ class PainelView(TemplateView):
         context['coordinates_by_date_json'] = coordinates_by_date_json
         context['guarnicoes_json'] = guarnicoes_json
         context['years'] = years
+        
         return context
 
 

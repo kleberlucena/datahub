@@ -77,6 +77,7 @@ class CriarNovoRelatorioView(PermissionRequiredMixin, CreateView):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
     
+    
 class EditarRelatorioView(PermissionRequiredMixin, UpdateView):
     model = Relatorio
     form_class = RelatorioFormulario
@@ -94,6 +95,7 @@ class EditarRelatorioView(PermissionRequiredMixin, UpdateView):
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+    
     
 class DeletarRelatorioView(PermissionRequiredMixin, DeleteView):
     model = Relatorio

@@ -6,18 +6,25 @@
 
 <!-- styles -->
 {% block style_sheet %}
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
-  <style>
-    #id_arquivo_solicitacao {
-      display: none;
-    }
-    .field_label {
-      margin-top: 30px;
-    }
-  </style>
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet"
+  href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+<style>
+  #id_arquivo_solicitacao {
+    display: none;
+  }
+
+  .field_label {
+    margin-top: 10px;
+  }
+
+  .form-switch {
+    display: inline;
+    margin-left: 10px;
+  }
+</style>
 {% endblock style_sheet %}
 
 <!-- context title -->
@@ -30,72 +37,175 @@
 
 <!-- main container -->
 {% block content %}
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card card-primary card-outline">
-        <div class="card-header">
-          <h3 class="card-title">Criar novo relatório</h3>
-        </div>
-        <form class="p-3" method='post' enctype="multipart/form-data">
-          {% csrf_token %}
-          <div class="form-row">
-            <div class="form-group col-md-12 mb-0">
-              {% for field in form %}
-                {% if field.label == "Arquivo de solicitação" %}
-                  <label for="{{ field.id_for_label }}" class="field_label">{{ field.label }}</label>
-                    <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
-                    <p id="fileName"></p>
-                  
-                  {% else %}
-                    <label for="{{ field.id_for_label }}" class="field_label">{{ field.label }}</label>
-                {% endif %}
-
-                {{ field }}
-              {% endfor %}
-            </div>
-          </div>
-          <div class="mt-3">
-            <button type="submit" class="btn btn-primary">Salvar</button>
-            <a href="{% url 'rpa_manager:relatorios' %}">
-              <button type="button" class="btn btn-warning">Cancelar</button>
-            </a>
-          </div>
-          {% for field in form %}
-            {% if field.errors %}
-              <div class="alert alert-danger">
-                {{ field.errors }}
-              </div>
-            {% endif %}
-          {% endfor %}
-          
-        </form>
+<div class="row">
+  <div class="col-md-12">
+    <div class="card card-primary card-outline">
+      <div class="card-header">
+        <h3 class="card-title">Criar novo relatório</h3>
+        {{ form.errors }}
       </div>
+      <form class="p-3" method='post' enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.militar }}
+        <div class="row">
+          <div class="col-md-6">
+            <label for="id_titulo" class="field_label">Título</label>
+            {{ form.titulo }}
+            {{ form.titulo.errors }}
+          </div>
+          <div class="col-md-6">
+            <label for="id_piloto_observador" class="field_label">Piloto Observador</label>
+            {{ form.piloto_observador }}
+            {{ form.piloto_observador.errors }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="id_quem_autorizou" class="field_label">Quem Autorizou</label>
+            {{ form.quem_autorizou }}
+            {{ form.quem_autorizou.errors }}
+          </div>
+          <div class="col-md-6">
+            <label for="id_quem_solicitou" class="field_label">Quem Solicitou</label>
+            {{ form.quem_solicitou }}
+            {{ form.quem_solicitou.errors }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="id_data" class="field_label">Data inicial</label>
+            {{ form.data }}
+            {{ form.data.errors }}
+          </div>
+          <div class="col-md-6">
+            <label for="id_data_final" class="field_label">Data final</label>
+            {{ form.data_final }}
+            {{ form.data_final.errors }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="id_horario_inicial" class="field_label">Horário Inicial</label>
+            {{ form.horario_inicial }}
+            {{ form.horario_inicial.errors }}
+          </div>
+          <div class="col-md-6">
+            <label for="id_horario_final" class="field_label">Horário Final</label>
+            {{ form.horario_final }}
+            {{ form.horario_final.errors }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="id_local" class="field_label">Local</label>
+            {{ form.local }}
+            {{ form.local.errors }}
+          </div>
+          <div class="col-md-6">
+            <label for="id_latitude" class="field_label">Latitude</label>
+            {{ form.latitude }}
+            {{ form.latitude.errors }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="id_longitude" class="field_label">Longitude</label>
+            {{ form.longitude }}
+            {{ form.longitude.errors }}
+          </div>
+          <div class="col-md-6">
+            <label for="id_arquivo_solicitacao" class="field_label">Arquivo Solicitação</label>
+            {{ form.arquivo_solicitacao }}
+            {{ form.arquivo_solicitacao.errors }}
+            <button type="button" class="btn btn-outline-primary ml-3 mt-3" id="fileButton">Selecionar Arquivo</button>
+            <p id="fileName"></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="id_num_sarpas" class="field_label">Número de Sarpas</label>
+            {{ form.num_sarpas }}
+            {{ form.num_sarpas.errors }}
+          </div>
+          <div class="col-md-6">
+            <label for="id_entidade_apoiada" class="field_label">Entidade Apoiada</label>
+            {{ form.entidade_apoiada }}
+            {{ form.entidade_apoiada.errors }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="id_natureza_de_voo" class="field_label">Natureza de Voo</label>
+            {{ form.natureza_de_voo }}
+            {{ form.natureza_de_voo.errors }}
+          </div>
+          <div class="col-md-6">
+            <label for="id_tipo_de_operacao" class="field_label">Tipo de Operação</label>
+            {{ form.tipo_de_operacao }}
+            {{ form.tipo_de_operacao.errors }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="id_aeronave" class="field_label">Aeronave</label>
+            {{ form.aeronave }}
+            {{ form.aeronave.errors }}
+          </div>
+          <div class="col-md-6">
+            <label for="id_numero_ficha_oc" class="field_label">Número Ficha OC</label>
+            {{ form.numero_ficha_oc }}
+            {{ form.numero_ficha_oc.errors }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <label for="id_relato_da_missao" class="field_label">Relato da operação</label>
+            {{ form.relato_da_missao }}
+            {{ form.relato_da_missao.errors }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <label for="id_relato_da_missao" class="field_label">Encerrar operação? <small>marque a caixa ao lado:</small></label>
+            {{ form.status_missao }}
+          </div>
+        </div>
     </div>
-  {% endblock content %}
+  </div>
+  <div class="mt-3 ml-2 mb-3">
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a href="{% url 'rpa_manager:relatorios' %}">
+      <button type="button" class="btn btn-warning">Cancelar</button>
+    </a>
+  </div>
+  </form>
+</div>
+</div>
+{% endblock content %}
 
-  <!-- javascripts -->
-  {% block js %}
-    <!-- DataTables  & Plugins -->
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
-    <script>
-      document.getElementById("fileButton").addEventListener("click", function() {
-        document.getElementById("id_arquivo_solicitacao").click();
-      });
-      document.getElementById("id_arquivo_solicitacao").addEventListener("change", function() {
-        var fileName = document.getElementById("id_arquivo_solicitacao").files[0].name;
-        document.getElementById("fileName").innerHTML = "Arquivo selecionado: " + fileName;
-      });
-    </script>
-  {% endblock %}
+<!-- javascripts -->
+{% block js %}
+<!-- DataTables  & Plugins -->
+<script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+<script>
+  document.getElementById("fileButton").addEventListener("click", function () {
+    document.getElementById("id_arquivo_solicitacao").click();
+  });
+  document.getElementById("id_arquivo_solicitacao").addEventListener("change", function () {
+    var fileName = document.getElementById("id_arquivo_solicitacao").files[0].name;
+    document.getElementById("fileName").innerHTML = "Arquivo selecionado: " + fileName;
+  });
+</script>
+{% endblock %}

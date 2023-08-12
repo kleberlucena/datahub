@@ -250,12 +250,17 @@
           <label for="id_aeronave">Aeronave</label>
           <small>Selecione uma aeronave para iniciar o checklist</small>
           {{ checklist_form.aeronave }}
-
           <div class="main_container_sup">
-            <label for="id_num_helices">Número de hélices</label>
-            {{ checklist_form.num_helices }}
-            <label for="id_num_baterias">Número de baterias</label>
-            {{ checklist_form.num_baterias }}
+            <div class="row">
+              <div class="col-md-6">
+                <label for="id_num_helices">Número de hélices</label>
+                {{ checklist_form.num_helices }}
+              </div>
+              <div class="col-md-6">
+                <label for="id_num_baterias">Número de baterias</label>
+                {{ checklist_form.num_baterias }}
+              </div>
+            </div>
           </div>
         </div>
 
