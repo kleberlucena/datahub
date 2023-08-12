@@ -7,7 +7,7 @@ def getLastRegisteredChecklistData(historico_checklist_dict):
     for aeronave in aeronaves:
         ultimo_registro = HistoricoAlteracoesAeronave.objects.filter(aeronave=aeronave).order_by('-data').first()
         if ultimo_registro:
-            historico_checklist_dict[aeronave.id] = {
+            historico_checklist_dict[f'{aeronave.prefixo} - {aeronave.modelo} - {aeronave.marca}'] = {
                 'num_helices': str(ultimo_registro.num_helices),
                 'num_baterias': str(ultimo_registro.num_baterias),
                 'baterias_carregadas': str(ultimo_registro.baterias_carregadas),
@@ -35,7 +35,7 @@ def getLastRegisteredChecklistData(historico_checklist_dict):
                 'alteracoes' : str(ultimo_registro.alteracoes)
             }
         else:
-            historico_checklist_dict[aeronave.id] = {
+            historico_checklist_dict[f'{aeronave.prefixo} - {aeronave.modelo} - {aeronave.marca}'] = {
                 'num_helices': 4,
                 'num_baterias': 4,
                 'alteracoes' : 'Sem alteração'

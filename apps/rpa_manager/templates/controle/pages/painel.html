@@ -251,10 +251,10 @@
   
   <script>
     const jsonEquipes = {{ guarnicoes_json | safe }};
-    const user = "{{ request.user | stringformat:"s" | safe }}"; // Get the logged-in user's username
+    const user = "{{ request.user | stringformat:"s" | safe }}"; // Recebe o username do usuário logado
     // Função para criar a estrutura HTML para uma equipe (card)
     function criarEquipeCard(equipe) {
-      const isCurrentUserCreator = equipe.piloto_remoto === user; // Check if the logged-in user is the creator of the Guarnicao
+      const isCurrentUserCreator = equipe.piloto_remoto === user; // Verifica se o usuário logado criou a Guarnicao
       let descadastroButton = ``
       if (isCurrentUserCreator) {
         descadastroButton = `
@@ -320,7 +320,7 @@
       document.getElementById('mensagem-container').innerHTML = '<h2>Nenhuma guarnição disponível.</h2>';
     }
 
-    // Verificando se o JSON está vazio
+    // Verificando se o JSON está vazio (sem equipes)
     if (jsonEquipes.length === 0) {
       exibirMensagem();
     } else {
@@ -338,7 +338,10 @@
         // Criando o card para a localidade com as equipes
         return `
             <div class="col-md-12">
-              <h2>${localidade} (${equipesLocalidade.length})</h2>
+              <blockquote class="quote-info">
+                <h6>${localidade}</h6>
+                <p>Quantidade: ${equipesLocalidade.length}</p>
+              </blockquote>
               <div class="row">
                 ${equipesCardsHTML}
               </div>

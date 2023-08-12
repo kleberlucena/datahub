@@ -40,6 +40,7 @@ class VerChecklistView(PermissionRequiredMixin, DetailView):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
+
 class ChecklistFormView(PermissionRequiredMixin, View):    
     permission_required = 'rpa_manager.add_checklist'
     
@@ -50,7 +51,7 @@ class ChecklistFormView(PermissionRequiredMixin, View):
         historico_checklist_dict_json = getLastRegisteredChecklistData(historico_checklist_dict)
         baterias = Bateria.objects.all()
         
-        ultima_guarnicao = Guarnicao.objects.latest('data')
+        ultima_guarnicao = Guarnicao.objects.filter(piloto_remoto=request.user).latest('data')
         
         dados_checklist = { 'piloto': piloto,
                            'guarnicao': ultima_guarnicao, }
@@ -85,6 +86,7 @@ class ChecklistFormView(PermissionRequiredMixin, View):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
     
+    
 class EditarChecklistView(PermissionRequiredMixin, UpdateView):
     model = Checklist
     form_class = ChecklistForm
@@ -114,6 +116,7 @@ class EditarChecklistView(PermissionRequiredMixin, UpdateView):
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+    
     
 class DeletarChecklistView(PermissionRequiredMixin, DeleteView):
     model = Checklist
