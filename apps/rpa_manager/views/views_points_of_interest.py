@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.contrib import messages
 
+message_model_name = 'Ponto de atenção'
 
 class AddPointOfInterest(CreateView):
     model = PontosDeInteresse
@@ -29,7 +30,8 @@ class AddPointOfInterest(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, 'Ponto de atenção criado com sucesso!')
+        
+        messages.success(self.request, f'{message_model_name} criado com sucesso!')
         return response
     
         
@@ -37,7 +39,7 @@ class UpdatePointOfInterest(UpdateView):
     model = PontosDeInteresse
     form_class = PointsOfInterestForm
     template_name = 'controle/pages/edit_point.html'
-    success_url = reverse_lazy('rpa_manager:painel')
+    success_url = reverse_lazy('rpa_manager:criar_nova_missao')
         
     def get_initial(self):
         initial = super().get_initial()
@@ -61,6 +63,11 @@ class UpdatePointOfInterest(UpdateView):
 
         return context
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'{message_model_name} editado com sucesso!')
+        
+        return response
     
 class DeletePointOfInterest(DeleteView):
     model = PontosDeInteresse
@@ -68,3 +75,7 @@ class DeletePointOfInterest(DeleteView):
     context_object_name = 'form'
     success_url = reverse_lazy('rpa_manager:criar_nova_missao')
     
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        messages.success(self.request, f'{message_model_name} excluído com sucesso!')
+        return response

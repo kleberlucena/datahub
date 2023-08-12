@@ -26,7 +26,7 @@ class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
         guarnicoes_no_dia = Guarnicao.objects.filter(piloto_remoto=user)
         
         if guarnicoes_no_dia.exists():
-            form.add_error(None, 'Já existe uma guarnição criada por este usuário no mesmo dia.')
+            form.add_error(None, 'Já existe uma guarnição cadastrada por este usuário no mesmo dia.')
             return self.form_invalid(form)
 
         messages.success(self.request, f'{message_model_name} cadastrada com sucesso!')

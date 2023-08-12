@@ -1,0 +1,136 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% comment %} bacinf style_sheet {% endcomment %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    @media (max-width: 768px) {
+      .dtr-control::before {
+        content: "\f107" !important; 
+        font-family: "Font Awesome 5 Free" !important; 
+        font-weight: 700 !important;
+      }
+    }
+  </style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Operações aéreas {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:baterias' %}">Baterias</a></li>
+  <li class="breadcrumb-item active">Tipos de baterias</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+  <div class="card card-primary card-outline">
+    <div class="card-header">
+      <h3 class="card-title">Tipos de baterias</h3>
+    </div>
+    <div class="card-body">
+      <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+        <table id="objects_list" class="table table-bordered table-striped dataTable dtr-inline" role="grid"
+          aria-describedby="objects_list_info" width="100%">
+          <thead>
+            <tr>
+              <th scope="col">Título do tipo</th>
+              <th scope="col">Ciclos recomendados</th>
+              <th scope="col">Ciclos alerta</th>
+              <th scope="col">Ciclos críticos</th>
+              <th class="removerDoPdf" scope="col">Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for type in type_of_batteries %}
+            <tr>
+              <td>{{ type.name }}</td>
+              <td>{{ type.recommended_cicles }}</td>
+              <td>{{ type.alert_cicles }}</td>
+              <td>{{ type.critical_cicles }}</td>
+              <td>
+                <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
+                  <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                  Filtros
+                  </button>
+                  <div class="dropdown-menu" role="menu" style="">
+                      <a class="dropdown-item" href="{% url 'rpa_manager:edit_typeofbattery' type.id %}">Editar tipo</a>
+                      <a class="dropdown-item" href="{% url 'rpa_manager:delete_typeofbattery' type.id %}">Excluir tipo</a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+<!-- DataTables  & Plugins -->
+<script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+<script>
+  var table = $('#objects_list').DataTable({
+    lengthChange: false,
+    buttons: [ 'pageLength',
+        {
+          extend: 'excel',
+          text: 'Excel',
+          exportOptions: {
+            columns: ':not(.removerDoPdf)'
+          }
+        },
+        {
+          extend: 'pdf',
+          text: 'PDF',
+          exportOptions: {
+            columns: ':not(.removerDoPdf)'
+          }
+        },
+        {
+          extend: 'print',
+          text: 'Imprimir',
+          exportOptions: {
+            columns: ':not(.removerDoPdf)'
+          }
+        },
+        'colvis'
+      ],
+    dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+    language: { "url": "//cdn.datatables.net/plug-ins/1.11.1/i18n/pt_br.json" },
+    responsive: true,
+    searching: true,
+    processing: true,
+    columnDefs: [{ "width": "200px", targets: [-1] }],
+    order: [
+      [2, 'desc'],
+    ]
+  });
+</script>
+{% endblock %}

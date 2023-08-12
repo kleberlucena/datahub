@@ -19,7 +19,9 @@ from .views.views_points_of_interest import (
     DeletePointOfInterest    
 )
 from .views.views_typeofbattery import (
-    TypeOfBatteryCreateView
+    TypeOfBatteryCreateView,
+    TypeOfBatteryUpdateView,
+    TypeOfBatteryDeleteView
 )
 from .views.views_main import (
     PainelView, PrincipalView,
@@ -38,8 +40,8 @@ from .views.views_main import (
     DeletarAeronaveView, VerBateriaView,
     CriarNovaBateriaView, EditarBateriaView,
     DeletarBateriaView, MilitaryListJson,
-    HistoricosPorAeronaveView, IncidentesView
-    )
+    HistoricosPorAeronaveView, IncidentesView,
+    TypeOfBatteryView)
 
 app_name = "rpa_manager"
 
@@ -54,9 +56,10 @@ urlpatterns = [
     path('delete_incidentes/<int:pk>/', IncidentesDeleteView.as_view(), name='delete_incidente'),
     path('delete_image/<int:pk>/', IncidenteImageDeleteView.as_view(), name='delete_image'),
     
-    
+    path('typeofbatteries/', TypeOfBatteryView.as_view(), name='typeofbatteries'),
     path('add_typeofbattery/', TypeOfBatteryCreateView.as_view(), name='add_typeofbattery'),
-    
+    path('edit_typeofbattery/<int:pk>', TypeOfBatteryUpdateView.as_view(), name='edit_typeofbattery'),
+    path('delete_typeofbattery/<int:pk>', TypeOfBatteryDeleteView.as_view(), name='delete_typeofbattery'),
     
     path('add_point/', AddPointOfInterest.as_view(), name='add_point'),
     path('edit_point/<int:pk>/', UpdatePointOfInterest.as_view(), name='edit_point'),

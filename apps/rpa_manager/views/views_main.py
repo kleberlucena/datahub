@@ -9,13 +9,13 @@ from .views_crud_efetivo import *
 from .views_crud_missao import *
 from .views_crud_relatorio import *
 from .views_funcoes_auxiliares import *
-from apps.rpa_manager.forms import AeronaveSelectForm
+from apps.rpa_manager.forms import AeronaveSelectForm, TypeOfBatteryForm
 from apps.rpa_manager.utils.create_json_for_coordinates import create_json_for_coordinates
 from apps.rpa_manager.models import (Aeronave, Bateria, 
                                      Checklist, Militar, 
                                      Missao, Relatorio,
                                      HistoricoAlteracoesAeronave,
-                                     Incidentes)
+                                     Incidentes, TypeOfBattery)
 from datetime import datetime
 
 
@@ -239,4 +239,18 @@ class HistoricosPorAeronaveView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form_class(self.request.GET or None)
+        return context
+    
+    
+class TypeOfBatteryView(TemplateView):
+    template_name = 'controle/pages/types_of_batteries.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        type_of_batteries = TypeOfBattery.objects.all()
+        form = TypeOfBatteryForm(self.request)
+
+        context['type_of_batteries'] = type_of_batteries
+        context['form'] = form
+
         return context
