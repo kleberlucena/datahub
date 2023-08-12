@@ -46,6 +46,7 @@
           <div class="form-group col-md-12 mb-0">
             <label for="#" class="piloto_observador">Piloto remoto</label>
             <br>{{ user.username }}<br><hr>
+            {{ form.errors }}
             <label for="id_piloto_observador" class="quem_solicitou">Piloto observador</label>
             {{ form.piloto_observador}}
             {{ form.piloto_observador.errors }}
@@ -63,7 +64,6 @@
           </div>
         </div>
 
-        {{ form.errors }}
         
         <div class="mt-3">
           <button type="submit" class="btn btn-primary">Salvar</button>

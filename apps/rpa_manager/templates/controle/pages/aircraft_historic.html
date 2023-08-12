@@ -4,37 +4,40 @@
 <!-- styles -->
 {% block style_sheet %}
 {% comment %} bacinf style_sheet {% endcomment %}
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
-  <style>
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet"
+  href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+<style>
+  .aircraft_selection {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 600px;
+  }
+
+  .selection_btn {
+    margin-left: 10px;
+    width: 150px;
+  }
+
+  @media (max-width: 768px) {
+
     .aircraft_selection {
       display: flex;
-      flex-direction: row;
-      align-items: center;
-      width: 600px;
+      flex-direction: column;
+      justify-content: start;
+      width: 100%;
     }
 
     .selection_btn {
-      margin-left: 10px;
-      width: 150px;
+      margin-top: 10px;
+      margin-left: 0;
+      width: 100%;
     }
-    @media (max-width: 768px) {
-    
-      .aircraft_selection {
-        display: flex;
-        flex-direction: column;
-        justify-content: start;
-        width: 100%;
-      }
-      .selection_btn {
-        margin-top: 10px;
-        margin-left: 0;
-        width: 100%;
-      }
   }
-  </style>
+</style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -45,24 +48,24 @@
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
-  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:painel' %}">Painel</a></li>
-  <li class="breadcrumb-item active">Histórico da Aeronave</li>
+<li class="breadcrumb-item"><a href="{% url 'rpa_manager:painel' %}">Painel</a></li>
+<li class="breadcrumb-item active">Histórico da Aeronave</li>
 {% endblock %}
 
 <!-- main container -->
 {% block content %}
-  {% if aircraft_historic %}
-  <div class="card card-primary card-outline">
-    <div class="card-header">
-      <h3 class="card-title">Históricos de alterações</h3>
+
+<div class="card card-primary card-outline">
+  <div class="card-header">
+    <h3 class="card-title">Históricos de alterações</h3>
+  </div>
+  <form method="get">
+    {% csrf_token %}
+    <div class="p-3 aircraft_selection">
+      {{ form.aeronave }}
+      <button type="submit" class="btn btn-outline-info selection_btn" id="fileButton">Filtrar</button>
     </div>
-    <form method="get">
-      {% csrf_token %}
-      <div class="p-3 aircraft_selection">
-        {{ form.aeronave }} 
-        <button type="submit" class="btn btn-outline-info selection_btn" id="fileButton">Filtrar</button>
-      </div>
-    </form>
+  </form>
 
   <div class="card-body">
     <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
@@ -79,27 +82,26 @@
           </tr>
         </thead>
         <tbody>
-          
-          {% if aircraft_historic %}
-            {% for historico in aircraft_historic %}
-            <tr>
-              
-              {% if historico.aeronave == None %}
-                <td>Desativada</td>
-              {% else %}
-                <td>Em atividade</td>
-              {% endif %}
-              <td>{{ historico.titulo_aeronave }}</td>
-              <td data-sort='YYYYMMDD'>{{ historico.data  | date:'d/m/Y'}}</td>
-              <td>{{ historico.num_helices }}</td>
-              <td>{{ historico.num_baterias }}</td>
-              <td>{{ historico.alteracoes }}</td>
-            </tr>
-            {% endfor %}
-          {% endif %}
+
+
+          {% for historico in aircraft_historic %}
+          <tr>
+            {% if historico.aeronave == None %}
+            <td>Desativada</td>
+            {% else %}
+            <td>Em atividade</td>
+            {% endif %}
+            <td>{{ historico.titulo_aeronave }}</td>
+            <td data-sort='YYYYMMDD'>{{ historico.data | date:'d/m/Y'}}</td>
+            <td>{{ historico.num_helices }}</td>
+            <td>{{ historico.num_baterias }}</td>
+            <td>{{ historico.alteracoes }}</td>
+          </tr>
+          {% endfor %}
+
         </tbody>
       </table>
-      {% endif %}
+
       {% endblock content %}
 
       <!-- javascripts -->
@@ -123,7 +125,7 @@
       <script>
         var table = $('#objects_list').DataTable({
           lengthChange: false,
-          buttons: [ 'pageLength',
+          buttons: ['pageLength',
             {
               extend: 'excel',
               text: 'Excel',
@@ -155,5 +157,5 @@
           columnDefs: [{ "width": "350px", targets: [-1] }],
           order: [[2, 'desc']]
         });
-  </script>
-{% endblock %}
+      </script>
+      {% endblock %}

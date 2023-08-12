@@ -233,6 +233,7 @@ class HistoricosPorAeronaveView(ListView):
         aeronave_id = self.request.GET.get('aeronave')
         if aeronave_id:
             queryset = queryset.filter(aeronave__id=aeronave_id)
+            num_queryset = queryset.filter(aeronave__id=aeronave_id).count()
         return queryset
 
     def get_context_data(self, **kwargs):

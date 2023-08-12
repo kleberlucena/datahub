@@ -3,7 +3,6 @@
 
 <!-- styles -->
 {% block style_sheet %}
-{% comment %} bacinf style_sheet {% endcomment %}
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
@@ -14,6 +13,15 @@
     #id_imagem_aeronave {
       display: none;
     }
+    .errorlist {
+      list-style-type: none;
+      color: red;
+      /* Adicione outros estilos desejados */
+    }
+    .error-border {
+      border: 1px solid red;
+    }
+
     /* fix select2 field height */
     .select2-selection,
     .select2-selection--single {
@@ -27,10 +35,10 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} RPA Manager | Cria Aeronave {% endblock %}
+{% block title %} Operações aéreas {% endblock %}
 
 <!-- context title -->
-{% block title-header %} Criar Aeronave {% endblock %}
+{% block title-header %} Operações aéreas {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
@@ -47,15 +55,19 @@
       <form class="p-3" method='post' enctype='multipart/form-data'>
         {% csrf_token %}
         <div class="form-row">
-          <div class="form-group col-md-12 mb-0">
+          <div class="form-group col-md-12 mb-0 forms_inputs">
             <label for="id_prefixo">Prefixo</label>
             {{ form.prefixo }}
+            {{ form.prefixo.errors }}
             <label for="id_modelo">Modelo</label>
             {{ form.modelo }}
+            {{ form.prefixo.errors }}
             <label for="id_marca">Marca</label>
             {{ form.marca }}
+            {{ form.prefixo.errors }}
             <label for="id_local">Local</label>
             {{ form.local }} 
+            {{ form.prefixo.errors }}
             <label for="id_imagem_aeronave" class="mt-3">Imagem da aeronave</label>
             {{ form.imagem_aeronave }}
             <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
@@ -68,6 +80,7 @@
             <button type="button" class="btn btn-warning">Cancelar</button>
           </a>
         </div>
+        
       </form>
     </div>
   </div>
@@ -90,6 +103,31 @@
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
   <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputs = document.querySelectorAll(".form-control");
+
+        inputs.forEach(input => {
+            input.addEventListener("input", function() {
+                const nextElement = input.nextElementSibling;
+                if (nextElement && nextElement.classList.contains("errorlist")) {
+                    input.classList.add("error-border");
+                } else {
+                    input.classList.remove("error-border");
+                }
+            });
+        });
+
+        // Verifique novamente quando a página é carregada, caso já haja um erro
+        inputs.forEach(input => {
+            const nextElement = input.nextElementSibling;
+            if (nextElement && nextElement.classList.contains("errorlist")) {
+                input.classList.add("error-border");
+            }
+        });
+      });
+  </script>
+
+  <script>   
     document.getElementById("fileButton").addEventListener("click", function() {
       document.getElementById("id_imagem_aeronave").click();
     });
