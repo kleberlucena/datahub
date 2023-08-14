@@ -11,7 +11,7 @@ from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
 from django.contrib import messages
 
-message_model_name = 'Incidente'
+MESSAGE_MODEL_NAME = 'Incidente'
 
 class IncidentesCreateView(PermissionRequiredMixin, CreateView):
     model = Incidentes
@@ -41,7 +41,7 @@ class IncidentesCreateView(PermissionRequiredMixin, CreateView):
         for image in images:
            ImagensIncidente.objects.create(incidente=self.object, imageIncidente=image)
 
-        messages.success(self.request, f'{message_model_name} criado com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} criado com sucesso!')
         
         return redirect(self.get_success_url())
     
@@ -69,7 +69,7 @@ class IncidentesUpdateView(PermissionRequiredMixin, UpdateView):
         for image in images:
             ImagensIncidente.objects.create(incidente=self.object, imageIncidente=image)
 
-        messages.success(self.request, f'{message_model_name} editado com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} editado com sucesso!')
         
         return redirect(self.get_success_url())
 
@@ -98,7 +98,7 @@ class IncidentesDeleteView(PermissionRequiredMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
-        messages.success(self.request, f'{message_model_name} excluído com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} excluído com sucesso!')
         return response
     
     @method_decorator(require_permission(permission_required))

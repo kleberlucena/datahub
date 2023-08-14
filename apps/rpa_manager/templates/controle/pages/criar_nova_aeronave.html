@@ -35,7 +35,7 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Operações aéreas {% endblock %}
+{% block title %} Criar nova aeronave {% endblock %}
 
 <!-- context title -->
 {% block title-header %} Operações aéreas {% endblock %}
@@ -61,13 +61,13 @@
             {{ form.prefixo.errors }}
             <label for="id_modelo">Modelo</label>
             {{ form.modelo }}
-            {{ form.prefixo.errors }}
+            {{ form.modelo.errors }}
             <label for="id_marca">Marca</label>
             {{ form.marca }}
-            {{ form.prefixo.errors }}
+            {{ form.prmarcaefixo.errors }}
             <label for="id_local">Local</label>
             {{ form.local }} 
-            {{ form.prefixo.errors }}
+            {{ form.local.errors }}
             <label for="id_imagem_aeronave" class="mt-3">Imagem da aeronave</label>
             {{ form.imagem_aeronave }}
             <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>

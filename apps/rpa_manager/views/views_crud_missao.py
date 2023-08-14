@@ -14,21 +14,11 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib import messages
 from base.decorations.toast_decorator import include_toast
 import json
-from django.utils import timezone
-import pytz
 from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
+from apps.rpa_manager.utils.getAttetionPointsForOperation import getAttentionPointsForOperation
 
-def exclude_time_passed_points():
-        tz = pytz.timezone('America/Recife')
-        current_datetime = timezone.now().astimezone(tz)
-        
-        pontos_excluir = PontosDeInteresse.objects.filter(date_final__lte=current_datetime)
-        
-        pontos_excluir.delete()
-        return tz
 
-@include_toast
 class VerMissaoView(PermissionRequiredMixin, DetailView):
     model = Missao
     template_name = "controle/pages/ver_missao.html"
@@ -45,36 +35,15 @@ class VerMissaoView(PermissionRequiredMixin, DetailView):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
-@include_toast
+
 class CriarNovaMissaoView(PermissionRequiredMixin, View):
     permission_required = 'rpa_manager.add_missao'
     
     def get(self, request):
         form = MissaoFormulario(initial={'usuario': request.user})
-        points_list = []
         points = PontosDeInteresse.objects.all()
-        
-        tz = exclude_time_passed_points()
-        
-        for point in points: 
-            formatted_date_initial = None
-            formatted_date_final = None
-
-            if point.date_initial:
-                formatted_date_initial = point.date_initial.astimezone(tz).strftime('%d/%m/%Y %H:%M:%S')
             
-            if point.date_final:
-                formatted_date_final = point.date_final.astimezone(tz).strftime('%d/%m/%Y %H:%M:%S')      
-                     
-            points_list.append({
-                'temporary': point.is_temporary,
-                'date_initial': formatted_date_initial or '',
-                'date_final': formatted_date_final or '',
-                'descricao': point.descricao,
-                'latitude': point.latitude,
-                'longitude': point.longitude,
-                })
-            
+        points_list = getAttentionPointsForOperation(points)
         points_json = json.dumps(points_list, indent=4, ensure_ascii=False, default=str)
         print(points_json)
         context = {
@@ -106,6 +75,7 @@ class CriarNovaMissaoView(PermissionRequiredMixin, View):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
     
+    
 class EditarMissaoView(PermissionRequiredMixin, UpdateView):
     model = Missao
     form_class = MissaoFormulario
@@ -115,8 +85,6 @@ class EditarMissaoView(PermissionRequiredMixin, UpdateView):
     permission_required = 'rpa_manager.change_missao'
     
     def get(self, request, *args, **kwargs):
-        exclude_time_passed_points()
-        
         self.object = self.get_object()
 
         aeronave_anterior = self.object.aeronave
@@ -125,6 +93,16 @@ class EditarMissaoView(PermissionRequiredMixin, UpdateView):
             aeronave_anterior.em_uso = False
             aeronave_anterior.save()
         return super().get(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        points = PontosDeInteresse.objects.all()
+            
+        points_list = getAttentionPointsForOperation(points)
+        points_json = json.dumps(points_list, indent=4, ensure_ascii=False, default=str)
+        context['points_json'] = points_json
+        context['points'] = points        
+        return context
     
     def form_valid(self, form):
         missao = form.instance
@@ -142,7 +120,6 @@ class EditarMissaoView(PermissionRequiredMixin, UpdateView):
             aeronave_nova.em_uso = True
             aeronave_nova.save()
 
-        
         messages.success(self.request, 'Operação editada com sucesso!')
         
         return response
@@ -150,6 +127,7 @@ class EditarMissaoView(PermissionRequiredMixin, UpdateView):
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+        
         
 class DeleteMissaoView(PermissionRequiredMixin, View):
     template_name = "controle/pages/delete_mission.html"

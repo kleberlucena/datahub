@@ -16,7 +16,7 @@ from apps.rpa_manager.models import (Checklist,
                                      Bateria)
 
 
-message_model_name = 'Checklist'
+MESSAGE_MODEL_NAME = 'Checklist'
 
 class VerChecklistView(PermissionRequiredMixin, DetailView):
     model = Checklist
@@ -109,7 +109,7 @@ class EditarChecklistView(PermissionRequiredMixin, UpdateView):
                 # Atualize outros campos de histórico, se necessário
                 historico.save()
 
-        messages.success(self.request, f'{message_model_name} editado com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} editado com sucesso!')
         
         return super().form_valid(form)
     
@@ -127,7 +127,7 @@ class DeletarChecklistView(PermissionRequiredMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
-        messages.success(self.request, f'{message_model_name} excluído com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} excluído com sucesso!')
         return response
     
     @method_decorator(require_permission(permission_required))

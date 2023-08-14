@@ -54,24 +54,36 @@
                   <span class="badge badge-warning">Em andamento</span>
                 {% endif %}
               </td>
-              <td>
-                <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
-                  <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
-                  <span class="sr-only">Toggle Dropdown</span>
-                  Filtros
-                  </button>
-                  <div class="dropdown-menu" role="menu" style="">
-                    {% if missao.concluida is not True %}
-                      <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver operação</a>
-                      <a class="dropdown-item" href="{% url 'rpa_manager:criar_novo_relatorio' missao.id %}">Encerrar operação</a>
-                      <a class="dropdown-item" href="{% url 'rpa_manager:editar_missao' missao.id %}">Editar operação</a>
-                      <a class="dropdown-item" href="{% url 'rpa_manager:deletar_missao' missao.id %}">Excluir operação</a>
-                    {% else %}
-                      <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver operação</a>
-                    {% endif %}
-                  </div>
-                </div>
-              </td>
+              {% if user.groups.all %}
+		            {% for group in user.groups.all %}
+                  {% if group.name == 'profile:rpa_view' %}
+                    <td>
+                      <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">
+                        <button type="button" class="btn btn-outline-info btn-block">Ver dados</button>
+                      </a>
+                    </td>
+                  {% else %}
+                    <td>
+                      <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
+                        <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                        <span class="sr-only">Toggle Dropdown</span>
+                        Filtros
+                        </button>
+                        <div class="dropdown-menu" role="menu" style="">
+                          {% if missao.concluida is not True %}
+                            <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver operação</a>
+                            <a class="dropdown-item" href="{% url 'rpa_manager:criar_novo_relatorio' missao.id %}">Encerrar operação</a>
+                            <a class="dropdown-item" href="{% url 'rpa_manager:editar_missao' missao.id %}">Editar operação</a>
+                            <a class="dropdown-item" href="{% url 'rpa_manager:deletar_missao' missao.id %}">Excluir operação</a>
+                          {% else %}
+                            <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver operação</a>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </td>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
             </tr>
             {% endfor %}
           </tbody>

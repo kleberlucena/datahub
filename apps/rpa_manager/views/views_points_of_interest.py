@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.contrib import messages
 
-message_model_name = 'Ponto de atenção'
+MESSAGE_MODEL_NAME = 'Ponto de atenção'
 
 class AddPointOfInterest(CreateView):
     model = PontosDeInteresse
@@ -31,7 +31,7 @@ class AddPointOfInterest(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         
-        messages.success(self.request, f'{message_model_name} criado com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} criado com sucesso!')
         return response
     
         
@@ -65,7 +65,7 @@ class UpdatePointOfInterest(UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, f'{message_model_name} editado com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} editado com sucesso!')
         
         return response
     
@@ -77,5 +77,5 @@ class DeletePointOfInterest(DeleteView):
     
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
-        messages.success(self.request, f'{message_model_name} excluído com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} excluído com sucesso!')
         return response

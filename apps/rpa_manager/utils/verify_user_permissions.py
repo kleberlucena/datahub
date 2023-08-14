@@ -1,4 +1,3 @@
-
 from django.contrib.auth.models import Permission
 
 def verify_user_permissions(self, request):

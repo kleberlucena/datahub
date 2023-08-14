@@ -8,8 +8,7 @@ from django.contrib import messages
 from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
 
-message_model_name = 'Aeronave'
-
+MESSAGE_MODEL_NAME = 'Aeronave'
 
 class VerAeronaveView(PermissionRequiredMixin, DetailView):
     model = Aeronave
@@ -32,7 +31,7 @@ class CriarNovaAeronaveView(PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, f'{message_model_name} criada com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} criada com sucesso!')
         return response
 
     @method_decorator(require_permission(permission_required))
@@ -51,7 +50,7 @@ class EditarAeronaveView(PermissionRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, f'{message_model_name} editada com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} editada com sucesso!')
         return response
     
     @method_decorator(require_permission(permission_required))
@@ -69,7 +68,7 @@ class DeletarAeronaveView(PermissionRequiredMixin, DeleteView):
     
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
-        messages.success(self.request, f'{message_model_name} excluída com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} excluída com sucesso!')
         return response
     
     @method_decorator(require_permission(permission_required))

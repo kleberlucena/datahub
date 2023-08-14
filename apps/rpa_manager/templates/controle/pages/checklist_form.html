@@ -247,18 +247,22 @@
 
         <div class="container formulario_checklist_parte1">
           {{ checklist_form.piloto }}
+          {{ checklist_form.piloto.errors }}
           <label for="id_aeronave">Aeronave</label>
           <small>Selecione uma aeronave para iniciar o checklist</small>
           {{ checklist_form.aeronave }}
+          {{ checklist_form.aeronave.errors }}
           <div class="main_container_sup">
             <div class="row">
               <div class="col-md-6">
                 <label for="id_num_helices">Número de hélices</label>
                 {{ checklist_form.num_helices }}
+                {{ checklist_form.num_helices.errors }}
               </div>
               <div class="col-md-6">
                 <label for="id_num_baterias">Número de baterias</label>
                 {{ checklist_form.num_baterias }}
+                {{ checklist_form.num_baterias.errors }}
               </div>
             </div>
           </div>
@@ -334,9 +338,9 @@
             <label class="container_alteracoes_titulo" for="id_alteracoes">Alterações</label>
             <input type="button" class="btn btn-danger botao_limpar" value="Limpar" onclick="limpaAlteracoes();" /><br>
             {{ checklist_form.alteracoes }}
+            {{ checklist_form.alteracoes.errors }}
           </div>
           <div class="mt-3">
-            {{ checklist_form.errors }}
             <button type="submit" class="btn btn-primary">Salvar</button>
             <a href="{% url 'rpa_manager:checklists' %}">
                 <button type="button" class="btn btn-warning">Cancelar</button>

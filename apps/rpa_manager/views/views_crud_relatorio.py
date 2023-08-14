@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from apps.rpa_manager.forms import RelatorioFormulario
 from apps.rpa_manager.models import Missao, Relatorio
 from django.views.generic import DetailView
@@ -11,8 +12,9 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
 from django.contrib import messages
+from django.utils import timezone
 
-message_model_name = 'Relatório'
+MESSAGE_MODEL_NAME = 'Relatório'
 
 
 class VerRelatorioView(PermissionRequiredMixin, DetailView):
@@ -69,7 +71,7 @@ class CriarNovoRelatorioView(PermissionRequiredMixin, CreateView):
 
         form.instance.missao = missao
         
-        messages.success(self.request, f'{message_model_name} criado com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} criado com sucesso!')
         
         return super().form_valid(form)
 
@@ -88,12 +90,17 @@ class EditarRelatorioView(PermissionRequiredMixin, UpdateView):
     
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, f'{message_model_name} editado com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} editado com sucesso!')
         
         return response
 
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
+        relatorio = self.get_object()
+        time_since_creation = timezone.now() - relatorio.created_at
+        if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
+            messages.error(self.request, 'Não é possível editar este relatório após 24 horas.')
+            return HttpResponseRedirect(self.success_url)
         return super().dispatch(*args, **kwargs)
     
     
@@ -106,9 +113,14 @@ class DeletarRelatorioView(PermissionRequiredMixin, DeleteView):
     
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
-        messages.success(self.request, f'{message_model_name} excluído com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} excluído com sucesso!')
         return response
     
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
+        relatorio = self.get_object()
+        time_since_creation = timezone.now() - relatorio.created_at
+        if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
+            messages.error(self.request, 'Não é possível excluir este relatório após 24 horas.')
+            return HttpResponseRedirect(self.success_url)
         return super().dispatch(*args, **kwargs)

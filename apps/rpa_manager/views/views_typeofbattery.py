@@ -4,7 +4,7 @@ from apps.rpa_manager.models import TypeOfBattery
 from apps.rpa_manager.forms import TypeOfBatteryForm
 from django.contrib import messages
 
-message_model_name = 'Tipo de bateria'
+MESSAGE_MODEL_NAME = 'Tipo de bateria'
 
 
 class TypeOfBatteryCreateView(CreateView):
@@ -15,7 +15,7 @@ class TypeOfBatteryCreateView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, f'{message_model_name} criado com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} criado com sucesso!')
         return response
 
 
@@ -28,7 +28,7 @@ class TypeOfBatteryUpdateView(UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, f'{message_model_name} editado com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} editado com sucesso!')
         return response
 
 
@@ -41,5 +41,5 @@ class TypeOfBatteryDeleteView(DeleteView):
     
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
-        messages.success(self.request, f'{message_model_name} excluído com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} excluído com sucesso!')
         return response

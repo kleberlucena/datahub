@@ -20,7 +20,7 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} RPA Manager | Guarnição {% endblock %}
+{% block title %} Cadastrar guarnição {% endblock %}
 
 <!-- context title -->
 {% block title-header %} Operações aéreas {% endblock %}
@@ -44,9 +44,9 @@
         {% csrf_token %}
         <div class="form-row">
           <div class="form-group col-md-12 mb-0">
+            {{ form.errors }}
             <label for="#" class="piloto_observador">Piloto remoto</label>
             <br>{{ user.username }}<br><hr>
-            {{ form.errors }}
             <label for="id_piloto_observador" class="quem_solicitou">Piloto observador</label>
             {{ form.piloto_observador}}
             {{ form.piloto_observador.errors }}
@@ -99,6 +99,10 @@
     console.log(error[0].textContent);
     if(error[0].textContent.includes('_all_')) {
       error[0].textContent = error[0].textContent.replace('__all__', '')
+    } else if(error[0].textContent.includes('piloto_observador')) {
+      error[0].textContent = error[0].textContent.replace('piloto_observador', '')
     }
+
+
   </script>
 {% endblock %}

@@ -2,66 +2,68 @@
 {% load static %}
 
 {% block style_sheet %}
-  <link rel="stylesheet"href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
-  <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
-  <style>
+<link rel="stylesheet"
+  href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+<style>
+  .map_options {
+    display: flex;
+    gap: 10px;
+  }
+
+  /* Estilo para o ícone "x" */
+  .input-container {
+    position: relative;
+    width: 400px;
+  }
+
+  .clear-icon {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+  }
+
+  /* fix select2 field height */
+  .select2-selection,
+  .select2-selection--single {
+    height: 38px !important;
+  }
+
+  #select2-id_aeronave-container {
+    height: 38px !important;
+  }
+
+  /* Menu collapse para pontos de interesse */
+  .card_atendimento:hover {
+    background-color: rgba(220, 220, 220, 1) !important;
+    color: #FFF;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .card_atendimento:nth-child(even) {
+    background-color: rgba(220, 220, 220, 0.3);
+  }
+
+  .loading_search {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
     .map_options {
       display: flex;
-      gap: 10px;
+      flex-direction: column;
     }
 
-    /* Estilo para o ícone "x" */
     .input-container {
       position: relative;
-      width: 400px;
+      width: 100%;
     }
-
-    .clear-icon {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      cursor: pointer;
-    }
-
-    /* fix select2 field height */
-    .select2-selection,
-    .select2-selection--single {
-      height: 38px !important;
-    }
-
-    #select2-id_aeronave-container {
-      height: 38px !important;
-    }
-
-    /* Menu collapse para pontos de interesse */
-    .card_atendimento:hover {
-      background-color: rgba(220, 220, 220, 1) !important;
-      color: #FFF;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .card_atendimento:nth-child(even) {
-      background-color: rgba(220, 220, 220, 0.3);
-    }
-
-    .loading_search {
-      display: none;
-    }
-    
-    @media (max-width: 768px) {
-      .map_options {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .input-container {
-        position: relative;
-        width: 100%;
-      }
-    }
-  </style>
+  }
+</style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -147,55 +149,60 @@
             {{ form.usuario }}
           </div>
         </div>
-      </form>
-      
 
-      <div class="map_options">
-        <button type="button" class="btn btn-outline-primary ml-3 mt-3" onclick="inserirPontoDecolagem();">Inserir Ponto de
-          Decolagem</button>
-        <div class="input-container mt-3">
-          <input type="text" class="form-control" id="endereco" placeholder="Digite o endereço" />
-          <i class="fas fa-times-circle clear-icon" onclick="limparCampo()"></i>
+
+        <div class="map_options">
+          <button type="button" class="btn btn-outline-primary ml-3 mt-3" onclick="inserirPontoDecolagem();">Inserir
+            Ponto de
+            Decolagem</button>
+          <div class="input-container mt-3">
+            <input type="text" class="form-control" id="endereco" placeholder="Digite o endereço" />
+            <i class="fas fa-times-circle clear-icon" onclick="limparCampo()"></i>
+          </div>
+          <button type="button" class="btn btn-outline-info mt-3" onclick="pesquisarEndereco()">Pesquisar
+            Endereço</button>
+          <div class="loading_search">
+            <p style="margin-top: 25px;">Pesquisando...</p>
+          </div>
         </div>
-        <button type="button" class="btn btn-outline-info mt-3" onclick="pesquisarEndereco()">Pesquisar
-          Endereço</button>
-        <div class="loading_search"><p style="margin-top: 25px;">Pesquisando...</p></div>
-      </div>
 
-      <section class="content mt-3">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-12">
-              <div class="card">
-                <div class="card-header">
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                  <h3 class="card-title" style="color: black;">Pontos de atenção</h3>
-                  </button>
-                  <div class="card-tools">
+        <section class="content mt-3">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                      <h3 class="card-title" style="color: black;">Pontos de atenção</h3>
+                    </button>
+                    <div class="card-tools">
+                    </div>
                   </div>
-                </div>
 
-                {% for point in points %}
-                <div class="card-body collapse card_atendimento" aria-expanded="false" id="pontosCadastrados">
+                  {% for point in points %}
+                  <div class="card-body collapse card_atendimento" aria-expanded="false" id="pontosCadastrados">
                     <div class="ponto-atendimento" data-lat="{{ point.latitude }}" data-lng="{{ point.longitude }}">
-                      <p class="point_of_interest" style="font-size: 0.8rem"> 
-                        <i class="fa fa-exclamation-triangle"></i> {{ point.descricao }} 
+                      <p class="point_of_interest" style="font-size: 0.8rem">
+                        <i class="fa fa-exclamation-triangle"></i> {{ point.descricao }}
                         {% if point.is_temporary %}
-                        | duração: <strong>{{ point.date_initial|date:"d/m/Y" }} {{ point.date_initial|time:"H:i" }} à {{ point.date_final | date:"d/m/Y" }} {{ point.date_final|time:"H:i" }}</strong>
+                        | duração: <strong>{{ point.date_initial|date:"d/m/Y" }} {{ point.date_initial|time:"H:i" }} à
+                          {{ point.date_final | date:"d/m/Y" }} {{ point.date_final|time:"H:i" }}</strong>
                         {% endif %}
-                        <a href="{% url 'rpa_manager:edit_point' point.pk %}" style="padding-left: 10px"><i class="fa fa-pen"></i></a>
-                        <a href="{% url 'rpa_manager:delete_point' point.pk %}" style="padding-left: 10px"><i class="fa fa-trash"></i></a>
+                        <a href="{% url 'rpa_manager:edit_point' point.pk %}" style="padding-left: 10px"><i
+                            class="fa fa-pen"></i></a>
+                        <a href="{% url 'rpa_manager:delete_point' point.pk %}" style="padding-left: 10px"><i
+                            class="fa fa-trash"></i></a>
                       </p>
                     </div>
+                  </div>
+                  {% endfor %}
                 </div>
-                {% endfor %}
               </div>
             </div>
           </div>
-        </div>
-      </section>
-        
-      <div id="map" class="ml-3 mr-3 mt-3" style="height: 400px;"></div>
+        </section>
+
+        <div id="map" class="ml-3 mr-3 mt-3" style="height: 400px;"></div>
 
         <div class="ml-3 mb-3 mt-3">
           <button type="submit" class="btn btn-primary">Salvar</button>
@@ -308,34 +315,34 @@
     const timedPoint = "{% static '/sti/img/timer.png' %}"
     var attentionIcon = L.icon({
       iconUrl: urlLocalImg,
-      iconSize: [32, 32], 
-      iconAnchor: [16, 32], 
-      popupAnchor: [0, -32] 
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+      popupAnchor: [0, -32]
     });
     var timerIcon = L.icon({
       iconUrl: timedPoint,
-      iconSize: [35, 35], 
-      iconAnchor: [16, 32], 
-      popupAnchor: [0, -32] 
+      iconSize: [35, 35],
+      iconAnchor: [16, 32],
+      popupAnchor: [0, -32]
     });
 
     dadosMarcadores.forEach((dados) => {
       const lat = dados.latitude;
       const lng = dados.longitude;
       const descricao = dados.descricao;
-      if(dados.temporary) {
+      if (dados.temporary) {
         var marker = L.marker([lat, lng], { icon: timerIcon }).addTo(map);
-        marker.bindPopup(descricao + '<br>' + `Evento: ${dados.date_initial} à ${dados.date_final}`); 
+        marker.bindPopup(descricao + '<br>' + `Evento: ${dados.date_initial} à ${dados.date_final}`);
       } else {
         var marker = L.marker([lat, lng], { icon: attentionIcon }).addTo(map);
-        marker.bindPopup(descricao); 
+        marker.bindPopup(descricao);
       }
     });
 
     const pontosAtendimento = document.querySelectorAll('.ponto-atendimento');
-    
+
     pontosAtendimento.forEach(ponto => {
-      ponto.addEventListener('click', function() {
+      ponto.addEventListener('click', function () {
         const lat = parseFloat(this.getAttribute('data-lat').replace(',', '.'));
         const lng = parseFloat(this.getAttribute('data-lng').replace(',', '.'));
         map.setView([lat, lng], 18);
@@ -362,10 +369,10 @@
     const pointOfInterestElements = document.querySelectorAll('.point_of_interest');
 
     pointOfInterestElements.forEach((point) => {
-      point.addEventListener('click', function() {
+      point.addEventListener('click', function () {
         var targetElement = document.getElementById('map');
         targetElement.scrollIntoView({ behavior: 'smooth' });
       });
     });  
   </script>
-{% endblock %}
+  {% endblock %}

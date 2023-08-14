@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
 
-message_model_name = 'Guarnição'
+MESSAGE_MODEL_NAME = 'Guarnição'
 
 
 class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
@@ -28,8 +28,15 @@ class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
         if guarnicoes_no_dia.exists():
             form.add_error(None, 'Já existe uma guarnição cadastrada por este usuário no mesmo dia.')
             return self.form_invalid(form)
+        
+        piloto_observador = form.cleaned_data.get('piloto_observador')
+        if piloto_observador:
+            guarnicoes_com_piloto = Guarnicao.objects.filter(piloto_observador=piloto_observador)
+            if guarnicoes_com_piloto.exists():
+                form.add_error('piloto_observador', 'Este piloto observador já foi cadastrado em outra guarnição.')
+                return self.form_invalid(form)
 
-        messages.success(self.request, f'{message_model_name} cadastrada com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} cadastrada com sucesso!')
         return super().form_valid(form)
     
     def get_form_kwargs(self):
@@ -40,6 +47,7 @@ class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+    
     
 class GuarnicaoUpdateView(PermissionRequiredMixin, UpdateView):
     model = Guarnicao
@@ -53,13 +61,14 @@ class GuarnicaoUpdateView(PermissionRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, f'{message_model_name} editada com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} editada com sucesso!')
         
         return response
 
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+    
     
 class GuarnicaoDeleteView(PermissionRequiredMixin, DeleteView):
     model = Guarnicao
@@ -71,6 +80,7 @@ class GuarnicaoDeleteView(PermissionRequiredMixin, DeleteView):
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+    
     
 class DescadastrarGuarnicao(PermissionRequiredMixin, View):
     template_name = 'controle/pages/descadastrar_guarnicao.html'
@@ -90,7 +100,7 @@ class DescadastrarGuarnicao(PermissionRequiredMixin, View):
         if last_guarnicao:
             last_guarnicao.delete()
             
-        messages.success(self.request, f'{message_model_name} descadastrada com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} descadastrada com sucesso!')
         return redirect(self.success_url)
     
     @method_decorator(require_permission(permission_required))
