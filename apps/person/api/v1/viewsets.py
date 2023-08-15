@@ -12,7 +12,7 @@ from guardian.shortcuts import assign_perm
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from apps.person.api.v1 import serializers
+from apps.person.api.v1 import serializers, list_serializers
 from apps.address.api.serializers import AddressSerializer
 from apps.image.api.serializers import ImageSerializer
 from apps.document.api.serializers import DocumentSerializer
@@ -72,9 +72,9 @@ class PersonByCpfViewSet(generics.ListAPIView):
         if self.request.user.groups.filter(name='profile:person_advanced').exists():
             return serializers.PersonSerializer
         elif self.request.user.groups.filter(name='profile:person_intermediate').exists():
-            return serializers.IntermediatePersonSerializer
+            return serializers.PersonSerializer
         elif self.request.user.groups.filter(name='profile:person_basic').exists():
-            return serializers.BasicPersonSerializer
+            return serializers.PersonSerializer
         raise Http404
 
     def get_queryset(self):
@@ -123,7 +123,10 @@ class AddPersonListView(generics.ListCreateAPIView):
 
     def get_serializer_class(self):
         if self.request.user.groups.filter(name__icontains='profile:person').exists():
-            return serializers.PersonSerializer
+            if self.request.method == 'POST':
+                return serializers.PersonSerializer
+            else:
+                return list_serializers.PersonListSerializer
         else:
             raise PermissionDenied
 
@@ -155,6 +158,7 @@ class AddPersonListView(generics.ListCreateAPIView):
         page = self.paginate_queryset(queryset)
         serializer = self.get_serializer(
             page, many=True) if page is not None else self.get_serializer(queryset, many=True)
+        print(serializer.data)
         return self.get_paginated_response(serializer.data)
 
     def create(self, request, *args, **kwargs):
@@ -264,9 +268,8 @@ class AddPersonListView(generics.ListCreateAPIView):
 
         for field, flag in query_dict.items():
             if value := query_params.get(field):
-                q = Q(**{f"{flag}__unaccent__icontains": value}) if field in ['address_city', 'address_neighborhood', 'address_street',
-                                                                              'address_complement', 'address_reference', 'address_zipcode'] else Q(
-                    **{f"{flag}__unaccent__iexact": value})
+                q = Q(**{f"{flag}__iexact": value}) if field in ['document_number', 'document_birth_date'] else Q(
+                    **{f"{flag}__unaccent__icontains": value})
                 filters &= q
         print(filters)
 
@@ -284,9 +287,9 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
         if self.request.user.groups.filter(name='profile:person_advanced').exists():
             return serializers.PersonSerializer
         elif self.request.user.groups.filter(name='profile:person_intermediate').exists():
-            return serializers.IntermediatePersonSerializer
+            return serializers.PersonSerializer
         elif self.request.user.groups.filter(name='profile:person_basic').exists():
-            return serializers.BasicPersonSerializer
+            return serializers.PersonSerializer
         raise Http404
 
     @swagger_auto_schema()

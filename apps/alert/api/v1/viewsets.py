@@ -94,8 +94,6 @@ class AddVehicleAlertCortexListView(generics.ListCreateAPIView):
     ordering = ['-created_at']
 
     def get_serializer_class(self):
-        print(self.request.user.groups.filter(
-            name='profile:alert_advanced').exists())
         if self.request.method in ['POST']:
             return serializers.VehicleAlertCortexSerializer
         elif self.request.user.groups.filter(name='profile:alert_advanced').exists():
