@@ -19,7 +19,7 @@ MESSAGE_MODEL_NAME = 'Relatório'
 
 class VerRelatorioView(PermissionRequiredMixin, DetailView):
     model = Relatorio
-    template_name = 'controle/pages/ver_relatorio.html'
+    template_name = 'rpa_manager/detail_report.html'
     context_object_name = 'relatorio'
     permission_required = 'rpa_manager.view_relatorio'
     
@@ -39,7 +39,7 @@ class VerRelatorioView(PermissionRequiredMixin, DetailView):
 class CriarNovoRelatorioView(PermissionRequiredMixin, CreateView):
     model = Relatorio
     form_class = RelatorioFormulario
-    template_name = 'controle/pages/criar_novo_relatorio.html'
+    template_name = 'rpa_manager/create_report.html'
     success_url = reverse_lazy('rpa_manager:add_point')
     permission_required = 'rpa_manager.add_relatorio'
     
@@ -83,7 +83,7 @@ class CriarNovoRelatorioView(PermissionRequiredMixin, CreateView):
 class EditarRelatorioView(PermissionRequiredMixin, UpdateView):
     model = Relatorio
     form_class = RelatorioFormulario
-    template_name = 'controle/pages/criar_novo_relatorio.html'
+    template_name = 'rpa_manager/update_report.html'
     success_url = reverse_lazy('rpa_manager:relatorios')
     context_object_name = 'relatorio'
     permission_required = 'rpa_manager.edit_relatorio'
@@ -106,7 +106,7 @@ class EditarRelatorioView(PermissionRequiredMixin, UpdateView):
     
 class DeletarRelatorioView(PermissionRequiredMixin, DeleteView):
     model = Relatorio
-    template_name = 'controle/pages/delete_relatorio.html'
+    template_name = 'rpa_manager/delete_report.html'
     success_url = reverse_lazy('rpa_manager:relatorios')
     context_object_name = 'obj'
     permission_required = 'rpa_manager.delete_relatorio'

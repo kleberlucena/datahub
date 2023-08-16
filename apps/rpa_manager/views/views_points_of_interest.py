@@ -10,7 +10,7 @@ MESSAGE_MODEL_NAME = 'Ponto de atenção'
 class AddPointOfInterest(CreateView):
     model = PontosDeInteresse
     form_class = PointsOfInterestForm
-    template_name = 'controle/pages/create_new_point.html'
+    template_name = 'rpa_manager/create_point.html'
     success_url = reverse_lazy('rpa_manager:painel')
     
     def get_initial(self):
@@ -38,7 +38,7 @@ class AddPointOfInterest(CreateView):
 class UpdatePointOfInterest(UpdateView):
     model = PontosDeInteresse
     form_class = PointsOfInterestForm
-    template_name = 'controle/pages/edit_point.html'
+    template_name = 'rpa_manager/update_point.html'
     success_url = reverse_lazy('rpa_manager:criar_nova_missao')
         
     def get_initial(self):
@@ -69,9 +69,10 @@ class UpdatePointOfInterest(UpdateView):
         
         return response
     
+    
 class DeletePointOfInterest(DeleteView):
     model = PontosDeInteresse
-    template_name = 'controle/pages/delete_point.html'
+    template_name = 'rpa_manager/delete_point.html'
     context_object_name = 'form'
     success_url = reverse_lazy('rpa_manager:criar_nova_missao')
     

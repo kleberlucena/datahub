@@ -10,7 +10,7 @@ MESSAGE_MODEL_NAME = 'Tipo de bateria'
 class TypeOfBatteryCreateView(CreateView):
     model = TypeOfBattery
     form_class = TypeOfBatteryForm
-    template_name = 'controle/pages/create_typeofbatteries.html' 
+    template_name = 'rpa_manager/create_typeofbatteries.html'
     success_url = reverse_lazy('rpa_manager:criar_nova_bateria')  
 
     def form_valid(self, form):
@@ -22,7 +22,7 @@ class TypeOfBatteryCreateView(CreateView):
 class TypeOfBatteryUpdateView(UpdateView):
     model = TypeOfBattery
     form_class = TypeOfBatteryForm
-    template_name = 'controle/pages/update_typeofbatteries.html'
+    template_name = 'rpa_manager/update_typeofbatteries.html'
     context_object_name = 'type_of_battery'
     success_url = reverse_lazy('rpa_manager:typeofbatteries')  
 
@@ -34,7 +34,7 @@ class TypeOfBatteryUpdateView(UpdateView):
 
 class TypeOfBatteryDeleteView(DeleteView):
     model = TypeOfBattery
-    template_name = 'controle/pages/delete_typeofbatteries.html'
+    template_name = 'rpa_manager/delete_typeofbatteries.html'
     context_object_name = 'type_of_battery'
     success_url = reverse_lazy('rpa_manager:typeofbatteries') 
     context_object_name = 'obj'

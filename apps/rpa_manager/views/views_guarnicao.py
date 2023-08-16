@@ -2,7 +2,6 @@ from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from apps.rpa_manager.models import Guarnicao
 from apps.rpa_manager.forms import GuarnicaoForm
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -17,7 +16,7 @@ MESSAGE_MODEL_NAME = 'Guarnição'
 class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
     model = Guarnicao
     form_class = GuarnicaoForm
-    template_name = 'controle/pages/guarnicao_register.html'
+    template_name = 'rpa_manager/create_guarnicao.html'
     success_url = reverse_lazy('rpa_manager:checklist_form')
     permission_required = 'rpa_manager.add_guarnicao'
     
@@ -52,7 +51,7 @@ class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
 class GuarnicaoUpdateView(PermissionRequiredMixin, UpdateView):
     model = Guarnicao
     form_class = GuarnicaoForm
-    template_name = 'controle/pages/guarnicao_edit.html' 
+    template_name = 'rpa_manager/update_guarnicao.html'
     success_url = reverse_lazy('rpa_manager:checklist_form')
     permission_required = 'rpa_manager.change_guarnicao'
     
@@ -72,7 +71,7 @@ class GuarnicaoUpdateView(PermissionRequiredMixin, UpdateView):
     
 class GuarnicaoDeleteView(PermissionRequiredMixin, DeleteView):
     model = Guarnicao
-    template_name = 'controle/pages/delete_guarnicao.html'
+    # template_name = 'controle/pages/delete_guarnicao.html'
     success_url = reverse_lazy('rpa_manager:painel')
     context_object_name = 'obj'
     permission_required = 'rpa_manager.delete_guarnicao'
@@ -83,7 +82,7 @@ class GuarnicaoDeleteView(PermissionRequiredMixin, DeleteView):
     
     
 class DescadastrarGuarnicao(PermissionRequiredMixin, View):
-    template_name = 'controle/pages/descadastrar_guarnicao.html'
+    template_name = 'rpa_manager/unregister_guarnicao.html'
     success_url = reverse_lazy('rpa_manager:painel')
     permission_required = 'rpa_manager.delete_guarnicao'
     

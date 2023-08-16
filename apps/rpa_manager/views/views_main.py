@@ -20,11 +20,11 @@ from datetime import datetime
 
 
 def home(request):
-    return render(request, 'controle/pages/base.html')
+    return render(request, 'rpa_manager/base.html')
 
 
 class PainelView(TemplateView):
-    template_name = 'controle/pages/painel.html'
+    template_name = 'rpa_manager/painel.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -88,7 +88,7 @@ class PainelView(TemplateView):
 
 
 class PrincipalView(LoginRequiredMixin, TemplateView):
-    template_name = 'controle/pages/operacoes.html'
+    template_name = 'rpa_manager/list_operations.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -109,7 +109,7 @@ class PrincipalView(LoginRequiredMixin, TemplateView):
         return context
 
 class ChecklistsView(TemplateView):
-    template_name = 'controle/pages/checklists.html'
+    template_name = 'rpa_manager/list_checklists.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -132,7 +132,7 @@ class ChecklistsView(TemplateView):
 
 
 class RelatoriosView(TemplateView):
-    template_name = 'controle/pages/relatorios.html'
+    template_name = 'rpa_manager/list_reports.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -155,7 +155,7 @@ class RelatoriosView(TemplateView):
 
 
 class EfetivoView(TemplateView):
-    template_name = 'controle/pages/usuarios.html'
+    template_name = 'rpa_manager/list_militaries.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -177,7 +177,7 @@ class EfetivoView(TemplateView):
 
 
 class AeronavesView(TemplateView):
-    template_name = 'controle/pages/aeronaves.html'
+    template_name = 'rpa_manager/list_aircrafts.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -191,7 +191,7 @@ class AeronavesView(TemplateView):
     
     
 class IncidentesView(TemplateView):
-    template_name = 'controle/pages/incidentes.html'
+    template_name = 'rpa_manager/list_incidents.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -207,7 +207,7 @@ class IncidentesView(TemplateView):
 
 
 class BateriasView(TemplateView):
-    template_name = 'controle/pages/baterias.html'
+    template_name = 'rpa_manager/list_batteries.html'
     limite_de_ciclos = 45
     
     def get_context_data(self, **kwargs):
@@ -225,7 +225,7 @@ class BateriasView(TemplateView):
 
 class HistoricosPorAeronaveView(ListView):
     model = HistoricoAlteracoesAeronave
-    template_name = 'controle/pages/aircraft_historic.html'
+    template_name = 'rpa_manager/list_aircraft_historic.html'
     context_object_name = 'aircraft_historic'
     form_class = AeronaveSelectForm
 
@@ -243,7 +243,7 @@ class HistoricosPorAeronaveView(ListView):
     
     
 class TypeOfBatteryView(TemplateView):
-    template_name = 'controle/pages/types_of_batteries.html'
+    template_name = 'rpa_manager/list_types_of_batteries.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

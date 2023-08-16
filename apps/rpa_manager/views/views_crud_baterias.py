@@ -14,7 +14,7 @@ MESSAGE_MODEL_NAME = 'Bateria'
 
 class VerBateriaView(PermissionRequiredMixin, DetailView):
     model = Bateria
-    template_name = 'controle/pages/ver_bateria.html'
+    template_name = 'rpa_manager/detail_battery.html'
     context_object_name = 'bateria'
     pk_url_kwarg = 'pk'
     permission_required = 'rpa_manager.view_bateria'
@@ -27,7 +27,7 @@ class VerBateriaView(PermissionRequiredMixin, DetailView):
 class CriarNovaBateriaView(PermissionRequiredMixin, CreateView):
     model = Bateria
     form_class = BateriaForm
-    template_name = 'controle/pages/criar_nova_bateria.html'
+    template_name = 'rpa_manager/create_battery.html'
     success_url = reverse_lazy('rpa_manager:baterias')
     permission_required = 'rpa_manager.add_bateria'
 
@@ -44,7 +44,7 @@ class CriarNovaBateriaView(PermissionRequiredMixin, CreateView):
 class EditarBateriaView(PermissionRequiredMixin, UpdateView):
     model = Bateria
     form_class = BateriaForm
-    template_name = 'controle/pages/editar_bateria.html'
+    template_name = 'rpa_manager/update_battery.html'
     context_object_name = 'form'
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('rpa_manager:baterias')
@@ -62,7 +62,7 @@ class EditarBateriaView(PermissionRequiredMixin, UpdateView):
     
 class DeletarBateriaView(PermissionRequiredMixin, DeleteView):
     model = Bateria
-    template_name = 'controle/pages/delete_bateria.html'
+    template_name = 'rpa_manager/delete_battery.html'
     context_object_name = 'obj'
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('rpa_manager:baterias')
@@ -79,7 +79,7 @@ class DeletarBateriaView(PermissionRequiredMixin, DeleteView):
     
     
 class UpdateAllBateriasView(View):
-    template_name = 'controle/pages/update_all_batteries.html'
+    template_name = 'rpa_manager/update_all_batteries.html'
 
     def get(self, request):
         baterias = Bateria.objects.all()

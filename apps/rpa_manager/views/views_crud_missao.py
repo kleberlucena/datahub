@@ -12,7 +12,6 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib import messages
-from base.decorations.toast_decorator import include_toast
 import json
 from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
@@ -21,7 +20,7 @@ from apps.rpa_manager.utils.getAttetionPointsForOperation import getAttentionPoi
 
 class VerMissaoView(PermissionRequiredMixin, DetailView):
     model = Missao
-    template_name = "controle/pages/ver_missao.html"
+    template_name = 'rpa_manager/detail_operation.html'
     context_object_name = 'missao'
     permission_required = 'rpa_manager.view_missao'
         
@@ -51,7 +50,7 @@ class CriarNovaMissaoView(PermissionRequiredMixin, View):
             'points_json': points_json,
             'points': points,
             }
-        return render(request, 'controle/pages/criar_nova_missao.html', context)
+        return render(request, 'rpa_manager/create_operation.html', context)
 
     def post(self, request):
         form = MissaoFormulario(request.POST, initial={'usuario': request.user})
@@ -69,7 +68,7 @@ class CriarNovaMissaoView(PermissionRequiredMixin, View):
             return redirect('rpa_manager:principal')
 
         context = {'form': form}
-        return render(request, 'controle/pages/criar_nova_missao.html', context)
+        return render(request, 'rpa_manager/create_operation.html', context)
     
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
@@ -79,7 +78,7 @@ class CriarNovaMissaoView(PermissionRequiredMixin, View):
 class EditarMissaoView(PermissionRequiredMixin, UpdateView):
     model = Missao
     form_class = MissaoFormulario
-    template_name = "controle/pages/editar_missao.html"
+    template_name = 'rpa_manager/detail_operations.html'
     context_object_name = 'form'
     success_url = reverse_lazy('rpa_manager:principal')
     permission_required = 'rpa_manager.change_missao'
@@ -130,7 +129,7 @@ class EditarMissaoView(PermissionRequiredMixin, UpdateView):
         
         
 class DeleteMissaoView(PermissionRequiredMixin, View):
-    template_name = "controle/pages/delete_mission.html"
+    template_name = 'rpa_manager/delete_operation.html'
     success_url = reverse_lazy('rpa_manager:principal')
     permission_required = 'rpa_manager.delete_missao'
     

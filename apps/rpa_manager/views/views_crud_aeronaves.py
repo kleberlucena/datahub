@@ -12,7 +12,7 @@ MESSAGE_MODEL_NAME = 'Aeronave'
 
 class VerAeronaveView(PermissionRequiredMixin, DetailView):
     model = Aeronave
-    template_name = 'controle/pages/ver_aeronave.html'
+    template_name = 'rpa_manager/detail_aircraft.html'
     context_object_name = 'aeronave'
     pk_url_kwarg = 'pk'
     permission_required = 'rpa_manager.view_aeronave'
@@ -25,7 +25,7 @@ class VerAeronaveView(PermissionRequiredMixin, DetailView):
 class CriarNovaAeronaveView(PermissionRequiredMixin, CreateView):
     model = Aeronave
     form_class = AeronavesForm
-    template_name = 'controle/pages/criar_nova_aeronave.html'
+    template_name = 'rpa_manager/create_aircraft.html'
     success_url = reverse_lazy('rpa_manager:aeronaves')
     permission_required = 'rpa_manager.add_aeronave'
 
@@ -42,7 +42,7 @@ class CriarNovaAeronaveView(PermissionRequiredMixin, CreateView):
 class EditarAeronaveView(PermissionRequiredMixin, UpdateView):
     model = Aeronave
     form_class = AeronavesForm
-    template_name = 'controle/pages/editar_aeronave.html'
+    template_name = 'rpa_manager/update_aircraft.html'
     context_object_name = 'form'
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('rpa_manager:aeronaves')
@@ -60,7 +60,7 @@ class EditarAeronaveView(PermissionRequiredMixin, UpdateView):
     
 class DeletarAeronaveView(PermissionRequiredMixin, DeleteView):
     model = Aeronave
-    template_name = 'controle/pages/delete_aeronave.html'
+    template_name = 'rpa_manager/delete_aircraft.html'
     context_object_name = 'obj'
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('rpa_manager:aeronaves')

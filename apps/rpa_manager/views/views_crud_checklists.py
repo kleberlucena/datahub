@@ -20,7 +20,7 @@ MESSAGE_MODEL_NAME = 'Checklist'
 
 class VerChecklistView(PermissionRequiredMixin, DetailView):
     model = Checklist
-    template_name = 'controle/pages/ver_checklist.html'
+    template_name = 'rpa_manager/detail_checklist.html'
     context_object_name = 'checklist'
     permission_required = 'rpa_manager.view_checklist'
 
@@ -63,7 +63,7 @@ class ChecklistFormView(PermissionRequiredMixin, View):
             'guarnicao': ultima_guarnicao,
             'baterias': baterias
             }
-        return render(request, 'controle/pages/checklist_form.html', context)
+        return render(request, 'rpa_manager/create_checklist.html', context)
     
     def post(self, request):
         dados_checklist = {
@@ -80,7 +80,7 @@ class ChecklistFormView(PermissionRequiredMixin, View):
             'checklist_form': checklist_form,
         }
         
-        return render(request, 'controle/pages/checklist_form.html', context)
+        return render(request, 'rpa_manager/create_checklist.html', context)
     
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
@@ -90,7 +90,7 @@ class ChecklistFormView(PermissionRequiredMixin, View):
 class EditarChecklistView(PermissionRequiredMixin, UpdateView):
     model = Checklist
     form_class = ChecklistForm
-    template_name = 'controle/pages/editar_checklist.html'
+    template_name = 'rpa_manager/update_checklist.html'
     success_url = reverse_lazy('rpa_manager:checklists')
     context_object_name = 'form'
     permission_required = 'rpa_manager.change_checklist'
@@ -120,7 +120,7 @@ class EditarChecklistView(PermissionRequiredMixin, UpdateView):
     
 class DeletarChecklistView(PermissionRequiredMixin, DeleteView):
     model = Checklist
-    template_name = 'controle/pages/delete_checklist.html'
+    template_name = 'rpa_manager/delete_checklist.html'
     success_url = reverse_lazy('rpa_manager:checklists')
     context_object_name = 'obj'
     permission_required = 'rpa_manager.delete_checklist'

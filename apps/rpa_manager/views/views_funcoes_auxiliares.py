@@ -87,7 +87,7 @@ def formulario_missao(request):
             return redirect('controle:principal')
     
     context = {'form': form}
-    return render(request, 'controle/pages/criar_nova_missao.html', context)
+    return render(request, 'rpa_manager/create_operation.html', context)
 
 
 def numero_de_missoes_por_usuario():

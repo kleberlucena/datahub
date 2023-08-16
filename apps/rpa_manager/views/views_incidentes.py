@@ -13,10 +13,33 @@ from django.contrib import messages
 
 MESSAGE_MODEL_NAME = 'Incidente'
 
+
+class IncidentesDetailView(PermissionRequiredMixin, DetailView):
+    model = Incidentes
+    template_name = 'rpa_manager/detail_incident.html'
+    permission_required = 'rpa_manager.view_incidentes'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        incidente = self.get_object()
+
+        images = ImagensIncidente.objects.filter(incidente=incidente)
+        
+        image_urls = [image.imageIncidente.url for image in images]
+        context['image_urls'] = image_urls
+        
+        return context
+    
+    @method_decorator(require_permission(permission_required))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
+    
 class IncidentesCreateView(PermissionRequiredMixin, CreateView):
     model = Incidentes
     form_class = IncidentesForm
-    template_name = 'controle/pages/create_incidente.html'
+    template_name = 'rpa_manager/create_incident.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
     permission_required = 'rpa_manager.add_incidente'
     
@@ -52,7 +75,7 @@ class IncidentesCreateView(PermissionRequiredMixin, CreateView):
 class IncidentesUpdateView(PermissionRequiredMixin, UpdateView):
     model = Incidentes
     form_class = IncidentesForm
-    template_name = 'controle/pages/create_incidente.html'
+    template_name = 'rpa_manager/create_incident.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
     permission_required = 'rpa_manager.change_incidente'
     
@@ -92,7 +115,7 @@ class IncidentesUpdateView(PermissionRequiredMixin, UpdateView):
     
 class IncidentesDeleteView(PermissionRequiredMixin, DeleteView):
     model = Incidentes
-    template_name = 'controle/pages/delete_incidente.html'
+    template_name = 'rpa_manager/delete_incident.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
     permission_required = 'rpa_manager.delete_incidente'
 
@@ -105,31 +128,10 @@ class IncidentesDeleteView(PermissionRequiredMixin, DeleteView):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
-class IncidentesDetailView(PermissionRequiredMixin, DetailView):
-    model = Incidentes
-    template_name = 'controle/pages/ver_incidente.html'
-    permission_required = 'rpa_manager.view_incidentes'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        incidente = self.get_object()
-
-        images = ImagensIncidente.objects.filter(incidente=incidente)
-        
-        image_urls = [image.imageIncidente.url for image in images]
-        context['image_urls'] = image_urls
-        
-        return context
-    
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-    
     
 class IncidenteImageDeleteView(DeleteView):
     model = ImagensIncidente
-    template_name = 'controle/pages/delete_image.html'
+    template_name = 'rpa_manager/delete_image.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
     
     def delete(self, request, *args, **kwargs):

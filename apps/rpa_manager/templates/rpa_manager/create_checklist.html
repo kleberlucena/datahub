@@ -336,7 +336,7 @@
                 alterações:</p>  
             </blockquote>
             <label class="container_alteracoes_titulo" for="id_alteracoes">Alterações</label>
-            <input type="button" class="btn btn-danger botao_limpar" value="Limpar" onclick="limpaAlteracoes();" /><br>
+            <button type="button" style="display: inline" class="btn btn-outline-info mt-3" onclick="limpaAlteracoes();">
             {{ checklist_form.alteracoes }}
             {{ checklist_form.alteracoes.errors }}
           </div>
