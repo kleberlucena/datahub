@@ -11,6 +11,8 @@
       <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
       <!-- icheck bootstrap -->
       <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+      <!-- toast bootstrap -->
+      <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/toastr/toastr.min.css' %}">
       <!-- Theme style -->
       <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
 
@@ -31,5 +33,30 @@
       
       {% block extra_body %}
       {% endblock %}
+
+      {% if messages %}
+        <!-- Toasts -->
+        <script src="{% static 'adminlte-3.1.0/plugins/jquery/jquery.min.js' %}"></script>
+        <script src="{% static 'adminlte-3.1.0/plugins/toastr/toastr.min.js' %}"></script>
+        <script>
+          $(function () {
+            loadMessages.init();
+          });
+          var loadMessages = {
+            init: function(){
+              toastr.options = {
+                "progressBar": true,
+                "positionClass": "toast-bottom-right", 
+                "timeOut": "5000",
+                "showEasing": "swing",
+                "preventDuplicates": true,
+              }
+              {% for message in messages %}
+                toastr.{{ message.tags }}('{{ message }}')
+              {% endfor %}
+            }
+          }
+        </script>
+      {% endif %}
   </body>
 </html>

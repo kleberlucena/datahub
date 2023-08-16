@@ -14,7 +14,7 @@ import json
 import jwt
 
 from social_django.utils import psa
-from auth_oidc.models import synchronize_permissions
+from auth.auth_oidc.helpers import synchronize_oidc_permission
 
 
 # Get an instance of a logger
@@ -65,11 +65,13 @@ def exchange_token(request, backend):
 
         if user:
             if user.is_active:
-                decoded_token = jwt.decode(jwt_token, key=settings.KEYCLOAK_SERVER_PUBLIC_KEY, algorithms=['RS256'], audience="account")
+                decoded_token = jwt.decode(jwt_token, key=settings.KEYCLOAK_SERVER_PUBLIC_KEY, algorithms=[
+                                           'RS256'], audience="account")
                 mapa_of_permissions = decoded_token['resource_access']
-                synchronize_permissions(user, mapa_of_permissions)
+                synchronize_oidc_permission(user, mapa_of_permissions)
                 refresh = RefreshToken.for_user(user)
-                response = {"refresh": str(refresh), "access": str(refresh.access_token)}
+                response = {"refresh": str(
+                    refresh), "access": str(refresh.access_token)}
                 return JsonResponse(response)
             else:
                 return Response(
@@ -84,10 +86,10 @@ def exchange_token(request, backend):
                 {'errors': {nfe: "Authentication Failed"}},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-      
- 
-@api_view(['POST'])     
-@permission_classes([IsAuthenticated])       
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def expire_token(request):
     '''
     Remove o token de acesso quando chamada a url de expiração do token.
@@ -103,7 +105,5 @@ def expire_token(request):
             status=status.HTTP_302_FOUND,
         )
     except Exception as e:
-        raise logger.error('Error while remove auth_token from user - {}'.format(e))
-        
-    
-        
+        raise logger.error(
+            'Error while remove auth_token from user - {}'.format(e))

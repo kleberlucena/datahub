@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class AuthOidcConfig(AppConfig):
+class ApiOidcProviderConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'auth_oidc'
+    name = 'auth.api_oidc_provider'

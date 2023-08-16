@@ -23,38 +23,43 @@ class PersonToRenavamCortexSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PersonRenavamCortex
-        fields = ("numeroCPF", "nomeCompleto", "nomeMae", "dataNascimento", "municipioNaturalidade", "ufNaturalidade", "paisNascimento", "situacaoCadastral", "identificadorResidenteExterior")
+        fields = ("numeroCPF", "nomeCompleto", "nomeMae", "dataNascimento", "municipioNaturalidade",
+                  "ufNaturalidade", "paisNascimento", "situacaoCadastral", "identificadorResidenteExterior")
 
-                  
+
 class RegistryVehicleCortexSerializer(serializers.ModelSerializer):
-    person_renavam_cortex = PersonToRenavamCortexSerializer(read_only=True, required=False, allow_null=True)
+    person_renavam_cortex = PersonToRenavamCortexSerializer(
+        read_only=True, required=False, allow_null=True)
     person_uuid = serializers.CharField(source="person")
 
     class Meta:
         model = RegistryVehicleCortex
-        fields =  ('uuid', 'created_at', 'updated_at', 'person_uuid', 'person_renavam_cortex')
+        fields = ('uuid', 'created_at', 'updated_at',
+                  'person_uuid', 'person_renavam_cortex')
 
 
 class MandadoBNMPSerializer(serializers.ModelSerializer):
 
-     class Meta:
+    class Meta:
         model = MandadoPrisao
         fields = ("seqPeca", "dataCriacao", "numeroProcesso", "numeroPeca", "tipoPeca", "status", "nomeServidor", "cargoServidor",
-                "nomeMagistrado", "textoJustificativaCancelamento", "dataConfirmacaoServidor", "dataExpedicao", "dataConclusao",
-                "dataExpiracaoPrisaoMandadoPrisao", "dataVencimentoMandados", "orgaoJudiciario", "dataValidade", "numeroPrazoPrisao",
-                "dataInfracao", "descricaoLocalOcorrencia", "sinteseDecisao", "tempoPenaAno", "tempoPenaMes", "tempoPenaDia",
-                "descricaoCumprimento", "observacao", "regimePrisional", "especiePrisao", "sigilo", "descricaoJustificativa", "nomeEstabelecimentoPrisional",
-                "dataPrisao", "ufCustodia", "municipioCustodia", "linkMandadoPrisao")
+                  "nomeMagistrado", "textoJustificativaCancelamento", "dataConfirmacaoServidor", "dataExpedicao", "dataConclusao",
+                  "dataExpiracaoPrisaoMandadoPrisao", "dataVencimentoMandados", "orgaoJudiciario", "dataValidade", "numeroPrazoPrisao",
+                  "dataInfracao", "descricaoLocalOcorrencia", "sinteseDecisao", "tempoPenaAno", "tempoPenaMes", "tempoPenaDia",
+                  "descricaoCumprimento", "observacao", "regimePrisional", "especiePrisao", "sigilo", "descricaoJustificativa", "nomeEstabelecimentoPrisional",
+                  "dataPrisao", "ufCustodia", "municipioCustodia", "linkMandadoPrisao")
 
 
-class PersonToBNMPSerializer(serializers.ModelSerializer):    
-    mandados = MandadoBNMPSerializer(many=True, read_only=True, required=False, allow_null=True)
+class PersonToBNMPSerializer(serializers.ModelSerializer):
+    mandados = MandadoBNMPSerializer(
+        many=True, read_only=True, required=False, allow_null=True)
 
     class Meta:
         model = PersonBNMP
-        fields = ('uuid', 'idpessoa', 'nome', 'alcunha', 'nomePai', 'nomeMae', 'dataNascimento', 'sexo', 
-        'naturalidade', 'statusPessoa', 'indiceAssertividade', 'tipoBuscaCPF', 'mandados', 'created_at', 'created_at')
-                  
+        fields = ('uuid', 'idpessoa', 'nome', 'alcunha', 'nomePai', 'nomeMae', 'dataNascimento', 'sexo',
+                  'naturalidade', 'statusPessoa', 'indiceAssertividade', 'tipoBuscaCPF', 'mandados', 'created_at', 'created_at')
+
+
 class PersonToCortexSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -67,28 +72,32 @@ class PersonToCortexSerializer(serializers.ModelSerializer):
 
 
 class RegistryCortexSerializer(serializers.ModelSerializer):
-    person_cortex = PersonToCortexSerializer(read_only=True, required=False, allow_null=True)
+    person_cortex = PersonToCortexSerializer(
+        read_only=True, required=False, allow_null=True)
     person_uuid = serializers.CharField(source="person")
 
     class Meta:
         model = RegistryCortex
-        fields =  ('uuid', 'created_at', 'updated_at', 'person_uuid', 'person_cortex')
+        fields = ('uuid', 'created_at', 'updated_at',
+                  'person_uuid', 'person_cortex')
 
 
 class RegistryBNMPSerializer(serializers.ModelSerializer):
-    person_bnmp = PersonToBNMPSerializer(read_only=True, required=False, allow_null=True)
+    person_bnmp = PersonToBNMPSerializer(
+        read_only=True, required=False, allow_null=True)
     person_uuid = serializers.CharField(source="person")
 
     class Meta:
         model = RegistryBNMP
-        fields =  ('uuid', 'created_at', 'updated_at', 'person_uuid', 'person_bnmp')
+        fields = ('uuid', 'created_at', 'updated_at',
+                  'person_uuid', 'person_bnmp')
 
 
 class RegistryPersonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Registry
-        fields =  ('uuid', 'created_at', 'updated_at', 'person')
+        fields = ('uuid', 'created_at', 'updated_at', 'person')
 
 
 class RegistryPolymorphicSerializer(PolymorphicSerializer):
@@ -97,7 +106,7 @@ class RegistryPolymorphicSerializer(PolymorphicSerializer):
         RegistryCortex: RegistryCortexSerializer,
         RegistryBNMP: RegistryBNMPSerializer,
         RegistryVehicleCortex: RegistryVehicleCortexSerializer
-    } 
+    }
 
 
 class FaceMediumSerializer(serializers.ModelSerializer):
@@ -115,7 +124,7 @@ class FaceMediumSerializer(serializers.ModelSerializer):
     def _get_medium(self, object):
         request = self.context.get('request', None)
         return watermark_helpers.handle(object.file.medium.url, request.user.id)
-    
+
     def _get_large(self, object):
         request = self.context.get('request', None)
         return watermark_helpers.handle(object.file.large.url, request.user.id)
@@ -128,14 +137,17 @@ class FaceMediumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Face
-        fields = ('uuid', 'file', 'medium', 'large', 'created_at', 'updated_at', 'entity', 'permissions')
+        fields = ('uuid', 'file', 'medium', 'large', 'created_at',
+                  'updated_at', 'entity', 'permissions')
 
 
 class FaceSerializer(serializers.ModelSerializer):
-    file = Base64ImageField(write_only=True)    
-    path_image = serializers.SerializerMethodField('_get_image_path', read_only=True)
+    file = Base64ImageField(write_only=True)
+    path_image = serializers.SerializerMethodField(
+        '_get_image_path', read_only=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
-    thumbnail = serializers.SerializerMethodField('_get_thumbnail', read_only=True)
+    thumbnail = serializers.SerializerMethodField(
+        '_get_thumbnail', read_only=True)
     medium = serializers.SerializerMethodField('_get_medium', read_only=True)
     large = serializers.SerializerMethodField('_get_large', read_only=True)
     entity = serializers.SerializerMethodField('_get_entity')
@@ -169,14 +181,15 @@ class FaceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Face
-        fields = ('uuid', 'file', 'path_image', 'large', 'medium', 'thumbnail', 'created_at', 'updated_at', 'entity', 'permissions')
+        fields = ('uuid', 'file', 'path_image', 'large', 'medium',
+                  'thumbnail', 'created_at', 'updated_at', 'entity', 'permissions')
 
 
 class NicknameSerializer(serializers.ModelSerializer):
     label = serializers.CharField()
     permissions = serializers.SerializerMethodField('_get_permissions')
     entity = serializers.SerializerMethodField('_get_entity')
-    
+
     def _get_permissions(self, object):
         request = self.context.get('request', None)
         if request:
@@ -190,7 +203,8 @@ class NicknameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Nickname
-        fields = ('uuid', 'label', 'created_at', 'updated_at', 'entity', 'permissions')
+        fields = ('uuid', 'label', 'created_at',
+                  'updated_at', 'entity', 'permissions')
 
 
 class TattooMediumSerializer(serializers.ModelSerializer):
@@ -210,7 +224,7 @@ class TattooMediumSerializer(serializers.ModelSerializer):
     def _get_medium(self, object):
         request = self.context.get('request', None)
         return watermark_helpers.handle(object.file.medium.url, request.user.id)
-    
+
     def _get_large(self, object):
         # return helpers.get_image_variation(self, object, 'large')
         request = self.context.get('request', None)
@@ -224,16 +238,19 @@ class TattooMediumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tattoo
-        fields = ('uuid', 'label', 'point', 'file', 'medium', 'large', 'created_at', 'updated_at', 'entity', 'permissions')
-    
+        fields = ('uuid', 'label', 'point', 'file', 'medium', 'large',
+                  'created_at', 'updated_at', 'entity', 'permissions')
+
 
 class TattooSerializer(serializers.ModelSerializer):
     label = serializers.CharField()
     point = PointField(required=False)
     file = Base64ImageField(write_only=True)
-    path_image = serializers.SerializerMethodField('_get_image_path', read_only=True)
+    path_image = serializers.SerializerMethodField(
+        '_get_image_path', read_only=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
-    thumbnail = serializers.SerializerMethodField('_get_thumbnail', read_only=True)
+    thumbnail = serializers.SerializerMethodField(
+        '_get_thumbnail', read_only=True)
     medium = serializers.SerializerMethodField('_get_medium', read_only=True)
     large = serializers.SerializerMethodField('_get_large', read_only=True)
     entity = serializers.SerializerMethodField('_get_entity')
@@ -267,7 +284,8 @@ class TattooSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tattoo
-        fields = ('uuid', 'label', 'point', 'file', 'path_image', 'large', 'medium', 'thumbnail', 'created_at', 'updated_at', 'entity', 'permissions')
+        fields = ('uuid', 'label', 'point', 'file', 'path_image', 'large', 'medium',
+                  'thumbnail', 'created_at', 'updated_at', 'entity', 'permissions')
 
 
 class PhysicalSerializer(serializers.ModelSerializer):
@@ -275,7 +293,7 @@ class PhysicalSerializer(serializers.ModelSerializer):
     value = serializers.CharField()
     permissions = serializers.SerializerMethodField('_get_permissions')
     entity = serializers.SerializerMethodField('_get_entity')
-    
+
     def _get_permissions(self, object):
         request = self.context.get('request', None)
         if request:
@@ -289,21 +307,23 @@ class PhysicalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Physical
-        fields = ('uuid', 'label', 'value', 'created_at', 'updated_at', 'entity', 'permissions')
+        fields = ('uuid', 'label', 'value', 'created_at',
+                  'updated_at', 'entity', 'permissions')
 
 
 class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
     nicknames = NicknameSerializer(many=True, required=False)
-    faces = FaceMediumSerializer(many=True, required=False)
+    faces = FaceSerializer(many=True, required=False)
     addresses = AddressSerializer(many=True, required=False)
-    images = ImageMediumSerializer(many=True, required=False)
-    tattoos = TattooMediumSerializer(many=True, required=False)
+    images = ImageSerializer(many=True, required=False)
+    tattoos = TattooSerializer(many=True, required=False)
     physicals = PhysicalSerializer(many=True, required=False)
     documents = DocumentSerializer(many=True, required=False)
-    registers = RegistryPolymorphicSerializer(many=True, read_only=True, required=False, allow_null=True)
+    registers = RegistryPolymorphicSerializer(
+        many=True, read_only=True, required=False, allow_null=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
     entity = serializers.SerializerMethodField('_get_entity')
-    
+
     def _get_permissions(self, object):
         request = self.context.get('request', None)
         if request:
@@ -314,14 +334,14 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
         if object.entity:
             return object.entity.name
         return None
-    
+
     class Meta:
         model = Person
         fields = (
             'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals',
             'created_at', 'updated_at', 'entity', 'registers', 'permissions')
-        
-        
+
+
 class IntermediatePersonSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
     nicknames = NicknameSerializer(many=True, required=False)
     faces = FaceMediumSerializer(many=True, required=False)
@@ -330,16 +350,17 @@ class IntermediatePersonSerializer(WritableNestedModelSerializer, serializers.Mo
     tattoos = TattooMediumSerializer(many=True, required=False)
     physicals = PhysicalSerializer(many=True, required=False)
     documents = DocumentSerializer(many=True, required=False)
-    registers = RegistryPolymorphicSerializer(many=True, read_only=True, required=False, allow_null=True)
+    registers = RegistryPolymorphicSerializer(
+        many=True, read_only=True, required=False, allow_null=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
     entity = serializers.SerializerMethodField('_get_entity')
-    
+
     def _get_permissions(self, object):
         request = self.context.get('request', None)
         if request:
             perms = get_perms(request.user, object)
             return perms
-        
+
     def _get_entity(self, object):
         if object.entity:
             return object.entity.name
@@ -350,8 +371,8 @@ class IntermediatePersonSerializer(WritableNestedModelSerializer, serializers.Mo
         fields = (
             'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals',
             'created_at', 'updated_at', 'registers', 'permissions', 'entity')
-        
-        
+
+
 class BasicPersonSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
     nicknames = NicknameSerializer(many=True, required=False)
     faces = FaceMediumSerializer(many=True, required=False)
@@ -362,13 +383,13 @@ class BasicPersonSerializer(WritableNestedModelSerializer, serializers.ModelSeri
     documents = DocumentSerializer(many=True, required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
     entity = serializers.SerializerMethodField('_get_entity')
-    
+
     def _get_permissions(self, object):
         request = self.context.get('request', None)
         if request:
             perms = get_perms(request.user, object)
             return perms
-        
+
     def _get_entity(self, object):
         if object.entity:
             return object.entity.name

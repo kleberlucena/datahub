@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'django.contrib.postgres',
 
-    'auth_oidc',  # O APP auth must come before allauth to load templates
+    'auth.auth_oidc',  # O APP auth must come before allauth to load templates
     'oauth2',  # Include authenticate token
 
     # Necessary to allauth
@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'widget_tweaks',
     'localflavor',
+    'django_filters',
     'django_celery_results',
     'django_celery_beat',
     'celery_progress',
@@ -88,6 +89,7 @@ INSTALLED_APPS = [
 
     # Apps
     'base',
+    'auth.api_oidc_provider',
     'apps.portal',
     'apps.cortex',
     'apps.person',
@@ -101,6 +103,7 @@ INSTALLED_APPS = [
     'apps.fact',
     'apps.police_report',
     'apps.rpa_manager',
+    'apps.radio',
 ]
 
 MIDDLEWARE = [
@@ -196,6 +199,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
     ],
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
@@ -213,6 +217,7 @@ SOCIALACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_STORE_TOKENS = True  # Necessary to logout
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 ACCOUNT_LOGOUT_REDIRECT_URL = env('KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL')
 LOGIN_REDIRECT_URL = '/'
@@ -229,10 +234,12 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-# response_sso = requests.get(f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/")
-# sso_public_key = json.loads(response_sso.text)["public_key"]
-# KEYCLOAK_SERVER_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n{}\n-----END PUBLIC KEY-----".format(
-#     sso_public_key)
+SOCIALACCOUNT_ADAPTER = 'auth.auth_oidc.adapter.PMPBSocialAccountAdapter'
+
+response_sso = requests.get(f"{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/")
+sso_public_key = json.loads(response_sso.text)["public_key"]
+KEYCLOAK_SERVER_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n{}\n-----END PUBLIC KEY-----".format(
+    sso_public_key)
 
 # Python Social Auth https://github.com/coriolinus/oauth2-article
 SOCIAL_AUTH_KEYCLOAK_KEY = env('SOCIAL_AUTH_KEYCLOAK_KEY')
@@ -295,14 +302,15 @@ SERVICES_TOKEN = env('SERVICES_TOKEN')
 
 # Global login required middleware
 PUBLIC_VIEWS = [
-    'auth_oidc.views.logout'
+    'auth.auth_oidc.views.logout'
 ]
 PUBLIC_PATHS = [
     r'^/accounts/.*',  # allow public access to all django-allauth views
     r'^/health_check',
     r'^/auth/logout/',
+    r'^/info_user_inactivate/',
     r'^/api/v1/.*',
-    r'/api/token/refresh/',
+    r'^/api/token/refresh/',
     r'^/watermark/.*',
     # Descomentar para expor rota adminitrativa (só para ajustes de configurações do keycloak)
     r'^/admin/.*',

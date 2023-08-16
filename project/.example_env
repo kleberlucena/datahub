@@ -20,9 +20,9 @@ MINIO_SECRET_KEY=J7i6wMWSLzGm2Ffa9dALyn4d7pE7
 
 # ALLAUTH
 SITE_ID=2
-KEYCLOAK_URL=http://localhost:8080/auth
+KEYCLOAK_URL=http://localhost:8080
 KEYCLOAK_REALM=pmpb
-KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL=http://localhost:8000/accounts/login/
+KEYCLOAK_ACCOUNT_LOGOUT_REDIRECT_URL=http://localhost:8003/accounts/keycloak/login/callback/
 
 # DJANGO SOCIAL LOGIN
 SOCIAL_AUTH_KEYCLOAK_KEY=bacinf
@@ -41,8 +41,10 @@ GRAYLOG_HTTP_ENDPOINT=http://localhost:12201/gelf
 # PORTAL
 PORTAL_TOKEN=token_from_sys_bacinf_in_portal
 PORTAL_URL_BASE=http://localhost:8002
+PORTAL_RELATIVE_URL_LIST_MILITARY=/api/v1/sigpmpb/list/
+PORTAL_RELATIVE_URL_LIST_ENTITY=/api/v1/entity/list/
 
 # SERVICES
 SERVICES_URL=http://localhost:8001
-SERVICES_ENDPOINT_MARK=/api/v1/mark/get-mark/
 SERVICES_TOKEN=token_from_sys_bacinf_in_services
+SERVICES_ENDPOINT_MARK=/api/v1/mark/get-mark/

@@ -26,10 +26,11 @@ def cortex_consult(self, username, cpf):
         logger.info('Task cortex_consult processing')
         data = portalCortexService.get_person_by_cpf(
             cpf=cpf, username=username)
+        numeroCPF = data['numeroCPF']
 
         if data:
             cortex_instance, created = PersonCortex.objects.update_or_create(
-                **data)
+                numeroCPF=numeroCPF, defaults={**data})
             retorno = cortex_instance
         else:
             logger.warn('Not found personcortex in cortex - {}'.format(cpf))
