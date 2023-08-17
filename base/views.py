@@ -19,5 +19,7 @@ class IndexView(TemplateView):
 class AboutView(TemplateView):
     template_name = 'base/about.html'
 
+
 def authorization_error_view(request):
     return render(request, 'base/error_template.html', {'message': 'Você não tem permissão para acessar essa página'})
+

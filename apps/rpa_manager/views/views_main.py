@@ -2,6 +2,7 @@ from typing import List, Dict
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView
+from base.mixins import GroupRequiredMixin
 from .views_crud_aeronaves import *
 from .views_crud_baterias import *
 from .views_crud_checklists import *
@@ -176,9 +177,10 @@ class EfetivoView(TemplateView):
         return context
 
 
-class AeronavesView(TemplateView):
+class AeronavesView(GroupRequiredMixin, TemplateView):
     template_name = 'rpa_manager/list_aircrafts.html'
-
+    group_required = ['profile:rpa_advanced']
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         aeronaves = Aeronave.objects.all()
@@ -254,3 +256,4 @@ class TypeOfBatteryView(TemplateView):
         context['form'] = form
 
         return context
+    

@@ -1,10 +1,13 @@
 {% load static %}
+{% load custom_tags %}
 
 <nav class="mt-2">
   <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
     <li class="nav-header">MÓDULOS</li>
     <!-- Módelo de Operações Aéreas -->
-    {% include 'base/apps-nav-content/rpa_manager.html' %}
+    {% if perms.rpa_manager %}
+      {% include 'base/apps-nav-content/rpa_manager.html' %}
+    {% endif %}
         {% if user.is_superuser %}
           <li class="nav-item module-item">
             <a href="#" class="nav-link">
@@ -121,8 +124,9 @@
               </ul>
             </li>
           </ul>
-      </li>      
+        </li>      
       {% endif %}
+      
       {% if user.is_superuser %}
         <li class="nav-header">INTEGRAÇÕES</li>
         <li class="nav-item">
@@ -286,7 +290,7 @@
                   </li>
                 </ul>
               </li>
-          {% endif %}
+          {% comment %} {% endif %} {% endcomment %}
           {% if user.is_superuser %}
             <li class="nav-header">INTEGRAÇÕES</li>
             <li class="nav-item">
