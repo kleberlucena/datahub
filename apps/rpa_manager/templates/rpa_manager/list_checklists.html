@@ -1,5 +1,6 @@
 {% extends "base/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 <!-- styles -->
 {% block style_sheet %}
@@ -55,22 +56,30 @@
             <td data-sort='YYYYMMDD'>{{ checklist.data | date:"d/m/Y" }}</td>
             <td>{{ checklist.horario }}</td>
 
-            <td>
-              <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
-                <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown"
-                  aria-expanded="false">
-                  <span class="sr-only">Toggle Dropdown</span>
-                  Filtros
-                </button>
-                <div class="dropdown-menu" role="menu" style="">
-                  <a class="dropdown-item" href="{% url 'rpa_manager:ver_checklist' checklist.id %}">Ver checklist</a>
-                  <a class="dropdown-item" href="{% url 'rpa_manager:editar_checklist' checklist.id %}">Editar
-                    checklist</a>
-                  <a class="dropdown-item" href="{% url 'rpa_manager:deletar_checklist' checklist.id %}">Excluir
-                    checklist</a>
+            {% if request.user|has_group:'profile:rpa_view' %}
+              <td>
+                <a class="dropdown-item" href="{% url 'rpa_manager:ver_checklist' checklist.id %}">
+                  <button type="button" class="btn btn-outline-info btn-block">Ver dados</button>
+                </a>
+              </td>
+            {% else %}
+              <td>
+                <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
+                  <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown"
+                    aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                    Filtros
+                  </button>
+                  <div class="dropdown-menu" role="menu" style="">
+                    <a class="dropdown-item" href="{% url 'rpa_manager:ver_checklist' checklist.id %}">Ver checklist</a>
+                    <a class="dropdown-item" href="{% url 'rpa_manager:editar_checklist' checklist.id %}">Editar
+                      checklist</a>
+                    <a class="dropdown-item" href="{% url 'rpa_manager:deletar_checklist' checklist.id %}">Excluir
+                      checklist</a>
+                  </div>
                 </div>
-              </div>
-            </td>
+              </td>
+            {% endif %}
           </tr>
           {% endfor %}
         </tbody>

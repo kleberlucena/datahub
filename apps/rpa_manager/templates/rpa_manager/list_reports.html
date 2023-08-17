@@ -1,5 +1,6 @@
 {% extends "base/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 <!-- styles -->
 {% block style_sheet %}
@@ -64,19 +65,28 @@
               <td>{{ relatorio.local }}</td>
               <td>{{ relatorio.aeronave }}</td>
               <td>{{ relatorio.entidade_apoiada }}</td>
-              <td>
-                <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
-                  <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
-                  <span class="sr-only">Toggle Dropdown</span>
-                  Filtros
-                  </button>
-                  <div class="dropdown-menu" role="menu" style="">
-                      <a class="dropdown-item" href="{% url 'rpa_manager:ver_relatorio' relatorio.id %}">Ver relatório</a>
-                      <a class="dropdown-item" href="{% url 'rpa_manager:editar_relatorio' relatorio.id %}">Editar relatório</a>
-                      <a class="dropdown-item" href="{% url 'rpa_manager:deletar_relatorio' relatorio.id %}">Excluir relatório</a>
+
+              {% if request.user|has_group:'profile:rpa_view' %}
+                <td>
+                  <a class="dropdown-item" href="{% url 'rpa_manager:ver_relatorio' relatorio.id %}">
+                    <button type="button" class="btn btn-outline-info btn-block">Ver dados</button>
+                  </a>
+                </td>
+              {% else %}
+                <td>
+                  <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
+                    <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                    Filtros
+                    </button>
+                    <div class="dropdown-menu" role="menu" style="">
+                        <a class="dropdown-item" href="{% url 'rpa_manager:ver_relatorio' relatorio.id %}">Ver relatório</a>
+                        <a class="dropdown-item" href="{% url 'rpa_manager:editar_relatorio' relatorio.id %}">Editar relatório</a>
+                        <a class="dropdown-item" href="{% url 'rpa_manager:deletar_relatorio' relatorio.id %}">Excluir relatório</a>
+                    </div>
                   </div>
-                </div>
-              </td>
+                </td>
+              {% endif %}
             </tr>
             {% endfor %}
           </tbody>

@@ -1,5 +1,6 @@
 {% extends "base/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 <!-- styles -->
 {% block style_sheet %}
@@ -54,9 +55,7 @@
                   <span class="badge badge-warning">Em andamento</span>
                 {% endif %}
               </td>
-              {% if user.groups.all %}
-		            {% for group in user.groups.all %}
-                  {% if group.name == 'profile:rpa_view' %}
+                  {% if request.user|has_group:'profile:rpa_view' %}
                     <td>
                       <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">
                         <button type="button" class="btn btn-outline-info btn-block">Ver dados</button>
@@ -82,8 +81,6 @@
                       </div>
                     </td>
                   {% endif %}
-                {% endfor %}
-              {% endif %}
             </tr>
             {% endfor %}
           </tbody>
