@@ -17,7 +17,8 @@
 
   <!-- breadcrumb -->
 {% block breadcrumb %}
-  <li class="breadcrumb-item active"> Operações </li>
+  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:painel' %}">Painel</a></li>
+  <li class="breadcrumb-item active">Operações</li>
 {% endblock %}
 
 <!-- main container -->
@@ -76,6 +77,8 @@
                             <a class="dropdown-item" href="{% url 'rpa_manager:deletar_missao' missao.id %}">Excluir operação</a>
                           {% else %}
                             <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver operação</a>
+                            <a class="dropdown-item" href="{% url 'rpa_manager:editar_missao' missao.id %}">Editar operação</a>
+                            <a class="dropdown-item" href="{% url 'rpa_manager:deletar_missao' missao.id %}">Excluir operação</a>
                           {% endif %}
                         </div>
                       </div>

@@ -21,7 +21,8 @@
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
-{% comment %} <li class="breadcrumb-item active">Início</li> {% endcomment %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:checklists' %}">Checklists</a></li>
+  <li class="breadcrumb-item active">Dados checklist</li>
 {% endblock %}
 
 <!-- main container -->

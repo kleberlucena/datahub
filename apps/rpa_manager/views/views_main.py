@@ -1,6 +1,6 @@
 from typing import List, Dict
 from django.contrib.auth.models import User
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView
 from base.mixins import GroupRequiredMixin
 from .views_crud_aeronaves import *
@@ -19,6 +19,7 @@ from apps.rpa_manager.models import (Aeronave, Bateria,
                                      Incidentes, TypeOfBattery)
 from datetime import datetime
 
+from apps.rpa_manager.forms import TesteUsuarioForm
 
 def home(request):
     return render(request, 'rpa_manager/base.html')
@@ -192,9 +193,10 @@ class AeronavesView(GroupRequiredMixin, TemplateView):
         return context
     
     
-class IncidentesView(TemplateView):
+class IncidentesView(GroupRequiredMixin, TemplateView):
     template_name = 'rpa_manager/list_incidents.html'
-
+    group_required = ['profile:rpa_advanced']
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
@@ -208,8 +210,9 @@ class IncidentesView(TemplateView):
         return context
 
 
-class BateriasView(TemplateView):
+class BateriasView(GroupRequiredMixin, TemplateView):
     template_name = 'rpa_manager/list_batteries.html'
+    group_required = ['profile:rpa_advanced']
     limite_de_ciclos = 45
     
     def get_context_data(self, **kwargs):
@@ -225,12 +228,13 @@ class BateriasView(TemplateView):
         return context
 
 
-class HistoricosPorAeronaveView(ListView):
+class HistoricosPorAeronaveView(GroupRequiredMixin, ListView):
     model = HistoricoAlteracoesAeronave
     template_name = 'rpa_manager/list_aircraft_historic.html'
     context_object_name = 'aircraft_historic'
     form_class = AeronaveSelectForm
-
+    group_required = ['profile:rpa_advanced']
+    
     def get_queryset(self):
         queryset = super().get_queryset()
         aeronave_id = self.request.GET.get('aeronave')
@@ -257,3 +261,16 @@ class TypeOfBatteryView(TemplateView):
 
         return context
     
+
+
+
+def formulario_teste_usuario(request):
+    if request.method == 'POST':
+        form = TesteUsuarioForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('nome_da_pagina_de_redirecionamento')  # Substitua pelo nome da URL para redirecionamento após o envio
+    else:
+        form = TesteUsuarioForm()
+    
+    return render(request, 'rpa_manager/testeUser.html', {'form': form})

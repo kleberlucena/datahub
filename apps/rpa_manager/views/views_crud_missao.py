@@ -78,7 +78,7 @@ class CriarNovaMissaoView(PermissionRequiredMixin, View):
 class EditarMissaoView(PermissionRequiredMixin, UpdateView):
     model = Missao
     form_class = MissaoFormulario
-    template_name = 'rpa_manager/detail_operations.html'
+    template_name = 'rpa_manager/update_operation.html'
     context_object_name = 'form'
     success_url = reverse_lazy('rpa_manager:principal')
     permission_required = 'rpa_manager.change_missao'

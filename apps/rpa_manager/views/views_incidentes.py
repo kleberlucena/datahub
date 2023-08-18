@@ -3,7 +3,6 @@ from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 from apps.rpa_manager.models import Incidentes, ImagensIncidente
 from apps.rpa_manager.forms import IncidentesForm
-from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin

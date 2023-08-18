@@ -41,7 +41,7 @@ from .views.views_main import (
     CriarNovaBateriaView, EditarBateriaView,
     DeletarBateriaView, MilitaryListJson,
     HistoricosPorAeronaveView, IncidentesView,
-    TypeOfBatteryView)
+    TypeOfBatteryView, formulario_teste_usuario)
 
 app_name = "rpa_manager"
 
@@ -49,6 +49,7 @@ urlpatterns = [
     path('painel/', PainelView.as_view(), name="painel"),
     path('principal/', PrincipalView.as_view(), name="principal"),
     path('historico/', HistoricosPorAeronaveView.as_view(), name='historico'),
+    path('teste/', formulario_teste_usuario, name='teste'),
     
     path('create_incidente/', IncidentesCreateView.as_view(), name='create_incidente'),
     path('incidentes_detail/<int:pk>/', IncidentesDetailView.as_view(), name='incidentes_detail'),
@@ -76,7 +77,7 @@ urlpatterns = [
     path('deletar_missao/<int:pk>/', DeleteMissaoView.as_view(), name="deletar_missao"),
 
     path('ver_relatorio/<int:pk>/', VerRelatorioView.as_view(), name="ver_relatorio"),
-    path('criar_novo_relatorio/', CriarNovoRelatorioView.as_view(), name="criar_novo_relatorio"),
+    path('criar_novo_relatorio/<int:pk>', CriarNovoRelatorioView.as_view(), name="criar_novo_relatorio"),
     path('editar_relatorio/<int:pk>/', EditarRelatorioView.as_view(), name="editar_relatorio"),
     path('deletar_relatorio/<int:pk>/', DeletarRelatorioView.as_view(), name="deletar_relatorio"),
 

@@ -295,3 +295,8 @@ class PontosDeInteresse(models.Model):
 
     def __str__(self):
         return self.descricao
+
+
+class TesteUsuario(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='teste_usuario_rel', null=True)
+    sub_usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sub_teste_usuario_rel', null=True)
