@@ -4,10 +4,6 @@
 <!-- styles -->
 {% block style_sheet %}
   {% comment %} bacinf style_sheet {% endcomment %}
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
   <style>
       .novo_checklist {
         display: flex;
@@ -188,21 +184,41 @@
 <!-- javascripts -->
 {% block js %}
   <!-- DataTables  & Plugins -->
-  <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
 
-  <script src="{% static 'controle/js/checklist_adiciona_alteracoes.js' %}"></script>
+  <script>
+    let checkboxes = document.querySelectorAll('.checklist_item');
+    let textAreaContent = document.querySelector("#id_alteracoes");
+    let listaDeAlteracoes = []
+
+
+    checkboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            if(!checkbox.checked) {
+                listaDeAlteracoes.push(checkbox.previousElementSibling.textContent);
+                adicionaTextoEmTextArea(listaDeAlteracoes);
+            } else if(listaDeAlteracoes.includes(checkbox.previousElementSibling.textContent)) {
+                let indice =  listaDeAlteracoes.indexOf(checkbox.previousElementSibling.textContent);
+                listaDeAlteracoes.splice(indice, 1);
+            }
+        })
+    })
+
+    function adicionaTextoEmTextArea(vetor) {
+        vetor.forEach(function(indice) {
+            if(!textAreaContent.value.includes(indice)) {
+                textAreaContent.value += indice + ':' + '\n';
+            } 
+        })
+    }
+
+    function limpaAlteracoes() {
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = true;
+        })
+        textAreaContent.value = '';
+        listaDeAlteracoes = [];
+    }
+  </script>
   <script>  
     $(document).ready(function() { 
       $(".aeronave_escolha").on('change', function() {
