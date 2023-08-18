@@ -112,6 +112,7 @@ class IncidentesUpdateView(PermissionRequiredMixin, UpdateView):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
     
+    
 class IncidentesDeleteView(PermissionRequiredMixin, DeleteView):
     model = Incidentes
     template_name = 'rpa_manager/delete_incident.html'

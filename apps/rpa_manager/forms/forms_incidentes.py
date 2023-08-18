@@ -4,7 +4,6 @@ from apps.rpa_manager.utils.add_class_and_form_control import add_class_and_form
 
 
 class IncidentesForm(forms.ModelForm):
-
     class Meta:
         model = Incidentes
         fields = ['operacao', 

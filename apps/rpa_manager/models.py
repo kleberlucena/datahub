@@ -143,7 +143,6 @@ def update_titulo_aeronave(sender, instance, **kwargs):
     instance.titulo_aeronave = instance.aeronave.prefixo
 
 
-
 class Missao(Base):
     titulo = models.CharField(max_length=100)
     piloto_observador = models.ForeignKey(Militar, on_delete=models.SET_NULL, blank=True, null=True)
@@ -226,6 +225,18 @@ class Checklist(Base):
     def __str__(self):
         return "Piloto: {} | {} | {} ".format(self.piloto, self.aeronave, self.data)
 
+class ImagensChecklist(models.Model):
+    checklist = models.ForeignKey(Checklist, on_delete=models.CASCADE)
+    imageChecklist = StdImageField(
+        'Imagem',
+        storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
+        upload_to='imagens',
+        variations={
+            'large': {'width': 720, 'height': 720, 'crop': True},
+            'medium': {'width': 480, 'height': 480, 'crop': True},
+            'thumbnail': {'width': 128, 'height': 128, 'crop': True},
+        }, delete_orphans=True, blank=True, null=True
+    )
      
 class Relatorio(Base):
     titulo = models.CharField(max_length=250, null=False, blank=False, default='')

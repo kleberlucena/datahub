@@ -41,7 +41,7 @@ from .views.views_main import (
     CriarNovaBateriaView, EditarBateriaView,
     DeletarBateriaView, MilitaryListJson,
     HistoricosPorAeronaveView, IncidentesView,
-    TypeOfBatteryView, formulario_teste_usuario)
+    TypeOfBatteryView, ChecklistImageDeleteView)
 
 app_name = "rpa_manager"
 
@@ -49,7 +49,6 @@ urlpatterns = [
     path('painel/', PainelView.as_view(), name="painel"),
     path('principal/', PrincipalView.as_view(), name="principal"),
     path('historico/', HistoricosPorAeronaveView.as_view(), name='historico'),
-    path('teste/', formulario_teste_usuario, name='teste'),
     
     path('create_incidente/', IncidentesCreateView.as_view(), name='create_incidente'),
     path('incidentes_detail/<int:pk>/', IncidentesDetailView.as_view(), name='incidentes_detail'),
@@ -96,6 +95,7 @@ urlpatterns = [
     path('checklist_form/', ChecklistFormView.as_view(), name="checklist_form"),
     path('editar_checklist/<int:pk>/', EditarChecklistView.as_view(), name="editar_checklist"),
     path('deletar_checklist/<int:pk>/', DeletarChecklistView.as_view(), name="deletar_checklist"),
+    path('delete_image_checklist/<int:pk>/', ChecklistImageDeleteView.as_view(), name='delete_image_checklist'),
 
     path('criar_novo_militar/', CriarNovoMilitarView.as_view(), name="criar_novo_militar"),
     path('ver_efetivo/<int:pk>/', VerEfetivoView.as_view(), name="ver_efetivo"),

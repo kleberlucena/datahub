@@ -140,6 +140,41 @@
     .hidden {
       display: none;
     }
+
+    /* handle checklist images */
+    .hidden {
+      display: none;
+    }
+    #id_imageIncidente {
+      display: none;
+    }
+    #fileList {
+      display: none;
+    }
+    .temp_images_view {
+      display: flex;
+      flex-wrap: nowrap;
+      max-height: 200px; /* Adjust the max height to control overflow */
+      overflow-x: auto;
+    }
+    
+    .temp_images_view img {
+      margin: 5px;
+      max-width: 150px; /* Adjust the max width of each image as needed */
+      max-height: 150px; /* Adjust the max height of each image as needed */
+    }
+    
+    .temp_images_view_edit {
+      display: flex;
+      flex-wrap: nowrap;
+      max-height: 200px; /* Adjust the max height to control overflow */
+      overflow-x: auto;
+    }
+    .temp_images_view_edit img {
+      margin: 5px;
+      max-width: 150px; /* Adjust the max width of each image as needed */
+      max-height: 150px; /* Adjust the max height of each image as needed */
+    }
     
     @media (max-width: 768px) {
       .formulario_checklist_selecao_itens {
@@ -324,7 +359,35 @@
               {{ checklist_form.telemetria }}
             </div>
           </div>
+          
+          <div class="ml-1 mr-3 mt-3">
+            <label for="id_operacao">Imagens de alterações</label>
+            <input type="file" id="id_imageIncidente", name="imagens" multiple>
+            <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
+            <p id="fileName"></p>
+            <p id="fileList"></p>
+            <div class="temp_images_view"></div>
   
+            {% if request.resolver_match.url_name == 'editar_checklist' %}
+              {% if images %}
+                <label for="">Imagens carregadas</label>
+              {% else %}
+                <label for="">Não há Imagens carregadas</label>
+              {% endif %}
+                
+              <div class="temp_images_view_edit">
+                {% if images %}
+                  {% for img in images %}
+                  <a href="{% url 'rpa_manager:delete_image_checklist' img.pk %} ">
+                    <img src="{{ img.imageChecklist.url }}" alt="Image" class="imagem-checklist" data-id="{{ img.pk }}">
+                  </a>
+                  {% endfor %}
+                {% else %}
+                {% endif %}                
+              </div>         
+            {% endif %}
+          </div>
+
           <div class="container formulario_checklist_alteracoes">
             <h4 class="formulario_checklist_titulo_selecao"></h4>
             <blockquote class="quote-info mt-0">
@@ -516,5 +579,44 @@
     });
   </script>
 
+  <script>
+    const fileInput = document.getElementById("id_imageIncidente");
+    const fileList = document.getElementById('fileList');
+    const tempImagesView = document.querySelector('.temp_images_view');
+  
+    document.getElementById("fileButton").addEventListener("click", function() {
+      fileInput.click();
+    });
+  
+    fileInput.addEventListener("change", function() {
+
+      const files = fileInput.files;
+      let fileListText = '';
+  
+      for (let i = 0; i < files.length; i++) {
+        fileListText += files[i].name + '<br>';
+      }
+  
+      fileList.innerHTML = fileListText;
+  
+      // Remove previous images from the tempImagesView
+      tempImagesView.innerHTML = '';
+  
+      // Display image previews
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+  
+        reader.onload = function(e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.alt = file.name;
+          tempImagesView.appendChild(img);
+        };
+  
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
 
 {% endblock %}

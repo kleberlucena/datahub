@@ -19,6 +19,14 @@
   .mapBehaviorWhenError {
     border: 1px solid black;
   }
+  .copy_btn:hover {
+    color: blue;
+  }
+  .search_btn:hover {
+    color: blue;
+
+  }
+
   @media (max-width: 768px) {
     .detail_report {
       display: flex;
@@ -91,15 +99,18 @@
           sem registro
         {% endif %}
         <hr>
-        <strong>Número Sarpas: </strong> 
-        {{ relatorio.num_sarpas }}
-              <a href="https://sarpas.decea.mil.br/consulta-protocolo" target="_blank"><i
-                  class="fa-solid fa-magnifying-glass"></i> Consultar</a>
+        <strong>Número Protocolo/Sarpas DECEA: </strong> 
+        <p class="protocol_number" style="display: inline; margin-right: 10px;">{{ relatorio.num_sarpas }}</p> 
+          <a type="button" onclick="copyProtocolNumber();" style="margin-right: 5px;">
+            <i class="copy_btn fa fa-copy fa-lg"></i>
+          <a href="https://sarpas.decea.mil.br/consulta-protocolo" target="_blank" style="text-decoration: none; color:black;">
+            <i class="search_btn fa fa-search fa-lg"></i>
+          </a>
         <hr>
         <strong>Arquivo de solicitação: </strong> 
         {% if relatorio.arquivo_solicitacao %}
-          <a href="{{ relatorio.arquivo_solicitacao.url }}" download target="_blank">Baixar solicitação <i
-                class="fas fa-file-pdf"></i> </a>
+          <a href="{{ relatorio.arquivo_solicitacao.url }}" download target="_blank">Baixar solicitação 
+            <i class="fas fa-file-pdf"></i> </a>
           {% else %}
            sem registro
         {% endif %}
@@ -168,4 +179,19 @@
         }
     });
 	</script>
+
+  <script>
+    const protocolNumber = document.querySelector(".protocol_number").textContent;
+    function copyProtocolNumber() {
+      const textarea = document.createElement('textarea');
+      textarea.value = protocolNumber;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+
+      alert(`Protocolo ${protocolNumber} copiado.`);
+    }
+
+  </script>
 {% endblock %}

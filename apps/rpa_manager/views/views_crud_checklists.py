@@ -2,6 +2,7 @@ from django.views.generic import DetailView, UpdateView, DeleteView
 from apps.rpa_manager.forms import ChecklistForm
 from django.urls import reverse_lazy
 from django.views import View
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from apps.rpa_manager.utils.saveNewChecklistInAircraftHistoric import saveNewChecklistInAircraftHistoric
 from apps.rpa_manager.utils.getLastRegisteredChecklistData import getLastRegisteredChecklistData
@@ -13,7 +14,7 @@ from django.contrib import messages
 from apps.rpa_manager.models import (Checklist, 
                                      HistoricoAlteracoesAeronave, 
                                      Guarnicao, 
-                                     Bateria)
+                                     Bateria,ImagensChecklist)
 
 
 MESSAGE_MODEL_NAME = 'Checklist'
@@ -26,6 +27,10 @@ class VerChecklistView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        checklist = self.get_object()
+        images = ImagensChecklist.objects.filter(checklist=checklist)
+        image_urls = [image.imageChecklist.url for image in images]
+        
         lista_de_alteracoes = self.object.alteracoes.split('\n')
         nova_lista_alteracoes = []
         for item in lista_de_alteracoes:
@@ -34,6 +39,7 @@ class VerChecklistView(PermissionRequiredMixin, DetailView):
             else:
                 nova_lista_alteracoes.append(item)
         context['nova_lista_alteracoes'] = nova_lista_alteracoes
+        context['image_urls'] = image_urls
         return context
 
     @method_decorator(require_permission(permission_required))
@@ -66,14 +72,22 @@ class ChecklistFormView(PermissionRequiredMixin, View):
         return render(request, 'rpa_manager/create_checklist.html', context)
     
     def post(self, request):
+        
         dados_checklist = {
             'piloto': request.user,
         }
+        
         checklist_form = ChecklistForm(request.POST, initial=dados_checklist)
+        
         if checklist_form.is_valid():
-            
             saveNewChecklistInAircraftHistoric(request.POST, dados_checklist)
+            checklist = checklist_form.save()
             
+            images = self.request.FILES.getlist('imagens')
+             # checklist = Checklist.objects.create(piloto=request.user, guarnicao=alguma_guarnicao)
+            for image in images:
+                ImagensChecklist.objects.create(checklist=checklist, imageChecklist=image)
+           
             return redirect('rpa_manager:update_all_batteries')
         
         context = {
@@ -108,10 +122,27 @@ class EditarChecklistView(PermissionRequiredMixin, UpdateView):
                 historico.num_baterias = checklist.num_baterias
                 # Atualize outros campos de histórico, se necessário
                 historico.save()
-
+            
+        images = self.request.FILES.getlist('imagens')
+        for image in images:
+            ImagensChecklist.objects.create(checklist=checklist, imageChecklist=image)
+                
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} editado com sucesso!')
         
         return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        checklist = self.get_object()
+
+        images = ImagensChecklist.objects.filter(checklist=checklist)
+        
+        image_urls = [image.imageChecklist.url for image in images]
+        context['image_urls'] = image_urls
+        context['images'] = images
+
+        return context
     
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
@@ -133,3 +164,17 @@ class DeletarChecklistView(PermissionRequiredMixin, DeleteView):
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+    
+    
+class ChecklistImageDeleteView(DeleteView):
+    model = ImagensChecklist
+    template_name = 'rpa_manager/delete_image_checklist.html'
+    success_url = reverse_lazy('rpa_manager:checklists')
+    
+    def delete(self, request, *args, **kwargs):
+        imagem = self.get_object()
+        if imagem:
+            imagem.delete()
+            return JsonResponse({'message': 'Imagem excluída com sucesso.'})
+        else:
+            return JsonResponse({'error': 'Imagem não encontrada.'}, status=404)
