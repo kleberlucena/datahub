@@ -61,4 +61,3 @@ admin.site.register(Entidades)
 admin.site.register(PontosDeInteresse)
 admin.site.register(ImagensIncidente)
 admin.site.register(ImagensChecklist)
-

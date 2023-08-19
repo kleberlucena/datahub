@@ -21,7 +21,6 @@ class GuarnicaoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        
         self.fields['motorista'].widget.attrs.update({
             'placeholder': 'Insira um motorista'
         })
@@ -35,7 +34,6 @@ class GuarnicaoForm(forms.ModelForm):
             'placeholder': 'Insira o local de atuação'
         })
 
-        
         campos = ['motorista', 
                   'piloto_remoto', 
                   'piloto_observador', 

@@ -1,4 +1,3 @@
-
 from apps.rpa_manager.forms import MilitarForm
 from apps.rpa_manager.models import Militar
 from django.views.generic import DetailView
@@ -28,43 +27,3 @@ class MilitaryListJson(BaseDatatableView):
             return row.unidade
 
         return super(MilitaryListJson, self).render_column(row, column)
-
-
-class VerEfetivoView(DetailView):
-    model = Militar
-    template_name = 'controle/pages/ver_efetivo.html'
-    context_object_name = 'militar'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        militar = self.get_object()
-        roles = militar.roles.all()
-        roles_as_strings = [str(role) for role in roles]
-
-        context['roles'] = roles_as_strings
-        return context
-
-class CriarNovoMilitarView(CreateView):
-    model = Militar
-    form_class = MilitarForm
-    template_name = 'controle/pages/criar_novo_militar.html'
-    success_url = reverse_lazy('rpa_manager:efetivo')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
-
-
-class EditarEfetivoView(UpdateView):
-    model = Militar
-    form_class = MilitarForm
-    template_name = 'controle/pages/criar_novo_militar.html'
-    success_url = reverse_lazy('rpa_manager:efetivo')
-    context_object_name = 'militar'
-
-
-class DeletarEfetivoView(DeleteView):
-    model = Militar
-    template_name = 'controle/pages/delete_efetivo.html'
-    success_url = reverse_lazy('rpa_manager:efetivo')
-    context_object_name = 'obj'

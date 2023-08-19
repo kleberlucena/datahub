@@ -6,7 +6,6 @@ from base.mixins import GroupRequiredMixin
 from .views_crud_aeronaves import *
 from .views_crud_baterias import *
 from .views_crud_checklists import *
-from .views_crud_efetivo import *
 from .views_crud_missao import *
 from .views_crud_relatorio import *
 from .views_funcoes_auxiliares import *
@@ -156,28 +155,6 @@ class RelatoriosView(TemplateView):
         context['relatorios'] = relatorios
         context['form'] = form
 
-        return context
-
-
-class EfetivoView(TemplateView):
-    template_name = 'rpa_manager/list_militaries.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        militares = Militar.objects.all()
-        numero_de_usuarios = User.objects.count()
-        form = formulario_missao(self.request)
-
-        context['militares'] = militares
-        context['form'] = form
-        context['numero_de_usuarios'] = numero_de_usuarios
-
-        militares_com_roles = {}
-        for militar in militares:
-            roles = militar.roles.all()
-            militares_com_roles[militar] = roles
-
-        context['militares_com_roles'] = militares_com_roles
         return context
 
 

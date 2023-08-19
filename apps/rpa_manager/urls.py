@@ -26,23 +26,20 @@ from .views.views_typeofbattery import (
 from .views.views_main import (
     PainelView, PrincipalView,
     ChecklistsView, RelatoriosView,
-    EfetivoView, AeronavesView,
+    AeronavesView,
     BateriasView, VerMissaoView,
     CriarNovaMissaoView,EditarMissaoView, 
     DeleteMissaoView, CriarNovoRelatorioView,
     VerRelatorioView, ChecklistFormView,
     EditarRelatorioView, DeletarRelatorioView,
-    VerEfetivoView, CriarNovoMilitarView,
-    EditarEfetivoView, DeletarEfetivoView,
     EditarChecklistView,DeletarChecklistView,
     VerChecklistView, VerAeronaveView,
     CriarNovaAeronaveView, EditarAeronaveView,
     DeletarAeronaveView, VerBateriaView,
     CriarNovaBateriaView, EditarBateriaView,
-    DeletarBateriaView, MilitaryListJson,
-    HistoricosPorAeronaveView, IncidentesView,
+    DeletarBateriaView,     HistoricosPorAeronaveView, IncidentesView,
     TypeOfBatteryView, ChecklistImageDeleteView)
-
+# MilitaryListJson
 app_name = "rpa_manager"
 
 urlpatterns = [
@@ -97,12 +94,6 @@ urlpatterns = [
     path('deletar_checklist/<int:pk>/', DeletarChecklistView.as_view(), name="deletar_checklist"),
     path('delete_image_checklist/<int:pk>/', ChecklistImageDeleteView.as_view(), name='delete_image_checklist'),
 
-    path('criar_novo_militar/', CriarNovoMilitarView.as_view(), name="criar_novo_militar"),
-    path('ver_efetivo/<int:pk>/', VerEfetivoView.as_view(), name="ver_efetivo"),
-    path('editar_efetivo/<int:pk>/', EditarEfetivoView.as_view(), name="editar_efetivo"),
-    path('deletar_efetivo/<int:pk>/', DeletarEfetivoView.as_view(), name="deletar_efetivo"),
-
-    path('efetivo/', EfetivoView.as_view(), name="efetivo"),
     path('checklists/', ChecklistsView.as_view(), name="checklists"),
     path('aeronaves/', AeronavesView.as_view(), name="aeronaves"),
     path('relatorios/', RelatoriosView.as_view(), name="relatorios"),
@@ -110,5 +101,5 @@ urlpatterns = [
     path('incidentes/', IncidentesView.as_view(), name="incidentes"),
 
     # API externa (vem do app portal)
-    path('api-v1/military_list_json/', MilitaryListJson.as_view(), name='military_list_json'),
+    # path('api-v1/military_list_json/', MilitaryListJson.as_view(), name='military_list_json'),
 ]

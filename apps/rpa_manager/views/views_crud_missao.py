@@ -2,7 +2,7 @@ from typing import Any, Dict
 from django.shortcuts import redirect, render
 from django.shortcuts import get_object_or_404
 from apps.rpa_manager.forms import MissaoFormulario
-from apps.rpa_manager.models import Missao, PontosDeInteresse
+from apps.rpa_manager.models import Missao, PontosDeInteresse, Aeronave
 from django.views import View
 from django.views.generic import DetailView
 from django.urls import reverse_lazy
@@ -40,15 +40,16 @@ class CriarNovaMissaoView(PermissionRequiredMixin, View):
     
     def get(self, request):
         form = MissaoFormulario(initial={'usuario': request.user})
+        aeronaves_disponiveis = Aeronave.objects.filter(em_uso=False)
+        
         points = PontosDeInteresse.objects.all()
-            
         points_list = getAttentionPointsForOperation(points)
         points_json = json.dumps(points_list, indent=4, ensure_ascii=False, default=str)
-        print(points_json)
         context = {
             'form': form,
             'points_json': points_json,
             'points': points,
+            'aeronaves_disponiveis': aeronaves_disponiveis,
             }
         return render(request, 'rpa_manager/create_operation.html', context)
 

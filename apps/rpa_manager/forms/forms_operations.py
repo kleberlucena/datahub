@@ -24,7 +24,11 @@ class MissaoFormulario(forms.ModelForm):
                    'concluida': forms.HiddenInput(),
                    }
 
-
+    def clean_aeronave(self):
+        aeronave = self.cleaned_data['aeronave']
+        if aeronave.em_uso:
+            raise forms.ValidationError('A aeronave está em uso e não pode ser selecionada.')
+        return aeronave
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

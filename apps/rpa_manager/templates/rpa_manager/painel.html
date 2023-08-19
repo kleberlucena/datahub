@@ -215,7 +215,7 @@
           if (latitude !== 0.0 && longitude !== 0.0) {
             let marker = new L.marker([latitude, longitude], {icon: droneMarkerIcon})
               .addTo(map)
-              .bindPopup(usuario + '<br>' + titulo + '<br>' + latitude + ',' + longitude).openPopup();
+              .bindPopup(usuario + '<br>' + titulo + '<br>' + latitude + ',' + longitude)
             
               let circle = L.circle([latitude, longitude], {
               color: 'gray',
@@ -236,7 +236,8 @@
         
         today_coordinates_operations.forEach(function(coordinate) {
           L.marker([coordinate.latitude, coordinate.longitude], {icon: makerIcon}).addTo(map)
-            .bindPopup(coordinate.titulo + '<br>' + coordinate.usuario);
+            .bindPopup(coordinate.titulo + '<br>' + coordinate.usuario + 
+            '<br>' + coordinate.latitude + ',' + coordinate.longitude);
       
           let circle = L.circle([coordinate.latitude, coordinate.longitude], {
             color: 'red',

@@ -1,7 +1,6 @@
 from .views_crud_aeronaves import *
 from .views_crud_baterias import *
 from .views_crud_checklists import *
-from .views_crud_efetivo import *
 from .views_crud_missao import *
 from .views_crud_relatorio import *
 from .views_funcoes_auxiliares import *

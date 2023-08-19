@@ -1,7 +1,7 @@
 from django import forms
 from apps.rpa_manager.models import Incidentes, Relatorio
 from apps.rpa_manager.utils.add_class_and_form_control import add_class_and_form_control
-
+from apps.rpa_manager.utils.addPlaceholderToField import addPlaceholder
 
 class IncidentesForm(forms.ModelForm):
     class Meta:
@@ -27,6 +27,10 @@ class IncidentesForm(forms.ModelForm):
                 self.fields['operacao'].queryset = Relatorio.objects.all()
             else:
                 self.fields['operacao'].queryset = Relatorio.objects.filter(militar=user)
+              
+        addPlaceholder(self, 'ponto_de_referencia', 'Insira um ponto de referência do local do incidente.' )              
+        addPlaceholder(self, 'relato', 'Elabore um relato com os fatos ocorridos no incidente.' )              
+              
                 
         campos = ['operacao', 
                   'aeronave',
@@ -36,7 +40,6 @@ class IncidentesForm(forms.ModelForm):
                   'data',
                   ]
 
-        
         for campo in campos:
             add_class_and_form_control(self, campo, campo, 'form-control')
 
