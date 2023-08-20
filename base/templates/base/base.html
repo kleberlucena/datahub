@@ -120,7 +120,7 @@
     </script>
     {% endif %}
 
-    <!-- modify input when error messages -->
+    <!-- modify input to border red when error messages -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
           const inputs = document.querySelectorAll(".form-control");
@@ -136,7 +136,7 @@
               });
           });
   
-          // Verifique novamente quando a página é carregada, caso já haja um erro
+          // Verify once again if page is loaded
           inputs.forEach(input => {
               const nextElement = input.nextElementSibling;
               if (nextElement && nextElement.classList.contains("errorlist")) {

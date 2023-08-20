@@ -1,6 +1,6 @@
 from typing import List, Dict
-from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+from django.shortcuts import render
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import TemplateView, ListView
 from base.mixins import GroupRequiredMixin
 from .views_crud_aeronaves import *
@@ -13,13 +13,12 @@ from apps.rpa_manager.forms import AeronaveSelectForm, TypeOfBatteryForm
 from apps.rpa_manager.utils.create_json_for_coordinates import create_json_for_coordinates
 from apps.rpa_manager.utils.getTodayLatLonCoordinates import getTodaysCoordinates
 from apps.rpa_manager.models import (Aeronave, Bateria, 
-                                     Checklist, Militar, 
+                                     Checklist, TypeOfBattery, 
                                      Missao, Relatorio,
                                      HistoricoAlteracoesAeronave,
-                                     Incidentes, TypeOfBattery)
+                                     Incidentes,)
 from datetime import datetime
 
-from apps.rpa_manager.forms import TesteUsuarioForm
 
 def home(request):
     return render(request, 'rpa_manager/base.html')
@@ -42,7 +41,6 @@ class PainelView(TemplateView):
             years.append(i)
         years = years[::-1]
         
-        ultimo_relatorio = Relatorio.objects.latest('id')
         default_month: int = 1
         default_year: int = 2023
         month: int = int(self.request.GET.get('month', default_month))  
@@ -69,7 +67,7 @@ class PainelView(TemplateView):
                     'piloto_remoto': 
                         guarnicao.piloto_remoto.username if(guarnicao.piloto_remoto != None) else 'sem registro',
                     'piloto_observador': 
-                        guarnicao.piloto_observador.nome_de_guerra 
+                        guarnicao.piloto_observador.username 
                         if(guarnicao.piloto_observador != None) else 'sem registro',
                     'local': 
                         guarnicao.local.cidades_pb if(guarnicao.local.cidades_pb != None) else 'sem registro',
@@ -80,8 +78,13 @@ class PainelView(TemplateView):
         guarnicoes_json = json.dumps(lista_de_guarnicoes, indent=4, ensure_ascii=False)
        
         coordinates_by_date_json = json.dumps(report_by_date_list, indent=4)
+        
+        try:
+            ultimo_relatorio = Relatorio.objects.latest('id')
+        except ObjectDoesNotExist:
+            ultimo_relatorio = None
         coordinates_json = create_json_for_coordinates(coordinates_dict, ultimo_relatorio)
-        print(today_coordinates_operations)
+
         context['coordinates_json'] = coordinates_json
         context['coordinates_by_date_json'] = coordinates_by_date_json
         context['today_coordinates_operations'] = today_coordinates_operations
@@ -240,17 +243,3 @@ class TypeOfBatteryView(TemplateView):
         context['form'] = form
 
         return context
-    
-
-
-
-def formulario_teste_usuario(request):
-    if request.method == 'POST':
-        form = TesteUsuarioForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('nome_da_pagina_de_redirecionamento')  # Substitua pelo nome da URL para redirecionamento após o envio
-    else:
-        form = TesteUsuarioForm()
-    
-    return render(request, 'rpa_manager/testeUser.html', {'form': form})

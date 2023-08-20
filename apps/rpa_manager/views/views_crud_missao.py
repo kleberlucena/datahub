@@ -55,10 +55,10 @@ class CriarNovaMissaoView(PermissionRequiredMixin, View):
 
     def post(self, request):
         form = MissaoFormulario(request.POST, initial={'usuario': request.user})
+        aeronaves_disponiveis = Aeronave.objects.filter(em_uso=False)
         if form.is_valid():
             missao = form.save(commit=False)
             aeronave = missao.aeronave
-
             aeronave.em_uso = True
             aeronave.save()
 
@@ -68,7 +68,8 @@ class CriarNovaMissaoView(PermissionRequiredMixin, View):
             
             return redirect('rpa_manager:principal')
 
-        context = {'form': form}
+        context = {'form': form,
+                   'aeronaves_disponiveis': aeronaves_disponiveis}
         return render(request, 'rpa_manager/create_operation.html', context)
     
     @method_decorator(require_permission(permission_required))

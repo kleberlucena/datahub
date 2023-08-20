@@ -3,7 +3,6 @@ from django.contrib import admin
 from apps.rpa_manager.models import (
     Missao,
     Aeronave,
-    Militar,
     Checklist,
     Relatorio,
     HistoricoAlteracoesAeronave,
@@ -11,7 +10,6 @@ from apps.rpa_manager.models import (
     NaturezaDeVoo,
     TipoDeOperacao,
     CidadesPB,
-    Roles,
     Guarnicao,
     Incidentes,
     Entidades,
@@ -46,7 +44,6 @@ class MilitarAdmin(admin.ModelAdmin):
 
 admin.site.register(Missao, MissaoAdmin)
 admin.site.register(Aeronave, AeronaveAdmin)
-admin.site.register(Militar, MilitarAdmin)
 admin.site.register(Checklist, ChecklistAdmin)
 admin.site.register(Relatorio, RelatorioAdmin)
 admin.site.register(HistoricoAlteracoesAeronave, HistoricoAlteracoesAeronaveAdmin)
@@ -55,7 +52,6 @@ admin.site.register(Bateria)
 admin.site.register(NaturezaDeVoo)
 admin.site.register(TipoDeOperacao)
 admin.site.register(CidadesPB)
-admin.site.register(Roles)
 admin.site.register(Incidentes)
 admin.site.register(Entidades)
 admin.site.register(PontosDeInteresse)

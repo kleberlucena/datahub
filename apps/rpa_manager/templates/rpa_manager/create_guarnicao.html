@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
   <style>
     .errorlist {
-      list-style-type: none;
+      /* list-style-type: none; */
       font-size: large;
       color: red;
     }
@@ -59,7 +59,6 @@
             {{ form.piloto_remoto }}
           </div>
         </div>
-
         
         <div class="mt-3">
           <button type="submit" class="btn btn-primary">Salvar</button>
@@ -80,13 +79,18 @@
   <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
   <script>
     const error = document.getElementsByClassName('errorlist');
-    console.log(error[0].textContent);
+    let pilot_error = "piloto_remotoO piloto remoto não pode ser o mesmo que o piloto observador.O piloto observador não pode ser o mesmo que o piloto remoto."
+    console.log();
+
     if(error[0].textContent.includes('_all_')) {
       error[0].textContent = error[0].textContent.replace('__all__', '')
-    } else if(error[0].textContent.includes('piloto_observador')) {
+    } 
+    if(error[0].textContent.includes('piloto_observador')) {
       error[0].textContent = error[0].textContent.replace('piloto_observador', '')
-    }
-
-
+    } 
+    if(error[0].textContent.includes('piloto_remotoO piloto')) {
+      console.log('cheguei aqui')
+      error[0].textContent = error[0].textContent.replace(pilot_error, 'Piloto remoto e observador não podem ser o mesmo.')
+    } 
   </script>
 {% endblock %}

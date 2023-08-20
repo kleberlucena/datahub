@@ -28,22 +28,25 @@
       <div class="card-header">
         <h3 class="card-title">Editar guarnição</h3>
       </div>
-
       <form class="p-3" method='post' enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-row">
           <div class="form-group col-md-12 mb-0">
+            {{ form.errors }}
             <label for="#" class="piloto_observador">Piloto remoto</label>
-            <br>{{ user.username}}<br><hr>
+            <br>{{ user.username }}<br><hr>
             <label for="id_piloto_observador" class="quem_solicitou">Piloto observador</label>
             {{ form.piloto_observador}}
+            {{ form.piloto_observador.errors }}
             <label for="id_motorista" class="titulo_operacao">Motorista</label>
             {{ form.motorista }}
+            {{ form.motorista.errors }}
             <label for="id_telefone" class="quem_autorizou">Telefone</label>
             {{ form.telefone }}
             {{ form.telefone.errors }}
             <label for="id_local" class="local">Local</label>
             {{ form.local }}
+            {{ form.local.errors }}
 
             {{ form.piloto_remoto }}
           </div>
@@ -65,4 +68,20 @@
 {% block js %}
 <!-- DataTables  & Plugins -->
   <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script>
+    const error = document.getElementsByClassName('errorlist');
+    let pilot_error = "piloto_remotoO piloto remoto não pode ser o mesmo que o piloto observador.O piloto observador não pode ser o mesmo que o piloto remoto."
+    console.log();
+
+    if(error[0].textContent.includes('_all_')) {
+      error[0].textContent = error[0].textContent.replace('__all__', '')
+    } 
+    if(error[0].textContent.includes('piloto_observador')) {
+      error[0].textContent = error[0].textContent.replace('piloto_observador', '')
+    } 
+    if(error[0].textContent.includes('piloto_remotoO piloto')) {
+      console.log('cheguei aqui')
+      error[0].textContent = error[0].textContent.replace(pilot_error, 'Piloto remoto e observador não podem ser o mesmo.')
+    } 
+  </script>
 {% endblock %}

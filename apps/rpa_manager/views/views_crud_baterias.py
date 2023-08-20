@@ -12,6 +12,7 @@ from apps.rpa_manager.handlers import require_permission
 
 MESSAGE_MODEL_NAME = 'Bateria'
 
+
 class VerBateriaView(PermissionRequiredMixin, DetailView):
     model = Bateria
     template_name = 'rpa_manager/detail_battery.html'

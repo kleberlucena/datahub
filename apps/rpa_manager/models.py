@@ -32,11 +32,13 @@ class Entidades(Base):
     def __str__(self):
         return self.entidade
 
+
 class NaturezaDeVoo(Base):
     natureza = models.CharField(max_length=300)
 
     def __str__(self):
         return self.natureza
+
 
 class TipoDeOperacao(Base):
     operacao = models.CharField(max_length=100)
@@ -44,33 +46,18 @@ class TipoDeOperacao(Base):
     def __str__(self):
         return self.operacao
 
+
 class CidadesPB(Base):
     cidades_pb = models.CharField(max_length=100)
 
     def __str__(self):
         return self.cidades_pb
 
-class Roles(Base):
-    role = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.role
-
-
-class Militar(Base):  
-    nome_de_guerra = models.CharField(max_length=100, null=False)
-    total_de_horas_voo = models.IntegerField(default=0, null=False)
-    matricula = models.CharField(max_length=9, null=False, unique=True)
-    roles = models.ManyToManyField('Roles')
-
-    def __str__(self):
-        return self.nome_de_guerra
-
 
 class Guarnicao(models.Model):
     motorista = models.CharField(max_length=100, null=True, blank=True)
-    piloto_remoto = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    piloto_observador = models.ForeignKey(Militar, on_delete=models.SET_NULL, blank=True, null=True)
+    piloto_remoto = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='gu_piloto_remoto', null=True)
+    piloto_observador = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='gu_piloto_observador', blank=True, null=True)
     telefone = models.CharField(max_length=20, null=False, blank=False)
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
     data = models.DateTimeField(auto_now_add=True)
@@ -145,15 +132,15 @@ def update_titulo_aeronave(sender, instance, **kwargs):
 
 class Missao(Base):
     titulo = models.CharField(max_length=100)
-    piloto_observador = models.ForeignKey(Militar, on_delete=models.SET_NULL, blank=True, null=True)
+    piloto_observador = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='operation_piloto_observador', blank=True, null=True)
     quem_autorizou = models.CharField(max_length=100, null=True, blank=True)
     quem_solicitou = models.CharField(max_length=100, null=True, blank=True)
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
-    latitude = models.FloatField("Latitude", default=0.0, null=True, blank=True)
-    longitude = models.FloatField("Longitude", default=0.0, null=True, blank=True)
+    latitude = models.FloatField("Latitude", default=0.0, null=False, blank=False)
+    longitude = models.FloatField("Longitude", default=0.0, null=False, blank=False)
     horario = models.TimeField(auto_now_add=True)
     data = models.DateField(auto_now_add=True)
-    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='operation_usuario', null=True)
     aeronave = models.ForeignKey(Aeronave, on_delete=models.SET_NULL, null=True)
     concluida = models.BooleanField(default=False, null=True)
 
@@ -240,8 +227,8 @@ class ImagensChecklist(models.Model):
      
 class Relatorio(Base):
     titulo = models.CharField(max_length=250, null=False, blank=False, default='')
-    militar = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    piloto_observador = models.ForeignKey(Militar, on_delete=models.SET_NULL, blank=True, null=True)
+    militar = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='report_militar', null=True)
+    piloto_observador = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='report_piloto_observador', blank=True, null=True)
     quem_autorizou = models.CharField(max_length=100, null=True, blank=True)
     quem_solicitou = models.CharField(max_length=100, null=True, blank=True)
     data = models.DateField(blank=False, null=False)
@@ -306,8 +293,3 @@ class PontosDeInteresse(models.Model):
 
     def __str__(self):
         return self.descricao
-
-
-class TesteUsuario(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='teste_usuario_rel', null=True)
-    sub_usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sub_teste_usuario_rel', null=True)

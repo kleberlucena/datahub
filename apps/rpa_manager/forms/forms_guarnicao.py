@@ -43,9 +43,20 @@ class GuarnicaoForm(forms.ModelForm):
         
         for campo in campos:
             add_class_and_form_control(self, campo, campo, 'form-control')    
-
+            
     def clean_telefone(self):
         telefone = self.cleaned_data['telefone']
         if not telefone.isdigit():
             raise forms.ValidationError("Favor inserir dígitos numéricos. Por exemplo, '83988776655'.")
         return telefone
+
+    def clean(self):
+        cleaned_data = super().clean()
+        piloto_remoto = cleaned_data.get('piloto_remoto')
+        piloto_observador = cleaned_data.get('piloto_observador')
+        
+        if piloto_remoto == piloto_observador:
+            self.add_error('piloto_remoto', "O piloto remoto não pode ser o mesmo que o piloto observador.")
+            self.add_error('piloto_observador', "O piloto observador não pode ser o mesmo que o piloto remoto.")
+            
+            

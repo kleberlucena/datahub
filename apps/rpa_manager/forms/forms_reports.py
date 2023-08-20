@@ -92,3 +92,12 @@ class RelatorioFormulario(forms.ModelForm):
             'class': 'p-3',
             'accept': "application/pdf", 
         })
+        
+    def clean(self):
+        cleaned_data = super().clean()
+        piloto_remoto = cleaned_data.get('militar')
+        piloto_observador = cleaned_data.get('piloto_observado')
+        
+        if piloto_remoto == piloto_observador:
+            self.add_error('militar', "O piloto remoto não pode ser o mesmo que o piloto observador.")
+            self.add_error('piloto_observador', "O piloto observador não pode ser o mesmo que o piloto remoto.")

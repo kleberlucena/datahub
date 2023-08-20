@@ -184,6 +184,7 @@
     // Função que será executada quando o documento estiver pronto
     document.addEventListener('DOMContentLoaded', function () {
       coordinatesJson = {{ coordinates_json | safe }}
+
       coordinatesByDate = {{ coordinates_by_date_json | safe }}
       let centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude];
       let zoomLevel = 11;
@@ -194,7 +195,7 @@
       var droneMarkerIcon = L.icon({
         iconUrl: urlLocalImg,
         iconSize: [32, 32], 
-        iconAnchor: [16, 32], 
+        iconAnchor: [16, 16], 
         popupAnchor: [0, -32] 
       });
 

@@ -60,7 +60,6 @@ class CriarNovoRelatorioView(PermissionRequiredMixin, CreateView):
         
     def form_valid(self, form):
         self.object = self.get_context_data()
-        evento_obj = form.save(commit=False)
         missao = get_object_or_404(Missao, pk=self.kwargs['pk'])
         missao.concluida = True
         missao.save()

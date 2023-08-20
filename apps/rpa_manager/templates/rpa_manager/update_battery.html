@@ -31,26 +31,32 @@
   <div class="col-md-12">
     <div class="card card-primary card-outline">
       <div class="card-header">
-        <h3 class="card-title">Criar bateria</h3>
+        <h3 class="card-title">Editar bateria</h3>
       </div>
+
       <form class="p-3" method='post' enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-row">
-          <div class="form-group col-md-12 mb-0">
-              <label for="id_numeracao">Numeração</label>
-              {{ form.numeracao }}
-              <label for="id_num_ciclos">Número de ciclos</label>
-              {{ form.num_ciclos }}
-              <label for="id_ciclos_maximo">Tipo</label>
-              {{ form.ciclos_maximo }}
-              <label for="id_numeracao">Aeronave</label>
-              {{ form.aeronave }}<br>
-              <label for="id_numeracao">Imagem da bateria</label>
-              {{ form.imagem_bateria }}
-              <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
-              <p id="fileName"></p>
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group col-md-12 mb-0">
+                <label for="id_numeracao">Numeração</label>
+                {{ form.numeracao }}
+                {{ form.numeracao.errors }}
+                <label for="id_num_ciclos">Número de ciclos</label>
+                {{ form.num_ciclos }}
+                {{ form.num_ciclos.errors }}
+                <label for="id_ciclos_maximo">Tipo</label>
+                {{ form.ciclos_maximo }}
+                {{ form.ciclos_maximo.errors }}
+                <label for="id_aeronave">Aeronave</label>
+                {{ form.aeronave }}
+                {{ form.aeronave.errors }}
+                <label for="#" class="mt-3">Imagem da bateria</label>
+                {{ form.imagem_bateria }}
+                <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
+                <p id="fileName"></p>
+            </div>
           </div>
-        </div>
+
         <div class="mt-3">
           <button type="submit" class="btn btn-primary">Salvar</button>
           <a href="{% url 'rpa_manager:baterias' %}">
@@ -74,5 +80,12 @@
       var fileName = document.getElementById("id_imagem_bateria").files[0].name;
       document.getElementById("fileName").innerHTML = "Arquivo selecionado: " + fileName;
     });
+  </script>
+
+  <script>
+    const error = document.querySelector('.errorlist li');
+    if(error.textContent.includes('Bateria com este Numeracao já existe.')) {
+      error.textContent = error.textContent.replace('Bateria com este Numeracao já existe.', 'Bateria com esta numeração já existe.')
+    } 
   </script>
 {% endblock %}

@@ -91,6 +91,7 @@
           <div class="form-group col-md-12 mb-0">
             <div class="row mt-3">
               <div class="col-md-6">
+                <!-- {{ form.errors }} -->
                 <label for="id_piloto_remoto" class="piloto_remoto">Piloto Remoto</label>
                 <br>{{ user.username }}<br>
               </div>
@@ -124,7 +125,7 @@
               <div class="col-md-6">
                 <label for="id_aeronave" class="aeronave">Aeronave</label>
                 <select name="aeronave" id="id_aeronave" class="form-control">
-                  <option value="" selected>---------</option>
+                  <option value="" selected>Selecione uma aeronave</option>
                   {% for aeronave in aeronaves_disponiveis %}
                     <option value="{{ aeronave.pk }}">{{ aeronave.prefixo }} - {{ aeronave.modelo }}</option>
                   {% endfor %}
@@ -365,5 +366,20 @@
         targetElement.scrollIntoView({ behavior: 'smooth' });
       });
     });  
+  </script>
+
+  <script>
+    /* Verify errors in create operation form*/
+    const error = document.getElementsByClassName('errorlist');
+    const latAndlngError = 'latitudeLatitude ou Longitude inválidos (marque um ponto no mapa)longitudeLatitude ou Longitude inválidos (marque um ponto no mapa)'
+    if(error[0].textContent.includes('_all_')) {
+      error[0].textContent = error[0].textContent.replace('__all__', '')
+    } 
+    if(error[0].textContent.includes('aeronaveEste campo é obrigatório.')) {
+      error[0].textContent = error[0].textContent.replace('_aeronaveEste campo é obrigatório._', '')
+    } 
+    if(error[0].textContent.includes(latAndlngError)) {
+      error[0].textContent = error[0].textContent.replace(latAndlngError, '')
+    } 
   </script>
   {% endblock %}
