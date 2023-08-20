@@ -10,7 +10,7 @@ from .views_crud_missao import *
 from .views_crud_relatorio import *
 from .views_funcoes_auxiliares import *
 from apps.rpa_manager.forms import AeronaveSelectForm, TypeOfBatteryForm
-from apps.rpa_manager.utils.create_json_for_coordinates import create_json_for_coordinates
+from apps.rpa_manager.utils.createJsonByLastOperation import createJsonByLastOperation
 from apps.rpa_manager.utils.getTodayLatLonCoordinates import getTodaysCoordinates
 from apps.rpa_manager.models import (Aeronave, Bateria, 
                                      Checklist, TypeOfBattery, 
@@ -18,7 +18,7 @@ from apps.rpa_manager.models import (Aeronave, Bateria,
                                      HistoricoAlteracoesAeronave,
                                      Incidentes,)
 from datetime import datetime
-
+from apps.rpa_manager.utils.verify_user_permissions import verify_user_permissions
 
 def home(request):
     return render(request, 'rpa_manager/base.html')
@@ -30,7 +30,6 @@ class PainelView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today_coordinates_operations = getTodaysCoordinates(context)
-        
         coordinates_dict: Dict = {}
         report_by_date_list: List = []
         lista_de_guarnicoes = []
@@ -80,11 +79,11 @@ class PainelView(TemplateView):
         coordinates_by_date_json = json.dumps(report_by_date_list, indent=4)
         
         try:
-            ultimo_relatorio = Relatorio.objects.latest('id')
+            ultima_operacao = Missao.objects.latest('id')
         except ObjectDoesNotExist:
-            ultimo_relatorio = None
-        coordinates_json = create_json_for_coordinates(coordinates_dict, ultimo_relatorio)
+            ultima_operacao = None
 
+        coordinates_json = createJsonByLastOperation(coordinates_dict, ultima_operacao)
         context['coordinates_json'] = coordinates_json
         context['coordinates_by_date_json'] = coordinates_by_date_json
         context['today_coordinates_operations'] = today_coordinates_operations
@@ -175,11 +174,12 @@ class AeronavesView(GroupRequiredMixin, TemplateView):
 
         return context
     
-    
+
+
 class IncidentesView(GroupRequiredMixin, TemplateView):
     template_name = 'rpa_manager/list_incidents.html'
     group_required = ['profile:rpa_advanced']
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
@@ -191,7 +191,7 @@ class IncidentesView(GroupRequiredMixin, TemplateView):
             incidentes = Incidentes.objects.filter(piloto=self.request.user).order_by('-data')
         context['incidentes'] = incidentes
         return context
-
+    
 
 class BateriasView(GroupRequiredMixin, TemplateView):
     template_name = 'rpa_manager/list_batteries.html'

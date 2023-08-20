@@ -5,7 +5,7 @@ from django.views.generic import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
-from apps.rpa_manager.utils.create_json_for_coordinates import create_json_for_coordinates
+from apps.rpa_manager.utils.createJsonByLastReport import createJsonByLastReport
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -28,7 +28,7 @@ class VerRelatorioView(PermissionRequiredMixin, DetailView):
             context = super().get_context_data(**kwargs)
             relatorio = self.get_object()
             coordinates_json = {}
-            context['coordinates_json'] = create_json_for_coordinates(coordinates_json, relatorio)
+            context['coordinates_json'] = createJsonByLastReport(coordinates_json, relatorio)
 
             return context
     

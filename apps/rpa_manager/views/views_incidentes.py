@@ -9,6 +9,8 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
 from django.contrib import messages
+from base.mixins import GroupRequiredMixin
+
 
 MESSAGE_MODEL_NAME = 'Incidente'
 
@@ -35,7 +37,7 @@ class IncidentesDetailView(PermissionRequiredMixin, DetailView):
         return super().dispatch(*args, **kwargs)
     
     
-class IncidentesCreateView(PermissionRequiredMixin, CreateView):
+class IncidentesCreateView(CreateView):
     model = Incidentes
     form_class = IncidentesForm
     template_name = 'rpa_manager/create_incident.html'
@@ -67,9 +69,6 @@ class IncidentesCreateView(PermissionRequiredMixin, CreateView):
         
         return redirect(self.get_success_url())
     
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
     
 class IncidentesUpdateView(PermissionRequiredMixin, UpdateView):
     model = Incidentes

@@ -57,8 +57,11 @@ class ChecklistFormView(PermissionRequiredMixin, View):
         historico_checklist_dict_json = getLastRegisteredChecklistData(historico_checklist_dict)
         baterias = Bateria.objects.all()
         
-        ultima_guarnicao = Guarnicao.objects.filter(piloto_remoto=request.user).latest('data')
-        
+        try:
+            ultima_guarnicao = Guarnicao.objects.filter(piloto_remoto=piloto).latest('data')
+        except:
+            ultima_guarnicao = None
+            
         dados_checklist = { 'piloto': piloto,
                            'guarnicao': ultima_guarnicao, }
             

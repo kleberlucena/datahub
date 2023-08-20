@@ -17,7 +17,7 @@
         <p>Painel</p>
       </a>
     </li>
-    {% if request.user|has_group:'profile:rpa_basic, profile:rpa_advanced' %}
+    {% if request.user|has_group:'profile:rpa_advanced' %}
       <li class="nav-item">
         <a href="{% url 'rpa_manager:guarnicao_form' %}" class="nav-link">
           <i class="far fa-circle nav-icon"></i>
@@ -43,12 +43,14 @@
         <p>Relatórios</p>
       </a>
     </li>
-    <li class="nav-item">
-      <a href="{% url 'rpa_manager:incidentes' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>Incidentes</p>
-      </a>
-    </li>
+
+      <li class="nav-item">
+        <a href="{% url 'rpa_manager:incidentes' %}" class="nav-link">
+          <i class="far fa-circle nav-icon"></i>
+          <p>Incidentes</p>
+        </a>
+      </li>
+
 
     {% if request.user|has_group:'profile:rpa_advanced' %}
       <li class="nav-item menu-item">
