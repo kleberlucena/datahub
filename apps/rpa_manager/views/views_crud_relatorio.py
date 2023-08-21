@@ -9,6 +9,7 @@ from apps.rpa_manager.utils.createJsonByLastReport import createJsonByLastReport
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from base.mixins import GroupRequiredMixin
 from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
 from django.contrib import messages
@@ -79,13 +80,14 @@ class CriarNovoRelatorioView(PermissionRequiredMixin, CreateView):
         return super().dispatch(*args, **kwargs)
     
     
-class EditarRelatorioView(PermissionRequiredMixin, UpdateView):
+class EditarRelatorioView(GroupRequiredMixin, UpdateView):
     model = Relatorio
     form_class = RelatorioFormulario
     template_name = 'rpa_manager/update_report.html'
     success_url = reverse_lazy('rpa_manager:relatorios')
     context_object_name = 'relatorio'
-    permission_required = 'rpa_manager.edit_relatorio'
+    # permission_required = 'rpa_manager.edit_relatorio'
+    group_required = ['profile:rpa_advanced']
     
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -93,7 +95,7 @@ class EditarRelatorioView(PermissionRequiredMixin, UpdateView):
         
         return response
 
-    @method_decorator(require_permission(permission_required))
+    # @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
         relatorio = self.get_object()
         time_since_creation = timezone.now() - relatorio.created_at

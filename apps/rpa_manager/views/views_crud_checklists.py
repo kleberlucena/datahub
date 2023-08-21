@@ -87,7 +87,7 @@ class ChecklistFormView(PermissionRequiredMixin, View):
             checklist = checklist_form.save()
             
             images = self.request.FILES.getlist('imagens')
-             # checklist = Checklist.objects.create(piloto=request.user, guarnicao=alguma_guarnicao)
+             
             for image in images:
                 ImagensChecklist.objects.create(checklist=checklist, imageChecklist=image)
            

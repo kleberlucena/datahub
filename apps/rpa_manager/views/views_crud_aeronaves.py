@@ -4,11 +4,14 @@ from apps.rpa_manager.forms import AeronavesForm
 from apps.rpa_manager.models import Aeronave 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from base.mixins import GroupRequiredMixin
+
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
 
 MESSAGE_MODEL_NAME = 'Aeronave'
+
 
 class VerAeronaveView(PermissionRequiredMixin, DetailView):
     model = Aeronave

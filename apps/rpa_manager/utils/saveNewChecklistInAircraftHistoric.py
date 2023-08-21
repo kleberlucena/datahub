@@ -3,7 +3,7 @@ from apps.rpa_manager.models import HistoricoAlteracoesAeronave
 
 def saveNewChecklistInAircraftHistoric(request, initial_data):
     checklist_form = ChecklistForm(request, initial=initial_data)
-    checklist = checklist_form.save()
+    checklist = checklist_form.save(commit=False)
     
     # Salvar as informações no histórico de alterações
     HistoricoAlteracoesAeronave.objects.create(
@@ -34,3 +34,4 @@ def saveNewChecklistInAircraftHistoric(request, initial_data):
         paraquedas = checklist.paraquedas,                
         alteracoes = checklist.alteracoes
     )
+    

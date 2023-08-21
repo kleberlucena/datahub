@@ -83,13 +83,14 @@
       </table>
     </div>
 
-    <div style="width: 10rem">
-      <a href="{% url 'rpa_manager:checklist_form' %}">
-        <button type="button" style="display: inline" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i>
-          Novo Checklist </button>
-      </a>
-    </div>
-
+    {% if request.user|has_group:'profile:rpa_advanced' %}
+      <div style="width: 10rem">
+        <a href="{% url 'rpa_manager:checklist_form' %}">
+          <button type="button" style="display: inline" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i>
+            Novo Checklist </button>
+        </a>
+      </div>
+    {% endif %}
   </div>
 </div>
 
