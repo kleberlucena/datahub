@@ -183,9 +183,8 @@
   <script type="text/javascript">
     // Função que será executada quando o documento estiver pronto
     document.addEventListener('DOMContentLoaded', function () {
-      coordinatesJson = {{ coordinates_json | safe }}
-
-      coordinatesByDate = {{ coordinates_by_date_json | safe }}
+      const coordinatesJson = {{ coordinates_json|safe }}
+      const coordinatesByDate = {{ coordinates_by_date_json|safe }}
       let centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude];
       let zoomLevel = 11;
       let map = L.map('map').setView(centerCoordinates, zoomLevel);
@@ -205,6 +204,27 @@
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
+      
+      function showCoordinatesInCourseOperations() {
+        const operationsInCourse = {{ operationsInCourse|safe }}
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        operationsInCourse.forEach(function(coordinate) {
+          L.marker([coordinate.latitude, coordinate.longitude], {icon: makerIcon}).addTo(map)
+            .bindPopup(coordinate.titulo + '<br>' + coordinate.usuario + 
+            '<br>' + coordinate.latitude + ',' + coordinate.longitude);
+      
+          let circle = L.circle([coordinate.latitude, coordinate.longitude], {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.1,
+            radius: 500
+          }).addTo(map); 
+        });
+      };
 
       function showCoordinatesByFilter() {
         for (let i = 0; i < coordinatesByDate.length; i++) {
@@ -229,24 +249,28 @@
       }
 
       function showTodaysCoordinates(makerIcon = null) {
-        var today_coordinates_operations = {{ today_coordinates_operations|safe }};
-    
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+        var todayCoordinatesOfOperations = {{ today_coordinates_operations|safe }};
+        console.log(todayCoordinatesOfOperations.length)
+        if(todayCoordinatesOfOperations.length == 0) {
+          showCoordinatesInCourseOperations()
+        } else {
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }).addTo(map);
+          
+          todayCoordinatesOfOperations.forEach(function(coordinate) {
+            L.marker([coordinate.latitude, coordinate.longitude], {icon: makerIcon}).addTo(map)
+              .bindPopup(coordinate.titulo + '<br>' + coordinate.usuario + 
+              '<br>' + coordinate.latitude + ',' + coordinate.longitude);
         
-        today_coordinates_operations.forEach(function(coordinate) {
-          L.marker([coordinate.latitude, coordinate.longitude], {icon: makerIcon}).addTo(map)
-            .bindPopup(coordinate.titulo + '<br>' + coordinate.usuario + 
-            '<br>' + coordinate.latitude + ',' + coordinate.longitude);
-      
-          let circle = L.circle([coordinate.latitude, coordinate.longitude], {
-            color: 'red',
-            fillColor: '#f03',
-            fillOpacity: 0.1,
-            radius: 500
-          }).addTo(map); 
-        });
+            let circle = L.circle([coordinate.latitude, coordinate.longitude], {
+              color: 'red',
+              fillColor: '#f03',
+              fillOpacity: 0.1,
+              radius: 500
+            }).addTo(map); 
+          });
+        }
       }
     });
   </script>

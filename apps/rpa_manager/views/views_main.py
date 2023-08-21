@@ -12,13 +12,13 @@ from .views_funcoes_auxiliares import *
 from apps.rpa_manager.forms import AeronaveSelectForm, TypeOfBatteryForm
 from apps.rpa_manager.utils.createJsonByLastOperation import createJsonByLastOperation
 from apps.rpa_manager.utils.getTodayLatLonCoordinates import getTodaysCoordinates
+from apps.rpa_manager.utils.getOperationInCourse import getOperationInCourse
 from apps.rpa_manager.models import (Aeronave, Bateria, 
                                      Checklist, TypeOfBattery, 
                                      Missao, Relatorio,
                                      HistoricoAlteracoesAeronave,
                                      Incidentes,)
 from datetime import datetime
-from apps.rpa_manager.utils.verify_user_permissions import verify_user_permissions
 
 def home(request):
     return render(request, 'rpa_manager/base.html')
@@ -30,6 +30,8 @@ class PainelView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today_coordinates_operations = getTodaysCoordinates(context)
+        operationsInCourseJson = getOperationInCourse()
+        print(operationsInCourseJson)
         coordinates_dict: Dict = {}
         report_by_date_list: List = []
         lista_de_guarnicoes = []
@@ -87,6 +89,7 @@ class PainelView(TemplateView):
         context['coordinates_json'] = coordinates_json
         context['coordinates_by_date_json'] = coordinates_by_date_json
         context['today_coordinates_operations'] = today_coordinates_operations
+        context['operationsInCourse'] = operationsInCourseJson
         context['guarnicoes_json'] = guarnicoes_json
         context['years'] = years
         

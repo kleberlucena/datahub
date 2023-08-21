@@ -10,14 +10,14 @@ def getTodaysCoordinates(context):
     month = today.month
     year = today.year
     
-    report_by_date = Missao.objects.filter(data__day=today.day, data__month=month, data__year=year)
+    operation_by_date = Missao.objects.filter(data__day=today.day, data__month=month, data__year=year)
     
-    for report in report_by_date:
+    for operation in operation_by_date:
         operation_by_date_list.append({
-            'usuario': report.usuario.username,
-            'titulo': report.titulo,
-            'latitude': report.latitude,
-            'longitude': report.longitude
+            'usuario': operation.usuario.username,
+            'titulo': operation.titulo,
+            'latitude': operation.latitude,
+            'longitude': operation.longitude
         })
     
     today_coordinates_operations = json.dumps(operation_by_date_list, indent=4)
