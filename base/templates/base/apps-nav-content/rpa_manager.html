@@ -17,7 +17,8 @@
         <p>Painel</p>
       </a>
     </li>
-    {% if request.user|has_group:'profile:rpa_advanced' %}
+    
+    {% if request.user|has_group:'profile:rpa_basic' or request.user|has_group:'profile:rpa_advanced'  %}
       <li class="nav-item">
         <a href="{% url 'rpa_manager:guarnicao_form' %}" class="nav-link">
           <i class="far fa-circle nav-icon"></i>
@@ -37,6 +38,7 @@
         </a>
       </li>
     {% endif %}
+
     <li class="nav-item">
       <a href="{% url 'rpa_manager:principal' %}" class="nav-link">
         <i class="far fa-circle nav-icon"></i>

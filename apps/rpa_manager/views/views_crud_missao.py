@@ -11,6 +11,7 @@ from django.views.generic.edit import UpdateView
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from base.mixins import GroupRequiredMixin
 from django.contrib import messages
 import json
 from django.utils.decorators import method_decorator
@@ -18,25 +19,21 @@ from apps.rpa_manager.handlers import require_permission
 from apps.rpa_manager.utils.getAttetionPointsForOperation import getAttentionPointsForOperation
 
 
-class VerMissaoView(PermissionRequiredMixin, DetailView):
+class VerMissaoView(GroupRequiredMixin, DetailView):
     model = Missao
     template_name = 'rpa_manager/detail_operation.html'
     context_object_name = 'missao'
-    permission_required = 'rpa_manager.view_missao'
-        
+    group_required = ['profile:rpa_view', 'profile:rpa_basic', 'profile:rpa_advanced']
+     
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['latitude'] = str(self.object.latitude)
         context['longitude'] = str(self.object.longitude)
         return super().get_context_data(**kwargs)
-    
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
 
 
-class CriarNovaMissaoView(PermissionRequiredMixin, View):
-    permission_required = 'rpa_manager.add_missao'
+class CriarNovaMissaoView(GroupRequiredMixin, View):
+    group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
     
     def get(self, request):
         form = MissaoFormulario(initial={'usuario': request.user})
@@ -55,7 +52,6 @@ class CriarNovaMissaoView(PermissionRequiredMixin, View):
 
     def post(self, request):
         form = MissaoFormulario(request.POST, initial={'usuario': request.user})
-        aeronaves_disponiveis = Aeronave.objects.filter(em_uso=False)
         if form.is_valid():
             missao = form.save(commit=False)
             aeronave = missao.aeronave
@@ -68,22 +64,19 @@ class CriarNovaMissaoView(PermissionRequiredMixin, View):
             
             return redirect('rpa_manager:principal')
 
+        aeronaves_disponiveis = Aeronave.objects.filter(em_uso=False)
         context = {'form': form,
                    'aeronaves_disponiveis': aeronaves_disponiveis}
         return render(request, 'rpa_manager/create_operation.html', context)
     
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
     
-    
-class EditarMissaoView(PermissionRequiredMixin, UpdateView):
+class EditarMissaoView(GroupRequiredMixin, UpdateView):
     model = Missao
     form_class = MissaoFormulario
     template_name = 'rpa_manager/update_operation.html'
     context_object_name = 'form'
     success_url = reverse_lazy('rpa_manager:principal')
-    permission_required = 'rpa_manager.change_missao'
+    group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
     
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -125,11 +118,7 @@ class EditarMissaoView(PermissionRequiredMixin, UpdateView):
         
         return response
 
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-        
-        
+                
 class DeleteMissaoView(PermissionRequiredMixin, View):
     template_name = 'rpa_manager/delete_operation.html'
     success_url = reverse_lazy('rpa_manager:principal')

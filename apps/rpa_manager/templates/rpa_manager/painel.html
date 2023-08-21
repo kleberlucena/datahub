@@ -25,7 +25,8 @@
   }
   
   #equipes-container {
-    width: 80rem;
+    /* card total width */
+    width: 70rem;
     max-width: 100%;
   }
 
@@ -74,7 +75,7 @@
   }
   
   .hover-zoom:hover {
-    transform: scale(3.0); /* Aumenta o tamanho da imagem em 20% no hover */
+    transform: scale(3.5); /* Aumenta o tamanho da imagem em 20% no hover */
   }
 
   @media (max-width: 768px) {
@@ -164,9 +165,14 @@
   </div>
   <div class="card-body">
     <div class="container-fluid">
-      <div class="row" id="equipes-container">
-        <!-- Os cards serão adicionados aqui via script js -->
-      </div>
+        <div class="row" id="equipes-container">
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="card bg-light">
+              <!-- Conteúdo do card aqui -->
+            </div>
+          </div>
+          <!-- Os cards serão adicionados aqui via script js -->
+        </div>
       <div class="row" id="mensagem-container">
         <!-- A mensagem será exibida aqui caso o JSON esteja vazio -->
       </div>
@@ -289,21 +295,20 @@
         </a>`
       } else {
         descadastroButton = 
-        `<button type="button" style="cursor: not-allowed;"class="btn btn-outline-secondary ml-3 desabled">Descadastrar</button>`
+        `<button type="button" style="cursor: not-allowed;"class="btn btn-outline-secondary ml-3 disabled">Descadastrar</button>`
       }
 
       let motorista = equipe.motorista !== 'sem registro' ? 
-      `<h5 class=""><i class="fa fa-car"></i> <b>Motorista:</b> ${equipe.motorista} </h5>` : ''
+      `<small class=""><i class="fa fa-car"></i> <b>Motorista:</b> ${equipe.motorista} </small>` : ''
       let piloto_remoto = equipe.piloto_remoto !== 'sem registro' ? 
-      `<h5 class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> ${equipe.piloto_remoto} </h5>` : ''
+      `<small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> ${equipe.piloto_remoto} </small>` : ''
       let piloto_observador = equipe.piloto_observador !== 'sem registro' ? 
-      `<h5 class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b> ${equipe.piloto_observador} </h5>` : ''
+      `<small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b> ${equipe.piloto_observador} </small>` : ''
       let telefone = equipe.telefone !== 'sem registro' ? 
-      `<h5 class=""><i class="fa fa-phone"></i> <b>Contato:</b> ${equipe.telefone} </h5>` : ''
-
+      `<small class=""><i class="fa fa-phone"></i> <b>Contato:</b> ${equipe.telefone} </small>` : ''
       
       return `
-      <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
+      <div class="col-12 col-sm-4 col-md-4 d-flex align-items-stretch flex-column">
           <div class="card bg-light d-flex flex-fill">
             <div class="card-header text-muted border-bottom-0">
               <i class="fas fa-lg fa-building"></i> ${equipe.local}
@@ -373,7 +378,7 @@
               </div>
             </div>
           `;
-      }).join('');
+    }).join('');
 
       // Adicionando o HTML criado ao elemento com o id 'equipes-container'
       document.getElementById('equipes-container').innerHTML = localidadesHTML;

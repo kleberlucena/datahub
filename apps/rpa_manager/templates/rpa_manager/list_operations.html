@@ -90,7 +90,7 @@
         </table>
       </div>
       
-      {% if request.user|has_group:'profile:rpa_advanced' %}
+      {% if request.user|has_group:'profile:rpa_basic' or request.user|has_group:'profile:rpa_advanced' %}
         <div style="width: 10rem">
           <a href="{% url 'rpa_manager:criar_nova_missao' %}">
             <button type="button" style="display: inline" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i> Nova operação </button>

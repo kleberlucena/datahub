@@ -13,52 +13,40 @@ from apps.rpa_manager.handlers import require_permission
 MESSAGE_MODEL_NAME = 'Aeronave'
 
 
-class VerAeronaveView(PermissionRequiredMixin, DetailView):
+class VerAeronaveView(GroupRequiredMixin, DetailView):
     model = Aeronave
     template_name = 'rpa_manager/detail_aircraft.html'
     context_object_name = 'aeronave'
     pk_url_kwarg = 'pk'
-    permission_required = 'rpa_manager.view_aeronave'
-
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    group_required = ['profile:rpa_advanced']
     
 
-class CriarNovaAeronaveView(PermissionRequiredMixin, CreateView):
+class CriarNovaAeronaveView(GroupRequiredMixin, CreateView):
     model = Aeronave
     form_class = AeronavesForm
     template_name = 'rpa_manager/create_aircraft.html'
     success_url = reverse_lazy('rpa_manager:aeronaves')
-    permission_required = 'rpa_manager.add_aeronave'
-
+    group_required = ['profile:rpa_advanced']
+    
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} criada com sucesso!')
         return response
 
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
     
-    
-class EditarAeronaveView(PermissionRequiredMixin, UpdateView):
+class EditarAeronaveView(GroupRequiredMixin, UpdateView):
     model = Aeronave
     form_class = AeronavesForm
     template_name = 'rpa_manager/update_aircraft.html'
     context_object_name = 'form'
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('rpa_manager:aeronaves')
-    permission_required = 'rpa_manager.change_aeronave'
+    group_required = ['profile:rpa_advanced']
 
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} editada com sucesso!')
         return response
-    
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
     
     
 class DeletarAeronaveView(PermissionRequiredMixin, DeleteView):

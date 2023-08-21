@@ -18,12 +18,11 @@ from django.utils import timezone
 MESSAGE_MODEL_NAME = 'Relatório'
 
 
-class VerRelatorioView(PermissionRequiredMixin, DetailView):
+class VerRelatorioView(GroupRequiredMixin, DetailView):
     model = Relatorio
     template_name = 'rpa_manager/detail_report.html'
     context_object_name = 'relatorio'
-    permission_required = 'rpa_manager.view_relatorio'
-    
+    group_required = ['profile:rpa_view', 'profile:rpa_basic', 'profile:rpa_advanced']
     
     def get_context_data(self, **kwargs):
             context = super().get_context_data(**kwargs)
@@ -32,17 +31,14 @@ class VerRelatorioView(PermissionRequiredMixin, DetailView):
             context['coordinates_json'] = createJsonByLastReport(coordinates_json, relatorio)
 
             return context
-    
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-    
-class CriarNovoRelatorioView(PermissionRequiredMixin, CreateView):
+        
+        
+class CriarNovoRelatorioView(GroupRequiredMixin, CreateView):
     model = Relatorio
     form_class = RelatorioFormulario
     template_name = 'rpa_manager/create_report.html'
     success_url = reverse_lazy('rpa_manager:add_point')
-    permission_required = 'rpa_manager.add_relatorio'
+    group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
     
     def get_initial(self):
         missao = get_object_or_404(Missao, pk=self.kwargs['pk'])
@@ -74,10 +70,6 @@ class CriarNovoRelatorioView(PermissionRequiredMixin, CreateView):
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} criado com sucesso!')
         
         return super().form_valid(form)
-
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
     
     
 class EditarRelatorioView(GroupRequiredMixin, UpdateView):
@@ -86,7 +78,6 @@ class EditarRelatorioView(GroupRequiredMixin, UpdateView):
     template_name = 'rpa_manager/update_report.html'
     success_url = reverse_lazy('rpa_manager:relatorios')
     context_object_name = 'relatorio'
-    # permission_required = 'rpa_manager.edit_relatorio'
     group_required = ['profile:rpa_advanced']
     
     def form_valid(self, form):
@@ -95,7 +86,6 @@ class EditarRelatorioView(GroupRequiredMixin, UpdateView):
         
         return response
 
-    # @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
         relatorio = self.get_object()
         time_since_creation = timezone.now() - relatorio.created_at

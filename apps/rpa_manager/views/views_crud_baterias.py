@@ -6,6 +6,7 @@ from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from base.mixins import GroupRequiredMixin
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
@@ -13,53 +14,41 @@ from apps.rpa_manager.handlers import require_permission
 MESSAGE_MODEL_NAME = 'Bateria'
 
 
-class VerBateriaView(PermissionRequiredMixin, DetailView):
+class VerBateriaView(GroupRequiredMixin, DetailView):
     model = Bateria
     template_name = 'rpa_manager/detail_battery.html'
     context_object_name = 'bateria'
     pk_url_kwarg = 'pk'
-    permission_required = 'rpa_manager.view_bateria'
+    group_required = ['profile:rpa_advanced']
 
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
     
-    
-class CriarNovaBateriaView(PermissionRequiredMixin, CreateView):
+class CriarNovaBateriaView(GroupRequiredMixin, CreateView):
     model = Bateria
     form_class = BateriaForm
     template_name = 'rpa_manager/create_battery.html'
     success_url = reverse_lazy('rpa_manager:baterias')
-    permission_required = 'rpa_manager.add_bateria'
+    group_required = ['profile:rpa_advanced']
 
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} criada com sucesso!')
         return response
 
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
     
-    
-class EditarBateriaView(PermissionRequiredMixin, UpdateView):
+class EditarBateriaView(GroupRequiredMixin, UpdateView):
     model = Bateria
     form_class = BateriaForm
     template_name = 'rpa_manager/update_battery.html'
     context_object_name = 'form'
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('rpa_manager:baterias')
-    permission_required = 'rpa_manager.change_bateria'
+    group_required = ['profile:rpa_advanced']
 
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} editada com sucesso!')
         return response
-    
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-    
+
     
 class DeletarBateriaView(PermissionRequiredMixin, DeleteView):
     model = Bateria

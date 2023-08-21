@@ -40,6 +40,7 @@ from .views.views_main import (
     DeletarBateriaView,     HistoricosPorAeronaveView, IncidentesView,
     TypeOfBatteryView, ChecklistImageDeleteView)
 # MilitaryListJson
+
 app_name = "rpa_manager"
 
 urlpatterns = [

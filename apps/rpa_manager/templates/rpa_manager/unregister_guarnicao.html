@@ -4,9 +4,6 @@
 <!-- styles -->
 {% block style_sheet %}
 {% comment %} bacinf style_sheet {% endcomment %}
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
   <style>
     .select_date_form {
@@ -53,7 +50,7 @@
     /* Make the alignment of images */
     .grid-container_for-images {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr; /* Três colunas com mesmo tamanho */
+      grid-template-columns: 50px 50px 50px; /* Três colunas com mesmo tamanho */
       gap: 10px; /* Espaçamento entre as divs (opcional) */
     }  
   
@@ -133,15 +130,16 @@
             <div class="card-body pt-0">
               <div class="card_content">
                 <div class="card_gu_info">
-                  <h5 class=""><i class="fa fa-car"></i> <b>Motorista:</b> {{ guarnicao.motorista }}</h5>
-                  <h5 class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> {{ guarnicao.piloto_remoto }} 
-                  <h5 class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b>  
+                  <small class=""><i class="fa fa-car"></i> <b>Motorista:</b> {{ guarnicao.motorista }}</small>
+                  <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> {{ guarnicao.piloto_remoto }} </small>
+                  <small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b>  
                     {% if guarnicao.piloto_observador != None %}
                       {{ guarnicao.piloto_observador }}
                     {% else %}
                       sem registro
                     {% endif %}
-                  <h5 class=""><i class="fa fa-phone"></i> <b>Contato: {{ guarnicao.telefone }}</b>
+                  </small>
+                  <small class=""><i class="fa fa-phone"></i> <b>Contato: {{ guarnicao.telefone }}</b></small>
                 </div>
                 <div class="grid-container_for-images">
                     <div class="grid-item large-image">

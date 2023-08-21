@@ -8,6 +8,7 @@ from apps.rpa_manager.utils.saveNewChecklistInAircraftHistoric import saveNewChe
 from apps.rpa_manager.utils.getLastRegisteredChecklistData import getLastRegisteredChecklistData
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from base.mixins import GroupRequiredMixin
 from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
 from django.contrib import messages
@@ -19,12 +20,12 @@ from apps.rpa_manager.models import (Checklist,
 
 MESSAGE_MODEL_NAME = 'Checklist'
 
-class VerChecklistView(PermissionRequiredMixin, DetailView):
+class VerChecklistView(GroupRequiredMixin, DetailView):
     model = Checklist
     template_name = 'rpa_manager/detail_checklist.html'
     context_object_name = 'checklist'
-    permission_required = 'rpa_manager.view_checklist'
-
+    group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         checklist = self.get_object()
@@ -42,13 +43,9 @@ class VerChecklistView(PermissionRequiredMixin, DetailView):
         context['image_urls'] = image_urls
         return context
 
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
 
-
-class ChecklistFormView(PermissionRequiredMixin, View):    
-    permission_required = 'rpa_manager.add_checklist'
+class ChecklistFormView(GroupRequiredMixin, View):    
+    group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
     
     def get(self, request, *args, **kwargs):
         piloto = request.user
@@ -99,18 +96,14 @@ class ChecklistFormView(PermissionRequiredMixin, View):
         
         return render(request, 'rpa_manager/create_checklist.html', context)
     
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
     
-    
-class EditarChecklistView(PermissionRequiredMixin, UpdateView):
+class EditarChecklistView(GroupRequiredMixin, UpdateView):
     model = Checklist
     form_class = ChecklistForm
     template_name = 'rpa_manager/update_checklist.html'
     success_url = reverse_lazy('rpa_manager:checklists')
     context_object_name = 'form'
-    permission_required = 'rpa_manager.change_checklist'
+    group_required = ['profile:rpa_advanced']
     
     def form_valid(self, form):
         checklist = form.save(commit=False)
@@ -146,10 +139,6 @@ class EditarChecklistView(PermissionRequiredMixin, UpdateView):
         context['images'] = images
 
         return context
-    
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
     
     
 class DeletarChecklistView(PermissionRequiredMixin, DeleteView):

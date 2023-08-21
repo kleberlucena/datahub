@@ -15,10 +15,11 @@ from base.mixins import GroupRequiredMixin
 MESSAGE_MODEL_NAME = 'Incidente'
 
 
-class IncidentesDetailView(PermissionRequiredMixin, DetailView):
+class IncidentesDetailView(GroupRequiredMixin, DetailView):
     model = Incidentes
     template_name = 'rpa_manager/detail_incident.html'
     permission_required = 'rpa_manager.view_incidentes'
+    group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -37,12 +38,12 @@ class IncidentesDetailView(PermissionRequiredMixin, DetailView):
         return super().dispatch(*args, **kwargs)
     
     
-class IncidentesCreateView(CreateView):
+class IncidentesCreateView(GroupRequiredMixin, CreateView):
     model = Incidentes
     form_class = IncidentesForm
     template_name = 'rpa_manager/create_incident.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
-    permission_required = 'rpa_manager.add_incidente'
+    group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
     
     def get_initial(self):
         return {
@@ -70,7 +71,7 @@ class IncidentesCreateView(CreateView):
         return redirect(self.get_success_url())
     
     
-class IncidentesUpdateView(PermissionRequiredMixin, UpdateView):
+class IncidentesUpdateView(GroupRequiredMixin, UpdateView):
     model = Incidentes
     form_class = IncidentesForm
     template_name = 'rpa_manager/create_incident.html'

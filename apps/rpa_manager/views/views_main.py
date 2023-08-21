@@ -31,7 +31,6 @@ class PainelView(TemplateView):
         context = super().get_context_data(**kwargs)
         today_coordinates_operations = getTodaysCoordinates(context)
         operationsInCourseJson = getOperationInCourse()
-        print(operationsInCourseJson)
         coordinates_dict: Dict = {}
         report_by_date_list: List = []
         lista_de_guarnicoes = []
@@ -96,8 +95,9 @@ class PainelView(TemplateView):
         return context
 
 
-class PrincipalView(LoginRequiredMixin, TemplateView):
+class PrincipalView(GroupRequiredMixin, TemplateView):
     template_name = 'rpa_manager/list_operations.html'
+    group_required = ['profile:rpa_view', 'profile:rpa_basic', 'profile:rpa_advanced']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -117,8 +117,10 @@ class PrincipalView(LoginRequiredMixin, TemplateView):
 
         return context
 
-class ChecklistsView(TemplateView):
+
+class ChecklistsView(GroupRequiredMixin, TemplateView):
     template_name = 'rpa_manager/list_checklists.html'
+    group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -140,15 +142,13 @@ class ChecklistsView(TemplateView):
         return context
 
 
-class RelatoriosView(TemplateView):
+class RelatoriosView(GroupRequiredMixin, TemplateView):
     template_name = 'rpa_manager/list_reports.html'
+    group_required = ['profile:rpa_view', 'profile:rpa_basic','profile:rpa_advanced']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
-        
         user = self.request.user
-
         if user.is_superuser or user.groups.filter(name='profile:rpa_view').exists():
             relatorios = Relatorio.objects.all().order_by('-data', '-horario_inicial')
         else:
@@ -160,6 +160,24 @@ class RelatoriosView(TemplateView):
         context['relatorios'] = relatorios
         context['form'] = form
 
+        return context
+
+
+class IncidentesView(GroupRequiredMixin, TemplateView):
+    template_name = 'rpa_manager/list_incidents.html'
+    group_required = ['profile:rpa_basic','profile:rpa_advanced']
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        user = self.request.user
+
+        if user.is_superuser or user.groups.filter(name='profile:rpa_view').exists():
+            incidentes = Incidentes.objects.all().order_by('-data')
+        else:
+            incidentes = Incidentes.objects.filter(piloto=self.request.user).order_by('-data')
+        context['incidentes'] = incidentes
         return context
 
 
@@ -175,24 +193,6 @@ class AeronavesView(GroupRequiredMixin, TemplateView):
         context['aeronaves'] = aeronaves
         context['form'] = form
 
-        return context
-    
-
-
-class IncidentesView(GroupRequiredMixin, TemplateView):
-    template_name = 'rpa_manager/list_incidents.html'
-    group_required = ['profile:rpa_advanced']
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        user = self.request.user
-
-        if user.is_superuser or user.groups.filter(name='profile:rpa_view').exists():
-            incidentes = Incidentes.objects.all().order_by('-data')
-        else:
-            incidentes = Incidentes.objects.filter(piloto=self.request.user).order_by('-data')
-        context['incidentes'] = incidentes
         return context
     
 
