@@ -1,5 +1,5 @@
 import logging
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, HttpResponseForbidden
 from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -14,8 +14,12 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from apps.portal.models import Entity, Military
-from apps.fact.models import Fact, FactType
-from apps.fact.api.v1.serializers import FactSerializer, FactTypeSerializer
+from apps.fact.models import Fact, FactType, FactImage
+from apps.fact.api.v1.serializers import FactSerializer, FactTypeSerializer, FactImageSerializer
+from apps.person.models import Person
+from apps.address.models import Address
+from apps.person.api.v1.serializers import PersonSerializer
+from apps.address.api.serializers import AddressSerializer
 
 my = openapi.Parameter('my', openapi.IN_QUERY,
                        description="param meu, que filtra os cadastros de pessoa pelo usuário", type=openapi.TYPE_BOOLEAN)
@@ -60,7 +64,7 @@ class AddFactListView(generics.ListCreateAPIView):
     queryset = Fact.objects.all()
 
     def get_serializer_class(self):
-        if self.request.user.groups.filter(name__icontains='profile:person_advanced').exists():
+        if self.request.user.groups.filter(name__icontains='fact:fact').exists():
             return FactSerializer
         else:
             raise PermissionDenied
@@ -78,7 +82,7 @@ class AddFactListView(generics.ListCreateAPIView):
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
         except Exception as e:
-            logger.error('Error while serialize person - {}'.format(e))
+            logger.error('Error while serialize fact - {}'.format(e))
             return Response(status=403)
 
     def create(self, request, *args, **kwargs):
@@ -265,7 +269,7 @@ class FactRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     lookup_field = 'uuid'
 
     def get_serializer_class(self):
-        if self.request.user.groups.filter(name='profile:person_advanced').exists():
+        if self.request.user.groups.filter(name__icontains='fact:fact').exists():
             return FactSerializer
         else:
             raise PermissionDenied
@@ -310,6 +314,157 @@ class FactRetrieveDestroyView(generics.RetrieveDestroyAPIView):
             return Response({"detail": "Recurso não encontrado."}, status=status.HTTP_404_NOT_FOUND)
         return super().handle_exception(exc)
 
+
+class FactAddImageViewSet(mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = FactImage.objects.all()
+    serializer_class = FactImageSerializer
+    permission_classes = [DjangoObjectPermissions]
+    
+    def get_serializer_class(self):
+        if self.request.user.groups.filter(name__icontains='fact:fact').exists():
+            return FactImageSerializer
+        else:
+            raise PermissionDenied
+    
+    @transaction.atomic
+    def perform_create(self, serializer):
+        fact = get_object_or_404(Fact, uuid=self.kwargs['uuid'])
+        
+        if serializer.is_valid():
+            try:
+                user = self.request.user
+                military = Military.objects.get(cpf=user.username)
+                entity = Entity.objects.get(id=military.entity.id)
+                instance = serializer.save(fact=fact, entity=entity, created_by=user)
+                assign_perm("change_factimage", self.request.user, instance)
+                assign_perm("delete_factimage", self.request.user, instance)
+                # fact.images.add(instance)
+                fact.save()
+                return Response(serializer.data, status=201)
+            except Exception as e:
+                logger.warn('Warning while save fact image - {}'.format(e))
+                transaction.set_rollback(True)
+                raise e
+        return Response(serializer.errors, status=422)
+
+    @swagger_auto_schema(method='post')
+    @action(detail=True, methods=['POST'])
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+    def handle_exception(self, exc):
+        if isinstance(exc, ValidationError):
+            return Response({"detail": "Erro na validação dos dados."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        if isinstance(exc, PermissionDenied):
+            return Response({"detail": "Você não tem permissão para acessar este recurso."}, status=status.HTTP_403_FORBIDDEN)
+        if isinstance(exc, NotFound):
+            return Response({"detail": "Recurso não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        return super().handle_exception(exc)
+
+
+class FactAddAddressViewSet(mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
+    permission_classes = [DjangoObjectPermissions]
+    
+    def get_serializer_class(self):
+        if self.request.user.groups.filter(name__icontains='fact:fact').exists():
+            return AddressSerializer
+        else:
+            raise PermissionDenied
+    
+    @transaction.atomic
+    def perform_create(self, serializer):
+        fact = get_object_or_404(Fact, uuid=self.kwargs['uuid'])
+        
+        if serializer.is_valid():
+            try:
+                user = self.request.user
+                military = Military.objects.get(cpf=user.username)
+                entity = Entity.objects.get(id=military.entity.id)
+                instance = serializer.save(entity=entity, created_by=user)
+                assign_perm("change_address", self.request.user, instance)
+                assign_perm("delete_address", self.request.user, instance)
+                fact.addresses.add(instance)
+                fact.save()
+                return Response(serializer.data, status=201)
+            except Exception as e:
+                logger.warn('Warning while save fact address - {}'.format(e))
+                transaction.set_rollback(True)
+                raise e
+        return Response(serializer.errors, status=422)
+
+    @swagger_auto_schema(method='post')
+    @action(detail=True, methods=['POST'])
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+    def handle_exception(self, exc):
+        if isinstance(exc, ValidationError):
+            return Response({"detail": "Erro na validação dos dados."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        if isinstance(exc, PermissionDenied):
+            return Response({"detail": "Você não tem permissão para acessar este recurso."}, status=status.HTTP_403_FORBIDDEN)
+        if isinstance(exc, NotFound):
+            return Response({"detail": "Recurso não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        return super().handle_exception(exc)
+    
+
+class FactAddInvlovedViewSet(mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Person.objects.all()
+    serializer_class = PersonSerializer
+    permission_classes = [DjangoObjectPermissions]
+    
+    def get_serializer_class(self):
+        if self.request.user.groups.filter(name__icontains='fact:fact').exists():
+            return PersonSerializer
+        else:
+            raise PermissionDenied
+    
+    @transaction.atomic
+    def perform_create(self, serializer):
+        fact = get_object_or_404(Fact, uuid=self.kwargs['uuid'])
+        involvedchoice = self.kwargs['involvedchoice']
+        choice_to_field = {
+            "victims": "victims",
+            "suspects": "suspects",
+            "witnesses": "witnesses",
+        }
+        
+        if serializer.is_valid():
+            try:
+                user = self.request.user
+                military = Military.objects.get(cpf=user.username)
+                entity = Entity.objects.get(id=military.entity.id)
+                instance = serializer.save(entity=entity, created_by=user)
+                assign_perm("change_person", self.request.user, instance)
+                assign_perm("delete_person", self.request.user, instance)
+                # fact[involvedchoice].add(instance)
+                if involvedchoice in choice_to_field:
+                    getattr(fact, choice_to_field[involvedchoice]).add(instance)
+                    fact.save()
+                else:
+                    raise NotFound
+                return Response(serializer.data, status=201)
+            except Exception as e:
+                logger.warn('Warning while save person involved - {}'.format(e))
+                transaction.set_rollback(True)
+                raise e
+        return Response(serializer.errors, status=422)
+
+    @swagger_auto_schema(method='post')
+    @action(detail=True, methods=['POST'])
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+    def handle_exception(self, exc):
+        if isinstance(exc, ValidationError):
+            return Response({"detail": "Erro na validação dos dados."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        if isinstance(exc, PermissionDenied):
+            return Response({"detail": "Você não tem permissão para acessar este recurso."}, status=status.HTTP_403_FORBIDDEN)
+        if isinstance(exc, NotFound):
+            return Response({"detail": "Recurso não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        return super().handle_exception(exc)
+    
 
 class FactTypeListViewSet(generics.ListAPIView):
     queryset = FactType.objects.all()
