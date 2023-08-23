@@ -22,7 +22,7 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 5px;
-        max-width: 100%%;
+        max-width: 100%;
     }
     
     .formulario_checklist_titulo_selecao {
@@ -66,10 +66,6 @@
     #select2-id_aeronave-container {
       height: 38px !important;
     }
-
-    #equipes-container {
-      width: 100rem;
-    }
   
     .card_content {
       display: grid;
@@ -85,7 +81,7 @@
 
     /* handle cards style */
     #equipes-container {
-      width: 70rem;
+      width: 80rem;
       max-width: 100%;
     }
   
@@ -113,7 +109,7 @@
     /* Make the alignment of images */
     .grid-container_for-images {
       display: grid;
-      grid-template-columns: 1.2rem 1.2rem 1.2rem; /* Três colunas com mesmo tamanho */
+      grid-template-columns: 1.5rem 1.5rem 1.5rem; /* Três colunas com mesmo tamanho */
       gap: 10px; /* Espaçamento entre as divs (opcional) */
     }  
   
@@ -223,7 +219,7 @@
 
       {% if guarnicao %}
         <div class="card-body">
-          <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch flex-column">
+          <div class="col-lg-3 col-md-12 col-sm-12">
             <div class="card bg-light d-flex flex-fill">
               <div class="card-header text-muted border-bottom-0">
                 <i class="fas fa-lg fa-building"></i> {{ guarnicao.local.cidades_pb }}

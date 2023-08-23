@@ -23,12 +23,11 @@
     width: 120px;
     margin-top: 32px;
   }
-  
+/*   
   #equipes-container {
-    /* card total width */
     width: 70rem;
     max-width: 100%;
-  }
+  } */
 
   .card_content {
     display: grid;
@@ -67,7 +66,7 @@
   }
   
   .img-fluid {
-    width: 100%; /* Para ocupar todo o espaço disponível na div */
+     /* Para ocupar todo o espaço disponível na div */
   }
 
   .hover-zoom {
@@ -91,7 +90,7 @@
       width: 100px;
     }
 
-    .card_gu_info {
+    /* .card_gu_info {
       display: flex;
       flex-direction: column;
       margin-top: 30px;
@@ -100,7 +99,7 @@
     .grid-container_for-images {
       display: flex;
       flex-direction: column;
-    }  
+    }   */
   }
 </style>
 {% endblock style_sheet %}
@@ -165,12 +164,7 @@
   </div>
   <div class="card-body">
     <div class="container-fluid">
-        <div class="row" id="equipes-container">
-          <div class="col-12 col-sm-6 col-md-3">
-            <div class="card bg-light">
-              <!-- Conteúdo do card aqui -->
-            </div>
-          </div>
+        <div class="row d-flex flex-wrap" id="equipes-container">
           <!-- Os cards serão adicionados aqui via script js -->
         </div>
       <div class="row" id="mensagem-container">
@@ -282,8 +276,8 @@
   </script>
   
   <script>
-    const jsonEquipes = {{ guarnicoes_json | safe }};
-    const user = "{{ request.user | stringformat:"s" | safe }}"; // Recebe o username do usuário logado
+    const jsonEquipes = {{ guarnicoes_json|safe }};
+    const user = "{{ request.user | stringformat:"s"|safe }}"; // Recebe o username do usuário logado
     // Função para criar a estrutura HTML para uma equipe (card)
     function criarEquipeCard(equipe) {
       const isCurrentUserCreator = equipe.piloto_remoto === user; // Verifica se o usuário logado criou a Guarnicao
@@ -308,7 +302,7 @@
       `<small class=""><i class="fa fa-phone"></i> <b>Contato:</b> ${equipe.telefone} </small>` : ''
       
       return `
-      <div class="col-12 col-sm-4 col-md-4 d-flex align-items-stretch flex-column">
+      <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
           <div class="card bg-light d-flex flex-fill">
             <div class="card-header text-muted border-bottom-0">
               <i class="fas fa-lg fa-building"></i> ${equipe.local}
@@ -334,7 +328,7 @@
                     <div class="grid-item">
                       <img src="{% static 'adminlte-3.1.0/img/user5-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
                     </div>
-                  </div>
+                </div>
               </div>
             </div>
             <div class="card-footer">
