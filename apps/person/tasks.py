@@ -45,7 +45,7 @@ def cortex_registry_list(self, username, person_list, cpf):
             logger.warn('Warn, local not exist any person_cortex with this CPF {}'.format(cpf))
             data = portalCortexService.get_person_by_cpf(cpf=cpf, username=username)
             if data:
-                person_cortex = PersonCortex.objects.update_or_create(**data)
+                person_cortex = PersonCortex.objects.update_or_create(numeroCPF=cpf, defaults={**data})
             else:
                 logger.warn('Warn, cortex not return any person_cortex')
     try:              
