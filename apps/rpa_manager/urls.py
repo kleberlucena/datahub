@@ -26,7 +26,7 @@ from .views.views_typeofbattery import (
 from .views.views_main import (
     PainelView, PrincipalView,
     ChecklistsView, RelatoriosView,
-    AeronavesView,
+    AeronavesView, PointsOfInterestView,
     BateriasView, VerMissaoView,
     CriarNovaMissaoView,EditarMissaoView, 
     DeleteMissaoView, CriarNovoRelatorioView,
@@ -59,6 +59,7 @@ urlpatterns = [
     path('edit_typeofbattery/<int:pk>', TypeOfBatteryUpdateView.as_view(), name='edit_typeofbattery'),
     path('delete_typeofbattery/<int:pk>', TypeOfBatteryDeleteView.as_view(), name='delete_typeofbattery'),
     
+    path('list_points/', PointsOfInterestView.as_view() , name='points_of_interest'),
     path('add_point/', AddPointOfInterest.as_view(), name='add_point'),
     path('edit_point/<int:pk>/', UpdatePointOfInterest.as_view(), name='edit_point'),
     path('delete_point/<int:pk>/', DeletePointOfInterest.as_view(), name='delete_point'),

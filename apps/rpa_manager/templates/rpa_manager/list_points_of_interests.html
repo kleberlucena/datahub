@@ -42,44 +42,35 @@
           aria-describedby="objects_list_info" width="100%">
           <thead>
             <tr>
-              <th scope="col">Título do tipo</th>
-              <th scope="col">Ciclos recomendados</th>
-              <th scope="col">Ciclos alerta</th>
-              <th scope="col">Ciclos críticos</th>
+              <th scope="col">Descrição</th>
+              <th scope="col">Operação</th>
+              <th scope="col">Coordenadas</th>
               <th class="removerDoPdf" scope="col">Ações</th>
             </tr>
           </thead>
-
           <tbody>
-            {% for type in type_of_batteries %}
-            <tr>
-              <td>{{ type.name }}</td>
-              <td>{{ type.recommended_cicles }}</td>
-              <td>{{ type.alert_cicles }}</td>
-              <td>{{ type.critical_cicles }}</td>
-              <td>
-                <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
-                  <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
-                  <span class="sr-only">Toggle Dropdown</span>
-                  Filtros
-                  </button>
-                  <div class="dropdown-menu" role="menu" style="">
-                      <a class="dropdown-item" href="{% url 'rpa_manager:edit_typeofbattery' type.id %}">Editar tipo</a>
-                      <a class="dropdown-item" href="{% url 'rpa_manager:delete_typeofbattery' type.id %}">Excluir tipo</a>
-                  </div>
-                </div>
-              </td>
-            </tr>
+            {% for point in points_of_interest %}
+              <tr>
+                <td>{{ point.descricao }}</td>
+                <td>{{ point.operacao }}</td>
+                <td>{{ point.latitude|stringformat:'f' }} , {{ point.longitude|stringformat:'f' }}</td>
+                <td>
+                  <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
+                    <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                      <span class="sr-only">Toggle Dropdown</span>
+                      Filtros
+                    </button>
+                    <div class="dropdown-menu" role="menu" style="">
+                        <a class="dropdown-item" href="{% url 'rpa_manager:edit_point' point.id %}">Editar ponto</a>
+                        <a class="dropdown-item" href="{% url 'rpa_manager:delete_point' point.id %}">Excluir ponto</a>
+                      </div>
+                    </div>
+                  </td>
+              </tr>
             {% endfor %}
           </tbody>
         </table>
-      </div>
-      
-        <a href="{% url 'rpa_manager:add_typeofbattery' %}">
-          <button type="button" style="display: block; width: 200px" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i>
-            Novo tipo bateria </button>
-        </a>  
-      
+      </div>      
     </div>
   </div>
 {% endblock content %}

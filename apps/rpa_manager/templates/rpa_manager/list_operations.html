@@ -91,11 +91,18 @@
       </div>
       
       {% if request.user|has_group:'profile:rpa_basic' or request.user|has_group:'profile:rpa_advanced' %}
-        <div style="width: 10rem">
-          <a href="{% url 'rpa_manager:criar_nova_missao' %}">
-            <button type="button" style="display: inline" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i> Nova operação </button>
-          </a>
-        </div>
+        <div class="row">
+          <div class="col-sm-2">
+            <a href="{% url 'rpa_manager:criar_nova_missao' %}">
+              <button type="button" style="display: inline" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i> Nova operação </button>
+            </a>
+          </div>
+          <div class="col-sm-2">
+            <a href="{% url 'rpa_manager:points_of_interest' %}">
+              <button type="button" style="display: inline" class="btn btn-outline-info mt-3"><i class="fa fa-cog nav-icon" aria-hidden="true"></i>
+                Gerenciar Pontos </button>
+            </a>
+          </div>
       {% endif %}
     </div>
   </div>
