@@ -5,6 +5,7 @@ from apps.rpa_manager.models import Missao
 
 def getTodaysCoordinates(context):
     operation_by_date_list = []
+    status_operation = None
 
     today = datetime.now()
     month = today.month
@@ -13,11 +14,17 @@ def getTodaysCoordinates(context):
     operation_by_date = Missao.objects.filter(data__day=today.day, data__month=month, data__year=year)
     
     for operation in operation_by_date:
+        if operation.concluida == False:
+            status_operation = 'Em andamento'
+        else:
+            status_operation = ''
+            
         operation_by_date_list.append({
             'usuario': operation.usuario.username,
             'titulo': operation.titulo,
             'latitude': operation.latitude,
-            'longitude': operation.longitude
+            'longitude': operation.longitude,
+            'status': status_operation
         })
     
     today_coordinates_operations = json.dumps(operation_by_date_list, indent=4)

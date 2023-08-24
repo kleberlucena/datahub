@@ -76,7 +76,7 @@ class IncidentesUpdateView(GroupRequiredMixin, UpdateView):
     form_class = IncidentesForm
     template_name = 'rpa_manager/create_incident.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
-    permission_required = 'rpa_manager.change_incidente'
+    group_required = ['profile:rpa_advanced']
     
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -107,10 +107,6 @@ class IncidentesUpdateView(GroupRequiredMixin, UpdateView):
         context['images'] = images
         
         return context
-    
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
     
     
 class IncidentesDeleteView(PermissionRequiredMixin, DeleteView):
