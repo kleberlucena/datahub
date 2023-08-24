@@ -243,7 +243,7 @@ class AddPersonListView(generics.ListCreateAPIView):
 
     def handle_exception(self, exc):
         if isinstance(exc, ValidationError):
-            return Response({"detail": "Erro na validação dos dados."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+            return Response({"detail": "Erro na validação dos dados. {}".format(exc)}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         if isinstance(exc, PermissionDenied):
             return Response({"detail": "Você não tem permissão para acessar este recurso."}, status=status.HTTP_403_FORBIDDEN)
         if isinstance(exc, NotFound):
