@@ -17,6 +17,15 @@
     display: inline;
     margin-left: 10px;
   }
+   /* fix select2 field height */
+  .select2-selection,
+  .select2-selection--single {
+    height: 38px !important;
+  }
+
+  #select2-id_aeronave-container {
+    height: 38px !important;
+  }
 </style>
 {% endblock style_sheet %}
 
@@ -184,6 +193,11 @@
 {% block js %}
 <!-- DataTables  & Plugins -->
 <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+<script>
+  $(document).ready(function () {
+    $('.local_escolha').select2()
+  });
+</script>
 <script>
   document.getElementById("fileButton").addEventListener("click", function () {
     document.getElementById("id_arquivo_solicitacao").click();
