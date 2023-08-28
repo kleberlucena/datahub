@@ -11,6 +11,15 @@
       font-size: large;
       color: red;
     }
+       /* fix select2 field height */
+    .select2-selection,
+    .select2-selection--single {
+      height: 38px !important;
+    }
+
+    #select2-id_aeronave-container {
+      height: 38px !important;
+    }
   </style>
 {% endblock style_sheet %}
 
@@ -77,6 +86,11 @@
 {% block js %}
 <!-- DataTables  & Plugins -->
   <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script>
+    $(document).ready(function () {
+      $('.local_escolha').select2();
+    });
+  </script>
   <script>
     const error = document.getElementsByClassName('errorlist');
     let pilot_error = "piloto_remotoO piloto remoto não pode ser o mesmo que o piloto observador.O piloto observador não pode ser o mesmo que o piloto remoto."

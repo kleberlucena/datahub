@@ -55,7 +55,7 @@ class CidadesPB(Base):
 
 
 class Guarnicao(models.Model):
-    motorista = models.CharField(max_length=100, null=True, blank=True)
+    motorista = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='gu_motorista', null=True)
     piloto_remoto = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='gu_piloto_remoto', null=True)
     piloto_observador = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='gu_piloto_observador', blank=True, null=True)
     telefone = models.CharField(max_length=20, null=False, blank=False)

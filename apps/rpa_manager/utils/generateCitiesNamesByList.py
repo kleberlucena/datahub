@@ -37,11 +37,14 @@ def generateCitiesByList(listOfCities = []):
     """ Only call this function if you have several new cities to add in the list.
         Preferably user django admin to add new cities.
     """
-    # CidadesPB.objects.all().delete()
+    CidadesPB.objects.all().delete()
     count = 0
-    for index in range(len(listOfCities)):
-        count += 1
-        CidadesPB.objects.create(cidades_pb=listOfCities[index])
+    if CidadesPB.objects.all().count() >= 223:
+        return
+    else:
+        for index in range(len(listOfCities)):
+            count += 1
+            CidadesPB.objects.create(cidades_pb=listOfCities[index])
         
     print(f"List of cities updated: {count}")
     
