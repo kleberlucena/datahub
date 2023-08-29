@@ -2,8 +2,13 @@ from django.contrib import admin
 from django.utils.html import format_html
 from guardian.admin import GuardedModelAdmin
 from safedelete.admin import SafeDeleteAdmin, SafeDeleteAdminFilter, highlight_deleted
+from polymorphic.admin import PolymorphicInlineSupportMixin, StackedPolymorphicInline
 
 from apps.person.models import *
+from apps.cortex.models import RegistryCortex
+from apps.bnmp.models import RegistryBNMP
+from apps.vehicle.models import RegistryVehicleCortex
+from base.models import Registry
 
 
 class FacesAdminInLine(admin.TabularInline):
@@ -18,6 +23,29 @@ class NicknamesAdminInLine(admin.TabularInline):
     model = Nickname
 
 
+class RegistersAdminInLine(StackedPolymorphicInline):
+    """
+    An inline for a polymorphic model.
+    The actual form appearance of each row is determined by
+    the child inline that corresponds with the actual model type.
+    """
+    class RegistryCortexInline(StackedPolymorphicInline.Child):
+        model = RegistryCortex
+
+    class RegistryVehicleCortexInline(StackedPolymorphicInline.Child):
+        model = RegistryVehicleCortex
+
+    class RegistryBNMPInline(StackedPolymorphicInline.Child):
+        model = RegistryBNMP
+
+    model = Registry
+    child_inlines = (
+        RegistryCortexInline,
+        RegistryVehicleCortexInline,
+        RegistryBNMPInline,
+    )
+ 
+    
 class AddressesAdminInLine(admin.TabularInline):
     model = Person.addresses.through
 
@@ -31,12 +59,12 @@ class ImagesAdminInLine(admin.TabularInline):
 
 
 @admin.register(Person)
-class PersonAdmin(SafeDeleteAdmin, GuardedModelAdmin):
+class PersonAdmin(PolymorphicInlineSupportMixin, SafeDeleteAdmin, GuardedModelAdmin):
     list_display = (highlight_deleted, "highlight_deleted_field", 'uuid', 'created_at', 'updated_at',
                     "created_by", "deleted_by") + SafeDeleteAdmin.list_display
     inlines = [
         AddressesAdminInLine, DocumentsAdminInLine, ImagesAdminInLine,
-        FacesAdminInLine, NicknamesAdminInLine, TattoosAdminInLine
+        FacesAdminInLine, NicknamesAdminInLine, TattoosAdminInLine, RegistersAdminInLine
     ]
     list_filter = ("created_by", SafeDeleteAdminFilter,) + SafeDeleteAdmin.list_filter
     search_fields = ('uuid', 'created_at', 'updated_at')

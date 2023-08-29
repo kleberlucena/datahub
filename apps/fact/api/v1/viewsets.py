@@ -60,7 +60,7 @@ class AddFactListView(generics.ListCreateAPIView):
     queryset = Fact.objects.all()
 
     def get_serializer_class(self):
-        if self.request.user.groups.filter(name__icontains='profile:person_advanced').exists():
+        if self.request.user.groups.filter(name__icontains='profile:person').exists():
             return FactSerializer
         else:
             raise PermissionDenied
@@ -265,7 +265,7 @@ class FactRetrieveDestroyView(generics.RetrieveDestroyAPIView):
     lookup_field = 'uuid'
 
     def get_serializer_class(self):
-        if self.request.user.groups.filter(name='profile:person_advanced').exists():
+        if self.request.user.groups.filter(name__icontains='profile:person').exists():
             return FactSerializer
         else:
             raise PermissionDenied

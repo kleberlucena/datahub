@@ -62,3 +62,52 @@ class VehicleAdmin(SafeDeleteAdmin, GuardedModelAdmin):
         obj.delete(deleted_by=user)
 
 VehicleAdmin.highlight_deleted_field.short_description = VehicleAdmin.field_to_highlight
+
+
+@admin.register(models.RegistryVehicleCortex)
+class RegistryVehicleCortexAdmin(admin.ModelAdmin):
+    list_display = ('person', 'person_renavam_cortex')
+    search_fields = ('person_uuid', 'person_renavam_cortex_uuid')
+    readonly_fields = ('person_uuid', 'person_renavam_cortex_uuid', 'person_info', 'person_renavam_tipoDocumento', 'person_renavam_numeroDocumento', 'person_renavam_nome', 'person_renavam_endereco')
+
+    def person_uuid(self, obj):
+        return obj.person.uuid
+    person_uuid.short_description = 'Person UUID'
+
+    def person_renavam_cortex_uuid(self, obj):
+        return obj.person_renavam_cortex.uuid
+    person_renavam_cortex_uuid.short_description = 'Person Renavam UUID'
+
+    def person_info(self, obj):
+        person = obj.person
+        return f"UUID: {person.uuid}, Other fields: ..."  # Display other relevant fields
+    person_info.short_description = 'Person Info'
+
+    def person_renavam_cortex_info(self, obj):
+        person_renavam_cortex = obj.person_renavam_cortex
+        return f"UUID: {person_renavam_cortex.uuid}, Other fields: ..."  # Display other relevant fields
+    person_renavam_cortex_info.short_description = 'Person Renavam Info'
+    
+    def person_renavam_numeroDocumento(self, obj):
+        try:
+            return obj.person_renavam_cortex.numeroDocumento
+        except:
+            return None
+        
+    def person_renavam_nome(self, obj):
+        try:
+            return obj.person_renavam_cortex.nome
+        except:
+            return None
+        
+    def person_renavam_tipoDocumento(self, obj):
+        try:
+            return obj.person_renavam_cortex.tipoDocumento
+        except:
+            return None
+        
+    def person_renavam_endereco(self, obj):
+        try:
+            return obj.person_renavam_cortex.endereco
+        except:
+            return None
