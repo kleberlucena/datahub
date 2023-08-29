@@ -1,5 +1,44 @@
 
-from apps.rpa_manager.models import CidadesPB
+from apps.rpa_manager.models import CidadesPB, NaturezaDeVoo, Entidades
+
+
+entities = [
+    'PMPB', 'PCPB', 'CBMPB', 'CPRM', 'CPR-I', 'CPR-II', 'CPR-III', 'SUPLAN', 
+    'TJPB', 'MPPB', 'PC', 'IPC', 'SUDEMA', 'AESA', 'PF', 'DAL', 'CE', 'DSAS', 
+    'CMG', 'QCG', '1º BPM', '2º BPM', '3º BPM', '4º BPM', '5º BPM', '6º BPM', 
+    '7º BPM', '8º BPM', '9º BPM', '10º BPM', '11º BPM', '12º BPM', '13º BPM', 
+    '14º BPM', '15º BPM', '1ª CIPM', '2ª CIPM', '3ª CIPM', '4ª CIPM', '5ª CIPM', 
+    '6ª CIPM', '7ª CIPM', 'BEPTUR', 'COA', 'BOPE', 'BPAmb', 'BPTran', 'RPMont', 'Outra'
+]
+
+natures_of_flights = [
+    'Treinamento',
+    'Policiamento ostensivo e investigativo',
+    'Policiamento e vigilância em áreas de responsabilidade',
+    'Ações de inteligência',
+    'Apoio ao cumprimento de mandado judicial',
+    'Controle de tumultos; distúrbios e motins',
+    'Escoltas de dignitários, presos, valores e cargas',
+    'Operações de busca terrestre e aquática',
+    'Controle de tráfego rodoviário, ferroviário e urbano',
+    'Aerolevantamento',
+    'Solenidades e eventos',
+    'Marketing institucional',
+    'Levantamento operacional',
+    'Desapropriação/reintegração',
+    'Patrulhamento preventivo',
+    'Patrulhamento de buscas',
+    'Solenidades',
+    'Festas populares',
+    'Manifestações/movimentos',
+    'Festas Juninas',
+    'Controle de tráfego rodoviário e ferroviário',
+    'Prevenção e combate a incêndio',
+    'Patrulhamento urbano, rural, ambiental, litorâneo e de fronteiras',
+    'Repressão ao contrabando e descaminho',
+    'Gestão e execução de atividades de fiscalização',
+    'Outra'
+]
 
 cities_pb = [
     'Água Branca', 'Aguiar', 'Alagoa Grande', 'Alagoa Nova', 'Alagoinha', 'Alcantil', 'Algodão de Jandaíra', 
@@ -33,6 +72,13 @@ cities_pb = [
     'Teixeira', 'Tenório', 'Triunfo', 'Uiraúna', 'Umbuzeiro', 'Várzea', 'Vieirópolis', 'Vista Serrana', 'Zabelê'
     ]
 
+
+"""The functions below are used to populate the models attributes, if you
+need to insert values to these models, call the package inside a views.py file
+and call one of these functions inside a view funcition. The lists above must be 
+in the view file also and be passed to the functions by parameters.
+"""
+
 def generateCitiesByList(listOfCities = []):
     """ Only call this function if you have several new cities to add in the list.
         Preferably user django admin to add new cities.
@@ -48,3 +94,15 @@ def generateCitiesByList(listOfCities = []):
         
     print(f"List of cities updated: {count}")
     
+def generateNatureOfFlighs(list_of_natures = []):
+    NaturezaDeVoo.objects.all().delete()
+    
+    for index in range(len(list_of_natures)):
+        NaturezaDeVoo.objects.create(natureza=list_of_natures[index])
+        
+def generateEntitiesOfFlighs(list_of_entities = []):
+    Entidades.objects.all().delete()
+    
+    for index in range(len(list_of_entities)):
+        Entidades.objects.create(natureza=list_of_entities[index])
+        

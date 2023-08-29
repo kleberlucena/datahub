@@ -17,7 +17,7 @@ from apps.rpa_manager.models import (Aeronave, Bateria,
                                      Checklist, TypeOfBattery, 
                                      Missao, Relatorio,
                                      HistoricoAlteracoesAeronave,
-                                     Incidentes, PontosDeInteresse)
+                                     Incidentes, PontosDeInteresse, NaturezaDeVoo, Entidades)
 from datetime import datetime
 
 def home(request):
@@ -26,7 +26,7 @@ def home(request):
 
 class PainelView(TemplateView):
     template_name = 'rpa_manager/painel.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today_coordinates_operations = getTodaysCoordinates(context)
