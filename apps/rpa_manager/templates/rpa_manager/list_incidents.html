@@ -59,7 +59,7 @@
               <td>{{ incidente.ponto_de_referencia }}</td>
               <td data-sort='YYYYMMDD'>{{ incidente.data | date:"d/m/Y" }}</td>
 
-              {% if request.user|has_group:'profile:rpa_view' %}
+              {% if request.user|has_group:'profile:rpa_view' or request.user|has_group:'profile:rpa_basic'%}
                 <td>
                   <a class="dropdown-item" href="{% url 'rpa_manager:incidentes_detail' incidente.id %}">
                     <button type="button" class="btn btn-outline-info btn-block">Ver dados</button>
@@ -75,7 +75,9 @@
                     <div class="dropdown-menu" role="menu" style="">
                         <a class="dropdown-item" href="{% url 'rpa_manager:incidentes_detail' incidente.pk %}">Ver incidente</a>
                         <a class="dropdown-item" href="{% url 'rpa_manager:update_incidente' incidente.pk %}">Editar incidente</a>
-                        <a class="dropdown-item" href="{% url 'rpa_manager:delete_incidente' incidente.pk %}">Excluir incidente</a>
+                        {% if request.user.is_superuser %}
+                          <a class="dropdown-item" href="{% url 'rpa_manager:delete_incidente' incidente.pk %}">Excluir incidente</a>
+                        {% endif %}
                     </div>
                   </div>
                 </td>

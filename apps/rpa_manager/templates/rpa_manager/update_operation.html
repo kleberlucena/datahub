@@ -163,42 +163,6 @@
           </div>
         </div>
 
-        <section class="content mt-3">
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-12">
-                <div class="card">
-                  <div class="card-header">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                      <h3 class="card-title" style="color: black;">Pontos de atenção</h3>
-                    </button>
-                    <div class="card-tools">
-                    </div>
-                  </div>
-
-                  {% for point in points %}
-                  <div class="card-body collapse card_atendimento" aria-expanded="false" id="pontosCadastrados">
-                    <div class="ponto-atendimento" data-lat="{{ point.latitude }}" data-lng="{{ point.longitude }}">
-                      <p class="point_of_interest" style="font-size: 0.8rem">
-                        <i class="fa fa-exclamation-triangle"></i> {{ point.descricao }}
-                        {% if point.is_temporary %}
-                        | duração: <strong>{{ point.date_initial|date:"d/m/Y" }} {{ point.date_initial|time:"H:i" }} à
-                          {{ point.date_final | date:"d/m/Y" }} {{ point.date_final|time:"H:i" }}</strong>
-                        {% endif %}
-                        <a href="{% url 'rpa_manager:edit_point' point.pk %}" style="padding-left: 10px"><i
-                            class="fa fa-pen"></i></a>
-                        <a href="{% url 'rpa_manager:delete_point' point.pk %}" style="padding-left: 10px"><i
-                            class="fa fa-trash"></i></a>
-                      </p>
-                    </div>
-                  </div>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <div id="map" class="ml-3 mr-3 mt-3" style="height: 400px;"></div>
 
         <div class="ml-3 mb-3 mt-3">

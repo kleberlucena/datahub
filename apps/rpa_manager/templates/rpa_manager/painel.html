@@ -192,12 +192,12 @@
       let zoomLevel = 11;
       let map = L.map('map').setView(centerCoordinates, zoomLevel);
       let staticUrl = "{% static 'leaflet/images/marker-icon.png' %}"
-
+      
       const urlLocalImg = "{% static '/sti/img/drone.png' %}"
       var droneMarkerIcon = L.icon({
         iconUrl: urlLocalImg,
-        iconSize: [32, 32], 
-        iconAnchor: [16, 16], 
+        iconSize: [13, 13], 
+        iconAnchor: [6.5, 6.5], 
         popupAnchor: [0, -32] 
       });
 

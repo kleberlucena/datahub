@@ -119,31 +119,5 @@
       }
     </script>
     {% endif %}
-
-    <!-- modify input to border red when error messages -->
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-          const inputs = document.querySelectorAll(".form-control");
-  
-          inputs.forEach(input => {
-              input.addEventListener("input", function() {
-                  const nextElement = input.nextElementSibling;
-                  if (nextElement && nextElement.classList.contains("errorlist")) {
-                      input.classList.add("error-border");
-                  } else {
-                      input.classList.remove("error-border");
-                  }
-              });
-          });
-  
-          // Verify once again if page is loaded
-          inputs.forEach(input => {
-              const nextElement = input.nextElementSibling;
-              if (nextElement && nextElement.classList.contains("errorlist")) {
-                  input.classList.add("error-border");
-              }
-          });
-        });
-    </script>
 </body>
 </html>

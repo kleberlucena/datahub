@@ -65,7 +65,7 @@
               <td>{{ relatorio.aeronave }}</td>
               <td>{{ relatorio.entidade_apoiada }}</td>
 
-              {% if request.user|has_group:'profile:rpa_view' %}
+              {% if request.user|has_group:'profile:rpa_view' or request.user|has_group:'profile:rpa_basic' %}
                 <td>
                   <a class="dropdown-item" href="{% url 'rpa_manager:ver_relatorio' relatorio.id %}">
                     <button type="button" class="btn btn-outline-info btn-block">Ver dados</button>
@@ -81,7 +81,9 @@
                     <div class="dropdown-menu" role="menu" style="">
                         <a class="dropdown-item" href="{% url 'rpa_manager:ver_relatorio' relatorio.id %}">Ver relatório</a>
                         <a class="dropdown-item" href="{% url 'rpa_manager:editar_relatorio' relatorio.id %}">Editar relatório</a>
-                        <a class="dropdown-item" href="{% url 'rpa_manager:deletar_relatorio' relatorio.id %}">Excluir relatório</a>
+                        {% if request.user.is_superuser %}
+                          <a class="dropdown-item" href="{% url 'rpa_manager:deletar_relatorio' relatorio.id %}">Excluir relatório</a>
+                        {% endif %}  
                     </div>
                   </div>
                 </td>
