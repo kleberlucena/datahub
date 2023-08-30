@@ -10,6 +10,8 @@ from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
 from django.contrib import messages
 from base.mixins import GroupRequiredMixin
+from django.utils import timezone
+from django.http import HttpResponseRedirect
 
 
 MESSAGE_MODEL_NAME = 'Incidente'
@@ -108,6 +110,15 @@ class IncidentesUpdateView(GroupRequiredMixin, UpdateView):
         
         return context
     
+    def dispatch(self, *args, **kwargs):
+        incidente = self.get_object()
+        time_since_creation = timezone.now() - incidente.data
+        print(time_since_creation)
+        if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
+            messages.error(self.request, 'Não é possível editar este incidente após 24 horas.')
+            return HttpResponseRedirect(self.success_url)
+        return super().dispatch(*args, **kwargs)
+    
     
 class IncidentesDeleteView(PermissionRequiredMixin, DeleteView):
     model = Incidentes
@@ -123,6 +134,7 @@ class IncidentesDeleteView(PermissionRequiredMixin, DeleteView):
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
 
     
 class IncidenteImageDeleteView(DeleteView):

@@ -13,7 +13,7 @@ def getOperationInCourse():
         if operation.concluida == False:
             status_operation = 'Em andamento'
         else:
-            status_operation = ''
+            status_operation = 'Encerrada'
         
         if operations.exists() and operationsNumber > 0:
             operationsInCourse.append({

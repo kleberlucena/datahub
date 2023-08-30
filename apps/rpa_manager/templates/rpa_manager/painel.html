@@ -186,6 +186,7 @@
       const coordinatesJson = {{ coordinates_json|safe }}
       const coordinatesByDate = {{ coordinates_by_date_json|safe }}
       const operationsInCourse = {{ operationsInCourse|safe }}
+      const popUpFontSizeValueinPx = 10;
 
       let centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude];
       let zoomLevel = 11;
@@ -219,9 +220,9 @@
         
         operationsInCourse.forEach(function(coordinate) {
           L.marker([coordinate.latitude, coordinate.longitude], {icon: makerIcon}).addTo(map)
-            .bindPopup(coordinate.titulo + '<br>' + coordinate.usuario + 
-            '<br>' + coordinate.latitude + ',' + coordinate.longitude + '<br>'
-            + coordinate.status);
+            .bindPopup(`<strong style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.usuario}</span>` + 
+            '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.latitude}</span>` + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.longitude }</span>`+ '<br>'
+            + `<span class="badge badge-warning">${coordinate.status}</span>`);
       
           let circle = L.circle([coordinate.latitude, coordinate.longitude], {
             color: 'red',
@@ -242,7 +243,7 @@
           if (latitude !== 0.0 && longitude !== 0.0) {
             let marker = new L.marker([latitude, longitude], {icon: droneMarkerIcon})
               .addTo(map)
-              .bindPopup(usuario + '<br>' + titulo + '<br>' + latitude + ',' + longitude)
+              .bindPopup(`<span style="font-size: ${popUpFontSizeValueinPx}px;">${usuario}</span>` + '<br>' + `<strong style="font-size: ${popUpFontSizeValueinPx}px;">${titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${latitude}</span>`  + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${longitude}</span>` )
             
               let circle = L.circle([latitude, longitude], {
               color: 'gray',
@@ -256,16 +257,18 @@
 
       function showTodaysCoordinates(makerIcon = null) {
         var todayCoordinatesOfOperations = {{ today_coordinates_operations|safe }};
-        
+        console.log(todayCoordinatesOfOperations)
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
         
         todayCoordinatesOfOperations.forEach(function(coordinate) {
+          let operationStatus = coordinate.status === 'Em andamento' ? `<span class="badge badge-warning">${coordinate.status}</span>` : `<span class="badge badge-success">${coordinate.status}</span>`;
+
           L.marker([coordinate.latitude, coordinate.longitude], {icon: makerIcon}).addTo(map)
-            .bindPopup(coordinate.titulo + '<br>' + coordinate.usuario + 
-            '<br>' + coordinate.latitude + ',' + coordinate.longitude + '<br>'
-            + coordinate.status);
+            .bindPopup(`<strong style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.usuario}</span>`  + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.latitude}</span>`  + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.longitude}</span>` + '<br>'
+            + operationStatus);
       
           let circle = L.circle([coordinate.latitude, coordinate.longitude], {
             color: 'red',

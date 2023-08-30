@@ -17,7 +17,7 @@ def getTodaysCoordinates(context):
         if operation.concluida == False:
             status_operation = 'Em andamento'
         else:
-            status_operation = ''
+            status_operation = 'Encerrada'
             
         operation_by_date_list.append({
             'usuario': operation.usuario.username,
