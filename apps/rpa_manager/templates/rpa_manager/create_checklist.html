@@ -178,19 +178,7 @@
           grid-template-columns: 1fr;
           gap: 5px;
           max-width: 800px;
-      }
-
-      /* handle cards style */
-      .card_gu_info {
-        display: flex;
-        flex-direction: column;
-        margin-top: 30px;
-      }
-  
-      .grid-container_for-images {
-        display: flex;
-        flex-direction: column;
-      }  
+      } 
   }
 </style>
 {% endblock style_sheet %}
@@ -218,17 +206,17 @@
       </div>
 
       {% if guarnicao %}
-        <div class="card-body">
-          <div class="col-lg-3 col-md-12 col-sm-12">
-            <div class="card bg-light d-flex flex-fill">
+      <div class="card-body">
+        <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
+          <div class="card bg-light d-flex flex-fill">
               <div class="card-header text-muted border-bottom-0">
                 <i class="fas fa-lg fa-building"></i> {{ guarnicao.local.cidades_pb }}
-              </div>
+              </div> 
               <div class="card-body pt-0">
                 <div class="card_content">
                   <div class="card_gu_info">
                     <small class=""><i class="fa fa-car"></i> <b>Motorista:</b> {{ guarnicao.motorista }}</small>
-                    <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> {{ guarnicao.piloto_remoto }}</small> 
+                    <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> {{ guarnicao.piloto_remoto }} </small>
                     <small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b>  
                       {% if guarnicao.piloto_observador != None %}
                         {{ guarnicao.piloto_observador }}
@@ -251,8 +239,10 @@
                       <div class="grid-item">
                         <img src="{% static 'adminlte-3.1.0/img/user5-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
                       </div>
-                    </div>
+                  </div>
                 </div>
+              </div>
+              <div class="card-footer">
               </div>
             </div>
           </div>
