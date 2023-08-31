@@ -122,11 +122,9 @@ class AddPersonListView(generics.ListCreateAPIView):
     queryset = Person.objects.all()
 
     def get_serializer_class(self):
-        if self.request.user.groups.filter(name__icontains='profile:person').exists():
-            if self.request.method == 'POST':
-                return serializers.PersonSerializer
-            else:
-                return list_serializers.PersonListSerializer
+        #if self.request.user.groups.filter(name__icontains='profile:person').exists():
+        if self.request.user.groups.filter(name__in=['profile:person_intermediate', 'profile:person_advanced', 'profile:person_basic']).exists():
+            return serializers.PersonSerializer
         else:
             raise PermissionDenied
 
@@ -150,17 +148,19 @@ class AddPersonListView(generics.ListCreateAPIView):
                 #                 documents=documents, person_cortex=person_cortex)
                 #     helpers_bnmp.process_bnmp_consult(
                 #         username=request.user.username, cpf=cpf)
+            queryset = self.get_queryset().filter(
+                self.build_filter_conditions()
+            )
+            page = self.paginate_queryset(queryset)
+            serializer = self.get_serializer(page, many=True) if page is not None else self.get_serializer(queryset, many=True)
+        
+            return self.get_paginated_response(serializer.data)
         except Exception as e:
             logger.error('Error while getting person_cortex - {}'.format(e))
+            raise ValidationError(e)
 
-        queryset = self.get_queryset().filter(
-            self.build_filter_conditions()
-        )
-        page = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(
-            page, many=True) if page is not None else self.get_serializer(queryset, many=True)
-        print(serializer.data)
-        return self.get_paginated_response(serializer.data)
+        
+        
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

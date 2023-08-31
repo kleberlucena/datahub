@@ -105,7 +105,6 @@ class RegistryPolymorphicSerializer(PolymorphicSerializer):
         Registry: RegistryPersonSerializer,
         RegistryCortex: RegistryCortexSerializer,
         RegistryBNMP: RegistryBNMPSerializer,
-        RegistryVehicleCortex: RegistryVehicleCortexSerializer
     }
 
 
