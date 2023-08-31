@@ -94,8 +94,8 @@ class PersonListSerializer(serializers.ModelSerializer):
     tattoos = TattooListSerializer(many=True, required=False)
     physicals = PhysicalSerializer(many=True, required=False)
     documents = DocumentListSerializer(many=True, required=False)
-    registers = RegistryPolymorphicSerializer(
-        many=True, read_only=True, required=False, allow_null=True)
+    # registers = RegistryPolymorphicSerializer(
+    #     many=True, read_only=True, required=False, allow_null=True)
     permissions = serializers.SerializerMethodField('_get_permissions')
     entity = serializers.SerializerMethodField('_get_entity')
 
