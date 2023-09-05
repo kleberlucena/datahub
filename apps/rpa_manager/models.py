@@ -293,3 +293,18 @@ class PontosDeInteresse(models.Model):
 
     def __str__(self):
         return self.descricao
+
+
+class Legislation(models.Model):
+    title = models.CharField(max_length=150, null=False)
+    description = models.TextField(null=True, blank=True, default='')
+    date_published = models.DateField(null=True)
+    in_effect = models.BooleanField(default=True)
+    legislation_file = models.FileField(
+        upload_to='legislations', storage=MinioBackend(
+        bucket_name=settings.MINIO_MEDIA_FILES_BUCKET), 
+        blank=True, 
+        null=True)
+    
+    def __str__(self):
+        return f'{self.title} - {self.date_published}'

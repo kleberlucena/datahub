@@ -1,6 +1,6 @@
 from django import forms
 from apps.rpa_manager.models import PontosDeInteresse, Relatorio
-from apps.rpa_manager.utils.add_class_and_form_control import add_class_and_form_control
+from apps.rpa_manager.utils.addAttributes import addAttributes
 
 class PointsOfInterestForm(forms.ModelForm):
     class Meta:
@@ -41,6 +41,6 @@ class PointsOfInterestForm(forms.ModelForm):
                   'longitude']
         
         for campo in campos:
-            add_class_and_form_control(self, campo, campo, 'form-control')
+            addAttributes(self, campo, campo, 'form-control')
             
             

@@ -1,6 +1,6 @@
 from django import forms
 from apps.rpa_manager.models import Bateria
-from apps.rpa_manager.utils.add_class_and_form_control import add_class_and_form_control
+from apps.rpa_manager.utils.addAttributes import addAttributes
 from apps.rpa_manager.utils.addPlaceholderToField import addPlaceholder
 
 class BateriaForm(forms.ModelForm):
@@ -24,4 +24,4 @@ class BateriaForm(forms.ModelForm):
         
         campos = ['numeracao', 'num_ciclos', 'ciclos_maximo', 'aeronave']
         for campo in campos:
-            add_class_and_form_control(self, campo, campo, 'form-control')
+            addAttributes(self, campo, campo, 'form-control')

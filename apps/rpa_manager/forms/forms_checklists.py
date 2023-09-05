@@ -1,6 +1,6 @@
 from django import forms
 from apps.rpa_manager.models import Checklist, Aeronave
-from apps.rpa_manager.utils.add_class_and_form_control import add_class_and_form_control
+from apps.rpa_manager.utils.addAttributes import addAttributes
 
 
 class ChecklistForm(forms.ModelForm):
@@ -61,7 +61,7 @@ class ChecklistForm(forms.ModelForm):
         campos = ['aeronave', 'num_baterias', 'num_helices', 'alteracoes']
         
         for campo in campos:
-            add_class_and_form_control(self, campo, campo, 'form-control')
+            addAttributes(self, campo, campo, 'form-control')
         
         for campo in self.camposCheckboxesChecklist:
-            add_class_and_form_control(self, campo, campo, 'checklist_item')
+            addAttributes(self, campo, campo, 'checklist_item')

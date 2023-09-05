@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from apps.rpa_manager.models import Missao, Aeronave
-from apps.rpa_manager.utils.add_class_and_form_control import add_class_and_form_control
+from apps.rpa_manager.utils.addAttributes import addAttributes
 from apps.rpa_manager.utils.addPlaceholderToField import addPlaceholder
 
 
@@ -62,7 +62,7 @@ class MissaoFormulario(forms.ModelForm):
                   'usuario']
         
         for campo in campos:
-            add_class_and_form_control(self, campo, campo, 'form-control')
+            addAttributes(self, campo, campo, 'form-control')
             
     def clean(self):
         cleaned_data = super().clean()

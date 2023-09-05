@@ -15,7 +15,8 @@ from apps.rpa_manager.models import (
     Entidades,
     PontosDeInteresse,
     ImagensIncidente,
-    ImagensChecklist
+    ImagensChecklist,
+    Legislation
 )
 
 class MissaoAdmin(admin.ModelAdmin):
@@ -54,6 +55,7 @@ admin.site.register(TipoDeOperacao)
 admin.site.register(CidadesPB)
 admin.site.register(Incidentes)
 admin.site.register(Entidades)
+admin.site.register(Legislation)
 admin.site.register(PontosDeInteresse)
 admin.site.register(ImagensIncidente)
 admin.site.register(ImagensChecklist)

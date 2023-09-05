@@ -1,5 +1,8 @@
 from django.urls import path
 from .views.views_crud_baterias import UpdateAllBateriasView
+from .views.views_legislation import (
+    LegislationCreateView,
+)
 from .views.views_incidentes import (
     IncidentesCreateView,
     IncidentesUpdateView,
@@ -38,7 +41,8 @@ from .views.views_main import (
     DeletarAeronaveView, VerBateriaView,
     CriarNovaBateriaView, EditarBateriaView,
     DeletarBateriaView,     HistoricosPorAeronaveView, IncidentesView,
-    TypeOfBatteryView, ChecklistImageDeleteView)
+    TypeOfBatteryView, ChecklistImageDeleteView,
+    LegislationsView,)
 # MilitaryListJson
 
 app_name = "rpa_manager"
@@ -47,6 +51,9 @@ urlpatterns = [
     path('painel/', PainelView.as_view(), name="painel"),
     path('principal/', PrincipalView.as_view(), name="principal"),
     path('historico/', HistoricosPorAeronaveView.as_view(), name='historico'),
+    
+    path('create_legislation/', LegislationCreateView.as_view(), name='create_legislation'),
+    
     
     path('create_incidente/', IncidentesCreateView.as_view(), name='create_incidente'),
     path('incidentes_detail/<int:pk>/', IncidentesDetailView.as_view(), name='incidentes_detail'),
@@ -101,6 +108,7 @@ urlpatterns = [
     path('relatorios/', RelatoriosView.as_view(), name="relatorios"),
     path('baterias/', BateriasView.as_view(), name="baterias"),
     path('incidentes/', IncidentesView.as_view(), name="incidentes"),
+    path('legislations/', LegislationsView.as_view(), name="legislations"),
 
     # API externa (vem do app portal)
     # path('api-v1/military_list_json/', MilitaryListJson.as_view(), name='military_list_json'),

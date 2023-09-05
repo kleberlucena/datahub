@@ -17,7 +17,8 @@ from apps.rpa_manager.models import (Aeronave, Bateria,
                                      Checklist, TypeOfBattery, 
                                      Missao, Relatorio,
                                      HistoricoAlteracoesAeronave,
-                                     Incidentes, PontosDeInteresse, NaturezaDeVoo, Entidades)
+                                     Incidentes, PontosDeInteresse,
+                                     Legislation,)
 from datetime import datetime
 
 def home(request):
@@ -128,6 +129,7 @@ class PointsOfInterestView(GroupRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["points_of_interest"] = PontosDeInteresse.objects.all()
         return context
+
 
 class ChecklistsView(GroupRequiredMixin, TemplateView):
     template_name = 'rpa_manager/list_checklists.html'
@@ -243,6 +245,12 @@ class HistoricosPorAeronaveView(GroupRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form_class(self.request.GET or None)
         return context
+    
+    
+class LegislationsView(ListView):
+    model = Legislation
+    template_name = 'rpa_manager/list_of_legislation.html'
+    context_object_name = 'legislations'
     
     
 class TypeOfBatteryView(TemplateView):

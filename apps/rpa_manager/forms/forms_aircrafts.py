@@ -1,6 +1,6 @@
 from django import forms
 from apps.rpa_manager.models import Aeronave
-from apps.rpa_manager.utils.add_class_and_form_control import add_class_and_form_control
+from apps.rpa_manager.utils.addAttributes import addAttributes
 from apps.rpa_manager.utils.addPlaceholderToField import addPlaceholder
 
 
@@ -24,4 +24,4 @@ class AeronavesForm(forms.ModelForm):
 
         campos = ['prefixo', 'modelo', 'marca','imagem_aeronave' , 'local', 'em_uso']
         for campo in campos:
-            add_class_and_form_control(self, campo, campo, 'form-control')
+            addAttributes(self, campo, campo, 'form-control')

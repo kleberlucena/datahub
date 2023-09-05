@@ -1,7 +1,7 @@
 
 from django import forms
 from apps.rpa_manager.models import Guarnicao
-from apps.rpa_manager.utils.add_class_and_form_control import add_class_and_form_control
+from apps.rpa_manager.utils.addAttributes import addAttributes
 
 
 class GuarnicaoForm(forms.ModelForm):
@@ -42,7 +42,7 @@ class GuarnicaoForm(forms.ModelForm):
                   ]
         
         for campo in campos:
-            add_class_and_form_control(self, campo, campo, 'form-control')    
+            addAttributes(self, campo, campo, 'form-control')    
             
     def clean_telefone(self):
         telefone = self.cleaned_data['telefone']
