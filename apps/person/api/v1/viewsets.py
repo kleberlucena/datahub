@@ -135,19 +135,22 @@ class AddPersonListView(generics.ListCreateAPIView):
             if probable_cpf:
                 cpf = base_helpers.validate_cpf(probable_cpf)
                 print(cpf)
-                # if cpf:
-                #     person_cortex = helpers_cortex.process_cortex_consult(
-                #         username=request.user.username, cpf=cpf)
-                #     if person_cortex:
-                #         documents = helpers_cortex.validate_document(cpf)
-                #         if documents is None:
-                #             helpers_cortex.create_person_and_document(
-                #                 person_cortex)
-                #         else:
-                #             helpers_cortex.update_registers(
-                #                 documents=documents, person_cortex=person_cortex)
-                #     helpers_bnmp.process_bnmp_consult(
-                #         username=request.user.username, cpf=cpf)
+                if cpf:
+                    person_cortex = helpers_cortex.process_cortex_consult(
+                        username=request.user.username, cpf=cpf)
+                    if person_cortex:
+                        documents = helpers_cortex.validate_document(cpf)
+                        if documents is None:
+                            helpers_cortex.create_person_and_document(
+                                person_cortex)
+                        else:
+                            helpers_cortex.update_registers(
+                                documents=documents, person_cortex=person_cortex)
+                    helpers_bnmp.process_bnmp_consult(
+                        username=request.user.username, cpf=cpf)
+        except Exception as e:
+            logger.warning('CPF not Found - {}'.format(e))
+        try:
             queryset = self.get_queryset().filter(
                 self.build_filter_conditions()
             )
@@ -156,7 +159,7 @@ class AddPersonListView(generics.ListCreateAPIView):
         
             return self.get_paginated_response(serializer.data)
         except Exception as e:
-            logger.error('Error while getting person_cortex - {}'.format(e))
+            logger.error('Error while getting person bacinf - {}'.format(e))
             raise ValidationError(e)
 
         
