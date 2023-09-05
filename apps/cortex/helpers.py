@@ -79,4 +79,3 @@ def create_person_and_document(person_cortex):
     except Exception as e:
         logger.error(
             'Error while create person and document on bacinf - {}'.format(e))
-        return None
