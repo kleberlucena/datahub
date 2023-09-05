@@ -16,11 +16,11 @@
       }
 
       .border-for-in-course{
-        border-right: 2px solid #FFC107;
+        border-right: 5px solid #FFC107 !important;
       }
 
       .border-for-done {
-        border-right: 2px solid lightblue;
+        border-right: 5px solid lightblue !important;
       }
     }
   </style>
@@ -64,9 +64,9 @@
             <tr>
               <td>{{ missao.usuario.username }} {{ missao.usuario.last_name }}</td>
               {% if missao.concluida is False %}
-                <td style="border-right: 2px solid #FFC107;">{{ missao.titulo }}</td>
+                <td class="border-for-in-course">{{ missao.titulo }}</td>
               {% else %}
-                <td style="border-right: 2px solid lightblue;">{{ missao.titulo }}</td>
+                <td class="border-for-done">{{ missao.titulo }}</td>
               {% endif %}
               <td data-sort='YYYYMMDD'>{{ missao.data | date:"d/m/Y" }}</td>
               <td>{{ missao.aeronave.prefixo}} - {{ missao.aeronave.modelo}}</td>
@@ -78,7 +78,6 @@
                   <span class="badge badge-warning">Em andamento</span>
                 {% endif %}
               </td>
-
 
               {% if missao.concluida is False %}
                 {% if request.user|has_group:'profile:rpa_view' %}
