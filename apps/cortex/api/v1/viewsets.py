@@ -65,23 +65,20 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
     def get(self, request, cpf):
         username = request.user.username
         cpf = helpers_base.validate_cpf(cpf)
-        person_cortex = None
-
-        try:
-            instance = helpers.process_cortex_consult(
-                username=username, cpf=cpf)
-            print(instance)
-            documents = helpers.validate_document(cpf)
-            if documents is None:
-                helpers.create_person_and_document(instance)
-            else:
-                helpers.update_registers(
-                    documents=documents, person_cortex=instance)
+    
+        instance = helpers.process_cortex_consult(
+            username=username, cpf=cpf)
+        documents = helpers.validate_document(cpf)
+        if documents is None:
+            helpers.create_person_and_document(instance)
+        else:
+            helpers.update_registers(
+                documents=documents, person_cortex=instance)
+        if instance:
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
-        except Exception as e:
-            logger.error('Error while serialize person_cortex - {}'.format(e))
-            return Response(status=500)
+        else:
+            raise NotFound
 
     def get_queryset(self):
         return PersonCortex.objects.all()

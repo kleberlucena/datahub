@@ -88,6 +88,7 @@ urlpatterns = [
     path('person/', include('apps.person.urls'), name='person'),
     path('portal/', include('apps.portal.urls'), name='portal'),
     path('fact/', include('apps.fact.urls'), name='fact'),
+    path('termos-de-uso/', include('apps.termsofuse.urls')),
     path('celery-progress/', include('celery_progress.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

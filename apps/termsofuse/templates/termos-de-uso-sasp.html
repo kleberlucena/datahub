@@ -1,0 +1,188 @@
+{% load static %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+
+<!-- styles -->
+{% block style_sheet %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/toastr/toastr.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+  <link
+      rel="icon"
+      href="https://www.pm.pb.gov.br/portal/wp-content/uploads/2017/09/pmpb.png"
+    />
+
+  <meta name="description" content="Polícia Militar da Paraíba" />
+  <link
+      href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+  <body class="flex flex-col items-center bg-gray-100">
+    <div class="mx-6 mt-6 max-w-6xl">
+      <img
+        class="h-44 lg:h-72 mx-auto"
+        src="https://www.pm.pb.gov.br/portal/wp-content/uploads/2017/09/pmpb.png"
+        alt="PMPB"
+      />
+
+      <h1 class="mt-12 text-center md:text-xl font-semibold text-gray-900">
+        ESTADO-MAIOR ESTRATÉGICO
+      </h1>
+      <h1 class="mt-2 text-center md:text-xl font-semibold text-gray-900">
+        COORDENADORIA DE INTELIGÊNCIA – EM/2
+      </h1>
+      <h1 class="mt-2 text-center md:text-xl font-semibold text-gray-900">
+        SEÇÃO DE TECNOLOGIA DA INFORMAÇÃO
+      </h1>
+      <h1 class="mt-24 text-center md:text-xl font-medium text-gray-900">
+        TERMO DE RESPONSABILIDADE DE USUÁRIO DO SISTEMA DE APOIO AO SERVIÇO
+        POLICIAL
+      </h1>
+
+      <p class="mt-12 text-center text-justify md:text-xl text-gray-600">
+        Pelo presente instrumento, a pessoa física autorizada e autenticada ao
+        SASP (Sistema de Apoio ao Serviço Policial) é doravante denominada
+        USUÁRIO(A). O SASP trata-se de um software desenvolvido para ser
+        instalado em dispositivo eletrônico móvel, como um smartphone, tablet ou
+        similar compatível. Este aplicativo pode ser instalado no dispositivo
+        desde que baixado pelo usuário através de uma loja on-line, tais como
+        Google Play ou Apple Store. Sua utilização tem justo e pactuado o
+        presente TERMO DE RESPONSABILIDADE DE USO DO SISTEMA, e será regido
+        pelas cláusulas seguintes:
+      </p>
+
+      <h1 class="mt-24 text-left md:text-xl font-medium text-gray-800">
+        CLÁUSULA PRIMEIRA - DEFINIÇÕES
+      </h1>
+      <p class="mt-12 text-center text-justify md:text-xl text-gray-600">
+        O Sistema de Apoio ao Serviço Policial de forma sintética, trata-se de
+        um aplicativo integrado a uma plataforma, compreendendo uma suíte de
+        ferramentas desenvolvidas para auxiliar no emprego policial,
+        contemplando requisitos operacionais e gerenciais ligados ao serviço
+        ostensivo. Sistema esse que possibilita a construção mútua de banco de
+        dados voltado a auxílio na tomada de decisão do operador de Segurança
+        Pública, possibilitando uma resposta mais rápida e precisa. Portanto
+        esse sistema trata-se de uma das ações que busca maior sinergia entre
+        entre as diversas modalidades de policiamento da PMPB.
+      </p>
+      <h1 class="mt-24 text-left md:text-xl font-medium text-gray-800">
+        CLÁUSULA SEGUNDA - OBRIGAÇÕES DO USUÁRIO
+      </h1>
+      <p class="mt-12 text-left text-justify md:text-xl text-gray-600">
+        Os usuários devem observar as seguintes condutas durante o acesso ao
+        SASP:
+      </p>
+      <ul class="list-inside list-disc mt-12 bg-rose-200 ...">
+        <li>
+          Realizar o cadastro sobre suas informações pessoais sendo responsável
+          pelo correto preenchimento e manutenção das referidas informações;
+        </li>
+        <li>
+          Poderá alterar suas informações cadastrais no próprio aplicativo;
+        </li>
+        <li>
+          Deverá manter sigilo de sua senha de acesso que é de uso pessoal e
+          intransferível, sendo punível sua divulgação conforme legislação;
+        </li>
+        <li>
+          Cumprir as normas, os procedimentos e as orientações de segurança da
+          informação e comunicações da COINT e PMPB;
+        </li>
+        <li>
+          Utilizar as informações disponíveis no SASP somente nas atividades a
+          que compete exercer, ciente que são monitoradas e acompanhadas suas
+          ações ou consultas ao sistema;
+        </li>
+        <li>
+          O aplicativo deverá ser utilizado por você, usuário. A venda,
+          transferência, modificação, engenharia reversa ou distribuição bem
+          como a cópia de textos, imagens ou quaisquer partes nele contido é
+          expressamente proibida;
+        </li>
+        <li>
+          Contatar o Setor de Tecnologia da Informação da COINT-PMPB caso
+          verifique que qualquer informação/dados que necessitem de revisão /
+          atualização, a quem compete analisar e com o aval da Coordenação
+          COINT, proceder às modificações que forem necessárias;
+        </li>
+        <li>
+          O Usuário concorda que não utilizará tais informações ou dados
+          exclusivos de nenhuma forma, exceto para uso dos Serviços em
+          conformidade com este Termo de Uso;
+        </li>
+        <li>
+          Nenhuma parte dos serviços do APP poderá ser reproduzida de qualquer
+          forma (Prints e ou Fotos) ou por qualquer meio, exceto conforme
+          expressamente permitido por estes termos.
+        </li>
+      </ul>
+      <p class="mt-12 text-center text-justify md:text-xl text-gray-600">
+        Qualquer compartilhamento não autorizado poderá ser punível nos termos
+        do RDPM (Publicar ou contribuir para que sejam publicados fatos,
+        documentos ou assuntos policiais-militares que possam concorrer para o
+        desprestígio da corporação ou firam a disciplina ou a segurança.) e Art.
+        326 do CPM (Revelar fato de que tem ciência em razão do cargo ou função
+        e que deva permanecer em segredo, ou facilitar-lhe a revelação, em
+        prejuízo da administração militar:), sem prejuízo de outras legislações
+        correlatas.
+      </p>
+
+      <h1 class="mt-24 text-left md:text-xl font-medium text-gray-800">
+        CLÁUSULA TERCEIRA - DAS RESPONSABILIDADES DO USUÁRIO
+      </h1>
+      <p class="mt-12 text-center text-justify md:text-xl text-gray-600">
+        Você reconhece ainda que analisou e aceitou as condições de uso. Leia-as
+        atentamente pois o uso deste aplicativo significa que você aceitou todos
+        os termos e concorda em cumpri-los.
+      </p>
+      <p class="mt-12 text-center text-justify md:text-xl text-gray-600">
+        O uso incorreto do Sistema de Apoio ao Serviço Policial poderá implicar
+        em sanções legais.
+      </p>
+      <h1 class="mt-24 text-left md:text-xl font-medium text-gray-800">
+        DECLARAÇÃO
+      </h1>
+      <p class="mt-12 text-center text-justify md:text-xl text-gray-600">
+        DECLARO ter ciência inequívoca da legislação sobre o tratamento de
+        informações classificadas cuja divulgação possa causar risco ou dano à
+        segurança da sociedade ou do Estado, e me comprometo a guardar o sigilo
+        necessário, sob pena do disposto nos Arts. 295, 299, 313-A, 313-B, 320,
+        325 e 327 do Código Penal Brasileiro, art. 132, Lei 12.527 (Lei de
+        acesso à informação), e demais normas complementares da PMPB;
+        aquiescendo com todas as responsabilidades inerentes ao uso das
+        informações privilegiadas e de natureza de Segurança Pública, bem como
+        todas as implicações legais decorrentes do uso indevido das informações
+        e do acesso, seja qual for a circunstância, constituindo o usuário e
+        senha, disponibilizados para acesso, propriedades da COINT e sujeitos ao
+        monitoramento e controle das ações realizadas nos sistemas integrados.
+      </p>
+    </div>
+    <footer class="h-72">
+      <div class="form-group">
+        <form method="post">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-12">            
+              <div class="form-group input-group row">
+                <button type="submit" class="btn btn-primary float-right mt-4"> 
+                  <a href="https://sasp.apps.pm.pb.gov.br">Aceitar</a>
+                </button>
+              </div>
+              <br>
+            </div>
+          </div>
+        </form>
+      </div>
+    </footer>
+  </body>
+  {% endblock %}
