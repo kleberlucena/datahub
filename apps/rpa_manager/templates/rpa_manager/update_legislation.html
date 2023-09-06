@@ -14,7 +14,7 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Inseir nova legislação {% endblock %}
+{% block title %} Editar legislação {% endblock %}
 
 
 <!-- context title -->
@@ -22,8 +22,8 @@
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
-  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:painel' %}">Painel</a></li>
-  <li class="breadcrumb-item active">Nova legislação</li>
+  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:legislations' %}">Legislação</a></li>
+  <li class="breadcrumb-item active">Editar legislação</li>
 {% endblock %}
 
 <!-- main container -->
@@ -32,7 +32,7 @@
     <div class="col-md-12">
       <div class="card card-primary card-outline">
         <div class="card-header">
-          <h3 class="card-title">Inserir legislação</h3>
+          <h3 class="card-title">Editar legislação</h3>
         </div>
         <form class="p-3" method='post' enctype="multipart/form-data">
           {% csrf_token %}
@@ -64,12 +64,14 @@
             </div>
           </div>
 
+          {% if request.user|has_group:'profile:rpa_advanced' %}
             <div class="mt-3">
               <button type="submit" class="btn btn-primary">Salvar</button>
               <a href="{% url 'rpa_manager:legislations' %}">
                 <button type="button" class="btn btn-warning">Cancelar</button>
               </a>
             </div>
+          {% endif %}
         </form>
       </div>
     </div>

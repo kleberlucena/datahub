@@ -137,7 +137,7 @@ class DeleteMissaoView(PermissionRequiredMixin, View):
         aeronave.em_uso = False
         aeronave.save()
 
-        messages.success(self.request, 'Operação excluída com sucesso!')
+        messages.info(self.request, 'Operação excluída com sucesso!')
         
         return HttpResponseRedirect(self.success_url)
 

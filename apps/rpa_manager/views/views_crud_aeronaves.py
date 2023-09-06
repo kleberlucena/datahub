@@ -59,7 +59,7 @@ class DeletarAeronaveView(PermissionRequiredMixin, DeleteView):
     
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
-        messages.success(self.request, f'{MESSAGE_MODEL_NAME} excluída com sucesso!')
+        messages.info(self.request, f'{MESSAGE_MODEL_NAME} excluída com sucesso!')
         return response
     
     @method_decorator(require_permission(permission_required))

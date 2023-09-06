@@ -99,7 +99,7 @@ class DescadastrarGuarnicao(PermissionRequiredMixin, View):
         if last_guarnicao:
             last_guarnicao.delete()
             
-        messages.success(self.request, f'{MESSAGE_MODEL_NAME} descadastrada com sucesso!')
+        messages.info(self.request, f'{MESSAGE_MODEL_NAME} descadastrada com sucesso!')
         return redirect(self.success_url)
     
     @method_decorator(require_permission(permission_required))

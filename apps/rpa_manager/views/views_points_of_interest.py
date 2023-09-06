@@ -78,5 +78,5 @@ class DeletePointOfInterest(DeleteView):
     
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
-        messages.success(self.request, f'{MESSAGE_MODEL_NAME} excluído com sucesso!')
+        messages.info(self.request, f'{MESSAGE_MODEL_NAME} excluído com sucesso!')
         return response

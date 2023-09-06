@@ -47,7 +47,7 @@
               <th scope="col">Data de publicação</th>
               <th scope="col">Descrição</th>
               <th scope="col">Em vigor</th>
-              <th class="removerDoPdf" scope="col">Download</th>
+              <th class="removerDoPdf" scope="col">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -56,11 +56,27 @@
               <td>{{ legislation.title }}</td>
               <td data-sort='YYYYMMDD'>{{ legislation.date_published|date:"d/m/Y" }}</td>
               <td>{{ legislation.description }}</td>
-              <td>{{ legislation.in_effect }}</td>
+              {% if legislation.in_effect == True %}
+                <td>Sim</td>
+              {% else %}
+                <td>Não</td>
+              {% endif %}
               <td>
-                <a href="{{ legislation.legislation_file.url }}" download target="_blank">
-                  <i class="fas fa-download"></i> Baixar
-                </a>
+                <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
+                  <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                  Filtros
+                  </button>
+                  <div class="dropdown-menu" role="menu"> 
+                    <a class="dropdown-item" href="{{ legislation.legislation_file.url }}" download target="_blank" style="text-decoration: none;">Baixar</a>
+                    {% if request.user|has_group:'profile:rpa_advanced' %}
+                      <a class="dropdown-item" href="{% url 'rpa_manager:update_legislation' legislation.pk %}">Editar legislação</a>
+                    {% endif %}
+                    {% if request.user.is_superuser %}
+                        <a class="dropdown-item" href="{% url 'rpa_manager:delete_legislation' legislation.pk %}">Excluir legislação</a>
+                    {% endif %}
+                  </div>
+                </div>
               </td>
             </tr>
             {% endfor %}

@@ -82,6 +82,6 @@ class UpdateAllBateriasView(View):
                 bateria.num_ciclos = int(num_ciclos)
                 bateria.save()
 
-        messages.success(self.request, f'Checklist criado com sucesso!')
+        messages.info(self.request, f'Checklist criado com sucesso!')
         
         return redirect('rpa_manager:painel')

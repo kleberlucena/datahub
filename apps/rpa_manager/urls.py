@@ -2,6 +2,8 @@ from django.urls import path
 from .views.views_crud_baterias import UpdateAllBateriasView
 from .views.views_legislation import (
     LegislationCreateView,
+    LegislationUpdateView,
+    LegislationDeleteView
 )
 from .views.views_incidentes import (
     IncidentesCreateView,
@@ -53,7 +55,8 @@ urlpatterns = [
     path('historico/', HistoricosPorAeronaveView.as_view(), name='historico'),
     
     path('create_legislation/', LegislationCreateView.as_view(), name='create_legislation'),
-    
+    path('update_legislation/<int:pk>/', LegislationUpdateView.as_view(), name='update_legislation'),
+    path('delete_legislation/<int:pk>/', LegislationDeleteView.as_view(), name='delete_legislation'),
     
     path('create_incidente/', IncidentesCreateView.as_view(), name='create_incidente'),
     path('incidentes_detail/<int:pk>/', IncidentesDetailView.as_view(), name='incidentes_detail'),
