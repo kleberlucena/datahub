@@ -16,7 +16,13 @@ from apps.rpa_manager.models import (
     PontosDeInteresse,
     ImagensIncidente,
     ImagensChecklist,
-    Legislation
+    Legislation,
+    Severity,
+    Probability,
+    Tolerability,
+    Situation,
+    Assessment,
+    RiskAssessment
 )
 
 class MissaoAdmin(admin.ModelAdmin):
@@ -58,4 +64,9 @@ admin.site.register(Entidades)
 admin.site.register(Legislation)
 admin.site.register(PontosDeInteresse)
 admin.site.register(ImagensIncidente)
-admin.site.register(ImagensChecklist)
+admin.site.register(Severity)
+admin.site.register(Probability)
+admin.site.register(Tolerability)
+admin.site.register(Situation)
+admin.site.register(Assessment)
+admin.site.register(RiskAssessment)

@@ -308,3 +308,59 @@ class Legislation(models.Model):
     
     def __str__(self):
         return f'{self.title} - {self.date_published}'
+    
+# risk analyses models
+class Severity(models.Model):
+    severity = models.CharField(max_length=1, null=False, default='')
+
+    def __str__(self):
+        return self.severity
+
+
+class Probability(models.Model):
+    probability = models.CharField(max_length=1, null=False, default='')
+
+    def __str__(self):
+        return self.probability
+    
+    
+class Tolerability(models.Model):
+    severity = models.ForeignKey(Severity, on_delete=models.SET_NULL, null=True)
+    probability = models.ForeignKey(Probability, on_delete=models.SET_NULL, null=True)
+    
+    def __str__(self):
+        return f"{self.probability}{self.severity}"
+
+
+class Situation(models.Model):
+    situation = models.CharField(max_length=100, null=False, default='')
+    
+    def __str__(self):
+        return self.situation
+
+
+class Assessment(models.Model):
+    situation = models.ForeignKey(Situation, on_delete=models.SET_NULL, null=True)
+    probability_of_occurrence = models.ForeignKey(Probability, on_delete=models.SET_NULL, null=True)
+    severity_of_occurrence = models.ForeignKey(Severity, on_delete=models.SET_NULL, null=True)
+    risk = models.CharField(max_length=2, null=False, default='')
+    hierarchy_authorization = models.CharField(max_length=100, null=True, blank=True)
+    tolerability = models.CharField(max_length=100, null=False, default='')
+    
+    def __str__(self):
+        return self.situation.situation
+    
+    
+class RiskAssessment(models.Model):
+    date = models.DateTimeField(null=True, blank=True)
+    operator = models.CharField(max_length=100, null=False, default='')
+    cpf = models.CharField(max_length=15, null=False, default='')
+    aircrafts = models.ManyToManyField('Aeronave')
+    apllied_legislation = models.TextField(null=False, default='')
+    keep_distance_from_3rd = models.BooleanField(default=False)
+    pilots_capabilities = models.BooleanField(default=True)
+    accident_procedure = models.TextField(null=False, default='')
+    assessment = models.ForeignKey(Assessment, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return f"{self.operator} - {self.date}"

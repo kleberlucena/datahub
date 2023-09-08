@@ -15,7 +15,7 @@ from apps.rpa_manager.handlers import require_permission
 from django.contrib import messages
 from django.utils import timezone
 
-MESSAGE_MODEL_NAME = 'Relatório'
+MESSAGE_MODEL_NAME = 'Cardeneta'
 
 
 class VerRelatorioView(GroupRequiredMixin, DetailView):
@@ -67,7 +67,7 @@ class CriarNovoRelatorioView(GroupRequiredMixin, CreateView):
 
         form.instance.missao = missao
         
-        messages.success(self.request, f'{MESSAGE_MODEL_NAME} criado com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} criada com sucesso!')
         
         return super().form_valid(form)
     
@@ -82,7 +82,7 @@ class EditarRelatorioView(GroupRequiredMixin, UpdateView):
     
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(self.request, f'{MESSAGE_MODEL_NAME} editado com sucesso!')
+        messages.success(self.request, f'{MESSAGE_MODEL_NAME} editada com sucesso!')
         
         return response
 
@@ -90,7 +90,7 @@ class EditarRelatorioView(GroupRequiredMixin, UpdateView):
         relatorio = self.get_object()
         time_since_creation = timezone.now() - relatorio.created_at
         if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
-            messages.error(self.request, 'Não é possível editar este relatório após 24 horas.')
+            messages.error(self.request, 'Não é possível editar esta cardeneta após 24 horas.')
             return HttpResponseRedirect(self.success_url)
         return super().dispatch(*args, **kwargs)
     
@@ -104,7 +104,7 @@ class DeletarRelatorioView(PermissionRequiredMixin, DeleteView):
     
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
-        messages.info(self.request, f'{MESSAGE_MODEL_NAME} excluído com sucesso!')
+        messages.info(self.request, f'{MESSAGE_MODEL_NAME} excluída com sucesso!')
         return response
     
     @method_decorator(require_permission(permission_required))
@@ -112,6 +112,6 @@ class DeletarRelatorioView(PermissionRequiredMixin, DeleteView):
         relatorio = self.get_object()
         time_since_creation = timezone.now() - relatorio.created_at
         if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
-            messages.error(self.request, 'Não é possível excluir este relatório após 24 horas.')
+            messages.error(self.request, 'Não é possível excluir esta cardeneta após 24 horas.')
             return HttpResponseRedirect(self.success_url)
         return super().dispatch(*args, **kwargs)
