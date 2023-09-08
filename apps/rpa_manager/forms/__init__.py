@@ -9,3 +9,4 @@ from .forms_points_interests import *
 from .forms_typeofbattery import *
 from .forms_incidentes import *
 from .forms_legislation import *
+from .forms_risk_assessment import *

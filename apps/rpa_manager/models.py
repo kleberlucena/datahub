@@ -360,7 +360,9 @@ class RiskAssessment(models.Model):
     keep_distance_from_3rd = models.BooleanField(default=False)
     pilots_capabilities = models.BooleanField(default=True)
     accident_procedure = models.TextField(null=False, default='')
-    assessment = models.ForeignKey(Assessment, on_delete=models.SET_NULL, null=True)
+    assessment = models.ManyToManyField(Assessment, related_name='risk_assessments', blank=True)
 
     def __str__(self):
         return f"{self.operator} - {self.date}"
+    
+

@@ -8,3 +8,4 @@ from .views_main import *
 from .views_points_of_interest import *
 from .views_incidentes import *
 from .views_legislation import *
+from .views_risk_assessment import *

@@ -1,5 +1,10 @@
 from django.urls import path
 from .views.views_crud_baterias import UpdateAllBateriasView
+from .views.views_risk_assessment import (
+    RiskAssessmentCreateView,
+    AssessmentCreateView,
+    RiskAssessmentListView
+)
 from .views.views_legislation import (
     LegislationCreateView,
     LegislationUpdateView,
@@ -53,6 +58,11 @@ urlpatterns = [
     path('painel/', PainelView.as_view(), name="painel"),
     path('principal/', PrincipalView.as_view(), name="principal"),
     path('historico/', HistoricosPorAeronaveView.as_view(), name='historico'),
+    
+    path('create_risk_assessment/', RiskAssessmentCreateView.as_view(), name='create_risk_assessment'),
+    path('create_assessment/', AssessmentCreateView.as_view(), name='create_assessment'),
+    path('risk_assessment_list/', RiskAssessmentListView.as_view(), name='risk_assessment_list'),
+    
     
     path('create_legislation/', LegislationCreateView.as_view(), name='create_legislation'),
     path('update_legislation/<int:pk>/', LegislationUpdateView.as_view(), name='update_legislation'),
