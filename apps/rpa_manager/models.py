@@ -338,19 +338,7 @@ class Situation(models.Model):
     def __str__(self):
         return self.situation
 
-
-class Assessment(models.Model):
-    situation = models.ForeignKey(Situation, on_delete=models.SET_NULL, null=True)
-    probability_of_occurrence = models.ForeignKey(Probability, on_delete=models.SET_NULL, null=True)
-    severity_of_occurrence = models.ForeignKey(Severity, on_delete=models.SET_NULL, null=True)
-    risk = models.CharField(max_length=2, null=False, default='')
-    hierarchy_authorization = models.CharField(max_length=100, null=True, blank=True)
-    tolerability = models.CharField(max_length=100, null=False, default='')
-    
-    def __str__(self):
-        return self.situation.situation
-    
-    
+  
 class RiskAssessment(models.Model):
     date = models.DateTimeField(null=True, blank=True)
     operator = models.CharField(max_length=100, null=False, default='')
@@ -360,9 +348,54 @@ class RiskAssessment(models.Model):
     keep_distance_from_3rd = models.BooleanField(default=False)
     pilots_capabilities = models.BooleanField(default=True)
     accident_procedure = models.TextField(null=False, default='')
-    assessment = models.ManyToManyField(Assessment, related_name='risk_assessments', blank=True)
+   
 
     def __str__(self):
         return f"{self.operator} - {self.date}"
     
+    
+class Assessment(models.Model):
+    situation = models.ForeignKey(Situation, on_delete=models.SET_NULL, null=True)
+    probability_of_occurrence = models.ForeignKey(Probability, on_delete=models.SET_NULL, null=True)
+    severity_of_occurrence = models.ForeignKey(Severity, on_delete=models.SET_NULL, null=True)
+    risk = models.CharField(max_length=2, null=False, default='')
+    hierarchy_authorization = models.CharField(max_length=100, null=True, blank=True)
+    tolerability = models.CharField(max_length=100, null=False, default='')
+    risk_assessment = models.ForeignKey(RiskAssessment, on_delete=models.CASCADE, null=True)
+    
+    def save(self, *args, **kwargs):
+        self.risk = f"{self.probability_of_occurrence}{self.severity_of_occurrence}"
+        
+        risk_tolerance_mapping = {
+            '4A': 'Risco extremo',
+            '5A': 'Risco extremo',
+            '5B': 'Risco extremo',
+            '3A': 'Alto risco',
+            '4B': 'Alto risco',
+            '5C': 'Alto risco',
+            '1A': 'Risco moderado',
+            '2A': 'Risco moderado',
+            '2B': 'Risco moderado',
+            '3B': 'Risco moderado',
+            '3C': 'Risco moderado',
+            '4C': 'Risco moderado',
+            '4D': 'Risco moderado',
+            '5D': 'Risco moderado',
+            '5E': 'Risco moderado',
+            '1B': 'Baixo risco',
+            '1C': 'Baixo risco',
+            '2C': 'Baixo risco',
+            '2D': 'Baixo risco',
+            '3D': 'Baixo risco',
+            '3E': 'Baixo risco',
+            '4E': 'Baixo risco',
+            '1D': 'Risco muito baixo',
+            '1E': 'Risco muito baixo',
+            '2E': 'Risco muito baixo',
+        }
+        self.tolerability = risk_tolerance_mapping.get(self.risk, 'Undefined')
 
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f"{self.situation.situation} - {self.risk_assessment}"

@@ -19,7 +19,7 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Análises de risco {% endblock %}
+{% block title %} Avaliação de risco operacional {% endblock %}
 
 <!-- context title -->
 {% block title-header %} Operações aéreas {% endblock %}
@@ -27,7 +27,7 @@
 <!-- breadcrumb -->
 {% block breadcrumb %}
   <li class="breadcrumb-item"><a href="{% url 'rpa_manager:painel' %}">Painel</a></li>
-  <li class="breadcrumb-item active">Análises de risco</li>
+  <li class="breadcrumb-item active">Avaliação de risco operacional</li>
 {% endblock %}
 
 <!-- main container -->
@@ -35,7 +35,7 @@
 
 <div class="card card-primary card-outline">
   <div class="card-header">
-    <h3 class="card-title">Análises de risco</h3>
+    <h3 class="card-title">Avaliação de risco operacional</h3>
   </div>
 
   <div class="card-body">
@@ -58,7 +58,7 @@
           <tr>
             <td>{{ risk_assessment.operator }}</td>
             <td>{{ risk_assessment.cpf }}</td>
-            <td>{{ risk_assessment.date }}</td>
+            <td data-sort='YYYYMMDD'>{{ risk_assessment.date|date:"d/m/Y"  }}</td>
             <td>{{ risk_assessment.aircrafts.all|join:", " }}</td>
             <td>
               <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
@@ -68,8 +68,8 @@
                   Filtros
                 </button>
                 <div class="dropdown-menu" role="menu" style="">
-                  {% comment %} <a class="dropdown-item" href="{% url 'rpa_manager:ver_aeronave' aeronave.id %}">Ver aeronave</a> {% endcomment %}
-                  {% comment %} <a class="dropdown-item" href="{% url 'rpa_manager:editar_aeronave' aeronave.id %}">Editar aeronave</a> {% endcomment %}
+                  <a class="dropdown-item" href="{% url 'rpa_manager:read_risk_assessment' risk_assessment.id %}">Ver avaliação</a>
+                  <a class="dropdown-item" href="{% url 'rpa_manager:update_risk_assessment' risk_assessment.id %}">Editar avaliação</a>
                   {% if request.user.is_superuser %}
                     {% comment %} <a class="dropdown-item" href="{% url 'rpa_manager:deletar_aeronave' aeronave.id %}">Excluir aeronave</a> {% endcomment %}
                   {% endif %}
@@ -139,7 +139,10 @@
         responsive: true,
         searching: true,
         processing: true,
-        columnDefs: [{ "width": "150px", targets: [-1]}]
+        columnDefs: [{ "width": "150px", targets: [-1]}],
+        order: [
+          [2, 'desc'],
+        ]
     } );
   </script>
 {% endblock %}

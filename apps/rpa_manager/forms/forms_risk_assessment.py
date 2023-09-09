@@ -28,13 +28,14 @@ class RiskAssessmentForm(forms.ModelForm):
 class AssessmentForm(forms.ModelForm):
     class Meta:
         model = Assessment
-        fields = ['situation', 'probability_of_occurrence', 'risk', 'severity_of_occurrence', 'hierarchy_authorization', 'tolerability']
-
+        fields = ['situation', 'probability_of_occurrence', 'severity_of_occurrence', 'hierarchy_authorization']
+        exclude = ['risk', 'tolerability']
+        
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         addPlaceholder(self, 'hierarchy_authorization', 'Insira o grau hierárquico de quem autorizou' )
 
-        campos = ['situation', 'probability_of_occurrence', 'risk', 'severity_of_occurrence', 'hierarchy_authorization', 'tolerability']
+        campos = ['situation', 'probability_of_occurrence', 'severity_of_occurrence', 'hierarchy_authorization']
         for campo in campos:
             addAttributes(self, campo, campo, 'form-control')

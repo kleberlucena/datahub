@@ -28,7 +28,7 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Criar nova análise de risco {% endblock %}
+{% block title %} Criar nova avaliação de risco operacional {% endblock %}
 
 <!-- context title -->
 {% block title-header %} Operações aéreas {% endblock %}
@@ -36,7 +36,7 @@
 <!-- breadcrumb -->
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'rpa_manager:painel' %}">Painel</a></li>
-<li class="breadcrumb-item active">Nova análise de risco</li>
+<li class="breadcrumb-item active">Nova avaliação de risco operacional</li>
 {% endblock %}
 
 <!-- main container -->
@@ -44,7 +44,7 @@
 <div class="col-md-12">
   <div class="card card-primary card-outline">
     <div class="card-header">
-      <h3 class="card-title">Nova análise de risco</h3>
+      <h3 class="card-title">Nova avaliação de risco operacional</h3>
     </div>
     <form class="p-3" method="post">
       {% csrf_token %}
