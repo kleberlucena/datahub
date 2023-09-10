@@ -344,10 +344,14 @@ class RiskAssessment(models.Model):
     operator = models.CharField(max_length=100, null=False, default='')
     cpf = models.CharField(max_length=15, null=False, default='')
     aircrafts = models.ManyToManyField('Aeronave')
-    apllied_legislation = models.TextField(null=False, default='')
+    apllied_legislation = models.TextField(
+        null=False, 
+        default='Lei nº 7.565/1986 – CBA; RBAC-E 94; ICA 100-40, MCA 56-5; IS nº E94-003')
     keep_distance_from_3rd = models.BooleanField(default=False)
     pilots_capabilities = models.BooleanField(default=True)
-    accident_procedure = models.TextField(null=False, default='')
+    accident_procedure = models.TextField(
+        null=False, 
+        default='Corpo de Bombeiros Militar da Paraíba, SAMU, Socorristas, Brigadistas. Deverá ser informado o ocorrido ao CIOP, solicitando o apoio necessário, ou procurar pelo responsável.')
    
 
     def __str__(self):

@@ -71,7 +71,7 @@
                   <a class="dropdown-item" href="{% url 'rpa_manager:read_risk_assessment' risk_assessment.id %}">Ver avaliação</a>
                   <a class="dropdown-item" href="{% url 'rpa_manager:update_risk_assessment' risk_assessment.id %}">Editar avaliação</a>
                   {% if request.user.is_superuser %}
-                    {% comment %} <a class="dropdown-item" href="{% url 'rpa_manager:deletar_aeronave' aeronave.id %}">Excluir aeronave</a> {% endcomment %}
+                    <a class="dropdown-item" href="{% url 'rpa_manager:delete_risk_assessment' risk_assessment.id %}">Excluir avaliação</a>
                   {% endif %}
                 </div>
               </div>
@@ -82,12 +82,12 @@
       </table>
     </div>
 
-    {% comment %} <div style="width: 10rem">
-      <a href="{% url 'rpa_manager:criar_nova_aeronave' %}">
+    <div style="width: 10rem">
+      <a href="{% url 'rpa_manager:create_risk_assessment' %}">
         <button type="button" style="display: inline" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i>
-          Nova Aeronave </button>
+          Nova Avaliação </button>
       </a>
-    </div> {% endcomment %}
+    </div>
   </div>
 </div>
 {% endblock content %}
@@ -114,13 +114,6 @@
         {
           extend: 'excel',
           text: 'Excel',
-          exportOptions: {
-            columns: ':not(.removerDoPdf)'
-          }
-        },
-        {
-          extend: 'pdf',
-          text: 'PDF',
           exportOptions: {
             columns: ':not(.removerDoPdf)'
           }

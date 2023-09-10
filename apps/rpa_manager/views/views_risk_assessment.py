@@ -1,8 +1,10 @@
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, DetailView
+from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic import ListView
 from apps.rpa_manager.models import RiskAssessment, Assessment
 from apps.rpa_manager.forms import RiskAssessmentForm, AssessmentForm
+from django.urls import reverse
+from django.shortcuts import redirect
 
 
 class RiskAssessmentDetailView(DetailView):
@@ -39,6 +41,14 @@ class RiskAssessmentUpdateView(UpdateView):
     success_url = reverse_lazy('rpa_manager:risk_assessment_list')
 
 
+class RiskAssessmentDeleteView(DeleteView):
+    model = RiskAssessment
+    template_name = 'rpa_manager/delete_risk_assessment.html'
+    context_object_name = 'obj'
+    pk_url_kwarg = 'pk'
+    success_url = reverse_lazy('rpa_manager:risk_assessment_list')
+
+
 class AssessmentCreateView(CreateView):
     model = Assessment
     template_name = 'rpa_manager/create_assessment.html'
@@ -56,3 +66,19 @@ class AssessmentUpdateView(UpdateView):
     template_name = 'rpa_manager/update_assessment.html'
     form_class = AssessmentForm
     success_url = reverse_lazy('rpa_manager:risk_assessment_list')
+
+    def form_valid(self, form):
+        self.object = form.save()
+        risk_assessment_pk = self.object.risk_assessment.pk
+        redirect_url = reverse('rpa_manager:read_risk_assessment', kwargs={'pk': risk_assessment_pk})
+        
+        return redirect(redirect_url)
+
+
+class AssessmentDeleteView(DeleteView):
+    model = Assessment
+    template_name = 'rpa_manager/delete_assessment.html'
+    context_object_name = 'obj'
+    pk_url_kwarg = 'pk'
+    success_url = reverse_lazy('rpa_manager:risk_assessment_list')
+    

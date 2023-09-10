@@ -5,8 +5,10 @@ from .views.views_risk_assessment import (
     RiskAssessmentListView,
     RiskAssessmentUpdateView,
     RiskAssessmentDetailView,
+    RiskAssessmentDeleteView,
     AssessmentCreateView,
     AssessmentUpdateView,
+    AssessmentDeleteView,
 )
 from .views.views_legislation import (
     LegislationCreateView,
@@ -65,9 +67,11 @@ urlpatterns = [
     path('create_risk_assessment/', RiskAssessmentCreateView.as_view(), name='create_risk_assessment'),
     path('read_risk_assessment/<int:pk>/', RiskAssessmentDetailView.as_view(), name='read_risk_assessment'),
     path('update_risk_assessment/<int:pk>/', RiskAssessmentUpdateView.as_view(), name='update_risk_assessment'),
+    path('delete_risk_assessment/<int:pk>/', RiskAssessmentDeleteView.as_view(), name='delete_risk_assessment'),
     path('risk_assessment_list/', RiskAssessmentListView.as_view(), name='risk_assessment_list'),
     path('create_assessment/', AssessmentCreateView.as_view(), name='create_assessment'),
     path('update_assessment/<int:pk>/', AssessmentUpdateView.as_view(), name='update_assessment'),
+    path('delete_assessment/<int:pk>/', AssessmentDeleteView.as_view(), name='delete_assessment'),
     
     path('create_legislation/', LegislationCreateView.as_view(), name='create_legislation'),
     path('update_legislation/<int:pk>/', LegislationUpdateView.as_view(), name='update_legislation'),
