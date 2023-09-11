@@ -121,10 +121,12 @@ class AddPersonListView(generics.ListCreateAPIView):
     ordering_fields = ['created_at', 'updated_at']
     queryset = Person.objects.all()
 
-    def get_serializer_class(self):
-        #if self.request.user.groups.filter(name__icontains='profile:person').exists():
+    def get_serializer_class(self):            
         if self.request.user.groups.filter(name__in=['profile:person_intermediate', 'profile:person_advanced', 'profile:person_basic']).exists():
-            return serializers.PersonSerializer
+            if self.request.method == 'POST':
+                return serializers.PersonSerializer
+            else:
+                return list_serializers.PersonListSerializer
         else:
             raise PermissionDenied
 
@@ -160,10 +162,7 @@ class AddPersonListView(generics.ListCreateAPIView):
             return self.get_paginated_response(serializer.data)
         except Exception as e:
             logger.error('Error while getting person bacinf - {}'.format(e))
-            raise ValidationError(e)
-
-        
-        
+            raise ValidationError(e)        
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -257,27 +256,31 @@ class AddPersonListView(generics.ListCreateAPIView):
         return super().handle_exception(exc)
 
     def build_filter_conditions(self):
-        print('No filtro personalizado...')
+        logger.info('No filtro personalizado - {}'.format(self.request.user))
         filters = Q()
         query_params = self.request.query_params
+        try:
+            my_param = query_params.get('my')
+            #logger.info('Meus cadastros - {}'.format(my_param))
 
-        filters &= Q(created_by=self.request.user) if query_params.get(
-            'my') or self.request.user.groups.filter(name='profile:person_basic').exists() else Q()
+            filters &= Q(created_by=self.request.user) if my_param is not None or self.request.user.groups.filter(name='profile:person_basic').exists() else Q()
 
-        query_dict = {'address_city': 'addresses__city', 'address_neighborhood': 'addresses__neighborhood', 'address_street': 'addresses__street',
-                      'address_complement': 'addresses__complement', 'address_reference': 'addresses__reference', 'address_zipcode': 'addresses__zipcode',
-                      'document_name': 'documents__name', 'document_mother': 'documents__mother', 'document_father': 'documents__father',
-                      'document_birth_date': 'documents__birth_date', 'document_number': 'documents__number', 'nickname_label': 'nicknames__label',
-                      'tattoo_label': 'tattoos__label', 'entity_name': 'entity__name'}
+            query_dict = {'address_city': 'addresses__city', 'address_neighborhood': 'addresses__neighborhood', 'address_street': 'addresses__street',
+                        'address_complement': 'addresses__complement', 'address_reference': 'addresses__reference', 'address_zipcode': 'addresses__zipcode',
+                        'document_name': 'documents__name', 'document_mother': 'documents__mother', 'document_father': 'documents__father',
+                        'document_birth_date': 'documents__birth_date', 'document_number': 'documents__number', 'nickname_label': 'nicknames__label',
+                        'tattoo_label': 'tattoos__label', 'entity_name': 'entity__name'}
 
-        for field, flag in query_dict.items():
-            if value := query_params.get(field):
-                q = Q(**{f"{flag}__iexact": value}) if field in ['document_number', 'document_birth_date'] else Q(
-                    **{f"{flag}__unaccent__icontains": value})
-                filters &= q
-        print(filters)
-
-        return filters
+            for field, flag in query_dict.items():
+                if value := query_params.get(field):
+                    q = Q(**{f"{flag}__iexact": value}) if field in ['document_number', 'document_birth_date'] else Q(
+                        **{f"{flag}__unaccent__icontains": value})
+                    filters &= q
+            logger.info('Query_filter - {}'.format(filters))
+            return filters
+        except Exception as e:
+             logger.Error('Exception - {}'.format(e))
+             raise e
 
 
 class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
@@ -332,7 +335,6 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
 
 
 # views to Add attributes of person
-
 class PersonAddFaceView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Face.objects.all()
     serializer_class = serializers.FaceSerializer
@@ -565,7 +567,6 @@ class PersonAddImageView(mixins.CreateModelMixin, generics.GenericAPIView):
 
 
 # views to recovery, Update or Delete attributes of person
-
 class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Face.objects.all()
     serializer_class = serializers.FaceSerializer

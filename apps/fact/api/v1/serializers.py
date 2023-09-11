@@ -20,7 +20,7 @@ class FactTypeSerializer(serializers.ModelSerializer):
 
 class FactPersonSerializer(serializers.ModelSerializer):
     nicknames = person_serializer.NicknameSerializer(many=True, required=False)
-    faces = person_serializer.FaceMediumSerializer(many=True, required=False)
+    faces = person_serializer.FaceSerializer(many=True, required=False)
     addresses = AddressSerializer(many=True, required=False)
     documents = person_serializer.DocumentSerializer(many=True, required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
