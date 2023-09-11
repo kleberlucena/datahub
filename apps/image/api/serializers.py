@@ -7,41 +7,6 @@ from apps.image.models import *
 from apps.watermark import helpers as watermark_helpers
 
 
-class ImageMediumSerializer(serializers.ModelSerializer):
-    '''
-    Serializador de imagens de Pessoas e genéricas
-    '''
-    file = Base64ImageField(write_only=True)
-    label = serializers.CharField(required=False)
-    permissions = serializers.SerializerMethodField('_get_permissions')
-    medium = serializers.SerializerMethodField('_get_medium', read_only=True)
-    large = serializers.SerializerMethodField('_get_large', read_only=True)
-    entity = serializers.SerializerMethodField('_get_entity')
-    
-    def _get_entity(self, object):
-        if object.entity:
-            return object.entity.name
-        return None
-
-    def _get_medium(self, object):
-        request = self.context.get('request', None)
-        return watermark_helpers.handle(object.file.medium.url, request.user.id)
-    
-    def _get_large(self, object):
-        request = self.context.get('request', None)
-        return watermark_helpers.handle(object.file.large.url, request.user.id)
-
-    def _get_permissions(self, object):
-        request = self.context.get('request', None)
-        if request:
-            perms = get_perms(request.user, object)
-            return perms
-    
-    class Meta:
-        model = Image
-        fields = ['uuid', 'file', 'medium', 'large', 'label', 'created_at', 'updated_at', 'entity', 'permissions']
-
-
 class ImageSerializer(serializers.ModelSerializer):
     '''
     Serializador de imagens de Pessoas e genéricas
@@ -93,9 +58,16 @@ class ImageListSerializer(serializers.ModelSerializer):
     '''
     Serializador de lista de imagens de Pessoas e genéricas
     '''
+    file = Base64ImageField(write_only=True)
     label = serializers.CharField(required=False)
     permissions = serializers.SerializerMethodField('_get_permissions')
     thumbnail = serializers.SerializerMethodField('_get_thumbnail', read_only=True)
+    entity = serializers.SerializerMethodField('_get_entity')
+
+    def _get_entity(self, object):
+        if object.entity:
+            return object.entity.name
+        return None
 
     def _get_thumbnail(self, object):
         request = self.context.get('request', None)
@@ -109,4 +81,4 @@ class ImageListSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Image
-        fields = ['uuid', 'thumbnail', 'label', 'created_at', 'updated_at', 'permissions']
+        fields = ['uuid', 'file', 'thumbnail', 'label', 'created_at', 'updated_at', 'entity', 'permissions']

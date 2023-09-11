@@ -4,6 +4,7 @@ from typing import List, Tuple
 import environ
 import requests
 import json
+import os
 
 # Environment variable definitions
 env = environ.Env(DEBUG=(bool, False))
@@ -13,6 +14,26 @@ environ.Env.read_env()
 SECRET_KEY = env('DJANGO_SECRET_KEY')
 DEBUG = env('DEBUG', default=False)
 BASE_DIR = Path(__file__).resolve().parent.parent
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+            "propagate": True,
+        },
+    },
+}
 
 ALLOWED_HOSTS = list(
     filter(lambda h: h != '', env('ALLOWED_HOSTS', default='*').split(','))
@@ -102,6 +123,7 @@ INSTALLED_APPS = [
     'apps.fact',
     'apps.police_report',
     'apps.radio',
+    'apps.termsofuse',
 
 ]
 MIDDLEWARE = [
