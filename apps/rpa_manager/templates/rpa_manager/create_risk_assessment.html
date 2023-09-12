@@ -51,23 +51,35 @@
       <div class="form-row">
         <div class="form-group col-md-12 mb-0 forms_inputs">
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
+              <label for="id_operational_scenario">Cenário operacional</label>
+              {{ form.operational_scenario }}
+              {{ form.operational_scenario.errors }}
+            </div>
+            <div class="col-md-6">
               <label for="id_operator">Operador</label>
               {{ form.operator }}
               {{ form.operator.errors }}
             </div>
-            <div class="col-md-4">
-              <label for="id_date">Data</label>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="id_date">Data realizada</label>
               {{ form.date }}
               {{ form.date.errors }}
             </div>
-            <div class="col-md-4">
-              <label for="id_cpf">CPF</label>
-              {{ form.cpf }}
-              {{ form.cpf.errors }}
+            <div class="col-md-6">
+              <label for="id_date">Data de expiração</label>
+              {{ form.expiration_date }}
+              {{ form.expiration_date.errors }}
             </div>
           </div>
           <div class="row">
+            <div class="col-md-6">
+              <label for="id_cpf">CNPJ</label>
+              {{ form.cnpj }}
+              {{ form.cnpj.errors }}
+            </div>
             <div class="col-md-6">
               <label for="id_aircrafts">Aeronaves</label>
               {{ form.aircrafts }}

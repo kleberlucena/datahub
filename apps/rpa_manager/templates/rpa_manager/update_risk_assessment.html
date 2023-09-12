@@ -51,34 +51,46 @@
       <div class="form-row">
         <div class="form-group col-md-12 mb-0 forms_inputs">
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
+              <label for="id_operational_scenario">Cenário operacional</label>
+              {{ form.operational_scenario }}
+              {{ form.operational_scenario.errors }}
+            </div>
+            <div class="col-md-6">
               <label for="id_operator">Operador</label>
               {{ form.operator }}
               {{ form.operator.errors }}
             </div>
-            <div class="col-md-4">
-              <label for="id_date">Data</label>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="id_date">Data realizada</label>
               {{ form.date }}
               {{ form.date.errors }}
             </div>
-            <div class="col-md-4">
-              <label for="id_cpf">CPF</label>
-              {{ form.cpf }}
-              {{ form.cpf.errors }}
+            <div class="col-md-6">
+              <label for="id_date">Data de expiração</label>
+              {{ form.expiration_date }}
+              {{ form.expiration_date.errors }}
             </div>
           </div>
           <div class="row">
+            <div class="col-md-6">
+              <label for="id_cpf">CNPJ</label>
+              {{ form.cnpj }}
+              {{ form.cnpj.errors }}
+            </div>
             <div class="col-md-6">
               <label for="id_aircrafts">Aeronaves</label>
               {{ form.aircrafts }}
               {{ form.aircrafts.errors }}
             </div>
             <div class="col-md-6">
-              <label for="id_keep_distance_from_3rd">Manter distância de terceiro?</label>
+              <label for="id_keep_distance_from_3rd" class="mt-3">Manter distância de terceiro?</label>
               {{ form.keep_distance_from_3rd }} <small> Sim </small>
               {{ form.keep_distance_from_3rd.errors }} <br>
               <label for="id_pilots_capabilities">Piloto remoto ou Piloto observador precisa de capacitação?</label>
-              {{ form.pilots_capabilities }} <small> Curso de Operador de RPAs – CORPA </small>
+              {{ form.pilots_capabilities }} <small> SIM – Curso de Operador de RPAs – CORPA </small>
               {{ form.pilots_capabilities.errors }}
             </div>
           </div>

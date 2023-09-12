@@ -44,9 +44,9 @@
         aria-describedby="objects_list_info" width="100%">
         <thead class="tabela_cabecalho">
           <tr>
-            <th scope="col">Operador</th>
-            <th scope="col">CPF</th>
-            <th scope="col">Data</th>
+            <th scope="col">Cenário operacional</th>
+            <th scope="col">Data realizada</th>
+            <th scope="col">Data de expiração</th>
             <th scope="col">Aeronaves</th>
             <th class="removerDoPdf" scope="col">Ações</th>
           </tr>
@@ -56,9 +56,9 @@
           {% for risk_assessment in risk_assessments %}
           
           <tr>
-            <td>{{ risk_assessment.operator }}</td>
-            <td>{{ risk_assessment.cpf }}</td>
+            <td>{{ risk_assessment.operational_scenario }}</td>
             <td data-sort='YYYYMMDD'>{{ risk_assessment.date|date:"d/m/Y"  }}</td>
+            <td data-sort='YYYYMMDD'>{{ risk_assessment.expiration_date|date:"d/m/Y"  }}</td>
             <td>{{ risk_assessment.aircrafts.all|join:", " }}</td>
             <td>
               <div class="btn-group" style="display: flex; align-items: center; align-content: center;">

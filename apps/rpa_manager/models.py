@@ -340,9 +340,11 @@ class Situation(models.Model):
 
   
 class RiskAssessment(models.Model):
+    operational_scenario = models.CharField(max_length=300, null=False, default='')
     date = models.DateTimeField(null=True, blank=True)
-    operator = models.CharField(max_length=100, null=False, default='')
-    cpf = models.CharField(max_length=15, null=False, default='')
+    expiration_date = models.DateTimeField(null=True, blank=True)
+    operator = models.CharField(max_length=100, null=False, default='POLÍCIA MILITAR DO ESTADO DA PARAÍBA')
+    cnpj = models.CharField(max_length=18, null=False, default='08.907.776/0001-00')
     aircrafts = models.ManyToManyField('Aeronave')
     apllied_legislation = models.TextField(
         null=False, 
@@ -355,7 +357,7 @@ class RiskAssessment(models.Model):
    
 
     def __str__(self):
-        return f"{self.operator} - {self.date}"
+        return f"{self.operational_scenario} - {self.operator} - {self.date}"
     
     
 class Assessment(models.Model):

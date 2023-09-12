@@ -57,6 +57,11 @@
               {{ form.situation.errors }}
             </div>
             <div class="col-md-6">
+              <label for="id_hierarchy_authorization">Hierarquia</label>
+              {{ form.hierarchy_authorization }} 
+              {{ form.hierarchy_authorization.errors }} <br>
+            </div>
+            <div class="col-md-6">
               <label for="id_probability_of_occurrence">Probabilidade</label>
               {{ form.probability_of_occurrence }}
               {{ form.probability_of_occurrence.errors }}
@@ -65,11 +70,6 @@
               <label for="id_severity_of_occurrence">Severidade</label>
               {{ form.severity_of_occurrence }}
               {{ form.severity_of_occurrence.errors }}
-            </div>
-            <div class="col-md-6">
-              <label for="id_hierarchy_authorization">Hierarquia</label>
-              {{ form.hierarchy_authorization }} 
-              {{ form.hierarchy_authorization.errors }} <br>
             </div>
           </div>
         </div>

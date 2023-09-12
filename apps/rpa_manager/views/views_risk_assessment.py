@@ -1,3 +1,4 @@
+from typing import Any
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic import ListView
@@ -5,6 +6,10 @@ from apps.rpa_manager.models import RiskAssessment, Assessment
 from apps.rpa_manager.forms import RiskAssessmentForm, AssessmentForm
 from django.urls import reverse
 from django.shortcuts import redirect
+import weasyprint
+from weasyprint import HTML, CSS
+from django.template.loader import render_to_string
+from django.http import HttpResponse
 
 
 class RiskAssessmentDetailView(DetailView):
@@ -81,4 +86,33 @@ class AssessmentDeleteView(DeleteView):
     context_object_name = 'obj'
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('rpa_manager:risk_assessment_list')
+
+
+class RiskAssessmentPDFDetailView(DetailView):
+    model = RiskAssessment
+    template_name = 'rpa_manager/generate_risk_asssessment_pdf.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        risk_assessment = self.object
+        assessments = risk_assessment.assessment_set.all()
+        context['risk_assessment'] = risk_assessment
+        context['assessments'] = assessments
+        return context
+
+    def render_to_response(self, context, **response_kwargs):
+        html = render_to_string(self.template_name, context)
+        css = '''
+        @page { size: A4; margin: 2cm; }
+        body { word-wrap: break-word; }
+        '''
+        
+        image_base_path = "/home/marcosdev/Documentos/Programacao/Projetos/bacinf/apps/rpa_manager/templates/rpa_manager/"
+        
+        pdf_file = weasyprint.HTML(string=html, base_url=image_base_path).write_pdf(stylesheets=[CSS(string=css)])
+        
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = 'inline; filename="risk-assessment.pdf"'
+
+        return response
     

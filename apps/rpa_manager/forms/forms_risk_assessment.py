@@ -7,21 +7,23 @@ from apps.rpa_manager.utils.addPlaceholderToField import addPlaceholder
 class RiskAssessmentForm(forms.ModelForm):
     class Meta:
         model = RiskAssessment
-        fields = ['operator', 'date', 'cpf', 'aircrafts', 'apllied_legislation', 'keep_distance_from_3rd', 'pilots_capabilities', 'accident_procedure']
+        fields = ['operational_scenario', 'operator', 'date', 'expiration_date', 'cnpj', 'aircrafts', 'apllied_legislation', 'keep_distance_from_3rd', 'pilots_capabilities', 'accident_procedure']
 
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
+            'expiration_date': forms.DateInput(attrs={'type': 'date'}),
         }
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        addPlaceholder(self, 'operator', 'Insira o operador responsável' )
-        addPlaceholder(self, 'cpf', 'Insira o cpf do operador' )
+        addPlaceholder(self, 'operational_scenario', 'Insira o cenário operacional')
+        addPlaceholder(self, 'operator', 'Insira o operador responsável')
+        addPlaceholder(self, 'cnpj', 'Insira o cnpj do operador')
         addPlaceholder(self, 'apllied_legislation', 'Insira as legislações aplicáveis')
         addPlaceholder(self, 'accident_procedure', 'Insira os procedimentos em caso de acidentes')
 
-        campos = ['operator', 'date', 'cpf', 'aircrafts', 'apllied_legislation', 'accident_procedure']
+        campos = ['operational_scenario' ,'operator', 'date', 'expiration_date', 'cnpj', 'aircrafts', 'apllied_legislation', 'accident_procedure']
         for campo in campos:
             addAttributes(self, campo, campo, 'form-control')
             
