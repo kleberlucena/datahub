@@ -354,7 +354,17 @@ class RiskAssessment(models.Model):
     accident_procedure = models.TextField(
         null=False, 
         default='Corpo de Bombeiros Militar da Paraíba, SAMU, Socorristas, Brigadistas. Deverá ser informado o ocorrido ao CIOP, solicitando o apoio necessário, ou procurar pelo responsável.')
-   
+    info_responsible = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    responsible_sign = StdImageField(
+        'Imagem',
+        storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
+        upload_to='imagens',
+        variations={
+            'large': {'width': 720, 'height': 720, 'crop': True},
+            'medium': {'width': 480, 'height': 480, 'crop': True},
+            'thumbnail': {'width': 128, 'height': 128, 'crop': True},
+        }, delete_orphans=True, blank=True, null=True
+    )
 
     def __str__(self):
         return f"{self.operational_scenario} - {self.operator} - {self.date}"
@@ -367,6 +377,7 @@ class Assessment(models.Model):
     risk = models.CharField(max_length=2, null=False, default='')
     hierarchy_authorization = models.CharField(max_length=100, null=True, blank=True)
     tolerability = models.CharField(max_length=100, null=False, default='')
+    mitigation_measures_risk = models.TextField(null=False, default='')
     risk_assessment = models.ForeignKey(RiskAssessment, on_delete=models.CASCADE, null=True)
     
     def save(self, *args, **kwargs):

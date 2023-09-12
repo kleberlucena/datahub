@@ -57,6 +57,8 @@
   <div class="detail_risk">
     <div class="card card-primary col-md-4 mt-3">
       <div class="card-body">
+        <strong>Responsável pelas informações: </strong> {{ risk_assessment.info_responsible }} 
+        <hr>
         <strong>Cenário operacional: </strong> {{ risk_assessment.operational_scenario }} 
         <hr>
         <strong>Operador: </strong> {{ risk_assessment.operator }} 
@@ -96,7 +98,8 @@
                   <th scope="col">Severidade da ocorrência</th>
                   <th scope="col">Risco</th>
                   <th scope="col">Tolerabilidade</th>
-                  <th scope="col">Nível hierárquico de autorização da operação</th>
+                  <th scope="col">Mitigação de riscos</th>
+                  <th scope="col">Nível hierárquico</th>
                   <th class="removerDoPdf" scope="col">Ações</th>
                 </tr>
               </thead>
@@ -108,6 +111,7 @@
                   <td>{{ assessment.severity_of_occurrence }}</td>
                   <td>{{ assessment.risk }}</td>
                   <td>{{ assessment.tolerability }}</td>
+                  <td>{{ assessment.mitigation_measures_risk }}</td>
                   <td>{{ assessment.hierarchy_authorization }}</td>
                   <td>
                     <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
@@ -175,7 +179,7 @@
         responsive: true,
         searching: true,
         processing: true,
-        columnDefs: [{ "width": "150px", targets: [-1]}]
+        columnDefs: [{ "width": "100px", targets: [-1]}]
     } );
   </script>
 {% endblock %}

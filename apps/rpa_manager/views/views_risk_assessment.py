@@ -7,7 +7,7 @@ from apps.rpa_manager.forms import RiskAssessmentForm, AssessmentForm
 from django.urls import reverse
 from django.shortcuts import redirect
 import weasyprint
-from weasyprint import HTML, CSS
+from weasyprint import CSS
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
@@ -32,11 +32,23 @@ class RiskAssessmentCreateView(CreateView):
     form_class = RiskAssessmentForm
     success_url = reverse_lazy('rpa_manager:create_assessment')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['initial'] = {'info_responsible': self.request.user}
+        return kwargs
 
+    def form_valid(self, form):
+        return super().form_valid(form)
+    
+    
 class RiskAssessmentListView(ListView):
     model = RiskAssessment
     template_name = 'rpa_manager/list_risks_analysis.html'  
     context_object_name = 'risk_assessments'
+
+    def get_queryset(self):
+        queryset = RiskAssessment.objects.all().order_by('-date')
+        return queryset
 
 
 class RiskAssessmentUpdateView(UpdateView):
@@ -107,10 +119,10 @@ class RiskAssessmentPDFDetailView(DetailView):
         body { word-wrap: break-word; }
         '''
         
-        image_base_path = "/home/marcosdev/Documentos/Programacao/Projetos/bacinf/apps/rpa_manager/templates/rpa_manager/"
+        pdf_file = weasyprint.HTML(string=html).write_pdf(stylesheets=[CSS(string=css)])
         
-        pdf_file = weasyprint.HTML(string=html, base_url=image_base_path).write_pdf(stylesheets=[CSS(string=css)])
-        
+        # inline - open in the same page
+        # attachment - download
         response = HttpResponse(pdf_file, content_type='application/pdf')
         response['Content-Disposition'] = 'inline; filename="risk-assessment.pdf"'
 

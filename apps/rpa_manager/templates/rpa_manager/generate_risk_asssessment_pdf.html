@@ -7,7 +7,7 @@
     <title>Document</title>
     <style>
         p, li {
-            font-size: 16px;
+            font-size: 15px;
         }
         ul {
             list-style-type: '- ';
@@ -58,9 +58,10 @@
     </style>
 </head>
 <body>
-    <section class="container content-header">
+    <section class="container content-header" id="pmpb-header">
         <div class="header-img">
-            <img src="./img/pmpb_128.png" alt="pmpb_logo">
+            
+            <img src="{% static 'sti/img/pmpb_128.png' %}" alt="pmpb_logo">
         </div>
         <div class="header">
             <div>
@@ -87,47 +88,55 @@
 
             <h2 class="main-intro-topic">Aspectos gerais:</h2>
             <ul>
-                <li>Legislação aplicável:</li>
-                <li>O operador é obrigado a se manter em áreas distantes de terceiros?</li>
-                <li>Os pilotos remotos e observadores devem passar por algum treinamento inicial ou periódico específico provido pela instituição?</li>
+                <li>Legislação aplicável: {{ risk_assessment.apllied_legislation }}</li>
+                <li>O operador é obrigado a se manter em áreas distantes de terceiros? {{ risk_assessment.keep_distance_from_3rd }}</li>
+                <li>Os pilotos remotos e observadores devem passar por algum treinamento inicial ou periódico específico provido pela instituição?
+                    {{ risk_assessment.pilots_capabilities }} - Curso de Operador de RPAs – CORPA
+                </li>
             </ul>
+
+            <p>Em caso de acidente com lesões a pessoas, quem acionar? Como proceder? {{ risk_assessment.accident_procedure }}</p>
 
             <h2 class="main-subtitle main-intro-topic">AVALIAÇÃO DO RISCO</h2>
 
-            <table class="main-table">
-                <thead>
-                    <th class="main-table-header">Situação x</th>
-                    <th class="main-table-header">Perda do link</th>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Probabilidade de ocorrência</td>
-                        <td>Valor</td>
-                    </tr>
-                    <tr>
-                        <td>Severidade da ocorrência</td>
-                        <td>Valor</td>
-                    </tr>
-                    <tr>
-                        <td>Risco</td>
-                        <td>Valor</td>
-                    </tr>
-                    <tr>
-                        <td>Tolerabilidade</td>
-                        <td>Valor</td>
-                    </tr>
-                    <tr>
-                        <td>Nível hierárquico de autorização da operação</td>
-                        <td>Valor</td>
-                    </tr>
-                    <tr class="main-table-risk-avoiding">
-                        <td>MEDIDAS DE MITIGAÇÃO DO RISCO</td>
-                        <td>Valor</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h2 class="main-intro-topic">Matriz de risco:</h2>
+            
+            {% for assessment in assessments %}
+                <table class="main-table">
+                    <thead>
+                        <th class="main-table-header">Situação</th>
+                        <th class="main-table-header"> {{ assessment.situation }} </th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Probabilidade de ocorrência</td>
+                            <td>{{ assessment.probability_of_occurrence }}</td>
+                        </tr>
+                        <tr>
+                            <td>Severidade da ocorrência</td>
+                            <td>{{ assessment.severity_of_occurrence }}</td>
+                        </tr>
+                        <tr>
+                            <td>Risco</td>
+                            <td>{{ assessment.risk }}</td>
+                        </tr>
+                        <tr>
+                            <td>Tolerabilidade</td>
+                            <td>{{ assessment.tolerability }}</td>
+                        </tr>
+                        <tr>
+                            <td>Nível hierárquico de autorização da operação</td>
+                            <td>{{ assessment.hierarchy_authorization }}</td>
+                        </tr>
+                        <tr class="main-table-risk-avoiding">
+                            <td>MEDIDAS DE MITIGAÇÃO DO RISCO</td>
+                            <td>{{ assessment.mitigation_measures_risk }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            {% endfor %}
+            
+            <br>
+            <h2 class="main-intro-topic" style="display: inline">Matriz de risco:</h2> <span>modelo IS nº E94-003</span>
 
             <h3 class="main-intro-topic">Probabilidade da ocorrência:</h3>
             <ul>
@@ -137,7 +146,7 @@
                 <li>Nível 2 (improvável): é bastante improvável que ocorra e não se tem notícia de que tenha alguma vez ocorrido; e</li>
                 <li>Nível 1 (muito improvável): é quase impossível que o evento ocorra.</li>
             </ul>
-            <h3 class="main-intro-topic">Probabilidade da ocorrência:</h3>
+            <h3 class="main-intro-topic">Severidade da ocorrência:</h3>
             <ul>
                 <li>Nível A (catastrófico): morte de múltiplas pessoas;</li>
                 <li>Nível B (crítico): morte de pessoa, lesões gravíssimas, capazes de deixar sequelas significativas e/ou incapacitantes, tais como cegueira, paralisia, amputações, etc.;</li>
@@ -147,7 +156,7 @@
             </ul>
             <h3 class="main-intro-topic">Tolerabilidade:</h3>
             <div>
-                <img src="./img/table-anac.png" alt="pmpb_logo" class="main-tolerability-img">
+                <img src="{% static 'sti/img/table-anac.png' %}" alt="pmpb_logo" class="main-tolerability-img">
             </div>
 
             <ul class="main-content-tolerability">
@@ -162,11 +171,11 @@
 
             <p style="text-align: justify">Declaro para os devidos fins que todos os pilotos remotos conhecem e cumprem a legislação e regulamentação aplicáveis, em especial as acima listadas, assim como conhecem as consequências do descumprimento.</p>
 
-            <p>Responsável pelas informações:</p>
+            <p>Responsável pelas informações: {{ risk_assessment.info_responsible }}</p>
 
-            <p>Data e assinatura:</p>
+            <p>Data e assinatura: {{ risk_assessment.date|date:"d/m/Y" }} </p>
 
-            <p style="text-align: center">Esta avaliação de risco operacional é válida até:</p>
+            <p style="text-align: center">Esta avaliação de risco operacional é válida até: {{ risk_assessment.expiration_date|date:"d/m/Y" }}  </p>
         </div>
     </section>
 </body>

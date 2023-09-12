@@ -70,6 +70,7 @@
                 <div class="dropdown-menu" role="menu" style="">
                   <a class="dropdown-item" href="{% url 'rpa_manager:read_risk_assessment' risk_assessment.id %}">Ver avaliação</a>
                   <a class="dropdown-item" href="{% url 'rpa_manager:update_risk_assessment' risk_assessment.id %}">Editar avaliação</a>
+                  <a class="dropdown-item" href="{% url 'rpa_manager:generate_pdf' risk_assessment.id %}">Emitir avaliação</a>
                   {% if request.user.is_superuser %}
                     <a class="dropdown-item" href="{% url 'rpa_manager:delete_risk_assessment' risk_assessment.id %}">Excluir avaliação</a>
                   {% endif %}
@@ -134,7 +135,7 @@
         processing: true,
         columnDefs: [{ "width": "150px", targets: [-1]}],
         order: [
-          [2, 'desc'],
+          [1, 'desc'],
         ]
     } );
   </script>
