@@ -72,9 +72,11 @@
                                     {% for fact in facts %}
                                     <tr>
             
-                                        <td><a href="{% url 'fact:fact_detail' fact.id %}">{{ fact.type_fact }} </a></td>
+                                        {% comment %} <td><a href="{% url 'fact:fact_detail' fact.id %}">{{ fact.type_fact }} </a></td> {% endcomment %}
+                                        <td><a href="#">{{ fact.type_fact }} </a></td>
                                     <td>
-                                        <a href="{% url 'fact:fact_detail' fact.id %}">{{ fact.description|truncatechars:40 }} </a>
+                                        <a href="#">{{ fact.description|truncatechars:40 }} </a>
+                                        {% comment %} <a href="{% url 'fact:fact_detail' fact.id %}">{{ fact.description|truncatechars:40 }} </a> {% endcomment %}
                                     </td>
                             </tr>
                             {% endfor %}

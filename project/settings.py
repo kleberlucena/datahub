@@ -104,6 +104,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'celery_progress',
     'guardian',
+    'leaflet',
     'corsheaders',
     'easyaudit',
 
