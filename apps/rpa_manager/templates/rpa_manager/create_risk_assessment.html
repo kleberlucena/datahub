@@ -4,7 +4,11 @@
 <!-- styles -->
 {% block style_sheet %}
 <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
 <style>
+  #id_responsible_sign {
+    display: none;
+  }
   .errorlist {
     list-style-type: none;
     color: red;
@@ -46,7 +50,7 @@
     <div class="card-header">
       <h3 class="card-title">Nova avaliação de risco operacional</h3>
     </div>
-    <form class="p-3" method="post">
+    <form class="p-3" method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="form-row">
         <div class="form-group col-md-12 mb-0 forms_inputs">
@@ -64,14 +68,22 @@
           </div>
           <div class="row">
             <div class="col-md-6">
-              <label for="id_date">Data realizada</label>
-              {{ form.date }}
-              {{ form.date.errors }}
+              <label for="id_data">Data que foi realizada</label>
+              <div class="input-group date" id="datetimepickerInitial" data-target-input="nearest">
+                {{ form.date }}
+                <div class="input-group-append" data-target="#datetimepickerInitial" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
             </div>
             <div class="col-md-6">
-              <label for="id_date">Data de expiração</label>
-              {{ form.expiration_date }}
-              {{ form.expiration_date.errors }}
+              <label for="id_data">Data de expiração</label>
+              <div class="input-group date" id="datetimepickerFinal" data-target-input="nearest">
+                {{ form.expiration_date }}
+                <div class="input-group-append" data-target="#datetimepickerFinal" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="row">
@@ -102,7 +114,11 @@
           {{ form.accident_procedure }}
           {{ form.accident_procedure.errors }}
           <label for="id_info_responsible">Responsável pelas informações:</label>  {{ user.username }}
-          {{ form.info_responsible}}
+          {{ form.info_responsible }} <br>
+          <label for="id_responsible_sign">Assinatura do responsável: </label> 
+          {{ form.responsible_sign }}
+          <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
+          <p id="fileName"></p>
         </div>
       </div>
 
@@ -120,11 +136,41 @@
 <!-- javascripts -->
 {% block js %}
 <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/moment/moment.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
 
 <script>
   $(document).ready(function () {
     $('.local_escolha').select2();
     $('.aircrafts_escolha').select2();
   })
+</script>
+
+<script>
+  $(function () {
+    $('#datetimepickerInitial').datetimepicker({
+      format: 'YYYY-MM-DD  HH:mm:ss',
+      icons: {
+        time: 'fa fa-clock',
+      }
+    });
+
+    $('#datetimepickerFinal').datetimepicker({
+      format: 'YYYY-MM-DD  HH:mm:ss',
+      icons: {
+        time: 'fa fa-clock',
+      }
+    });
+  });
+</script>
+
+<script>
+  document.getElementById("fileButton").addEventListener("click", function() {
+    document.getElementById("id_responsible_sign").click();
+  });
+  document.getElementById("id_responsible_sign").addEventListener("change", function() {
+    var fileName = document.getElementById("id_responsible_sign").files[0].name;
+    document.getElementById("fileName").innerHTML = "Arquivo selecionado: " + fileName;
+  });
 </script>
 {% endblock %}

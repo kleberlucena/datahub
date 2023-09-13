@@ -7,12 +7,20 @@ from apps.rpa_manager.utils.addPlaceholderToField import addPlaceholder
 class RiskAssessmentForm(forms.ModelForm):
     class Meta:
         model = RiskAssessment
-        fields = ['operational_scenario', 'operator', 'date', 'expiration_date', 'cnpj', 'aircrafts', 'apllied_legislation', 'keep_distance_from_3rd', 'pilots_capabilities', 'accident_procedure', 'info_responsible']
+        fields = ['operational_scenario', 
+                  'operator', 
+                  'date', 
+                  'expiration_date', 
+                  'cnpj', 'aircrafts', 
+                  'apllied_legislation', 
+                  'keep_distance_from_3rd', 
+                  'pilots_capabilities', 
+                  'accident_procedure', 
+                  'info_responsible',
+                  'responsible_sign']
         
         widgets = {
             'info_responsible': forms.HiddenInput(),
-            'date': forms.DateInput(attrs={'type': 'date'}),
-            'expiration_date': forms.DateInput(attrs={'type': 'date'}),
         }
         
     def __init__(self, *args, **kwargs):
@@ -22,6 +30,8 @@ class RiskAssessmentForm(forms.ModelForm):
         addPlaceholder(self, 'operator', 'Insira o operador responsável')
         addPlaceholder(self, 'cnpj', 'Insira o cnpj do operador')
         addPlaceholder(self, 'apllied_legislation', 'Insira as legislações aplicáveis')
+        addPlaceholder(self, 'date', 'Informe a data e hora em que foi realizada')
+        addPlaceholder(self, 'expiration_date', 'Informe a data e hora de expiração')
         addPlaceholder(self, 'accident_procedure', 'Insira os procedimentos em caso de acidentes')
         
         self.fields['date'].widget.attrs.update({
@@ -34,14 +44,28 @@ class RiskAssessmentForm(forms.ModelForm):
             'required': True
         })
         
-        campos = ['operational_scenario' ,'operator', 'date', 'expiration_date', 'cnpj', 'aircrafts', 'apllied_legislation', 'accident_procedure']
+        campos = ['operational_scenario' ,
+                  'operator', 
+                  'date', 
+                  'expiration_date', 
+                  'cnpj', 'aircrafts', 
+                  'apllied_legislation', 
+                  'accident_procedure',
+                  'responsible_sign']
+        
         for campo in campos:
             addAttributes(self, campo, campo, 'form-control')
             
 class AssessmentForm(forms.ModelForm):
     class Meta:
         model = Assessment
-        fields = ['situation', 'probability_of_occurrence', 'severity_of_occurrence', 'hierarchy_authorization', 'mitigation_measures_risk']
+        
+        fields = ['situation', 
+                  'probability_of_occurrence', 
+                  'severity_of_occurrence', 
+                  'hierarchy_authorization', 
+                  'mitigation_measures_risk']
+        
         exclude = ['risk', 'tolerability']
         
     def __init__(self, *args, **kwargs):

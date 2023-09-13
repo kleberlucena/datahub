@@ -19,6 +19,9 @@
       height: 800px;
       margin: 0 auto;
     }
+    .responsible_sign {
+      width: 300px;
+    }
     @media (max-width: 768px) {
       .detail_risk {
         display: flex;
@@ -31,6 +34,7 @@
         font-family: "Font Awesome 5 Free" !important; 
         font-weight: 700 !important;
       }
+
     }
   </style>
 
@@ -73,11 +77,31 @@
         <hr>
         <strong>Legislação aplicável: </strong> <br> {{ risk_assessment.apllied_legislation }}
         <hr>
-        <strong>Manter distância de terceiros </strong> {{ risk_assessment.keep_distance_from_3rd }}
+        <strong>Manter distância de terceiros </strong> 
+        
+        {% if risk_assessment.keep_distance_from_3rd == True %}
+          Sim
+        {% else %}
+          Não  
+        {% endif %}
+          
         <hr>
-        <strong>Piloto remoto ou Piloto observador precisa de curso </strong> {{ risk_assessment.pilots_capabilities }}
+        <strong>Piloto remoto ou Piloto observador precisa de curso </strong>
+        
+        {% if risk_assessment.pilots_capabilities == True %}
+          Sim - Curso de Operador de RPAs – CORPA
+        {% else %}
+          Não
+        {% endif %}
+          
         <hr>
         <strong>Procedimento em caso de acidente </strong> <br> <p style="text-align: justify;">{{ risk_assessment.accident_procedure }}</p>
+        <hr>
+        <strong>Assinatura do responsável pelas informações </strong> <br>
+        {% if risk_assessment.responsible_sign %}
+          <img src="{{ risk_assessment.responsible_sign.url }}" alt="assinatura" class="responsible_sign">
+        {% endif %}
+          
         <hr>
       </div>
     </div>

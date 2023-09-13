@@ -71,6 +71,7 @@
                   <a class="dropdown-item" href="{% url 'rpa_manager:read_risk_assessment' risk_assessment.id %}">Ver avaliação</a>
                   <a class="dropdown-item" href="{% url 'rpa_manager:update_risk_assessment' risk_assessment.id %}">Editar avaliação</a>
                   <a class="dropdown-item" href="{% url 'rpa_manager:generate_pdf' risk_assessment.id %}">Emitir avaliação</a>
+                  <a class="dropdown-item" href="{% url 'rpa_manager:duplicate_risk_assessment' risk_assessment.id %}">Duplicar avaliação</a>
                   {% if request.user.is_superuser %}
                     <a class="dropdown-item" href="{% url 'rpa_manager:delete_risk_assessment' risk_assessment.id %}">Excluir avaliação</a>
                   {% endif %}

@@ -26,6 +26,10 @@
         .header-img {
             display: inline;
         }
+        .pmpb_logo {
+            width: 90px !important;
+            height: 110px !important;
+        }
         .header {
             display: flex;
             flex-direction: column;
@@ -55,13 +59,17 @@
         .main-content-tolerability li {
             text-align: justify;
         }
+        .responsible_sign {
+            display: inline;
+            width: 50%;
+            margin-left: 120px;
+        }
     </style>
 </head>
 <body>
     <section class="container content-header" id="pmpb-header">
         <div class="header-img">
-            
-            <img src="{% static 'sti/img/pmpb_128.png' %}" alt="pmpb_logo">
+            <img src="{% static 'sti/img/pmpb_128.png' %}" alt="pmpb_logo" class="pmpb_logo">
         </div>
         <div class="header">
             <div>
@@ -89,9 +97,23 @@
             <h2 class="main-intro-topic">Aspectos gerais:</h2>
             <ul>
                 <li>Legislação aplicável: {{ risk_assessment.apllied_legislation }}</li>
-                <li>O operador é obrigado a se manter em áreas distantes de terceiros? {{ risk_assessment.keep_distance_from_3rd }}</li>
+                <li>O operador é obrigado a se manter em áreas distantes de terceiros?
+                    
+                    {% if risk_assessment.keep_distance_from_3rd == True %}
+                        Sim
+                    {% else %}
+                        Não
+                    {% endif %}
+                        
+                </li>
                 <li>Os pilotos remotos e observadores devem passar por algum treinamento inicial ou periódico específico provido pela instituição?
-                    {{ risk_assessment.pilots_capabilities }} - Curso de Operador de RPAs – CORPA
+                    
+                    {% if risk_assessment.pilots_capabilities == True %}
+                        Sim - Curso de Operador de RPAs – CORPA
+                    {% else %}
+                        Não
+                    {% endif %}
+                        
                 </li>
             </ul>
 
@@ -174,6 +196,13 @@
             <p>Responsável pelas informações: {{ risk_assessment.info_responsible }}</p>
 
             <p>Data e assinatura: {{ risk_assessment.date|date:"d/m/Y" }} </p>
+
+            {% if risk_assessment.responsible_sign %}
+                <img src="{{ risk_assessment.responsible_sign.url }}" alt="assinatura" class="responsible_sign">
+            {% else %}
+                <br>
+                <span class="responsible_sign">___________________________________________</span>
+            {% endif %}
 
             <p style="text-align: center">Esta avaliação de risco operacional é válida até: {{ risk_assessment.expiration_date|date:"d/m/Y" }}  </p>
         </div>

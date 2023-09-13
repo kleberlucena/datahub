@@ -45,7 +45,7 @@ class RelatorioFormulario(forms.ModelForm):
         widgets = {
             'militar': forms.HiddenInput(),
             'horario_inicial': forms.TimeInput(attrs={'type': 'time'}),
-            'horario_final': forms.TimeInput(attrs={'type': 'time'}),
+            'horario_final': forms.TimeInput(attrs={'type': 'time', 'required': False}),
             'data': forms.DateInput(attrs={'type': 'date'}),
             'data_final': forms.DateInput(attrs={'type': 'date'}),
             'num_sarpas': forms.Textarea(attrs={
@@ -82,6 +82,8 @@ class RelatorioFormulario(forms.ModelForm):
         for campo in campos:
             addAttributes(self, campo, campo, 'form-control')
             
+        self.fields['horario_final'].required = False 
+        
         self.fields['titulo'].widget.attrs['readonly'] = True
         
         self.fields['status_missao'].widget.attrs.update({
@@ -92,6 +94,7 @@ class RelatorioFormulario(forms.ModelForm):
             'class': 'p-3',
             'accept': "application/pdf", 
         })
+        
         
     def clean(self):
         cleaned_data = super().clean()

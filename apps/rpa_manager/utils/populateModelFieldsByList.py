@@ -104,5 +104,5 @@ def generateEntitiesOfFlighs(list_of_entities = []):
     Entidades.objects.all().delete()
     
     for index in range(len(list_of_entities)):
-        Entidades.objects.create(natureza=list_of_entities[index])
+        Entidades.objects.create(entidade=list_of_entities[index])
         

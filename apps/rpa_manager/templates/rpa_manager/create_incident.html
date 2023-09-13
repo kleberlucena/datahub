@@ -38,6 +38,15 @@
       max-width: 150px; /* Adjust the max width of each image as needed */
       max-height: 150px; /* Adjust the max height of each image as needed */
     }
+      /* fix select2 field height */
+    .select2-selection,
+    .select2-selection--single {
+      height: 38px !important;
+    }
+
+    #select2-id_aeronave-container {
+      height: 38px !important;
+    }
   </style>
   {% endblock style_sheet %}
 
@@ -126,6 +135,11 @@
           <label for="id_operacao">Relato do incidente</label>
           {{ form.relato}}
         </div>
+        <div class="ml-3 mr-3 mt-3">
+          <label for="id_numero_ficha_oc" class="field_label">Número da ficha de ocorrência policial</label>
+          {{ form.numero_ficha_oc }}
+          {{ form.numero_ficha_oc.errors }}
+        </div>
 
         <div class="ml-3 mr-3 mt-3 mb-3">
           <button type="submit" class="btn btn-primary">Salvar</button>
@@ -145,9 +159,15 @@
   <script src="{% static 'adminlte-3.1.0/plugins/moment/moment.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
   <script>
+    $(document).ready(function () {
+      $('.local_escolha').select2();
+      $('.aeronave_escolha').select2();
+    });
+  </script>
+  <script>
     $(function () {
       $('#datetimepicker').datetimepicker({
-        format: 'YYYY-MM-DD HH:mm:ss',
+        format: 'YYYY-MM-DD  HH:mm:ss',
         icons: {
           time: 'fa fa-clock',
         }

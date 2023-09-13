@@ -12,6 +12,7 @@ class IncidentesForm(forms.ModelForm):
                   'local',
                   'ponto_de_referencia',
                   'relato', 
+                  'numero_ficha_oc',
                   'data', 
                   ]
                 
@@ -37,6 +38,7 @@ class IncidentesForm(forms.ModelForm):
                   'local',
                   'ponto_de_referencia',
                   'relato', 
+                  'numero_ficha_oc',
                   'data',
                   ]
 

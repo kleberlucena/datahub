@@ -28,6 +28,7 @@ def home(request):
 class PainelView(TemplateView):
     template_name = 'rpa_manager/painel.html'
 
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today_coordinates_operations = getTodaysCoordinates(context)
@@ -161,12 +162,7 @@ class RelatoriosView(GroupRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        if user.is_superuser or user.groups.filter(name='profile:rpa_view').exists():
-            relatorios = Relatorio.objects.all().order_by('-data', '-horario_inicial')
-        else:
-            # Filtra os objetos para exibir apenas os que foram criados pelo usuário atual
-            relatorios = Relatorio.objects.filter(militar=self.request.user).order_by('-data', '-horario_inicial')
+        relatorios = Relatorio.objects.all().order_by('-data', '-horario_inicial')
 
         form = formulario_missao(self.request)
 

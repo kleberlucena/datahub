@@ -6,7 +6,6 @@ from apps.rpa_manager.utils.addPlaceholderToField import addPlaceholder
 
 
 class MissaoFormulario(forms.ModelForm):
-    
     class Meta:
         model = Missao
         fields = ['titulo', 

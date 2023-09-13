@@ -12,6 +12,7 @@ from django_minio_backend import MinioBackend
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
+
 class Base(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     created_at = models.DateTimeField('Criado', auto_now_add=True)
@@ -234,7 +235,7 @@ class Relatorio(Base):
     data = models.DateField(blank=False, null=False)
     data_final = models.DateField(blank=True, null=True)
     horario_inicial = models.TimeField()
-    horario_final = models.TimeField()
+    horario_final = models.TimeField(null=True)
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
     latitude = models.FloatField("Latitude", default=0.0, null=True, blank=True)
     longitude = models.FloatField("Longitude", default=0.0, null=True, blank=True)
@@ -262,6 +263,7 @@ class Incidentes(models.Model):
     relato = models.TextField()
     local = models.ForeignKey(CidadesPB, on_delete=models.SET_NULL, null=True)
     ponto_de_referencia = models.TextField()
+    numero_ficha_oc = models.CharField(max_length=100, null=True, blank=True, default='')
     data = models.DateTimeField()
 
     def __str__(self):
