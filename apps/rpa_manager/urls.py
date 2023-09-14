@@ -15,7 +15,8 @@ from .views.views_risk_assessment import (
 from .views.views_legislation import (
     LegislationCreateView,
     LegislationUpdateView,
-    LegislationDeleteView
+    LegislationDeleteView,
+    LegislationDetailView
 )
 from .views.views_incidentes import (
     IncidentesCreateView,
@@ -78,6 +79,7 @@ urlpatterns = [
     path('duplicate_risk_assessment/<int:risk_assessment_id>/', duplicate_risk_assessment, name='duplicate_risk_assessment'),
     
     path('create_legislation/', LegislationCreateView.as_view(), name='create_legislation'),
+    path('detail_legislation/<int:pk>/', LegislationDetailView.as_view(), name='detail_legislation'),
     path('update_legislation/<int:pk>/', LegislationUpdateView.as_view(), name='update_legislation'),
     path('delete_legislation/<int:pk>/', LegislationDeleteView.as_view(), name='delete_legislation'),
     

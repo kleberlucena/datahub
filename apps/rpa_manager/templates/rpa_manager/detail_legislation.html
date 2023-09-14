@@ -1,0 +1,36 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% comment %} bacinf style_sheet {% endcomment %}
+  <style>
+
+  </style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Operações aéreas {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+{% comment %} <li class="breadcrumb-item active">Início</li> {% endcomment %}
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+<div class="col-md-12" style="height: 100vh; width: 100%;">
+  <embed src="{{ legislation.legislation_file.url }}" type="application/pdf" width="100%" height="700px;">
+</div>
+
+
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+  <!-- DataTables  & Plugins -->
+{% endblock %}

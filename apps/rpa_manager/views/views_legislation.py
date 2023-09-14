@@ -10,6 +10,13 @@ from base.mixins import GroupRequiredMixin
 MESSAGE_MODEL_NAME = 'Legislação'
 
 
+class LegislationDetailView(DetailView):
+    model = Legislation
+    template_name = 'rpa_manager/detail_legislation.html'
+    context_object_name = 'legislation'
+    pk_url_kwarg = 'pk'
+
+
 class LegislationCreateView(GroupRequiredMixin, CreateView):
     model = Legislation
     form_class = LegislationForm

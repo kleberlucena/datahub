@@ -22,6 +22,10 @@
       .border-for-done {
         border-right: 5px solid lightblue !important;
       }
+
+      #new_operation_btn {
+        margin-left: 0px !important;
+      }
     }
   </style>
 {% endblock style_sheet %}
@@ -155,7 +159,7 @@
       {% if request.user|has_group:'profile:rpa_basic' or request.user|has_group:'profile:rpa_advanced' %}
         <div class="row">
             <a href="{% url 'rpa_manager:criar_nova_missao' %}" style="margin-right: 10px;">
-              <button type="button" style="display: inline; width: 160px; height: 38px;" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i> Nova operação </button>
+              <button type="button" id="new_operation_btn" style="display: inline; width: 160px; height: 38px; margin-left: 10px" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i> Nova operação </button>
             </a>
             <a href="{% url 'rpa_manager:points_of_interest' %}">
               <button type="button" style="display: inline" class="btn btn-outline-info mt-3"><i class="fa fa-cog nav-icon" aria-hidden="true"></i>

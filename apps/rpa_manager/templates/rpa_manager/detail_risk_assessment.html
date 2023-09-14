@@ -159,8 +159,11 @@
           </div>
         </div>
       </div>
+      <a class="dropdown-item" style="display: inline" href="{% url 'rpa_manager:duplicate_risk_assessment' risk_assessment.id %}">
+          <button type="button" style="display: inline; width: 160px; height: 38px;" class="btn btn-block btn-primary mt-3"><i class="fa  fa-clone"></i> Duplicar avaliação </button>
+      </a>
     </div>
-
+    
 {% endblock content %}
 
 <!-- javascripts -->

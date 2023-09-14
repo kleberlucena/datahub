@@ -59,8 +59,6 @@ class RiskAssessmentCreateView(GroupRequiredMixin, CreateView):
         messages.info(self.request, f'{MESSAGE_MODEL_NAME} criada, faça a análise de risco')
         return super().form_valid(form)
     
-    
-
 
 class RiskAssessmentUpdateView(GroupRequiredMixin, UpdateView):
     model = RiskAssessment
@@ -189,4 +187,4 @@ def duplicate_risk_assessment(request, risk_assessment_id):
             risk_assessment=new_risk_assessment,
         )
 
-    return redirect('rpa_manager:risk_assessment_list')
+    return redirect('rpa_manager:update_risk_assessment', pk=new_risk_assessment.id)

@@ -1,7 +1,6 @@
 
 from apps.rpa_manager.models import CidadesPB, NaturezaDeVoo, Entidades
 
-
 entities = [
     'PMPB', 'PCPB', 'CBMPB', 'CPRM', 'CPR-I', 'CPR-II', 'CPR-III', 'SUPLAN', 
     'TJPB', 'MPPB', 'PC', 'IPC', 'SUDEMA', 'AESA', 'PF', 'DAL', 'CE', 'DSAS', 
@@ -105,4 +104,8 @@ def generateEntitiesOfFlighs(list_of_entities = []):
     
     for index in range(len(list_of_entities)):
         Entidades.objects.create(entidade=list_of_entities[index])
-        
+
+def populateModelsFieldsByList():
+    generateCitiesByList(cities_pb)
+    generateEntitiesOfFlighs(entities)
+    generateNatureOfFlighs(natures_of_flights)

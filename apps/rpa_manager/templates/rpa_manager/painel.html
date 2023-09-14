@@ -109,6 +109,7 @@
   <div class="card-header">
     <h3 class="card-title">Voos realizados</h3>
   </div>
+
   <div class="card-body">
     <form id="coordinatesForm" method='GET'>
       {% csrf_token %}
@@ -270,10 +271,12 @@
 
     }); // end DOM load
   </script>
-  
+  {% comment %} <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid small-image"> {% endcomment %}
   <script>
     const jsonEquipes = {{ guarnicoes_json|safe }};
-    const user = "{{ request.user | stringformat:"s"|safe }}"; // Recebe o username do usuário logado
+    const user = "{{ user | stringformat:"s"|safe }}"; // Recebe o username do usuário logado
+    const userImage = "{{ user.military.image.url | stringformat:"s"|safe }}"; 
+    console.log(userImage)
     // Função para criar a estrutura HTML para uma equipe (card)
     function criarEquipeCard(equipe) {
       const isCurrentUserCreator = equipe.piloto_remoto === user; // Verifica se o usuário logado criou a Guarnicao
@@ -313,7 +316,8 @@
                 </div>
                 <div class="grid-container_for-images">
                     <div class="grid-item large-image">
-                      <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid small-image">
+                      <img src=${userImage} alt="user-avatar" class="img-circle img-fluid small-image">
+                      
                     </div>
                     <div class="grid-item">
                       <img src="{% static 'adminlte-3.1.0/img/user7-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">

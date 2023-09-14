@@ -24,10 +24,8 @@ from datetime import datetime
 def home(request):
     return render(request, 'rpa_manager/base.html')
 
-
 class PainelView(TemplateView):
     template_name = 'rpa_manager/painel.html'
-
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
