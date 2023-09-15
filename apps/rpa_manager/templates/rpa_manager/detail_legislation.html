@@ -4,9 +4,14 @@
 <!-- styles -->
 {% block style_sheet %}
 {% comment %} bacinf style_sheet {% endcomment %}
-  <style>
-
-  </style>
+<style>
+  /* Add any custom styles for your PDF container here */
+  .pdf-container {
+    height: 100vh; /* Full viewport height */
+    width: 100%;
+    overflow: auto; /* Allow scrolling if PDF is larger than viewport */
+  }
+</style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -22,15 +27,12 @@
 
 <!-- main container -->
 {% block content %}
-
-<div class="col-md-12" style="height: 100vh; width: 100%;">
-  <embed src="{{ legislation.legislation_file.url }}" type="application/pdf" width="100%" height="700px;">
+<div class="col-md-12 pdf-container">
+  <embed src="{{ legislation.legislation_file.url }}" type="application/pdf" width="100%" height="100%" allowfullscreen>
 </div>
-
-
 {% endblock content %}
 
 <!-- javascripts -->
 {% block js %}
-  <!-- DataTables  & Plugins -->
+  <!-- DataTables & Plugins -->
 {% endblock %}

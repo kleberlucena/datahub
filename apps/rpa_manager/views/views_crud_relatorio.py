@@ -15,7 +15,7 @@ from apps.rpa_manager.handlers import require_permission
 from django.contrib import messages
 from django.utils import timezone
 
-MESSAGE_MODEL_NAME = 'Cardeneta'
+MESSAGE_MODEL_NAME = 'Caderneta'
 
 
 class VerRelatorioView(GroupRequiredMixin, DetailView):
@@ -90,7 +90,7 @@ class EditarRelatorioView(GroupRequiredMixin, UpdateView):
         relatorio = self.get_object()
         time_since_creation = timezone.now() - relatorio.created_at
         if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
-            messages.error(self.request, 'Não é possível editar esta cardeneta após 24 horas.')
+            messages.error(self.request, 'Não é possível editar esta Caderneta após 24 horas.')
             return HttpResponseRedirect(self.success_url)
         return super().dispatch(*args, **kwargs)
     
@@ -112,6 +112,6 @@ class DeletarRelatorioView(PermissionRequiredMixin, DeleteView):
         relatorio = self.get_object()
         time_since_creation = timezone.now() - relatorio.created_at
         if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
-            messages.error(self.request, 'Não é possível excluir esta cardeneta após 24 horas.')
+            messages.error(self.request, 'Não é possível excluir esta Caderneta após 24 horas.')
             return HttpResponseRedirect(self.success_url)
         return super().dispatch(*args, **kwargs)

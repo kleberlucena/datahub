@@ -1,5 +1,5 @@
-from typing import Any
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic import ListView
 from apps.rpa_manager.models import RiskAssessment, Assessment
@@ -15,7 +15,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from base.mixins import GroupRequiredMixin
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
-
+from django.shortcuts import render, redirect
 
 MESSAGE_MODEL_NAME = "Avaliação de risco"
 
@@ -85,7 +85,28 @@ class RiskAssessmentDeleteView(GroupRequiredMixin, DeleteView):
         messages.info(self.request, f'{MESSAGE_MODEL_NAME} excluída com sucesso!')
         return response
     
+
+class CreateAssessmentByRiskView(View):
+    template_name = 'rpa_manager/create_assessment.html'
     
+    def get(self, request, risk_assessment_id):
+        risk_assessment = RiskAssessment.objects.get(pk=risk_assessment_id)
+        form = AssessmentForm()
+        return render(request, self.template_name, {'form': form, 'risk_assessment': risk_assessment})
+    
+    def post(self, request, risk_assessment_id):
+        risk_assessment = RiskAssessment.objects.get(pk=risk_assessment_id)
+        form = AssessmentForm(request.POST)
+        
+        if form.is_valid():
+            assessment = form.save(commit=False)
+            assessment.risk_assessment = risk_assessment
+            assessment.save()
+            return redirect('rpa_manager:read_risk_assessment', pk=risk_assessment_id)
+        
+        return render(request, self.template_name, {'form': form, 'risk_assessment': risk_assessment})
+
+
 class AssessmentCreateView(GroupRequiredMixin, CreateView):
     model = Assessment
     template_name = 'rpa_manager/create_assessment.html'
@@ -112,7 +133,6 @@ class AssessmentUpdateView(GroupRequiredMixin, UpdateView):
         self.object = form.save()
         risk_assessment_pk = self.object.risk_assessment.pk
         redirect_url = reverse('rpa_manager:read_risk_assessment', kwargs={'pk': risk_assessment_pk})
-        
         messages.info(self.request, f'Análise editada com sucesso!')
         return redirect(redirect_url)
 
@@ -126,10 +146,14 @@ class AssessmentDeleteView(GroupRequiredMixin, DeleteView):
     group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
 
     def delete(self, request, *args, **kwargs):
+        assessment = self.get_object()
+        risk_assessment_pk = assessment.risk_assessment.pk  
         response = super().delete(request, *args, **kwargs)
         messages.info(self.request, f'Análise excluída com sucesso!')
-        return response
-
+        
+        redirect_url = reverse('rpa_manager:read_risk_assessment', kwargs={'pk': risk_assessment_pk})
+        return redirect(redirect_url)
+    
 
 class RiskAssessmentPDFDetailView(DetailView):
     model = RiskAssessment
@@ -146,7 +170,7 @@ class RiskAssessmentPDFDetailView(DetailView):
     def render_to_response(self, context, **response_kwargs):
         html = render_to_string(self.template_name, context)
         css = '''
-        @page { size: A4; margin: 2cm; }
+        @page { size: A4; margin: 1cm; }
         body { word-wrap: break-word; }
         '''
         
@@ -155,7 +179,7 @@ class RiskAssessmentPDFDetailView(DetailView):
         # inline - open in the same page
         # attachment - download
         response = HttpResponse(pdf_file, content_type='application/pdf')
-        response['Content-Disposition'] = 'inline; filename="risk-assessment.pdf"'
+        response['Content-Disposition'] = 'inline; filename="avaliação-de-risco-operacional.pdf"'
 
         return response
 

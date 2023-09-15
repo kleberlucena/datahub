@@ -10,6 +10,7 @@ from .views.views_risk_assessment import (
     AssessmentUpdateView,
     AssessmentDeleteView,
     RiskAssessmentDetailView,
+    CreateAssessmentByRiskView,
     duplicate_risk_assessment
 )
 from .views.views_legislation import (
@@ -74,10 +75,11 @@ urlpatterns = [
     path('generate_pdf/<int:pk>/pdf/', RiskAssessmentPDFDetailView.as_view(), name='generate_pdf'),
     path('risk_assessment_list/', RiskAssessmentListView.as_view(), name='risk_assessment_list'),
     path('create_assessment/', AssessmentCreateView.as_view(), name='create_assessment'),
+    path('create_assessment/<int:risk_assessment_id>/', CreateAssessmentByRiskView.as_view(), name='create_assessment'),
     path('update_assessment/<int:pk>/', AssessmentUpdateView.as_view(), name='update_assessment'),
     path('delete_assessment/<int:pk>/', AssessmentDeleteView.as_view(), name='delete_assessment'),
     path('duplicate_risk_assessment/<int:risk_assessment_id>/', duplicate_risk_assessment, name='duplicate_risk_assessment'),
-    
+
     path('create_legislation/', LegislationCreateView.as_view(), name='create_legislation'),
     path('detail_legislation/<int:pk>/', LegislationDetailView.as_view(), name='detail_legislation'),
     path('update_legislation/<int:pk>/', LegislationUpdateView.as_view(), name='update_legislation'),

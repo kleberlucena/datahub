@@ -7,16 +7,28 @@
     <title>Document</title>
     <style>
         p, li {
-            font-size: 15px;
+            font-size: 14px;
         }
         ul {
             list-style-type: '- ';
         }
-        table, th, td{
+        table, th, td {
             border: 1px solid black;
+        }
+
+        @page {
+            @bottom-right {
+                content: counter(page);
+                height: 1cm;
+                text-align: right;
+                width: 1cm;
+            }
         }
         .content-header {
             display: flex;
+            flex-direction: column;
+            justify-content: center;
+
         }
         /*
         .container {
@@ -24,7 +36,8 @@
         }
         */
         .header-img {
-            display: inline;
+            display: flex;
+            justify-content: center;
         }
         .pmpb_logo {
             width: 90px !important;
@@ -33,11 +46,20 @@
         .header {
             display: flex;
             flex-direction: column;
+            justify-content: center;
         }
-        .main-title, .main-subtitle {
+        .header div p {
             text-align: center;
         }
+        .main-title, .main-subtitle {
+            text-align: left;
+        }
+        .main-subtitle {
+            font-size: 12px;
+            font-weight: 400;
+        }
         .main-intro-topic {
+            font-size: 13px;
             text-decoration: underline;
         }
         .main-table {
@@ -53,8 +75,8 @@
             font-weight: bold;
         }
         .main-tolerability-img {
-            /* margin-left: 50px; */
-            max-width: 100%;
+            margin-left: 50px;
+            max-width: 80%;
         }
         .main-content-tolerability li {
             text-align: justify;
@@ -62,7 +84,11 @@
         .responsible_sign {
             display: inline;
             width: 50%;
-            margin-left: 120px;
+            margin-left: 170px;
+        }
+        .section-title {
+            font-size: 15px;
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -73,31 +99,30 @@
         </div>
         <div class="header">
             <div>
-                <p>POLÍCIA MILITAR DA PARAÍBA</p>
+                <p style="margin: 0; padding: 0;"><strong>POLÍCIA MILITAR DA PARAÍBA</strong></p>
             </div>
             <div>
-                <p>COMANDO DE OPERAÇÕES AÉREAS – COA</p>
+                <p style="margin: 0; padding: 0;"><strong>COMANDO DE OPERAÇÕES AÉREAS – COA</strong></p>
             </div>
             <div>
-                <p>AERONAVES NÃO TRIPULADAS – SUBGRUPO RPA</p>
+                <p style="margin: 0; padding: 0;"><strong>AERONAVES NÃO TRIPULADAS – SUBGRUPO RPA</strong></p>
             </div>
         </div>
     </section>
 
     <section class="container">
-        <h3 class="main-title">AVALIAÇÃO DE RISCO OPERACIONAL</h3>
-        <h3 class="main-subtitle">Em cumprimento ao parágrafo [E94.103(f)(2) ou E94.103(g)(2)] do RBAC-E nº 94 da ANAC</h3>
+        <h3 class="main-title" style="text-align: center;">Avaliação de Risco Operacional</h3>
+        <h3 class="main-subtitle" style="text-align: center;">Em cumprimento ao parágrafo [E94.103(f)(2) ou E94.103(g)(2)] do RBAC-E nº 94 da ANAC</h3>
 
         <div class="content-main" >
-            <p><strong>Operador:</strong>  {{ risk_assessment.operator }}</p> 
-            <p><strong>CNPJ:</strong>  {{ risk_assessment.cnpj }}</p> 
-            <p><strong>Aeronaves:</strong> {{ risk_assessment.aircrafts.all|join:", " }}</p>
-            <p><strong>Cenário operarional:</strong> {{ risk_assessment.operational_scenario }}</p>
+            <p style="margin-top: 20px;">Operador:  {{ risk_assessment.operator }}</p> 
+            <p>CNPJ:  {{ risk_assessment.cnpj }}</p> 
+            <p>Aeronaves: {{ risk_assessment.aircrafts.all|join:", " }}</p>
+            <p style="margin-top: 20px; ">Cenário operarional: {{ risk_assessment.operational_scenario }}</p>
 
-            <h2 class="main-intro-topic">Aspectos gerais:</h2>
-            <ul>
-                <li>Legislação aplicável: {{ risk_assessment.apllied_legislation }}</li>
-                <li>O operador é obrigado a se manter em áreas distantes de terceiros?
+            <h2 class="section-title">Aspectos gerais:</h2>
+                <p>Legislação aplicável: {{ risk_assessment.apllied_legislation }}</p>
+                <p>O operador é obrigado a se manter em áreas distantes de terceiros?
                     
                     {% if risk_assessment.keep_distance_from_3rd == True %}
                         Sim
@@ -105,8 +130,8 @@
                         Não
                     {% endif %}
                         
-                </li>
-                <li>Os pilotos remotos e observadores devem passar por algum treinamento inicial ou periódico específico provido pela instituição?
+                </p>
+                <p>Os pilotos remotos e observadores devem passar por algum treinamento inicial ou periódico específico provido pela instituição?
                     
                     {% if risk_assessment.pilots_capabilities == True %}
                         Sim - Curso de Operador de RPAs – CORPA
@@ -114,16 +139,15 @@
                         Não
                     {% endif %}
                         
-                </li>
-            </ul>
+                </p>
 
-            <p>Em caso de acidente com lesões a pessoas, quem acionar? Como proceder? {{ risk_assessment.accident_procedure }}</p>
+            <p style="text-align: justify;">Em caso de acidente com lesões a pessoas, quem acionar? Como proceder? {{ risk_assessment.accident_procedure }}</p>
 
-            <h2 class="main-subtitle main-intro-topic">AVALIAÇÃO DO RISCO</h2>
+            <h2 class="section-title" style="font-weight: bold;">Avaliação de Risco:</h2>
 
             
             {% for assessment in assessments %}
-                <table class="main-table">
+                <table class="main-table" style="page-break-inside: avoid;">
                     <thead>
                         <th class="main-table-header">Situação</th>
                         <th class="main-table-header"> {{ assessment.situation }} </th>
@@ -158,54 +182,53 @@
             {% endfor %}
             
             <br>
-            <h2 class="main-intro-topic" style="display: inline">Matriz de risco:</h2> <span>modelo IS nº E94-003</span>
+            <h2 class="section-title" style="display: inline">Matriz de risco:</h2> <span>modelo IS nº E94-003</span>
 
             <h3 class="main-intro-topic">Probabilidade da ocorrência:</h3>
-            <ul>
-                <li>Nível 5 (frequente): é provável que ocorra muitas vezes, ou historicamente tem ocorrido frequentemente;</li>
-                <li>Nível 4 (ocasional): é provável que ocorra algumas vezes, ou historicamente tem ocorrido com pouca frequência;</li>
-                <li>Nível 3 (remoto): é improvável, mas é possível que venha a ocorrer, ou ocorre raramente;</li>
-                <li>Nível 2 (improvável): é bastante improvável que ocorra e não se tem notícia de que tenha alguma vez ocorrido; e</li>
-                <li>Nível 1 (muito improvável): é quase impossível que o evento ocorra.</li>
-            </ul>
-            <h3 class="main-intro-topic">Severidade da ocorrência:</h3>
-            <ul>
-                <li>Nível A (catastrófico): morte de múltiplas pessoas;</li>
-                <li>Nível B (crítico): morte de pessoa, lesões gravíssimas, capazes de deixar sequelas significativas e/ou incapacitantes, tais como cegueira, paralisia, amputações, etc.;</li>
-                <li>Nível C (significativo): lesões sérias a pessoas, mas não incapacitantes nem com sequelas significativas;</li>
-                <li>Nível D (pequeno): incidentes menores, danos a objetos, animais ou vegetação no solo, lesões leves;</li>
-                <li>Nível E (insignificante): somente danos ao equipamento.</li>
-            </ul>
-            <h3 class="main-intro-topic">Tolerabilidade:</h3>
+                <p style="margin: 0; padding: 0; text-align: justify; font-size: 12px;">-Nível 5 (frequente): é provável que ocorra muitas vezes, ou historicamente tem ocorrido frequentemente;</p>
+                <p style="margin: 0; padding: 0; text-align: justify; font-size: 12px;">-Nível 4 (ocasional): é provável que ocorra algumas vezes, ou historicamente tem ocorrido com pouca frequência;</p>
+                <p style="margin: 0; padding: 0; text-align: justify; font-size: 12px;">-Nível 3 (remoto): é improvável, mas é possível que venha a ocorrer, ou ocorre raramente;</p>
+                <p style="margin: 0; padding: 0; text-align: justify; font-size: 12px;">-Nível 2 (improvável): é bastante improvável que ocorra e não se tem notícia de que tenha alguma vez ocorrido; e</p>
+                <p style="margin: 0; padding: 0; text-align: justify; font-size: 12px;">-Nível 1 (muito improvável): é quase impossível que o evento ocorra.</p>
+            
+                <h3 class="main-intro-topic">Severidade da ocorrência:</h3>
+                <p style="margin: 0; padding: 0; text-align: justify; font-size: 12px;">-Nível A (catastrófico): morte de múltiplas pessoas;</p>
+                <p style="margin: 0; padding: 0; text-align: justify; font-size: 12px;">-Nível B (crítico): morte de pessoa, lesões gravíssimas, capazes de deixar sequelas significativas e/ou incapacitantes, tais como cegueira, paralisia, amputações, etc.;</p>
+                <p style="margin: 0; padding: 0; text-align: justify; font-size: 12px;">-Nível C (significativo): lesões sérias a pessoas, mas não incapacitantes nem com sequelas significativas;</p>
+                <p style="margin: 0; padding: 0; text-align: justify; font-size: 12px;">-Nível D (pequeno): incidentes menores, danos a objetos, animais ou vegetação no solo, lesões leves;</p>
+                <p style="margin: 0; padding: 0; text-align: justify; font-size: 12px;">-Nível E (insignificante): somente danos ao equipamento.</p>
+            
+                <h3 class="main-intro-topic">Tolerabilidade:</h3>
             <div>
                 <img src="{% static 'sti/img/table-anac.png' %}" alt="pmpb_logo" class="main-tolerability-img">
             </div>
+            <br>
+            <p style="text-align: justify; margin: 0; padding: 0; font-size: 12px;">- <span style="color: red; font-weight: bold;">Risco extremo</span>  (classificações 4A, 5A e 5B): a operação não deve ocorrer e, caso esteja ocorrendo, deve cessar imediatamente, enquanto persistir a condição ou até que medidas mitigadoras suficientes reduzam o risco para um nível aceitável pelo operador. Caso ainda se decida prosseguir com a operação, controles preventivos para mitigação do risco devem ser estabelecidos, devem estar em vigor e a aprovação da hierarquia mais alta da empresa (presidente) deve ser requerida.</li>
+            <p style="text-align: justify; margin: 0; padding: 0; font-size: 12px;">- <span style="color: #854010; font-weight: bold;">Alto risco</span>  (classificações 3A, 4B e 5C): a operação não deveria ocorrer e, caso esteja ocorrendo, deveria cessar imediatamente, enquanto persistir a condição ou até que medidas mitigadoras suficientes reduzam o risco para um nível aceitável pelo operador. Caso ainda se decida prosseguir com a operação, controles preventivos para mitigação do risco devem ser estabelecidos, devem estar em vigor e a aprovação da hierarquia de gestão da empresa (gerente ou diretor) deve ser requerida.</li>
+            <p style="text-align: justify; margin: 0; padding: 0; font-size: 12px;">- <span style="color: blue; font-weight: bold;">Risco moderado</span>  (classificações 1A, 2A, 2B, 3B, 3C, 4C, 4D, 5D, 5E): a operação pode ocorrer com controles preventivos para mitigação do risco estabelecidos e que devem estar em vigor, conforme necessários. Operações neste nível de risco deveriam ser aprovadas por nível hierárquico imediatamente superior (chefia imediata).</li>
+            <p style="text-align: justify; margin: 0; padding: 0; font-size: 12px;">- <span style="color: #FF9900; font-weight: bold;">Baixo risco</span>  (classificações 1B, 1C, 2C, 2D, 3D, 3E, 4E): a operação pode ocorrer e controles preventivos para mitigação de risco e aprovação por nível hierárquico imediatamente superior (chefia imediata) são opcionais.</li>
+            <p style="text-align: justify; margin: 0; padding: 0; font-size: 12px;">- <span style="color: green; font-weight: bold;">Risco muito baixo</span>  (classificações 1D, 1E e 2E): a operação é aceitável como concebida, e nenhum controle preventivo para mitigação de risco e aprovação é requerida para que ela ocorra.</li>
 
-            <ul class="main-content-tolerability">
-                <li><span style="color: red; font-weight: bold;">Risco extremo</span> (classificações 4A, 5A e 5B): a operação não deve ocorrer e, caso esteja ocorrendo, deve cessar imediatamente, enquanto persistir a condição ou até que medidas mitigadoras suficientes reduzam o risco para um nível aceitável pelo operador. Caso ainda se decida prosseguir com a operação, controles preventivos para mitigação do risco devem ser estabelecidos, devem estar em vigor e a aprovação da hierarquia mais alta da empresa (presidente) deve ser requerida.</li>
-                <li><span style="color: #854010; font-weight: bold;">Alto risco</span> (classificações 3A, 4B e 5C): a operação não deveria ocorrer e, caso esteja ocorrendo, deveria cessar imediatamente, enquanto persistir a condição ou até que medidas mitigadoras suficientes reduzam o risco para um nível aceitável pelo operador. Caso ainda se decida prosseguir com a operação, controles preventivos para mitigação do risco devem ser estabelecidos, devem estar em vigor e a aprovação da hierarquia de gestão da empresa (gerente ou diretor) deve ser requerida.</li>
-                <li><span style="color: blue; font-weight: bold;">Risco moderado</span> (classificações 1A, 2A, 2B, 3B, 3C, 4C, 4D, 5D, 5E): a operação pode ocorrer com controles preventivos para mitigação do risco estabelecidos e que devem estar em vigor, conforme necessários. Operações neste nível de risco deveriam ser aprovadas por nível hierárquico imediatamente superior (chefia imediata).</li>
-                <li><span style="color: #FF9900; font-weight: bold;">Baixo risco</span> (classificações 1B, 1C, 2C, 2D, 3D, 3E, 4E): a operação pode ocorrer e controles preventivos para mitigação de risco e aprovação por nível hierárquico imediatamente superior (chefia imediata) são opcionais.</li>
-                <li><span style="color: green; font-weight: bold;">Risco muito baixo</span> (classificações 1D, 1E e 2E): a operação é aceitável como concebida, e nenhum controle preventivo para mitigação de risco e aprovação é requerida para que ela ocorra.</li>
-            </ul>
+            <div style="page-break-inside: avoid;">
+                <h3 class="section-title">Disposições finais:</h3>
 
-            <h3 class="main-intro-topic">Disposições finais:</h3>
+                <p style="text-align: justify">Declaro para os devidos fins que todos os pilotos remotos conhecem e cumprem a legislação e regulamentação aplicáveis, em especial as acima listadas, assim como conhecem as consequências do descumprimento.</p>
 
-            <p style="text-align: justify">Declaro para os devidos fins que todos os pilotos remotos conhecem e cumprem a legislação e regulamentação aplicáveis, em especial as acima listadas, assim como conhecem as consequências do descumprimento.</p>
+                <p>Responsável pelas informações: {{ risk_assessment.info_responsible }}</p>
 
-            <p>Responsável pelas informações: {{ risk_assessment.info_responsible }}</p>
+                <p>Data e assinatura: {{ risk_assessment.date|date:"d/m/Y" }} </p>
 
-            <p>Data e assinatura: {{ risk_assessment.date|date:"d/m/Y" }} </p>
+                {% if risk_assessment.responsible_sign %}
+                    <img src="{{ risk_assessment.responsible_sign.url }}" alt="assinatura" class="responsible_sign">
+                {% else %}
+                    <br>
+                    <span class="responsible_sign">_____________________________________________</span>
+                {% endif %}
 
-            {% if risk_assessment.responsible_sign %}
-                <img src="{{ risk_assessment.responsible_sign.url }}" alt="assinatura" class="responsible_sign">
-            {% else %}
-                <br>
-                <span class="responsible_sign">___________________________________________</span>
-            {% endif %}
-
-            <p style="text-align: center">Esta avaliação de risco operacional é válida até: {{ risk_assessment.expiration_date|date:"d/m/Y" }}  </p>
+                <p style="text-align: center">Esta avaliação de risco operacional é válida até: {{ risk_assessment.expiration_date|date:"d/m/Y" }}  </p>
+            </div>
         </div>
     </section>
+
 </body>
 </html>

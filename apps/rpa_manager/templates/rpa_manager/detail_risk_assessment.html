@@ -118,9 +118,6 @@
               <thead class="tabela_cabecalho">
                 <tr>
                   <th scope="col">Situação</th>
-                  <th scope="col">Probabilidade de ocorrência</th>
-                  <th scope="col">Severidade da ocorrência</th>
-                  <th scope="col">Risco</th>
                   <th scope="col">Tolerabilidade</th>
                   <th scope="col">Mitigação de riscos</th>
                   <th scope="col">Nível hierárquico</th>
@@ -131,9 +128,6 @@
                 {% for assessment in risk_assessment.assessment_set.all %}
                 <tr>
                   <td>{{ assessment.situation }}</td>
-                  <td>{{ assessment.probability_of_occurrence }}</td>
-                  <td>{{ assessment.severity_of_occurrence }}</td>
-                  <td>{{ assessment.risk }}</td>
                   <td>{{ assessment.tolerability }}</td>
                   <td>{{ assessment.mitigation_measures_risk }}</td>
                   <td>{{ assessment.hierarchy_authorization }}</td>
@@ -159,9 +153,13 @@
           </div>
         </div>
       </div>
-      <a class="dropdown-item" style="display: inline" href="{% url 'rpa_manager:duplicate_risk_assessment' risk_assessment.id %}">
-          <button type="button" style="display: inline; width: 160px; height: 38px;" class="btn btn-block btn-primary mt-3"><i class="fa  fa-clone"></i> Duplicar avaliação </button>
+      <a style="display: inline" href="{% url 'rpa_manager:duplicate_risk_assessment' risk_assessment.id %}">
+          <button type="button" style="display: inline; width: 200px; height: 38px;" class="btn btn-block btn-primary mt-3 mb-3"><i class="fa  fa-clone"></i> Duplicar avaliação </button>
       </a>
+      <a  style="display: inline" href="{% url 'rpa_manager:create_assessment' risk_assessment.id %}">
+          <button type="button" style="display: inline; width: 160px; height: 38px;" class="btn btn-block btn-primary mt-3 mb-3"><i class="fa  fa-plus"></i> Nova análise </button>
+      </a>
+
     </div>
     
 {% endblock content %}

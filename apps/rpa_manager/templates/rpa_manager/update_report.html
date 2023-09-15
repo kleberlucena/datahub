@@ -21,15 +21,15 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Editar cardeneta {% endblock %}
+{% block title %} Editar Caderneta {% endblock %}
 
 <!-- context title -->
 {% block title-header %} Operações aéreas {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
-  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:relatorios' %}">Cardenetas</a></li>
-  <li class="breadcrumb-item active">Editar cardeneta</li>
+  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:relatorios' %}">Cadernetas</a></li>
+  <li class="breadcrumb-item active">Editar Caderneta</li>
 {% endblock %}
 
 <!-- main container -->
@@ -38,7 +38,7 @@
   <div class="col-md-12">
     <div class="card card-primary card-outline">
       <div class="card-header">
-        <h3 class="card-title">Editar cardeneta</h3>
+        <h3 class="card-title">Editar Caderneta</h3>
         {{ form.errors }}
       </div>
       <form class="p-3" method='post' enctype="multipart/form-data">
