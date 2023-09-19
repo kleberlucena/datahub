@@ -1,11 +1,11 @@
 from django import forms
-from apps.rpa_manager.models import Checklist, Aeronave
+from apps.rpa_manager.models import Checklist, Aircraft
 from apps.rpa_manager.utils.addAttributes import addAttributes
 
 
 class ChecklistForm(forms.ModelForm):
     camposCheckboxesChecklist = [
-        'baterias_carregadas',
+        'batteries_loaded',
         'bateria_controle_carregada',
         'corpo',
         'hastes_motor',
@@ -35,7 +35,7 @@ class ChecklistForm(forms.ModelForm):
         fields = [
             'piloto', 'aeronave',
             'num_helices', 'num_baterias',
-            'baterias_carregadas', 'bateria_controle_carregada',
+            'batteries_loaded', 'bateria_controle_carregada',
             'corpo', 'hastes_motor',
             'helices', 'gimbal',
             'holofote', 'auto_falante',

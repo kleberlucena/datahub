@@ -128,7 +128,7 @@ class AicraftHistoric(models.Model):
     
 @receiver(pre_save, sender=AicraftHistoric)
 def update_titulo_aeronave(sender, instance, **kwargs):
-    instance.titulo_aeronave = instance.aircraft.prefix
+    instance.aircraft_title = instance.aircraft.prefix
 
 
 class Operation(Base):
@@ -146,7 +146,7 @@ class Operation(Base):
     completed = models.BooleanField(default=False, null=True)
 
     def __str__(self):
-        return self.titulo
+        return self.title
 
 
 class TypeOfBattery(models.Model):
@@ -285,7 +285,7 @@ class IncidentImage(models.Model):
     )
 
     
-class PontosDeInteresse(models.Model):
+class PointsOfInterest(models.Model):
     operation = models.ForeignKey(Report, on_delete=models.SET_NULL, null=True)
     description = models.TextField()
     latitude = models.FloatField("Latitude", default=0.0, null=True, blank=True)

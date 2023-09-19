@@ -1,9 +1,9 @@
 from django import forms
-from apps.rpa_manager.models import Aeronave
+from apps.rpa_manager.models import Aircraft
 
 
 class AeronaveSelectForm(forms.Form):
-    aeronave = forms.ModelChoiceField(queryset=Aeronave.objects.all(), empty_label='Selecione uma aeronave')
+    aeronave = forms.ModelChoiceField(queryset=Aircraft.objects.all(), empty_label='Selecione uma aeronave')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
