@@ -12,7 +12,7 @@ from apps.rpa_manager.models import (
     CidadesPB,
     Guarnicao,
     Incidentes,
-    Entidades,
+    Entities,
     PontosDeInteresse,
     ImagensIncidente,
     ImagensChecklist,
@@ -60,7 +60,7 @@ admin.site.register(NaturezaDeVoo)
 admin.site.register(TipoDeOperacao)
 admin.site.register(CidadesPB)
 admin.site.register(Incidentes)
-admin.site.register(Entidades)
+admin.site.register(Entities)
 admin.site.register(Legislation)
 admin.site.register(PontosDeInteresse)
 admin.site.register(ImagensIncidente)
