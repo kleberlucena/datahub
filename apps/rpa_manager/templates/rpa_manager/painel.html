@@ -23,11 +23,11 @@
     width: 120px;
     margin-top: 32px;
   }
-/*   
+  
   #equipes-container {
-    width: 70rem;
+    width: 100rem;
     max-width: 100%;
-  } */
+  }
 
   .card_content {
     display: grid;
@@ -53,13 +53,9 @@
   /* Make the alignment of images */
   .grid-container_for-images {
     display: grid;
-    grid-template-columns: 30px 30px 30px; /* Três colunas com mesmo tamanho */
+    grid-template-columns: 45px 45px 45px; /* Três colunas com mesmo tamanho */
     gap: 10px; /* Espaçamento entre as divs (opcional) */
   }  
-
-  .lead-img {
-    /* bigger img on card */
-  }
 
   .large-image {
     grid-column: 1 / span 3; /* A primeira imagem ocupa três colunas */
@@ -70,7 +66,7 @@
   }
   
   .img-fluid {
-     /* Para ocupar todo o espaço disponível na div */
+    width: 100%; /* Para ocupar todo o espaço disponível na div */
   }
 
   .hover-zoom {
@@ -78,7 +74,7 @@
   }
   
   .hover-zoom:hover {
-    transform: scale(3.5); /* Aumenta o tamanho da imagem em 20% no hover */
+    transform: scale(3.0); /* Aumenta o tamanho da imagem em 20% no hover */
   }
 
   @media (max-width: 768px) {
@@ -278,9 +274,7 @@
   {% comment %} <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid small-image"> {% endcomment %}
   <script>
     const jsonEquipes = {{ guarnicoes_json|safe }};
-    const user = "{{ user | stringformat:"s"|safe }}"; // Recebe o username do usuário logado
-    const userImage = "{{ user.military.image.url | stringformat:"s"|safe }}"; 
-    console.log(userImage)
+    const user = "{{ request.user | stringformat:"s"|safe }}"; // Recebe o username do usuário logado
     // Função para criar a estrutura HTML para uma equipe (card)
     function criarEquipeCard(equipe) {
       const isCurrentUserCreator = equipe.piloto_remoto === user; // Verifica se o usuário logado criou a Guarnicao
@@ -319,19 +313,19 @@
                     ${telefone}
                 </div>
                 <div class="grid-container_for-images">
-                    <div class="grid-item large-image">
-                      <img src=${userImage} alt="user-avatar" class="img-circle img-fluid lead-img">
-                    </div>
-                    <div class="grid-item">
-                      <img src="{% static 'adminlte-3.1.0/img/user7-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
-                    </div>
-                    <div class="grid-item">
-                      <img src="{% static 'adminlte-3.1.0/img/user6-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
-                    </div>
-                    <div class="grid-item">
-                      <img src="{% static 'adminlte-3.1.0/img/user5-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
-                    </div>
-                </div>
+                  <div class="grid-item large-image">
+                    <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid small-image">
+                  </div>
+                  <div class="grid-item">
+                    <img src="{% static 'adminlte-3.1.0/img/user7-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
+                  </div>
+                  <div class="grid-item">
+                    <img src="{% static 'adminlte-3.1.0/img/user6-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
+                  </div>
+                  <div class="grid-item">
+                    <img src="{% static 'adminlte-3.1.0/img/user5-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
+                  </div>
+              </div>
               </div>
             </div>
             <div class="card-footer">
