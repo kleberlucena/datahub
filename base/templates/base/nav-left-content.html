@@ -2,6 +2,7 @@
 
 <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
+      {% include 'base/apps-nav-left-content/protect_network.html' %}
       {% if user.is_superuser %}
       <!--Módulo técnico-->
       <li class="nav-item module-item">
