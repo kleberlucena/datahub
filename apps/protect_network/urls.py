@@ -7,4 +7,6 @@ app_name = 'protect_network'
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('estabelishment/', views.EstablishmentView.as_view(), name='estabelishment'),
+    path('employee/', views.EmployeeView.as_view(), name='employee'),
+
 ]

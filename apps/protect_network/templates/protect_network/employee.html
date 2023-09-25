@@ -38,55 +38,8 @@
             </div>
         <form class="p-3" method='post' enctype="multipart/form-data">
 
-            <div class="row">
-                <div class="col-sm-12">
-                    {{form.name|add_class:"form-control"|as_crispy_field}}
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-sm-12">
-                    {{form.type|add_class:"form-control"|as_crispy_field}}
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-sm-12">
-                    <label for="{{ form.is_headquarters.id_for_label }}">É Matriz?</label>
-                    {{ form.is_headquarters }}
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-sm-12">
-                    {{form.cnpj|add_class:"form-control"|as_crispy_field}}
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-sm-12">
-                    {{form.parent_company|add_class:"form-control"|as_crispy_field}}
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-sm-12">
-                    {{form.description|add_class:"form-control"|as_crispy_field}}
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-sm-12">
-                    {{form.address|add_class:"form-control"|as_crispy_field}}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            <label for="add">&#10;</label>
-                            <div class=""></div>
-                            <button type="button" class="btn btn-block btn-outline-primary" id="btn_add_adress">
-                            Novo endereço
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
+
 
                
             <div class="mt-3">
