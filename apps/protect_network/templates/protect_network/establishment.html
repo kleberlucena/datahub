@@ -11,11 +11,11 @@
 {% endblock %}
 
 
-{% block title-header %} Pontos de Interesse {% endblock %}
+{% block title-header %} Rede de Proteção {% endblock %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
-<li class="breadcrumb-item"><a>Adicionar tag</a></li>
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Rede</a></li>
+<li class="breadcrumb-item"><a>Estabelecimento</a></li>
 {% endblock %}
 
 {% block content %}
@@ -34,7 +34,7 @@
     <div class="col-md-12">
         <div class="card card-primary card-outline">
             <div class="card-header">
-                <h3 class="card-title">Informações sobre o estabelecimento</h3>
+                <h3 class="card-title"><b>Informações sobre o estabelecimento</b></h3>
             </div>
         <form class="p-3" method='post' enctype="multipart/form-data">
 
@@ -71,6 +71,7 @@
             </div>
             <div class="row mt-3">
                 <div class="col-sm-12">
+                    <b>###ENDEREÇO DO MODELO ADDRESS, FAZER MODAL PRA CADASTRO DO ENDEREÇO E EXIBIR ENDREÇOS CADASTRADOS EM LISTA A BAIXO###</b>
                     {{form.address|add_class:"form-control"|as_crispy_field}}
                 </div>
             </div>

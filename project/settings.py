@@ -106,6 +106,7 @@ INSTALLED_APPS = [
     'guardian',
     'corsheaders',
     'easyaudit',
+    'leaflet',
 
     # Apps
     'base',

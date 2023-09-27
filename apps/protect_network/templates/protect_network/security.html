@@ -1,0 +1,67 @@
+{% extends "base/base.html" %}
+{% load static crispy_forms_tags widget_tweaks %}
+
+
+<!-- browser title -->
+{% block title %} Adicionar tag {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% endblock %}
+
+
+{% block title-header %} Rede de Proteção{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Rede</a></li>
+<li class="breadcrumb-item"><a>Informações de Segurança</a></li>
+{% endblock %}
+
+{% block content %}
+
+<!-- INFO BOX-->
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre informações de segurança</h3>
+    <p class="text-muted text-justify px-3 pt-2">
+        1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla auctor tortor non dui mattis, nec blandit justo dignissim.
+        <br>2. Phasellus volutpat semper justo, vel laoreet tellus consequat vel. Suspendisse potenti. Fusce nec malesuada neque.
+        <br>3. Integer id vestibulum neque, ac malesuada libero. Quisque a ligula vel ante ultrices blandit. Vivamus in lacinia lorem.
+    </p>
+</div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary card-outline">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <b>Informações de segurança</b></h3>
+                        </div>
+                        CADASTRAR FORM COM:<br>
+                        - Sistemas de Alarme<br>
+                        - Câmeras de Segurança (CCTV monitoramento em tempo real, gravação, camera IP, DVR)<br>
+                        - Iluminação externa adequada?<br>
+                        - Portões, muro alto<br>
+                        - Cerca elétrica<br>
+                        - Segurança Privada (Empresa particular ou vigia de rua)<br>
+                        - 
+                    </div>
+            
+                </div>
+            </div>
+            
+
+
+
+
+
+
+
+{% endblock %}
+<!-- javascripts -->
+{% block js %}
+<script src="{% static 'adminlte-3.1.0/plugins/inputmask/jquery.inputmask.min.js' %}"></script>
+<script>
+</script>
+
+{% endblock %}

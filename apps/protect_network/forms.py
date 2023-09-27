@@ -1,5 +1,4 @@
 from django import forms
-from django.forms import formset_factory
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Submit
 
@@ -40,14 +39,19 @@ class EstablishmentForm(forms.Form):
 
 
 class EmployeeForm(forms.Form):
-    owner_name = forms.CharField(label='Nome do Proprietário', max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do Proprietário'}))
-    
-    name = forms.CharField(label='Nome do Funcionário', max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    position = forms.CharField(label='Cargo', max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    GENDER_CHOICES = (
+        ('', '------'),
+        ('M', 'Masculino'),
+        ('F', 'Feminino'),
+    )
+    name = forms.CharField(label='Nome', max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    position = forms.CharField(label='Cargo ou função', max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     rg = forms.CharField(label='RG', max_length=20, widget=forms.TextInput(attrs={'class': 'form-control'}))
     cpf = forms.CharField(label='CPF', max_length=14, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    phone = forms.CharField(label='Telefone', max_length=20, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email = forms.EmailField(label='Email', max_length=100, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    phone = forms.CharField(label='Telefone', max_length=20,required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(label='Email', required=False,max_length=100, widget=forms.EmailInput(attrs={'class': 'form-control'}))
     photo = forms.ImageField(label='Foto', required=False, widget=forms.FileInput(attrs={'class': 'form-control-file'}))
+    start_date = forms.DateField(label='Data de Ingresso', widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
+    end_date = forms.DateField(label='Data de Desligamento', required=False, widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
+    gender = forms.ChoiceField(label='Sexo', choices=GENDER_CHOICES, initial='', widget=forms.Select(attrs={'class': 'form-control'}))
 
-EmployeeFormSet = formset_factory(EmployeeForm, extra=1, can_delete=True)

@@ -1,10 +1,15 @@
 <!--Módulo Rede de Proteção-->
 <li class="nav-item module-item">
-    <a href="#" class="nav-link">
+    <a href="" class="nav-link">
         <i class="fas fa-map-marked-alt nav-icon"></i>
         <p>Rede de Proteção<i class="fas fa-angle-left right"></i></p>
     </a>
     <ul class="nav nav-treeview" style="display: none;">
+        <li class="nav-item ">
+            <a href="{% url 'protect_network:index' %}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i><p>Rede</p>
+            </a>
+        </li>
         <li class="nav-item ">
             <a href="{% url 'protect_network:estabelishment' %}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i><p>Comércio</p>
@@ -16,12 +21,12 @@
             </a>
         </li>
         <li class="nav-item ">
-            <a href="" class="nav-link">
+            <a href="{% url 'protect_network:working_hours' %}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i><p>Funcionamento</p>
             </a>
         </li>
         <li class="nav-item ">
-            <a href="" class="nav-link">
+            <a href="{% url 'protect_network:security' %}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i><p>Segurança</p>
             </a>
         </li>

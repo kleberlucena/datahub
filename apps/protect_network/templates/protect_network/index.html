@@ -1,0 +1,151 @@
+{% extends "base/base.html" %}
+{% load static leaflet_tags crispy_forms_tags widget_tweaks %}
+
+
+<!-- browser title -->
+{% block title %} Adicionar tag {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% leaflet_css plugins="ALL" %}
+<style>
+    #map {
+        height: 600px;
+    }
+    .div-pai {
+    position: relative;
+    }
+
+    #apply-filter {
+        position: absolute;
+        bottom: 0;
+    }
+</style>
+
+{% endblock %}
+
+
+{% block title-header %} Rede de Proteção{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a>Adicionar tag</a></li>
+{% endblock %}
+
+{% block content %}
+
+<!-- INFO BOX-->
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre rede de protação</h3>
+    <p class="text-muted text-justify px-3 pt-2">
+        1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla auctor tortor non dui mattis, nec blandit justo dignissim.
+        <br>2. Phasellus volutpat semper justo, vel laoreet tellus consequat vel. Suspendisse potenti. Fusce nec malesuada neque.
+        <br>3. Integer id vestibulum neque, ac malesuada libero. Quisque a ligula vel ante ultrices blandit. Vivamus in lacinia lorem.
+    </p>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Mapa da rede</h3>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2">
+                    <form id="filter-form" class="ml-3 mt-3">
+                        <label for="spot-types">Filtrar</label><br>
+                            <input type="checkbox" name="spot_type" value=""> Comércio <br>
+                            <input type="checkbox" name="spot_type" value=""> Drogaria <br>
+                            <input type="checkbox" name="spot_type" value=""> Supermercado <br>
+                        <button type="button" id="apply-filter" class="mb-3 btn btn-outline-primary">Aplicar Filtro</button>
+                    </form>
+                </div>
+                <div class="col-md-10 pai">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card-body">
+                                {% leaflet_map "map" callback="window.map_init" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">Estabelecimentos cadastrados</h3>
+                    </div>
+
+        <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+            <div class="table-responsive">
+                <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline" role="grid" aria-describedby="objects_list_info" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Categoria</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+
+                    <tboby>
+                        <tr>
+                            <td>Lojas Mil</td>
+                            <td> Drogaria </td>
+                            <td class="project-actions text-center">
+                                <a  class="btn btn-outline-info btn-sm" href="">Detalhes</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Zé Eletrônicos</td>
+                            <td> Comércio </td>
+                            <td class="project-actions text-center">
+                                <a  class="btn btn-outline-info btn-sm" href="">Detalhes</a>
+                            </td>
+                        </tr>
+                    </tboby>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+        </div></div></div>
+
+
+
+
+
+{% endblock %}
+<!-- javascripts -->
+{% block js %}
+<script src="{% static 'adminlte-3.1.0/plugins/inputmask/jquery.inputmask.min.js' %}"></script>
+{% leaflet_js plugins="ALL" %}
+<script>
+    // Defina a função de inicialização do mapa
+    function map_init(map, options) {
+        // Configurações do mapa
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Definir zoom e posição inicial
+        var initialZoom = 12;
+        var initialPosition = L.latLng(-7.121651, -34.88033);
+        map.setView(initialPosition, initialZoom);
+
+        var markerA = L.marker([-7.100314, -34.84742], { title: "A" }).addTo(map);
+        var markerB = L.marker([-7.100221, -34.87500], { title: "A" }).addTo(map);
+
+
+
+    }
+</script>
+
+{% endblock %}
