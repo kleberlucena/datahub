@@ -44,3 +44,11 @@ class WorkingHoursView(TemplateView):
 
 class SecurityView(TemplateView):
     template_name = 'protect_network/security.html'
+
+    def get(self, request, *args, **kwargs):
+        form = forms.SecurityForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = forms.SecurityForm(request.POST)
+        return render(request, self.template_name, {'form': form})

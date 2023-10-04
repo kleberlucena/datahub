@@ -29,26 +29,52 @@
     </p>
 </div>
 
-
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card card-primary card-outline">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <b>Informações de segurança</b></h3>
-                        </div>
-                        CADASTRAR FORM COM:<br>
-                        - Sistemas de Alarme<br>
-                        - Câmeras de Segurança (CCTV monitoramento em tempo real, gravação, camera IP, DVR)<br>
-                        - Iluminação externa adequada?<br>
-                        - Portões, muro alto<br>
-                        - Cerca elétrica<br>
-                        - Segurança Privada (Empresa particular ou vigia de rua)<br>
-                        - 
-                    </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title"><b>Informações de segurança</b></h3>
+            </div>
+        <form class="p-3" method='post' enctype="multipart/form-data">
             
+        <div>
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    {{ form.alarm_system|add_class:"form-control"|as_crispy_field }}
                 </div>
             </div>
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    {{ form.security_cameras|add_class:"form-control"|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    {{ form.outdoor_lighting|add_class:"form-control"|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    {{ form.gates|add_class:"form-control"|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    {{ form.electric_fence|add_class:"form-control"|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    {{ form.private_security|add_class:"form-control"|as_crispy_field }}
+                </div>
+            </div>
+        </div>
+    
+
+        <button type="submit" class="btn btn-primary mt-3">Salvar</button>
+        </form>
+    </div>
+    </div>
             
 
 
