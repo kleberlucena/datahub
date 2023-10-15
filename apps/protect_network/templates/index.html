@@ -1,0 +1,266 @@
+{% extends "base/base.html" %}
+{% load static leaflet_tags crispy_forms_tags widget_tweaks %}
+
+
+<!-- browser title -->
+{% block title %} Mapa de pontos {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% leaflet_css plugins="ALL" %}
+<style>
+    #map {
+        height: 600px;
+    }
+    .div-pai {
+    position: relative;
+    }
+
+    #apply-filter {
+        position: absolute;
+        bottom: 0;
+    }
+</style>
+{% endblock %}
+
+<!-- context title -->
+{% block title-header %} Pontos de interesse{% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="#">Painel</a></li>
+  <li class="breadcrumb-item active">Mapa de pontos</li>
+{% endblock %}
+
+{% block content %}
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Mapa de pontos</h3>
+        <p class="text-muted text-justify px-3 pt-2">
+            <b>Essa tela exibe no mapa todos os pontos que foram cadastrados.</b>
+            <br>
+            - Clique em Detalhes após escolher um ponto para exibir informações detalhadas sobre esse ponto.
+        </p>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Mapa de pontos</h3>
+            </div>
+
+        <div class="row">
+            <div class="col-md-2">
+                <form id="filter-form" class="ml-3 mt-3">
+                    <label for="spot-types">Filtrar</label><br>
+                    {% for spot_type in spot_types %}
+                        <input type="checkbox" name="spot_type" value="{{ spot_type.name }}"> {{ spot_type.name }}<br>
+                    {% endfor %}
+                    <button type="button" id="apply-filter" class="btn btn-outline-primary mb-3" data-api-url="{% url 'point_interest_api:list_filter_spots_index' %}">Aplicar Filtro</button>
+                </form>
+            </div>
+            <div class="col-md-10 pai">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card-body">
+                            {% leaflet_map "map" callback="window.map_init" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+<!-- javascripts -->
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+{% leaflet_js plugins="ALL" %}
+<script type="text/javascript">
+    function map_init(map, options) {
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Definir zoom e posição inicial
+        var initialZoom = 12;
+        var initialPosition = L.latLng(-7.121651, -34.88033);
+        map.setView(initialPosition, initialZoom);
+
+        // Captura o evento de clique no botão "Aplicar Filtro"
+        $('#apply-filter').on('click', function() {
+            var apiUrl = $(this).data('api-url'); // Obtenha a URL da API a partir do atributo de dados
+
+            var selectedSpotTypes = [];
+            $('input[name="spot_type"]:checked').each(function() {
+                selectedSpotTypes.push($(this).val());
+            });
+
+            // Transforme o array em uma string separada por vírgulas
+            var spotTypesString = selectedSpotTypes.join(',');
+
+            loadPointsOfInterest(apiUrl, spotTypesString);
+        });
+
+        function loadPointsOfInterest(apiUrl, spotTypes) {
+            if (spotTypes) {
+                $.ajax({
+                    url: apiUrl,
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        'spot_type_name': spotTypes
+                    },
+                    success: function(data) {
+                        // Remove os marcadores existentes do mapa
+                        map.eachLayer(function(layer) {
+                            if (layer instanceof L.Marker) {
+                                map.removeLayer(layer);
+                            }
+                        });
+
+                        data = data.results;
+                        for (var i = 0; i < data.length; i++) {
+                            addMarker(data[i]);
+                        }
+                    },
+                    error: function(error) {
+                        console.log('Erro ao carregar os pontos:', error);
+                    }
+                });
+            } else {
+                // Lidar com o caso em que nenhum tipo de ponto foi selecionado (opcional)
+                map.eachLayer(function(layer) {
+                    if (layer instanceof L.Marker) {
+                        map.removeLayer(layer);
+                    }
+                });
+            }
+        }
+
+        function addMarker(spot) {
+            var lat = spot.latitude;
+            var lon = spot.longitude;
+            var name = spot.name;
+            var detailUrl = spot.detail_url;
+            // Cria um marcador para o ponto
+            var marker = L.marker([lat, lon]).addTo(map);
+
+            // Cria um objeto XMLHttpRequest para carregar o conteúdo HTML
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", detailUrl, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var popupContent = xhr.responseText;
+                    marker.bindPopup(popupContent, { autoClose: false });
+                } else {
+                    marker.bindPopup('<a href="' + detailUrl + '">' + name + '</a>', { autoClose: false });
+                }
+            };
+            xhr.send();
+        }
+
+        // Inicializa o mapa com todos os pontos de interesse
+        loadPointsOfInterest([]);
+    }
+</script>
+
+
+<!-- <script type="text/javascript">
+    function map_init(map, options) {
+        // Configurações do mapa
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Definir zoom e posição inicial
+        var initialZoom = 12;
+        var initialPosition = L.latLng(-7.121651, -34.88033);
+        map.setView(initialPosition, initialZoom);
+
+        // Captura o evento de clique no botão "Aplicar Filtro"
+        $('#apply-filter').on('click', function() {
+            var apiUrl = $(this).data('api-url'); // Obtenha a URL da API a partir do atributo de dados
+
+            var selectedSpotTypes = [];
+            $('input[name="spot_type"]:checked').each(function() {
+                selectedSpotTypes.push($(this).val());
+            });
+
+            // Transforme o array em uma string separada por vírgulas
+            var spotTypesString = selectedSpotTypes.join(',');
+
+            loadPointsOfInterest(apiUrl, spotTypesString);
+        });
+
+        function loadPointsOfInterest(apiUrl, spotTypes) {
+            if (spotTypes) {
+                $.ajax({
+                    url: apiUrl,
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        'spot_type_name': spotTypes
+                    },
+                    success: function(data) {
+                        // Remove os marcadores existentes do mapa
+                        map.eachLayer(function(layer) {
+                            if (layer instanceof L.Marker) {
+                                map.removeLayer(layer);
+                            }
+                        });
+
+                        data = data.results;
+                        for (var i = 0; i < data.length; i++) {
+                            var spot = data[i];
+                            var lat = spot.latitude;
+                            var lon = spot.longitude;
+                            var name = spot.name;
+                            var detailUrl = spot.detail_url;
+                            var updateUrl = spot.update_url; // Assumindo que você também esteja passando update_url
+
+                            // Cria um marcador para o ponto
+                            var marker = L.marker([lat, lon]).addTo(map);
+
+                            // Cria um objeto XMLHttpRequest para carregar o conteúdo HTML
+                            var xhr = new XMLHttpRequest();
+                            xhr.open("GET", detailUrl, true);
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState === 4 && xhr.status === 200) {
+                                    var popupContent = xhr.responseText;
+                                    marker.bindPopup(popupContent, { autoClose: false });
+                                } else {
+                                    marker.bindPopup('<a href="' + updateUrl + '">' + name + '</a>', { autoClose: false });
+                                }
+                            };
+                            xhr.send();
+                        }
+                    },
+                    error: function(error) {
+                        console.log('Erro ao carregar os pontos:', error);
+                    }
+                });
+            } else {
+                // Lidar com o caso em que nenhum tipo de ponto foi selecionado (opcional)
+                map.eachLayer(function(layer) {
+                    if (layer instanceof L.Marker) {
+                        map.removeLayer(layer);
+                    }
+                });
+            }
+        }
+
+        // Inicializa o mapa com todos os pontos de interesse
+        loadPointsOfInterest([]);
+    }
+</script> -->
+{% endblock %}

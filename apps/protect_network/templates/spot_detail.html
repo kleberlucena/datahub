@@ -1,0 +1,636 @@
+{% extends "base/base.html" %}
+{% load static leaflet_tags crispy_forms_tags widget_tweaks %}
+
+
+<!-- browser title -->
+{% block title %} Detalhes do ponto {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css" />
+{% leaflet_css plugins="ALL" %}
+<style>
+    #map {
+            height: 500px;
+        }
+</style>
+<style>
+    /* Estilos para o badge */
+    .badge {
+        display: inline-block;
+        padding: 0.5em 0.5em;
+        font-size: 0.8em;
+        border-radius: 10px;
+    }
+</style>
+<style>
+    .image-container {
+        display: flex; /* Usar flexbox para exibir as divs em linha */
+        flex-wrap: wrap; /* Permitir que as divs quebrem para a próxima linha, se necessário */
+        gap: 20px; /* Espaçamento horizontal entre as divs */
+    }
+    .image-wrapper {
+        display: inline-block; /* Exibir as divs lado a lado */
+    }
+    .image-wrapper img {
+        width: auto; /* Ajuste o valor conforme necessário */
+        height: auto; /* Manter a proporção original da imagem */
+    }
+    .progress_bar {
+        width: 200px; /* Ou outra largura desejada */
+        font-size: 1.4em;
+    }
+    .irs .irs-bar {
+        background-color: gray; /* Cor padrão */
+    }
+    .outdated {
+        color: red;
+    }
+
+</style>
+
+  
+{% endblock %}
+
+
+{% block title-header %} Pontos de Interesse {% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'point_interest:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a>Detalhes do ponto</a></li>
+{% endblock %}
+
+{% block content %}
+
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Detalhes do ponto</h3>
+        <p class="text-muted text-justify px-3 pt-2">
+            <b>Essa tela permite a visualização de todas as cadastradas sobre um ponto, como:</b>
+            <br>
+            - Detalhes sobre o ponto;
+            <br>
+            - Lista de tags cadastradas para o ponto;
+            <br>
+            - Coordenadas geográficas e localização do ponto no mapa;
+            <br>
+            - Visualização e inserção de imagens referentes ao ponto;
+            <br>
+            - Visualização e cadastro de informações de contato e horário de funcionamento de estabelecimentos, caso exista.
+        </p>
+</div>
+
+<div class="card card-primary card-outline">
+    <div class="row">
+        <div class="col-md-6">
+        <div class="card-header">
+            <h3 class="card-title"><b> Informações do ponto</b></h3>
+        </div>
+        <div class="p-4">
+            <div class="row mb-1">
+                <div>
+                    <b>Nome:</b>
+                </div>
+                <div class="ml-1" id="id_name">
+                    {{ spot.name }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Categoria:</b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.spot_type }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Informações adicionais:</b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.details }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Latitude:</b>
+                </div>
+                <div class="ml-1" id="id_latitude">
+                    {{ spot.latitude|stringformat:"f" }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Longitude:</b>
+                </div>
+                <div class="ml-1" id="id_longitude">
+                    {{ spot.longitude|stringformat:"f" }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div style="width: 50%">
+                        <b>Dias para atualizar:</b>
+                        {% if spot_progress_bar_math > 0 %}
+                            {% if spot.next_update  == 1 %}
+                                <span>{{ spot.next_update }} dia</span>
+                                {% else %}
+                                <span>{{ spot.next_update }} dias</span>
+                            {% endif %}
+                        {% else %}
+                            Desatualizado
+                        {% endif %}
+                        <input type="text" id="slider" name="slider" />
+                </div>
+            </div>
+
+            <br><br>
+            <div class="row mb-1">
+                <div>
+                    <h3 class="card-title"><b> Informações de registro</b></h3>
+                </div>
+            </div>
+            <hr>
+            <div class="row mb-1">
+                <div>
+                    <b>Criado por:</b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.created_by }} em {{ spot.created_at }}</h6>
+                </div>
+            </div>
+                <div class="row mb-1">
+                <div>
+                    <b>Unidade do criador:</b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.user_unit.unit.last}}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Nome de guerra: </b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.user_unit.nickname}}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Usuário: </b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.user_unit}}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Nome completo: </b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.user_unit.name}}
+                </div>
+            </div>
+            <div class="row mb-1">
+                {% if spot.updated_by %}
+                    <div>
+                        <b>Atualizado por:</b>
+                    </div>
+                    <div class="ml-1">
+                        {{ spot.updated_by }} em {{ spot.updated_at }}</p></h6>
+                    </div>
+                {% else %}
+                    <div class="ml-1">
+                        Sem atualização recente
+                    </div>
+                {% endif %}
+            </div>
+    </div>
+    <div class="row mt-auto ml-3 mb-3">
+        <div>
+            <a class="btn btn-outline-primary" href="{% url 'point_interest:spot_update' spot.pk %}">Editar</a>
+        </div>
+    </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card-header">
+        <h3 class="card-title"><b>Localização no mapa</b></h3>
+            </div>
+            <div class="card-body">
+                {% leaflet_map "map" callback="window.map_init" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title"><b>Tags</b></h3>
+            </div>
+            <div class="card-body">
+                {% if spot.tags.all %}
+                    {% for tag in spot.tags.all %}
+                        <div class="badge bg-warning">{{ tag.name }}</div>
+                    {% endfor %}
+                    <br><br>
+                    <a href="{% url 'point_interest:spot_tags_update' spot.id %}">
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class="fa fa-plus"></i>
+                            Inserir
+                        </button>
+                    </a>
+                {% else %}
+                    <p>Não existem tags cadastradas.</p><br>
+                    <a href="{% url 'point_interest:spot_tags_update' spot.id %}">
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class="fa fa-plus"></i>
+                            Inserir
+                        </button>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title"><b>Imagens do ponto</b></h3>
+            </div>
+            <div class="card-body">
+                <div class="image-container">
+                    {% if spot_images %}
+                        {% for spot_image in spot_images %} 
+                            <div class="image-wrapper">
+                                <div>
+                                    <a href="javascript:void(0);" onclick="openPopup('{{ spot_image.imageSpot.url }}', '{{ spot_image.name }}')">
+                                        <img src="{{ spot_image.imageSpot.thumbnail.url }}" alt="{{ spot_image.name }}">
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>Não existem imagens cadastradas.</p>
+                    {% endif %}
+                </div>
+                    
+                <br>
+                <a href="{% url 'point_interest:spot_image_add' spot.id %}">
+                    <button type="button" class="btn btn-outline-primary">
+                        <i class="fa fa-plus"></i>
+                        Inserir
+                    </button>
+                </a>
+                <a href="{% url 'point_interest:spot_image_list' spot.id %}">
+                    <button type="button" class="btn btn-outline-info">
+                        <i class=""></i>
+                        Listar
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title"><b>Lista de contatos</b></h3>
+            </div>
+                <div class="card-body">
+                    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                        <div class="table-responsive">
+                            <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
+                                role="grid" aria-describedby="objects_list_info" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Contato</th>
+                                        <th>Função</th>
+                                        <th>Telefone</th>
+                                        <th>E-mail</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tboby>
+                                    {% if spot_contacts %}
+                                        {% for spot_contact in spot_contacts %} 
+                                        <tr>
+                                            <td>{{ spot_contact.name }}</td>
+                                            <td>{{ spot_contact.role }}</td>
+                                            <td>{{ spot_contact.phone }}</td>
+                                            <td>{{ spot_contact.email }}</td>
+                                            <td class="project-actions text-center">
+                                                <a  class="btn btn-outline-info btn-sm" href="{% url 'point_interest:contact_update' spot_contact.id %}">Editar</a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="6" align="center">Não existem contatos cadastrados.</td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <a href="{% url 'point_interest:contact_add' spot.id %}">
+                            <button type="button" class="btn btn-outline-primary">
+                                <i class="fa fa-plus"></i>
+                                Inserir
+                            </button>
+                        </a>
+            
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+       
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <b>Horário de funcionamento</b></h3>
+            </div>
+                <div class="card-body">
+                        <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                            <div class="table-responsive">
+                                <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
+                                    role="grid" aria-describedby="objects_list_info" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Dia da semana</th>
+                                            <th>Abertura</th>
+                                            <th>Encerramento</th>
+                                        </tr>
+                                    </thead>
+                                    <tboby>
+                                        {% if spot_opening_hours %}
+                                            {% for opening_hour in spot_opening_hours %}
+                                                    <tr>
+                                                    <td> Segunda-feira </td>
+                                                        {% if opening_hour.opened_mon == True %}
+
+                                                            {% if opening_hour.open_time_mon == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.open_time_mon }}</td>
+                                                            {% endif %}
+
+                                                            {% if opening_hour.close_time_mon == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.close_time_mon }}</td>
+                                                            {% endif %}
+                                                            
+                                                        {% else %}
+                                                            <td colspan="2">Fechado nesse dia</td>
+                                                        {% endif %}
+                                                </tr>
+                                                <tr>
+                                                    <td> Terça-feira </td>
+                                                        {% if opening_hour.opened_tue == True %}
+
+                                                            {% if opening_hour.open_time_tue == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.open_time_tue }}</td>
+                                                            {% endif %}
+
+                                                            {% if opening_hour.close_time_tue == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.close_time_tue }}</td>
+                                                            {% endif %}
+                                                            
+                                                        {% else %}
+                                                        <td colspan="2">Fechado nesse dia</td>
+                                                    {% endif %}
+                                                </tr>
+                                                <tr>
+                                                    <td> Quarta-feira </td>
+                                                        {% if opening_hour.opened_wed == True %}
+
+                                                            {% if opening_hour.open_time_wed == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.open_time_wed }}</td>
+                                                            {% endif %}
+
+                                                            {% if opening_hour.close_time_wed == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.close_time_wed }}</td>
+                                                            {% endif %}
+                                                            
+                                                        {% else %}
+                                                            <td colspan="2">Fechado nesse dia</td>
+                                                        {% endif %}
+                                                </tr>
+                                                <tr>
+                                                    <td> Quinta-feira </td>
+                                                        {% if opening_hour.opened_thu == True %}
+
+                                                            {% if opening_hour.open_time_thu == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.open_time_thu }}</td>
+                                                            {% endif %}
+
+                                                            {% if opening_hour.close_time_thu == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.close_time_thu }}</td>
+                                                            {% endif %}
+                                                            
+                                                        {% else %}
+                                                            <td colspan="2">Fechado nesse dia</td>
+                                                        {% endif %}
+                                                </tr>
+                                                <tr>
+                                                    <td> Sexta-feira </td>
+                                                        {% if opening_hour.opened_fri == True %}
+
+                                                            {% if opening_hour.open_time_fri == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.open_time_fri }}</td>
+                                                            {% endif %}
+
+                                                            {% if opening_hour.close_time_fri == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.close_time_fri }}</td>
+                                                            {% endif %}
+                                                            
+                                                        {% else %}
+                                                            <td colspan="2">Fechado nesse dia</td>
+                                                        {% endif %}
+                                                </tr>
+                                                <tr>
+                                                    <td> Sábado </td>
+                                                        {% if opening_hour.opened_sat == True %}
+
+                                                            {% if opening_hour.open_time_sat == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.open_time_sat }}</td>
+                                                            {% endif %}
+
+                                                            {% if opening_hour.close_time_sat == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.close_time_sat }}</td>
+                                                            {% endif %}
+                                                            
+                                                        {% else %}
+                                                            <td colspan="2">Fechado nesse dia</td>
+                                                        {% endif %}
+                                                </tr>
+                                                <tr>
+                                                    <td> Domingo </td>
+                                                    {% if opening_hour.opened_sun == True %}
+
+                                                        {% if opening_hour.open_time_sun == None %}
+                                                            <td> Sem horário cadastrado </td>
+                                                        {% else %}
+                                                            <td>{{ opening_hour.open_time_sun }}</td>
+                                                        {% endif %}
+
+                                                        {% if opening_hour.close_time_sun == None %}
+                                                            <td> Sem horário cadastrado </td>
+                                                        {% else %}
+                                                            <td>{{ opening_hour.close_time_sun }}</td>
+                                                        {% endif %}
+
+                                                    {% else %}
+                                                        <td colspan="2">Fechado nesse dia</td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="3" align="center">Não existem horários de funcionamenton cadastrados.</td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% if spot_opening_hours %}
+                                {% for opening_hour in spot_opening_hours %}
+                                    <a href="{% url 'point_interest:opening_hours_update' opening_hour.id  %}">
+                                        <button type="button" class="btn btn-outline-primary">
+                                            <i class=""></i>
+                                            Editar
+                                        </button>
+                                    </a>
+                                {% endfor %}
+                            {% else %}
+                                <a href="{% url 'point_interest:opening_hours_add' spot.id %}">
+                                    <button type="button" class="btn btn-outline-primary">
+                                        <i class="fa fa-plus"></i>
+                                        Inserir
+                                    </button>
+                                </a>
+                            {% endif %}         
+                        </div>
+                </div>
+            </div>
+        </div>
+
+</div>
+
+</div>
+
+
+    
+
+        
+
+
+
+
+
+{% endblock %}
+<!-- javascripts -->
+{% block js %}
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+{% leaflet_js plugins="ALL" %}
+<script type="text/javascript">
+    function map_init(map, options) {
+        // Configurações do mapa
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Verifica se já existem valores de latitude, longitude e nome
+        var lat = parseFloat(document.getElementById('id_latitude').textContent);
+        var lon = parseFloat(document.getElementById('id_longitude').textContent);
+
+        // Definir zoom e posição inicial
+        var initialZoom = 18;
+        var initialPosition = L.latLng(lat, lon);
+        map.setView(initialPosition, initialZoom);
+        var marker = null;
+
+        // Cria um marcador inicial se os valores já estiverem definidos
+        if (lat && lon) {
+            marker = L.marker([lat, lon]).addTo(map);
+        }
+    }
+</script>
+<script>
+    function openPopup(imageUrl, imageName) {
+      const popupWidth = 800;
+      const popupHeight = 600;
+      const left = (window.innerWidth - popupWidth) / 2;
+      const top = (window.innerHeight - popupHeight) / 2;
+      const popupOptions = `width=${popupWidth}, height=${popupHeight}, top=${top}, left=${left}, resizable=yes, scrollbars=yes`;
+      const popup = window.open(imageUrl, imageName, popupOptions);
+      if (window.focus) {
+        popup.focus();
+      }
+    }
+  </script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/js/ion.rangeSlider.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var maxValue = {{ spot.spot_type.update_time }}; // Valor máximo do slider
+        var centerValue = 0; // Valor fixo no centro
+
+        var initialValue = {{ spot.next_update }}; // Valor inicial do slider
+        var backgroundColor = initialValue <= centerValue ? "red" : "green"; // Cor condicional
+
+        $("#slider").ionRangeSlider({
+            min: -maxValue, // Valor mínimo será o oposto do valor máximo
+            max: maxValue,
+            from: initialValue, // Valor inicial
+            step: 1,
+            from_fixed: true,
+            onStart: function (data) {
+                // Define a cor inicial da barra de seleção
+                $(".irs .irs-bar").css("background-color", backgroundColor);
+            },
+            onChange: function (data) {
+                var currentValue = data.from;
+
+                // Define a cor da barra de seleção com base no valor do "from"
+                backgroundColor = currentValue <= centerValue ? "red" : "green";
+                $(".irs .irs-bar").css("background-color", backgroundColor);
+            }
+        });
+
+        // Posiciona o marcador na posição 0 inicialmente
+        $(".slider-marker").css("left", "50%");
+    });
+    </script>
+
+{% endblock %}

@@ -1,54 +1,404 @@
-from django.views.generic import CreateView, TemplateView, UpdateView, ListView, DetailView, DeleteView
+from typing import Any, Dict
+from django.views.generic import CreateView, TemplateView, UpdateView, ListView, DetailView, DeleteView, FormView
+from base.decorations.toast_decorator import include_toast
 from django.urls import reverse_lazy, reverse
-from django.shortcuts import  render, redirect, get_object_or_404
+from django.shortcuts import  get_object_or_404
 from django.utils import timezone
+from django.contrib.gis.geos import GEOSGeometry
 from . import models, forms
 import json
 
-
-
 class IndexView(TemplateView):
     template_name = 'protect_network/index.html'
+    model = models.SpotType
+    form_class = forms.SpotTypeForm
 
-class EstablishmentView(TemplateView):
-    template_name = 'protect_network/establishment.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        spot_types = models.SpotType.objects.all()
+        context['spot_types'] = spot_types
+    
+        return context
 
-    def get(self, request, *args, **kwargs):
-        form = forms.EstablishmentForm()
-        return render(request, self.template_name, {'form': form})
 
-    def post(self, request, *args, **kwargs):
-        form = forms.EstablishmentForm(request.POST)
-        if form.is_valid():
-            # Faça algo com os dados do formulário, se necessário
-            return redirect('sucesso')  # Redirecione para a página de sucesso após o envio bem-sucedido
+class DetailSpotView(DetailView):
+    model = models.Spot
+    template_name = 'protect_network/spot_detail.html'
+    context_object_name = 'spot'
 
-        return render(request, self.template_name, {'form': form})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        spot = self.get_object()
+        contact_info = models.ContactInfo.objects.filter(spot=spot)
+        opening_hours = models.OpeningHours.objects.filter(spot=spot)
+        images = models.Image.objects.filter(spot=spot).order_by('-id')[:12]
+        spot_types = models.SpotType.objects.filter(spot=spot)
+        progress_bar_math = (spot.next_update / spot.spot_type.update_time) * 100
+        progress_bar_math_rounded = round(progress_bar_math)
+
+        context['spot_progress_bar_math'] = progress_bar_math_rounded
+        context['spot_contacts'] = contact_info
+        context['spot_opening_hours'] = opening_hours
+        context['spot_images'] = images
+        context['spot_types'] = spot_types
+
+        return context
     
 
-class EmployeeView(TemplateView):
-    template_name = 'protect_network/employee.html'
 
-    def get(self, request, *args, **kwargs):
-        form = forms.EmployeeForm()
-        return render(request, self.template_name, {'form': form})
+class DetailCardSpotView(DetailView):
+    model = models.Spot
+    template_name = 'protect_network/spot_detail_card.html'
+    context_object_name = 'spot'
 
-    def post(self, request, *args, **kwargs):
-        form = forms.EmployeeForm(request.POST)
-        return render(request, self.template_name, {'form': form})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        spot = self.get_object()
+        images = models.Image.objects.filter(spot=spot).order_by('-id')[:1]
+        context['spot_images'] = images
+        
+        return context
+    
+
+@include_toast
+class CreateSpotView(CreateView):
+    model = models.Spot
+    form_class = forms.SpotForm
+    template_name = 'protect_network/spot_add.html'
+    success_url = reverse_lazy('protect_network:spot_list')
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        latitude = form.cleaned_data['latitude']
+        longitude = form.cleaned_data['longitude']
+        self.object.location = GEOSGeometry(f"POINT ({longitude} {latitude})", srid=4326)
+        self.object.created_by = self.request.user
+        self.object.updated_by = self.request.user
+        self.object.updated_at = timezone.now()
+        self.object.update_score = 100
+        military = get_object_or_404(models.portal_models.Military, user=self.request.user)
+        self.object.user_unit_id = military.id
+        spot_type = self.object.spot_type
+        spot_next_update = spot_type.update_time
+        self.object.next_update = spot_next_update
+        self.object.save()
+
+    ##### TESTE ADDRESS ###### Crie uma instância de Address manualmente
+        #street = self.request.POST.get('input_street')
+        city_value = form.cleaned_data.get('city')
+        print("CITY: #############",city_value)
+        address1 = models.Address(city=city_value, state="PB")
+        address1.save()
+        self.object.addresses.add(address1)
+
+        return super().form_valid(form)
 
 
-class WorkingHoursView(TemplateView):
-    template_name = 'protect_network/working_hours.html'
+
+@include_toast
+class UpdateSpotView(UpdateView):
+    model = models.Spot
+    template_name = 'protect_network/spot_update.html'
+    form_class = forms.SpotForm
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+
+        latitude = form.cleaned_data['latitude']
+        longitude = form.cleaned_data['longitude']
+        self.object.location = GEOSGeometry(f"POINT ({longitude} {latitude})", srid=4326)
+
+        self.object.updated_by = self.request.user
+        self.object.update_score = 100
+        self.object.updated_at = timezone.now()
+        spot_type = self.object.spot_type
+        spot_next_update = spot_type.update_time
+        self.object.next_update = spot_next_update
+        tags = self.request.POST.getlist('tags')
+        self.object.save()
+        self.object.tags.set(tags)
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        spot_pk = self.object.pk
+        return reverse('protect_network:spot_detail', kwargs={'pk': spot_pk})
+    
+
+class SpotListView(ListView):
+    model = models.Spot
+    template_name = 'protect_network/spot_list.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(SpotListView, self).get_context_data(**kwargs)
+        spot = models.Spot.objects.all()
+
+        context['spots'] = spot
+        return context
 
 
-class SecurityView(TemplateView):
-    template_name = 'protect_network/security.html'
+class SpotListCreatedView(ListView):
+    model = models.Spot
+    template_name = 'protect_network/spot_list_created.html'
 
-    def get(self, request, *args, **kwargs):
-        form = forms.SecurityForm()
-        return render(request, self.template_name, {'form': form})
+    def get_context_data(self, *args, **kwargs):
+        context = super(SpotListCreatedView, self).get_context_data(**kwargs)
+        spot = models.Spot.objects.all()
+        context['spots'] = spot
+        return context
+    
 
-    def post(self, request, *args, **kwargs):
-        form = forms.SecurityForm(request.POST)
-        return render(request, self.template_name, {'form': form})
+@include_toast
+class CreateSpotTypeView(CreateView):
+    model = models.SpotType
+    form_class = forms.SpotTypeForm
+    template_name = 'protect_network/spot_type_add.html'
+    success_url = reverse_lazy('protect_network:type_list')
+
+
+@include_toast
+class UpdateSpotTypeView(UpdateView):
+    model = models.SpotType
+    template_name = 'protect_network/spot_type_add.html'
+    form_class = forms.SpotTypeForm
+    success_url = reverse_lazy('protect_network:type_list')
+
+
+class SpotTypeListView(ListView):
+    model = models.SpotType
+    template_name = 'protect_network/spot_type_list.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(SpotTypeListView, self).get_context_data(**kwargs)
+        spot_type = models.SpotType.objects.all()
+        context['spot_types'] = spot_type
+        return context
+    
+
+@include_toast
+class CreateTagView(CreateView):
+    model = models.Tag
+    form_class = forms.TagForm
+    template_name = 'protect_network/tag_add.html'
+    success_url = reverse_lazy('protect_network:tag_list')
+
+
+@include_toast
+class UpdateSpotTagsView(UpdateView):
+    model = models.Spot
+    template_name = 'protect_network/spot_tags_form.html'
+    form_class = forms.SpotTagsForm
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        spot_pk = self.object.pk
+        return reverse('protect_network:spot_detail', kwargs={'pk': spot_pk})
+    
+
+@include_toast
+class UpdateTagView(UpdateView):
+    model = models.Tag
+    template_name = 'protect_network/tag_add.html'
+    form_class = forms.TagForm
+    success_url = reverse_lazy('protect_network:tag_list')
+
+
+class TagListView(ListView):
+    model = models.Tag
+    template_name = 'protect_network/tag_list.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(TagListView, self).get_context_data(**kwargs)
+        tag = models.Tag.objects.all()
+        context['tags'] = tag
+        return context
+    
+
+@include_toast
+class CreateImageSpotView(CreateView):
+    model = models.Image
+    template_name = 'protect_network/spot_image_add.html'
+    form_class = forms.SpotImageForm
+
+    def get_success_url(self):
+        spot_id = self.kwargs['spot_id']
+        return reverse_lazy('protect_network:spot_detail', kwargs={'pk': spot_id})
+
+    def form_valid(self, form):
+        spot_id = self.kwargs['spot_id']
+        form.instance.spot_id = spot_id
+        spot = get_object_or_404(models.Spot, id=spot_id)
+        spot_image = form.save(commit=False)
+        spot_image.spot = spot
+        spot_image.created_by = self.request.user
+        spot_image.save()
+        return super().form_valid(form)
+    
+
+@include_toast
+class ImageDeleteView(DeleteView):
+    model = models.Image
+    template_name = 'protect_network/spot_image_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        spot_id = self.object.spot.id
+        context['spot_id'] = spot_id
+        return context
+    
+    def get_success_url(self):
+        spot_id = self.object.spot.id
+        return reverse_lazy('protect_network:spot_image_list', kwargs={'spot_id': spot_id})
+    
+
+class ImageListView(ListView):
+    model = models.Image
+    template_name = 'protect_network/spot_image_list.html'
+    context_object_name = 'spot_images'
+    
+    def get_queryset(self):
+        spot_id = self.kwargs.get('spot_id')
+        queryset = super().get_queryset()
+        return queryset.filter(spot_id=spot_id)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        spot_id = self.kwargs.get('spot_id')
+        spot = get_object_or_404(models.Spot, pk=spot_id)
+        context['spot_pk'] = spot.pk
+        return context
+    
+
+@include_toast
+class CreateContactInfoView(CreateView):
+    model = models.ContactInfo
+    template_name = 'protect_network/spot_contact_form.html'
+    form_class = forms.ContactInfoForm
+
+    def get_success_url(self):
+        spot_id = self.kwargs['spot_id']
+        return reverse_lazy('protect_network:spot_detail', kwargs={'pk': spot_id})
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        spot_id = self.kwargs.get('spot_id')
+        spot = get_object_or_404(models.Spot, pk=spot_id)
+        context['spot_pk'] = spot.pk
+        return context
+    
+    def form_valid(self, form):
+        spot_id = self.kwargs['spot_id']
+        form.instance.spot_id = spot_id
+        return super().form_valid(form)
+    
+
+@include_toast
+class UpdateContactInfoView(UpdateView):
+    model = models.ContactInfo
+    template_name = 'protect_network/spot_contact_form.html'
+    form_class = forms.ContactInfoForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['spot_pk'] = self.object.spot_id
+        return context
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['spot_pk'] = self.object.spot_id
+        return context
+
+    def get_success_url(self):
+        spot_id = self.object.spot_id
+        return reverse('protect_network:spot_detail', args=[spot_id])
+    
+
+@include_toast
+class CreateOpeningHoursView(CreateView):
+    model = models.OpeningHours
+    template_name = 'protect_network/spot_opening_hours_form.html'
+    form_class = forms.OpeningHoursForm
+    
+    def get_success_url(self):
+        spot_id = self.kwargs['spot_id']
+        return reverse_lazy('protect_network:spot_detail', kwargs={'pk': spot_id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        spot_id = self.kwargs.get('spot_id')
+        spot = get_object_or_404(models.Spot, pk=spot_id)
+        context['spot_pk'] = spot.pk
+        return context
+
+    def form_valid(self, form):
+        spot_id = self.kwargs['spot_id']
+        form.instance.spot_id = spot_id
+        self.object = form.save(commit=False)
+        self.object.open_time_mon = self.request.POST.get('monday_open_name', '')
+        self.object.close_time_mon = self.request.POST.get('monday_close_name', '')
+        self.object.open_time_tue = self.request.POST.get('tuesday_open_name', '')
+        self.object.close_time_tue = self.request.POST.get('tuesday_close_name', '')
+        self.object.open_time_wed = self.request.POST.get('wednesday_open_name', '')
+        self.object.close_time_wed = self.request.POST.get('wednesday_close_name', '')
+        self.object.open_time_thu = self.request.POST.get('thursday_open_name', '')
+        self.object.close_time_thu = self.request.POST.get('thursday_close_name', '')
+        self.object.open_time_fri = self.request.POST.get('friday_open_name', '')
+        self.object.close_time_fri = self.request.POST.get('friday_close_name', '')
+        self.object.open_time_sat = self.request.POST.get('saturday_open_name', '')
+        self.object.close_time_sat = self.request.POST.get('saturday_close_name', '')
+        self.object.open_time_sun = self.request.POST.get('sunday_open_name', '')
+        self.object.close_time_sun = self.request.POST.get('sunday_close_name', '')
+        self.object.save()
+        return super().form_valid(form)
+    
+
+@include_toast
+class UpdateOpeningHoursView(UpdateView):
+    model = models.OpeningHours
+    template_name = 'protect_network/spot_opening_hours_form.html'
+    form_class = forms.OpeningHoursForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['spot_pk'] = self.object.spot_id
+        context['load_open_time_mon'] = self.object.open_time_mon
+        context['load_close_time_mon'] = self.object.close_time_mon
+        context['load_open_time_tue'] = self.object.open_time_tue
+        context['load_close_time_tue'] = self.object.close_time_tue
+        context['load_open_time_wed'] = self.object.open_time_wed
+        context['load_close_time_wed'] = self.object.close_time_wed
+        context['load_open_time_thu'] = self.object.open_time_thu
+        context['load_close_time_thu'] = self.object.close_time_thu
+        context['load_open_time_fri'] = self.object.open_time_fri
+        context['load_close_time_fri'] = self.object.close_time_fri
+        context['load_open_time_sat'] = self.object.open_time_sat
+        context['load_close_time_sat'] = self.object.close_time_sat
+        context['load_open_time_sun'] = self.object.open_time_sun
+        context['load_close_time_sun'] = self.object.close_time_sun
+        return context
+    
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.open_time_mon = self.request.POST.get('monday_open_name', '')
+        self.object.close_time_mon = self.request.POST.get('monday_close_name', '')
+        self.object.open_time_tue = self.request.POST.get('tuesday_open_name', '')
+        self.object.close_time_tue = self.request.POST.get('tuesday_close_name', '')
+        self.object.open_time_wed = self.request.POST.get('wednesday_open_name', '')
+        self.object.close_time_wed = self.request.POST.get('wednesday_close_name', '')
+        self.object.open_time_thu = self.request.POST.get('thursday_open_name', '')
+        self.object.close_time_thu = self.request.POST.get('thursday_close_name', '')
+        self.object.open_time_fri = self.request.POST.get('friday_open_name', '')
+        self.object.close_time_fri = self.request.POST.get('friday_close_name', '')
+        self.object.open_time_sat = self.request.POST.get('saturday_open_name', '')
+        self.object.close_time_sat = self.request.POST.get('saturday_close_name', '')
+        self.object.open_time_sun = self.request.POST.get('sunday_open_name', '')
+        self.object.close_time_sun = self.request.POST.get('sunday_close_name', '')
+        self.object.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        spot_id = self.object.spot_id
+        return reverse('protect_network:spot_detail', args=[spot_id])

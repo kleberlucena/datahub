@@ -5,10 +5,26 @@ from . import views
 app_name = 'protect_network'
 
 urlpatterns = [
-    path('', views.IndexView.as_view(), name='index'),
-    path('estabelishment/', views.EstablishmentView.as_view(), name='estabelishment'),
-    path('employee/', views.EmployeeView.as_view(), name='employee'),
-    path('working_hours/', views.WorkingHoursView.as_view(), name='working_hours'),
-    path('security/', views.SecurityView.as_view(), name='security'),
-
+  path('',views.IndexView.as_view(), name='index'), 
+  path('spot', views.SpotListView.as_view(), name='spot_list'),
+  path('spot/list_created', views.SpotListCreatedView.as_view(), name='spot_list_created'),  
+  path('spot/add', views.CreateSpotView.as_view(), name='spot_add'), 
+  path('<int:pk>/spot/update', views.UpdateSpotView.as_view(), name='spot_update'),
+  path('<int:pk>/spot/detail', views.DetailSpotView.as_view(), name='spot_detail'),
+  path('<int:pk>/spot/detail_card', views.DetailCardSpotView.as_view(), name='spot_detail_card'),
+  path('<int:pk>/spot/update/tags', views.UpdateSpotTagsView.as_view(), name='spot_tags_update'),
+  path('spot_type', views.SpotTypeListView.as_view(), name='type_list'), 
+  path('spot_type/add', views.CreateSpotTypeView.as_view(), name='type_add'), 
+  path('<int:pk>/spot_type/update', views.UpdateSpotTypeView.as_view(), name='type_update'),
+  path('tag', views.TagListView.as_view(), name='tag_list'), 
+  path('tag/add', views.CreateTagView.as_view(), name='tag_add'), 
+  path('<int:pk>/tag/update', views.UpdateTagView.as_view(), name='tag_update'),
+  path('<int:spot_id>/contact/add', views.CreateContactInfoView.as_view(), name='contact_add'), 
+  path('<int:pk>/contact/update', views.UpdateContactInfoView.as_view(), name='contact_update'),
+  path('<int:spot_id>/opening_hours/add/<str:day_of_week>/', views.CreateOpeningHoursView.as_view(), name='opening_hours_add_monday'),
+  path('<int:spot_id>/opening_hours/add', views.CreateOpeningHoursView.as_view(), name='opening_hours_add'), 
+  path('<int:pk>/opening_hours/update', views.UpdateOpeningHoursView.as_view(), name='opening_hours_update'),
+  path('<int:spot_id>/spot/image/add', views.CreateImageSpotView.as_view(), name='spot_image_add'),
+  path('<int:spot_id>/spot/images', views.ImageListView.as_view(), name='spot_image_list'),
+  path('spot/image/<int:pk>/delete/', views.ImageDeleteView.as_view(), name='spot_image_delete'),
 ]

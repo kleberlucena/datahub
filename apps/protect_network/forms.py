@@ -1,14 +1,35 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Submit
+from . import models
 
-class EstablishmentForm(forms.Form):
-    name = forms.CharField(label='Nome', max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do estabelecimento'}))
-    description = forms.CharField(label='Descrição', widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 40, 'placeholder': 'Informações sobre o estabelecimento e serviço prestado'}), max_length=500)
-    type = forms.CharField(label='Categoria', max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '------'}))
-    address = forms.CharField(label='Endereço', max_length=50, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Insira um endereço'}))
-    parent_company = forms.CharField(label='CNPJ da matriz', max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '99.999.999/9999-99'}))
-    cnpj = forms.CharField(label='CNPJ', max_length=20, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '99.999.999/9999-99'}))
+
+class SpotTypeForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['spot_type_father'].queryset = models.SpotType.objects.exclude(id=self.instance.id)
+
+    class Meta:
+        model = models.SpotType
+        fields = ['name', 'spot_type_father', 'update_time']
+        labels = {
+            'name': 'Categoria',
+            'spot_type_father': 'Categoria Pai',
+            'update_time' : 'Tempo de atualização',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome da categoria'}),
+            'spot_type_father': forms.Select(attrs={'class': 'form-control'}),
+            'update_time': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o tempo de atualização em dias'}),
+        }
+
+
+
+class SpotForm(forms.ModelForm):
+    latitude = forms.FloatField(label="Latitude", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Clique no mapa ou digite as coordenadas'}))
+    longitude = forms.FloatField(label="Longitude", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Clique no mapa ou digite as coordenadas'}))
+    
+    address = forms.CharField(label='Endereço', max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Insira um endereço'}))
     street = forms.CharField(label='Logradouro', max_length=255, required=False)
     number = forms.CharField(label='Número', max_length=9, required=False)
     complement = forms.CharField(label='Complemento', max_length=255, required=False)
@@ -19,30 +40,28 @@ class EstablishmentForm(forms.Form):
     region = forms.CharField(label='Região', max_length=2, required=False)
     country = forms.CharField(label='País', max_length=155, required=False)
     zipcode = forms.CharField(label='CEP', required=False)
-    # Campo para indicar se é a matriz (caixa de seleção)
-    IS_HEADQUARTERS_CHOICES = [
-        (True, 'Sim'),
-        (False, 'Não'),
-    ]
-    is_headquarters = forms.ChoiceField(
-        label='É Matriz?',
-        choices=IS_HEADQUARTERS_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        required=False,
-        initial=True,
-    )
+
+
+    class Meta:
+        model = models.Spot
+        fields = ('name', 'details', 'spot_type', 'latitude', 'longitude', 'tags','location')
+        labels = {
+            'name': 'Ponto',
+            'details': 'Informações adicionais',
+            'spot_type': 'Tipo',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome do ponto'}),
+            'details': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Se houver, digite informações adicionais'}),
+            'spot_type': forms.Select(attrs={'class': 'form-control'}),
+            'tags': forms.CheckboxSelectMultiple(attrs={'class': 'form-check', 'style': 'display: block'}),
+        }
 
     def __init__(self, *args, **kwargs):
-        super(EstablishmentForm, self).__init__(*args, **kwargs)
+        super(SpotForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            Field('name'),
-            Field('description'),
-            Field('cnpj'),
-            Field('type'),
             Field('address'),
-            Field('is_headquarters'),
-            Field('parent_company'),
             Submit('submit', 'Submit', css_class='btn btn-primary'),
             Field('street', css_class='form-control'),
             Field('number', css_class='form-control'),
@@ -57,48 +76,105 @@ class EstablishmentForm(forms.Form):
         )
 
 
-class EmployeeForm(forms.Form):
-    GENDER_CHOICES = (
-        ('', '------'),
-        ('M', 'Masculino'),
-        ('F', 'Feminino'),
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if commit:
+            instance.save()
+        return instance
+    
+
+
+class SpotTagsForm(forms.ModelForm):
+    tags = forms.ModelMultipleChoiceField(
+        queryset=models.Tag.objects.all(),
+        widget=forms.SelectMultiple(attrs={'class': 'form-control select2bs4'}),
+        required=False,
     )
-    name = forms.CharField(label='Nome', max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    position = forms.CharField(label='Cargo ou função', max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    rg = forms.CharField(label='RG', max_length=20, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    cpf = forms.CharField(label='CPF', max_length=14, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    phone = forms.CharField(label='Telefone', max_length=20,required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email = forms.EmailField(label='Email', required=False,max_length=100, widget=forms.EmailInput(attrs={'class': 'form-control'}))
-    photo = forms.ImageField(label='Foto', required=False, widget=forms.FileInput(attrs={'class': 'form-control-file'}))
-    start_date = forms.DateField(label='Data de Ingresso', widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
-    end_date = forms.DateField(label='Data de Desligamento', required=False, widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
-    gender = forms.ChoiceField(label='Sexo', choices=GENDER_CHOICES, initial='', widget=forms.Select(attrs={'class': 'form-control'}))
+    
+    class Meta:
+        model = models.Spot
+        fields = ('tags',)
+
+class TagForm(forms.ModelForm):
+    class Meta:
+        model = models.Tag
+        fields = ['name','details']
+        labels = {
+            'name': 'Nome da Tag',
+            'details': 'Descrição',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome da tag'}),
+            'details': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Descrição sobre a tag'}),
+        }
 
 
-class SecurityForm(forms.Form):
-    YES_NO_CHOICES = [
-        ('Sim', 'Sim'),
-        ('Não', 'Não'),
-    ]
-    PRIVATE_SECURITY_CHOICES = [
-        ('Não', 'Não'),
-        ('Segurança privada', 'Segurança privada'),
-        ('Vigia de rua', 'Vigia de rua'),
-    ]
-    SECURITY_CAMERAS_CHOICES = [
-        ('Não', 'Não'),
-        ('Sim, apenas para monitoramento', 'Sim, apenas para monitoramento'),
-        ('Sim, monitoramento e gravação', 'Sim, monitoramento e gravação'),
-    ]
-    ALARM_SYSTEM_CHOICES = [
-        ('Não', 'Não'),
-        ('Sim, apenas alarme local', 'Sim, apenas alarme local'),
-        ('Sim, alarme local e central de monitoramento', 'Sim, alarme local e central de monitoramento'),
-    ]
 
-    alarm_system = forms.ChoiceField(label='Sistemas de Alarme', choices=ALARM_SYSTEM_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
-    security_cameras = forms.ChoiceField(label='Câmeras de Segurança', choices=SECURITY_CAMERAS_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
-    outdoor_lighting = forms.ChoiceField(label='Iluminação externa adequada?', choices=YES_NO_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
-    gates = forms.ChoiceField(label='Portões de acesso', choices=YES_NO_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
-    electric_fence = forms.ChoiceField(label='Cerca elétrica', choices=YES_NO_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
-    private_security = forms.ChoiceField(label='Segurança Privada', choices=PRIVATE_SECURITY_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+class ContactInfoForm(forms.ModelForm):
+    class Meta:
+        model = models.ContactInfo
+        fields = ['name', 'phone', 'role', 'email']
+        labels = {
+            'name': 'Contato',
+            'phone': 'Telefone de contato',
+            'role': 'Título ou função',
+            'email': 'E-mail',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(ContactInfoForm, self).__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs['placeholder'] = 'Digite o nome do contato'
+        self.fields['phone'].widget.attrs['placeholder'] = '(99) 99999-9999'
+        self.fields['role'].widget.attrs['placeholder'] = 'Digite a função'
+        self.fields['email'].widget.attrs['placeholder'] = 'exemplo@email.com.br'
+
+
+
+class OpeningHoursForm(forms.ModelForm):
+    class Meta:
+        model = models.OpeningHours
+        fields = [
+            'opened_mon','open_time_mon','close_time_mon',
+            'opened_tue','open_time_tue','close_time_tue',
+            'opened_wed','open_time_wed','close_time_wed',
+            'opened_thu','open_time_thu','close_time_thu',
+            'opened_fri','open_time_fri','close_time_fri',
+            'opened_sat','open_time_sat','close_time_sat',
+            'opened_sun','open_time_sun','close_time_sun',
+        ]
+        labels = {
+            'opened_mon' :"", 'open_time_mon': "",'close_time_mon': "",
+            'opened_tue' :"", 'open_time_tue': "",'close_time_tue': "",
+            'opened_wed' :"", 'open_time_wed': "",'close_time_wed': "",
+            'opened_thu' :"", 'open_time_thu': "",'close_time_thu': "",
+            'opened_fri' :"", 'open_time_fri': "",'close_time_fri': "",
+            'opened_sat' :"", 'open_time_sat': "",'close_time_sat': "",
+            'opened_sun' :"", 'open_time_sun': "",'close_time_sun': "",
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(OpeningHoursForm, self).__init__(*args, **kwargs)
+        self.fields['open_time_mon'].widget.attrs['placeholder'] = 'HH:MM'
+        self.fields['close_time_mon'].widget.attrs['placeholder'] = 'HH:MM'
+        self.fields['open_time_tue'].widget.attrs['placeholder'] = 'HH:MM'
+        self.fields['close_time_tue'].widget.attrs['placeholder'] = 'HH:MM'
+        self.fields['open_time_wed'].widget.attrs['placeholder'] = 'HH:MM'
+        self.fields['close_time_wed'].widget.attrs['placeholder'] = 'HH:MM'
+        self.fields['open_time_thu'].widget.attrs['placeholder'] = 'HH:MM'
+        self.fields['close_time_thu'].widget.attrs['placeholder'] = 'HH:MM'
+        self.fields['open_time_fri'].widget.attrs['placeholder'] = 'HH:MM'
+        self.fields['close_time_fri'].widget.attrs['placeholder'] = 'HH:MM'
+        self.fields['open_time_sat'].widget.attrs['placeholder'] = 'HH:MM'
+        self.fields['close_time_sat'].widget.attrs['placeholder'] = 'HH:MM'
+        self.fields['open_time_sun'].widget.attrs['placeholder'] = 'HH:MM'
+        self.fields['close_time_sun'].widget.attrs['placeholder'] = 'HH:MM'
+
+
+
+class SpotImageForm(forms.ModelForm):
+    class Meta:
+        model = models.Image
+        fields = ['name','imageSpot']
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'Digite um nome ou descrição para a imagem'}),
+        }

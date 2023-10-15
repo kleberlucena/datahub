@@ -1,0 +1,76 @@
+{% extends "base/base.html" %}
+{% load static crispy_forms_tags widget_tweaks %}
+
+
+<!-- browser title -->
+{% block title %} Adicionar contato {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+
+{% endblock %}
+
+
+{% block title-header %} Pontos de Interesse {% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'point_interest:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a>Adicionar contato</a></li>
+{% endblock %}
+
+{% block content %}
+
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre contatos</h3>
+    <p class="text-muted text-justify px-3 pt-2">
+        <b>Essa tela permite a adição de informações de contato para o ponto </b>
+    </p>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Adicionar contato</h3>
+            </div>
+        <form class="p-3" method='post' enctype="multipart/form-data">
+            {% csrf_token %}
+        
+            <div class="row">
+                <div class="col-sm-8">
+                    {{form.name|add_class:"form-control"|as_crispy_field}}
+                    <br>
+                    {{form.role|add_class:"form-control"|as_crispy_field}}
+                    <br>
+                    {{form.phone|add_class:"form-control"|as_crispy_field}}
+                    <br>
+                    {{form.email|add_class:"form-control"|as_crispy_field}}
+                </div>
+            </div>
+               
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a href="{% url 'point_interest:spot_detail' spot_pk %}">
+                    <button type="button" class="btn btn-warning">
+                        <i class=""></i>
+                        Voltar
+                    </button>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+{% endblock %}
+<!-- javascripts -->
+{% block js %}
+<script src="{% static 'adminlte-3.1.0/plugins/inputmask/jquery.inputmask.min.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $("#id_phone").inputmask("(99) 99999-9999");
+        $("#id_email").inputmask({alias: "email"});
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends "base/base.html" %}
+{% load static leaflet_tags crispy_forms_tags widget_tweaks %}
+
+
+<!-- browser title -->
+{% block title %} Mapa de pontos {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% leaflet_css plugins="ALL" %}
+<style>
+        #map {
+            height: 600px;
+        }
+    </style>
+{% endblock %}
+
+<!-- context title -->
+{% block title-header %} Pontos de interesse{% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="#">Painel</a></li>
+  <li class="breadcrumb-item active">Mapa de pontos</li>
+{% endblock %}
+
+{% block content %}
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Mapa de pontos</h3>
+        <p class="text-muted text-justify px-3 pt-2">
+            <b>Essa tela exibe no mapa todos os pontos que foram cadastrados.</b>
+            <br>
+            - Clique em Detalhes após escolher um ponto para exibir informações detalhadas sobre esse ponto.
+        </p>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Mapa de pontos</h3>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card-body">
+                        {% leaflet_map "map" callback="window.map_init" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+<!-- javascripts -->
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+{% leaflet_js plugins="ALL" %}
+<script type="text/javascript">
+    function map_init(map, options) {
+        // Configurações do mapa
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Definir zoom e posição inicial
+        var initialZoom = 12;
+        var initialPosition = L.latLng(-7.121651, -34.88033);
+        map.setView(initialPosition, initialZoom);
+
+        // Consulta os pontos existentes no contexto do template
+        var spots = JSON.parse('{{ spots_json|escapejs }}');
+
+        var markers = [];
+
+        for (var i = 0; i < spots.length; i++) {
+            var spot = spots[i];
+            var lat = spot.latitude;
+            var lon = spot.longitude;
+            var name = spot.name;
+            var detailUrl = spot.detail_url;
+
+            // Cria um marcador para o ponto
+            var marker = L.marker([lat, lon]).addTo(map);
+
+            // Cria um objeto XMLHttpRequest para carregar o conteúdo HTML
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", detailUrl, false);
+            xhr.send();
+
+            // Verifica se a requisição foi bem-sucedida e define o conteúdo do popup
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var popupContent = xhr.responseText;
+                marker.bindPopup(popupContent, { autoClose: false });
+            } else {
+                marker.bindPopup('<a href="' + spot.update_url + '">' + name + '</a>', { autoClose: false });
+            }
+        }
+    }
+</script>
+
+
+
+
+{% endblock %}

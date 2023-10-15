@@ -1,0 +1,303 @@
+{% extends "base/base.html" %}
+{% load static leaflet_tags crispy_forms_tags widget_tweaks %}
+
+
+<!-- browser title -->
+{% block title %} Adicionar ponto {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% leaflet_css plugins="ALL" %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css' %}">
+<style>
+        #map {
+            height: 600px;
+        }
+</style>
+{% endblock %}
+
+
+{% block title-header %} Pontos de Interesse {% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'point_interest:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a>Adicionar ponto</a></li>
+{% endblock %}
+
+{% block content %}
+
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar pontos</h3>
+    <p class="text-muted text-justify px-3 pt-2">
+        <b>Essa tela permite a criação de pontos de interesse no mapa</b>
+    </p>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Adicionar ponto</h3>
+            </div>
+            <form class="p-3" method='post' enctype="multipart/form-data">
+                {% csrf_token %}
+            <div class="row">
+                <div class="col-sm-8">
+                    {{form.name|add_class:"form-control"|as_crispy_field}}
+                </div>
+                <div class="col-sm-4">
+                    {{form.spot_type|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    {{form.details|add_class:"form-control"|as_crispy_field}}
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    {{form.address|add_class:"form-control"|as_crispy_field}}
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-sm-12">
+                    <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#addressModal">
+                        {% if form.address.value %}
+                            + Alterar endereço
+                        {% else %}
+                            + Adicionar endereço
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-sm-6">
+                    {{form.latitude|add_class:"form-control"|as_crispy_field}}
+                </div>
+                <div class="col-sm-6">
+                    {{form.longitude|add_class:"form-control"|as_crispy_field}}
+                </div>
+            </div>
+
+            <br>
+            <div class="row">
+                <div class="col-sm-12">
+                    {% leaflet_map "map" callback="window.map_init" %}
+                </div>
+            </div>
+    
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <button onclick="goBack()" type="button" class="btn btn-warning">Cancelar</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para adicionar endereço -->
+<div class="modal fade" id="addressModal" tabindex="-1" role="dialog" aria-labelledby="addressModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addressModallLabel">Novo endereço</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row mt-3">
+                        <div class="col-sm-12">
+                            {{ form.zipcode|add_class:"form-control"|as_crispy_field}}
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-sm-12">
+                            {{ form.city|add_class:"form-control"|as_crispy_field}}
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-sm-12">
+                            {{ form.neighborhood|add_class:"form-control"|as_crispy_field}}
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-sm-12">
+                            {{ form.street|add_class:"form-control"|as_crispy_field}}
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-sm-12">
+                            {{ form.number|add_class:"form-control"|as_crispy_field}}
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-sm-12">
+                            {{ form.complement|add_class:"form-control"|as_crispy_field}}
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-sm-12">
+                            {{ form.reference|add_class:"form-control"|as_crispy_field}}
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary mt-3" id="saveAddressButton">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+<!-- javascripts -->
+{% block js %}
+{% leaflet_js plugins="ALL" %}
+<script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.full.min.js' %}"></script>
+<script>
+  $(function () {
+    $('.select2bs4').select2({
+      placeholder: 'Selecione um item',
+      theme: 'bootstrap4',
+      width: '100%'
+    })
+  });
+</script>
+<script type="text/javascript">
+    var markers = [];
+    function map_init(map, options) {
+        // Configurações do mapa
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Definir zoom e posição inicial
+        var initialZoom = 12;
+        var initialPosition = L.latLng(-7.121651, -34.88033);
+        var marker = [];
+        var spotTypeName  = [];
+        map.setView(initialPosition, initialZoom);
+
+        var grayIcon = new L.Icon({
+            iconUrl: '{% static "sti/img/icons/marker-icon-2x-grey.png" %}',
+            iconSize: [26, 40], // Tamanho do ícone em pixels
+            iconAnchor: [13, 40 ] // Âncora do ícone em relação à posição do marcador
+        });;
+
+
+        function getSpots(spotTypeName) {  
+            $.ajax({
+                url: '{% url "point_interest_api:list_filter_spots_type" %}?spot_type_name=' + spotTypeName,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    data = data.results;
+                    for (var i = 0; i < data.length; i++) {
+                        (function() {
+                            var spot = data[i];
+                            var lat = spot.latitude;
+                            var lon = spot.longitude;
+                            var name = spot.name;
+                            var detailUrl = spot.detail_url;
+
+                            // Cria um marcador para o ponto
+                            var marker = L.marker([lat, lon],{ icon: grayIcon }).addTo(map);
+                            markers.push(marker); // Adicione o marcador ao array
+
+                            // Cria um objeto XMLHttpRequest para carregar o conteúdo HTML
+                            var xhr = new XMLHttpRequest();
+                            xhr.open("GET", detailUrl, true);
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState === 4 && xhr.status === 200) {
+                                    var popupContent = xhr.responseText;
+                                    marker.bindPopup(popupContent, { autoClose: false });
+                                } else {
+                                    marker.bindPopup('<a href="' + name + '</a>', { autoClose: false });
+                                }
+                            };
+                            xhr.send();
+                        })();
+                    }
+                },
+            });
+        }
+
+
+        function removeMarkers() {
+            for (var i = 0; i < markers.length; i++) {
+                map.removeLayer(markers[i]);
+            }
+            markers = []; // Limpa o array de marcadores
+        }
+
+
+        function getType() { 
+            removeMarkers()       
+            var spotTypeName = $('#id_spot_type').select2('data')[0].text;
+            getSpots(spotTypeName);
+        }
+
+        $('#id_spot_type').on('change', getType);
+
+        // NOVO MARCADOR
+        var marker_new = null;
+
+        map.on('click', function(e) {
+            var lat = e.latlng.lat;
+            var lon = e.latlng.lng;
+
+            // Atualiza os campos de localização no formulário
+            document.getElementById('id_latitude').value = lat;
+            document.getElementById('id_longitude').value = lon;
+            var coord = lat + ', ' + lon;
+
+            // Remove o marcador existente, se houver
+            if (marker_new) {
+                map.removeLayer(marker_new);
+            }
+
+            // Adiciona um novo marcador
+            marker_new = L.marker([lat, lon], { draggable: true }).addTo(map);
+            marker_new.on('dragend', function(event) {
+                var updatedMarker = event.target;
+                var position = updatedMarker.getLatLng();
+                var lat = position.lat;
+                var lon = position.lng;
+
+                // Atualiza os campos de localização no formulário
+                document.getElementById('id_latitude').value = lat;
+                document.getElementById('id_longitude').value = lon;
+            });
+        })
+    }
+</script>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+<script>
+    $(document).ready(function() {
+        $("#saveAddressButton").click(function() {
+            var zipcode = $("#id_zipcode").val();
+            var city = $("#id_city").val();
+            var neighborhood = $("#id_neighborhood").val();
+            var street = $("#id_street").val();
+            var number = $("#id_number").val();
+            var complement = $("#id_complement").val();
+            var reference = $("#id_reference").val();
+            var addressInfo = street + ", " + number + " - " + neighborhood + " - " + city;
+
+            $("#id_address").val(addressInfo);
+            $("#addressModal").modal("hide");
+        });
+    });
+</script>
+{% endblock %}
