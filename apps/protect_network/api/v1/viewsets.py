@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework import viewsets, filters
-from apps.point_interest import models
-from apps.point_interest.api.v1 import serializers
+from apps.protect_network import models
+from apps.protect_network.api.v1 import serializers
 from django.db.models import Q
 
 class SpotListView(generics.ListAPIView):
@@ -67,8 +67,8 @@ class SpotListFilterView(generics.ListAPIView):
 #     # views.py
 # from rest_framework import generics
 # from rest_framework import viewsets, filters
-# from apps.point_interest import models
-# from apps.point_interest.api.v1 import serializers
+# from apps.protect_network import models
+# from apps.protect_network.api.v1 import serializers
 
 
 # class SpotListView(generics.ListAPIView):

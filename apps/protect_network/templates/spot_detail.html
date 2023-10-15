@@ -57,7 +57,7 @@
 {% block title-header %} Pontos de Interesse {% endblock %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{% url 'point_interest:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
 <li class="breadcrumb-item"><a>Detalhes do ponto</a></li>
 {% endblock %}
 
@@ -207,7 +207,7 @@
     </div>
     <div class="row mt-auto ml-3 mb-3">
         <div>
-            <a class="btn btn-outline-primary" href="{% url 'point_interest:spot_update' spot.pk %}">Editar</a>
+            <a class="btn btn-outline-primary" href="{% url 'protect_network:spot_update' spot.pk %}">Editar</a>
         </div>
     </div>
         </div>
@@ -234,7 +234,7 @@
                         <div class="badge bg-warning">{{ tag.name }}</div>
                     {% endfor %}
                     <br><br>
-                    <a href="{% url 'point_interest:spot_tags_update' spot.id %}">
+                    <a href="{% url 'protect_network:spot_tags_update' spot.id %}">
                         <button type="button" class="btn btn-outline-primary">
                             <i class="fa fa-plus"></i>
                             Inserir
@@ -242,7 +242,7 @@
                     </a>
                 {% else %}
                     <p>Não existem tags cadastradas.</p><br>
-                    <a href="{% url 'point_interest:spot_tags_update' spot.id %}">
+                    <a href="{% url 'protect_network:spot_tags_update' spot.id %}">
                         <button type="button" class="btn btn-outline-primary">
                             <i class="fa fa-plus"></i>
                             Inserir
@@ -278,13 +278,13 @@
                 </div>
                     
                 <br>
-                <a href="{% url 'point_interest:spot_image_add' spot.id %}">
+                <a href="{% url 'protect_network:spot_image_add' spot.id %}">
                     <button type="button" class="btn btn-outline-primary">
                         <i class="fa fa-plus"></i>
                         Inserir
                     </button>
                 </a>
-                <a href="{% url 'point_interest:spot_image_list' spot.id %}">
+                <a href="{% url 'protect_network:spot_image_list' spot.id %}">
                     <button type="button" class="btn btn-outline-info">
                         <i class=""></i>
                         Listar
@@ -324,7 +324,7 @@
                                             <td>{{ spot_contact.phone }}</td>
                                             <td>{{ spot_contact.email }}</td>
                                             <td class="project-actions text-center">
-                                                <a  class="btn btn-outline-info btn-sm" href="{% url 'point_interest:contact_update' spot_contact.id %}">Editar</a>
+                                                <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:contact_update' spot_contact.id %}">Editar</a>
                                             </td>
                                         </tr>
                                         {% endfor %}
@@ -336,7 +336,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <a href="{% url 'point_interest:contact_add' spot.id %}">
+                        <a href="{% url 'protect_network:contact_add' spot.id %}">
                             <button type="button" class="btn btn-outline-primary">
                                 <i class="fa fa-plus"></i>
                                 Inserir
@@ -522,7 +522,7 @@
                             </div>
                             {% if spot_opening_hours %}
                                 {% for opening_hour in spot_opening_hours %}
-                                    <a href="{% url 'point_interest:opening_hours_update' opening_hour.id  %}">
+                                    <a href="{% url 'protect_network:opening_hours_update' opening_hour.id  %}">
                                         <button type="button" class="btn btn-outline-primary">
                                             <i class=""></i>
                                             Editar
@@ -530,7 +530,7 @@
                                     </a>
                                 {% endfor %}
                             {% else %}
-                                <a href="{% url 'point_interest:opening_hours_add' spot.id %}">
+                                <a href="{% url 'protect_network:opening_hours_add' spot.id %}">
                                     <button type="button" class="btn btn-outline-primary">
                                         <i class="fa fa-plus"></i>
                                         Inserir

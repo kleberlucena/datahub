@@ -12,7 +12,7 @@
 {% block title-header %} Pontos de Interesse {% endblock %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{% url 'point_interest:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
 <li class="breadcrumb-item"><a>Lista de imagens</a></li>
 {% endblock %}
 
@@ -63,7 +63,7 @@
                   <td>{{ spot_image.created_by }}</td>
                   <td>{{ spot_image.created_at }}</td>
                   <td class="project-actions text-center">
-                    <a  class="btn btn-outline-danger btn-sm" href="{% url 'point_interest:spot_image_delete' spot_image.id %}">Excluir</a>
+                    <a  class="btn btn-outline-danger btn-sm" href="{% url 'protect_network:spot_image_delete' spot_image.id %}">Excluir</a>
                   </td>
                 </tr>
                 {% endfor %}
@@ -73,13 +73,13 @@
         </div>
         
 
-      <a href="{% url 'point_interest:spot_image_add' spot_pk %}">
+      <a href="{% url 'protect_network:spot_image_add' spot_pk %}">
         <button type="button" class="btn btn-primary">
             <i class="fa fa-plus"></i>
             Inserir
         </button>
     </a>
-    <a href="{% url 'point_interest:spot_detail' spot_pk %}">
+    <a href="{% url 'protect_network:spot_detail' spot_pk %}">
         <button type="button" class="btn btn-warning">
             <i class=""></i>
             Cancelar

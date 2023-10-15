@@ -1,7 +1,7 @@
 from django.urls import path
-from apps.point_interest.api.v1 import viewsets
+from apps.protect_network.api.v1 import viewsets
 
-app_name = 'point_interest_api'
+app_name = 'protect_network_api'
 
 urlpatterns = [
     path('spots/', viewsets.SpotListView.as_view(), name='list_filter_spots'),

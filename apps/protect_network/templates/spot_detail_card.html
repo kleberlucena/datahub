@@ -64,7 +64,7 @@
                         {% for spot_image in spot_images %} 
                             <div class="image-wrapper">
                                 <div>
-                                    <a href="{% url 'point_interest:spot_detail' spot.pk %}">
+                                    <a href="{% url 'protect_network:spot_detail' spot.pk %}">
                                         <img src="{{ spot_image.imageSpot.thumbnail.url }}" alt="{{ spot_image.name }}">
                                     </a>
                                 </div>
@@ -84,7 +84,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <br><a  class="btn btn-outline-primary btn-sm" href="{% url 'point_interest:spot_detail' spot.pk %}">Detalhes</a>
+                        <br><a  class="btn btn-outline-primary btn-sm" href="{% url 'protect_network:spot_detail' spot.pk %}">Detalhes</a>
                     </div>
                 </div>
             </div>

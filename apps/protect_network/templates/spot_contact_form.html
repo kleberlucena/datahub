@@ -14,7 +14,7 @@
 {% block title-header %} Pontos de Interesse {% endblock %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{% url 'point_interest:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
 <li class="breadcrumb-item"><a>Adicionar contato</a></li>
 {% endblock %}
 
@@ -50,7 +50,7 @@
                
             <div class="mt-3">
                 <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="{% url 'point_interest:spot_detail' spot_pk %}">
+                <a href="{% url 'protect_network:spot_detail' spot_pk %}">
                     <button type="button" class="btn btn-warning">
                         <i class=""></i>
                         Voltar

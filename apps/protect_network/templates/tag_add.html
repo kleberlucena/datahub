@@ -14,7 +14,7 @@
 {% block title-header %} Pontos de Interesse {% endblock %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{% url 'point_interest:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
 <li class="breadcrumb-item"><a>Adicionar tag</a></li>
 {% endblock %}
 
@@ -59,7 +59,7 @@
                
             <div class="mt-3">
                 <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="{% url 'point_interest:tag_list' %}"><button type="button" class="btn btn-warning">Cancelar</button></a>
+                <a href="{% url 'protect_network:tag_list' %}"><button type="button" class="btn btn-warning">Cancelar</button></a>
             </div>
         </form>
     </div>

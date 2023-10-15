@@ -21,7 +21,7 @@
 {% block title-header %} Pontos de Interesse {% endblock %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{% url 'point_interest:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
 <li class="breadcrumb-item"><a>Lista de pontos</a></li>
 {% endblock %}
 
@@ -82,7 +82,7 @@
                         {% endif %}
                       </td>
                       <td class="project-actions text-center">
-                        <a  class="btn btn-outline-info btn-sm" href="{% url 'point_interest:spot_detail' spot.pk %}">Detalhes</a>
+                        <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:spot_detail' spot.pk %}">Detalhes</a>
                       </td>
                     </tr>
                   {% endfor %}
@@ -96,7 +96,7 @@
           </div>
         </div>
         <div class="row mt-auto ml-0">
-          <a href="{% url 'point_interest:spot_add' %}" alt="spot_add">
+          <a href="{% url 'protect_network:spot_add' %}" alt="spot_add">
             <button type="button" class="btn btn-block btn-primary"><i class="fa fa-plus"></i> Inserir</button>
           </a>
         </div>

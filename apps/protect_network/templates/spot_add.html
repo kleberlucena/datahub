@@ -21,7 +21,7 @@
 {% block title-header %} Pontos de Interesse {% endblock %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{% url 'point_interest:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
 <li class="breadcrumb-item"><a>Adicionar ponto</a></li>
 {% endblock %}
 
@@ -194,7 +194,7 @@
 
         function getSpots(spotTypeName) {  
             $.ajax({
-                url: '{% url "point_interest_api:list_filter_spots_type" %}?spot_type_name=' + spotTypeName,
+                url: '{% url "protect_network_api:list_filter_spots_type" %}?spot_type_name=' + spotTypeName,
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {

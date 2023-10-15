@@ -21,7 +21,7 @@
 {% block title-header %} Pontos de Interesse {% endblock %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="{% url 'point_interest:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
 {% if "/add" in request.path %}
     <li class="breadcrumb-item"><a>Adicionar ponto</a></li>
 {% elif "/update" in request.path %}
@@ -90,7 +90,7 @@
     
             <div class="mt-3">
                 <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="{% url 'point_interest:spot_detail' spot.pk %}"><button type="button" class="btn btn-warning">Cancelar</button></a>
+                <a href="{% url 'protect_network:spot_detail' spot.pk %}"><button type="button" class="btn btn-warning">Cancelar</button></a>
             </div>
             </form>
         </div>
@@ -138,7 +138,7 @@
 
         function getSpots(spotTypeName) {  
             $.ajax({
-                url: '{% url "point_interest_api:list_filter_spots_type" %}?spot_type_name=' + spotTypeName,
+                url: '{% url "protect_network_api:list_filter_spots_type" %}?spot_type_name=' + spotTypeName,
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {

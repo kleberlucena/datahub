@@ -56,7 +56,7 @@
                     {% for spot_type in spot_types %}
                         <input type="checkbox" name="spot_type" value="{{ spot_type.name }}"> {{ spot_type.name }}<br>
                     {% endfor %}
-                    <button type="button" id="apply-filter" class="btn btn-outline-primary mb-3" data-api-url="{% url 'point_interest_api:list_filter_spots_index' %}">Aplicar Filtro</button>
+                    <button type="button" id="apply-filter" class="btn btn-outline-primary mb-3" data-api-url="{% url 'protect_network_api:list_filter_spots_index' %}">Aplicar Filtro</button>
                 </form>
             </div>
             <div class="col-md-10 pai">
