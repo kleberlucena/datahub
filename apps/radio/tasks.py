@@ -5,7 +5,7 @@ from .models import Gps
 
 @shared_task
 def clean_old_gps_data():
-    # Calcule a data limite (7 dias atrás a partir do tempo atual)
+    # Calcule a data limite (30 dias atrás a partir do tempo atual)
     cutoff_date = timezone.now() - timezone.timedelta(days=30)
 
     # Remova registros com data de criação anterior à data limite
