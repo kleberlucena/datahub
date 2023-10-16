@@ -3,7 +3,7 @@
 
 
 <!-- browser title -->
-{% block title %} Adicionar estabelecimento {% endblock %}
+{% block title %} Adicionar ponto {% endblock %}
 
 <!-- styles -->
 {% block style_sheet %}
@@ -18,19 +18,19 @@
 {% endblock %}
 
 
-{% block title-header %} Rede de Proteção {% endblock %}
+{% block title-header %} Pontos de Interesse {% endblock %}
 
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
-<li class="breadcrumb-item"><a>Adicionar estabelecimento</a></li>
+<li class="breadcrumb-item"><a>Adicionar ponto</a></li>
 {% endblock %}
 
 {% block content %}
 
 <div class="callout callout-info">
-    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar estabelecimento</h3>
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar pontos</h3>
     <p class="text-muted text-justify px-3 pt-2">
-        <b>Essa tela permite o cadastro de novos estabelecimentos em uma rede</b>
+        <b>Essa tela permite a criação de pontos de interesse no mapa</b>
     </p>
 </div>
 
@@ -38,45 +38,18 @@
     <div class="col-md-12">
         <div class="card card-primary card-outline">
             <div class="card-header">
-                <h3 class="card-title">Adicionar estabelecimento</h3>
+                <h3 class="card-title">Adicionar ponto</h3>
             </div>
             <form class="p-3" method='post' enctype="multipart/form-data">
                 {% csrf_token %}
             <div class="row">
-                <div class="col-sm-6 mt-3">
-                    {{form.spot_network|add_class:"form-control"|as_crispy_field}}
-                </div>
-                <div class="col-sm-6 mt-3">
-                    {{form.QPP|add_class:"form-control"|as_crispy_field}}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-6 mt-3">
+                <div class="col-sm-8">
                     {{form.name|add_class:"form-control"|as_crispy_field}}
                 </div>
-                <div class="col-sm-6 mt-3">
+                <div class="col-sm-4">
                     {{form.spot_type|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
                 </div>
             </div>
-
-            <div class="row mt-3">
-                <div class="col-sm-12">
-                    <label for="{{ form.is_headquarters.id_for_label }}">É Matriz?</label>
-                    {{ form.is_headquarters }}
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-sm-12">
-                    {{form.cnpj|add_class:"form-control"|as_crispy_field}}
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-sm-12">
-                    {{form.parent_company|add_class:"form-control"|as_crispy_field}}
-                </div>
-            </div>
-
             <div class="row mt-3">
                 <div class="col-sm-12">
                     {{form.details|add_class:"form-control"|as_crispy_field}}
@@ -286,32 +259,6 @@
         zipcodeInput.inputmask("99999-999", { clearMaskOnLostFocus: false });
     });
     </script>
-<script>
-    $(document).ready(function () {
-        $('#id_cnpj').inputmask('99.999.999/9999-99', { "clearIncomplete": true });
-        $('#id_parent_company').inputmask('99.999.999/9999-99', { "clearIncomplete": true });
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        var headquarters = document.getElementById("id_is_headquarters");
-        var cnpj = document.getElementById("id_cnpj");
-        var parent_company = document.getElementById("id_parent_company");
-        // Ocultar o campo CNPJ inicialmente
-        //$(parent_company).prop("disabled", true);
-
-        // Detectar a seleção do campo É Matriz?
-        $(headquarters).change(function() {
-            if (headquarters.value === "True"){
-                parent_company.value = ""
-                //$(parent_company).prop("disabled", true);
-                console.log(parent_company.value)
-            } else {
-                //$(parent_company).prop("disabled", false);
-            }
-        });
-    });
-</script>
 <script>
     function goBack() {
         window.history.back();

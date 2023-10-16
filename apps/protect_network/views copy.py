@@ -84,24 +84,13 @@ class CreateSpotView(CreateView):
         self.object.next_update = spot_next_update
         self.object.save()
 
-        print("OKKKKKKKKKKKKK 1")
-        location_value = GEOSGeometry(f"POINT ({longitude} {latitude})", srid=4326)
-        zipcode_value = form.cleaned_data.get('zipcode')
+    ##### TESTE ADDRESS ###### Crie uma instância de Address manualmente
+        #street = self.request.POST.get('input_street')
         city_value = form.cleaned_data.get('city')
-        neighborhood_value = form.cleaned_data.get('neighborhood')
-        street_value = form.cleaned_data.get('street')
-        number_value = form.cleaned_data.get('number')
-        complement_value = form.cleaned_data.get('complement')
-        reference_value = form.cleaned_data.get('reference')
-        address1 = models.Address(street=street_value,number=number_value, complement=complement_value,reference=reference_value, neighborhood=neighborhood_value,
-                                    city=city_value, state="PB", region="NE", zipcode=zipcode_value, place=location_value, created_by=self.request.user,
-                                      updated_by=self.request.user)
+        print("CITY: #############",city_value)
+        address1 = models.Address(city=city_value, state="PB")
         address1.save()
-        
-        print("OKKKKKKKKKKKKK 2")
         self.object.addresses.add(address1)
-        
-        print("OKKKKKKKKKKKKK 3")
 
         return super().form_valid(form)
 
@@ -127,32 +116,6 @@ class UpdateSpotView(UpdateView):
         spot_next_update = spot_type.update_time
         self.object.next_update = spot_next_update
         tags = self.request.POST.getlist('tags')
-
-        location_value = GEOSGeometry(f"POINT ({longitude} {latitude})", srid=4326)
-        zipcode_value = form.cleaned_data.get('zipcode')
-        city_value = form.cleaned_data.get('city')
-        neighborhood_value = form.cleaned_data.get('neighborhood')
-        street_value = form.cleaned_data.get('street')
-        number_value = form.cleaned_data.get('number')
-        complement_value = form.cleaned_data.get('complement')
-        reference_value = form.cleaned_data.get('reference')
-
-        address_id = self.object.spotaddresses_set.first().address.id
-        existing_address = get_object_or_404(models.Address, id=address_id)
-        existing_address.street = street_value
-        existing_address.number = number_value
-        existing_address.complement = complement_value
-        existing_address.reference = reference_value
-        existing_address.neighborhood = neighborhood_value
-        existing_address.city = city_value
-        existing_address.zipcode = zipcode_value
-        existing_address.place = location_value
-        existing_address.save()
-        self.object.addresses.add(existing_address)
-
-
-
-
         self.object.save()
         self.object.tags.set(tags)
         return super().form_valid(form)

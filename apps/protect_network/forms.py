@@ -54,7 +54,7 @@ class SpotForm(forms.ModelForm):
 
     class Meta:
         model = models.Spot
-        fields = ('name', 'details', 'spot_type', 'latitude', 'longitude', 'tags','location','spot_network', 'cnpj', 'parent_company')
+        fields = ('name', 'details', 'spot_type', 'latitude', 'longitude', 'tags','location','spot_network', 'cnpj', 'parent_company','QPP')
         labels = {
             'name': 'Ponto',
             'details': 'Informações adicionais',
@@ -68,25 +68,26 @@ class SpotForm(forms.ModelForm):
             'details': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Se houver, digite informações adicionais'}),
             'spot_type': forms.Select(attrs={'class': 'form-control'}),
             'tags': forms.CheckboxSelectMultiple(attrs={'class': 'form-check', 'style': 'display: block'}),
+            'QPP': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite a qual QPP pertence'}),
         }
 
-    def __init__(self, *args, **kwargs):
-        super(SpotForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            Field('address'),
-            Submit('submit', 'Submit', css_class='btn btn-primary'),
-            Field('street', css_class='form-control'),
-            Field('number', css_class='form-control'),
-            Field('complement', css_class='form-control'),
-            Field('reference', css_class='form-control'),
-            Field('neighborhood', css_class='form-control'),
-            Field('city', css_class='form-control'),
-            Field('state', css_class='form-control'),
-            Field('region', css_class='form-control'),
-            Field('country', css_class='form-control'),
-            Field('zipcode', css_class='form-control'),
-        )
+    # def __init__(self, *args, **kwargs):
+    #     super(SpotForm, self).__init__(*args, **kwargs)
+    #     self.helper = FormHelper()
+    #     self.helper.layout = Layout(
+    #         Field('address'),
+    #         Submit('submit', 'Submit', css_class='btn btn-primary'),
+    #         Field('street', css_class='form-control'),
+    #         Field('number', css_class='form-control'),
+    #         Field('complement', css_class='form-control'),
+    #         Field('reference', css_class='form-control'),
+    #         Field('neighborhood', css_class='form-control'),
+    #         Field('city', css_class='form-control'),
+    #         Field('state', css_class='form-control'),
+    #         Field('region', css_class='form-control'),
+    #         Field('country', css_class='form-control'),
+    #         Field('zipcode', css_class='form-control'),
+    #     )
 
 
     def save(self, commit=True):

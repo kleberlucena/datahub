@@ -30,17 +30,18 @@ class Tag(models.Model):
     
 class Network(models.Model):
     name = models.CharField("Nome da rede", max_length=200)
-    # responsibles = models.ManyToManyField('Military', through='NetworkResponsible')
-    responsible = models.ForeignKey(Military, related_name='responsible_name', on_delete=models.RESTRICT)
+    responsibles = models.ManyToManyField(Military, related_name='networks_responsible')
+    #responsible = models.ForeignKey(Military, related_name='responsible_name', on_delete=models.RESTRICT)
+    #responsible = models.ManyToManyField('Military', related_name='networks_responsible')
     #unit = models.ForeignKey(Entity, related_name='respondible_unit', on_delete=models.RESTRICT)
 
     def __str__(self):
         return self.name
     
 
-# class NetworkResponsible(models.Model):
-#     network = models.ForeignKey(Network, on_delete=models.CASCADE)
-#     military = models.ForeignKey('Military', on_delete=models.CASCADE)
+class NetworkResponsible(models.Model):
+    network = models.ForeignKey(Network, on_delete=models.CASCADE)
+    military = models.ForeignKey(Military, on_delete=models.CASCADE)
     
     
 class Image(models.Model):
@@ -93,11 +94,11 @@ class Spot(models.Model):
         through='SpotAddresses',
         through_fields=('spot', 'address'),
     )
-    is_headquarters = models.BooleanField(default=True, null=True, blank=False)
-    cnpj = models.CharField(max_length=20, unique=True, null=True, blank=False)
-    parent_company = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
+    is_headquarters = models.BooleanField(default=True, null=False, blank=False)
+    cnpj = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    parent_company = models.CharField(max_length=20, unique=True, null=True, blank=True)
     spot_network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=False)
-    QPP = models.CharField("QPP do ponto", max_length=255, null=True, blank=True) #CRIAR UM MODELO PARA CADASTRAR OS QPP's?
+    QPP = models.CharField(max_length=255, null=True, blank=True) #CRIAR UM MODELO PARA CADASTRAR OS QPP's?
     
 
 
