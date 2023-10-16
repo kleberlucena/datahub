@@ -7,6 +7,7 @@ from django_minio_backend import MinioBackend
 from django.contrib.gis.db import models
 from apps.address.models import Address
 from apps.portal import models as portal_models
+from apps.portal.models import Entity, Military
 
 
 
@@ -23,6 +24,14 @@ class SpotType(models.Model):
 class Tag(models.Model):
     name = models.CharField("Tag", max_length=50)
     details = models.CharField("Descrição", max_length=300, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+    
+class Network(models.Model):
+    name = models.CharField("Nome da rede", max_length=200)
+    responsible = models.ForeignKey(Military, related_name='responsible_name', on_delete=models.RESTRICT)
+    #unit = models.ForeignKey(Entity, related_name='respondible_unit', on_delete=models.RESTRICT)
 
     def __str__(self):
         return self.name
@@ -69,7 +78,7 @@ class Spot(models.Model):
     user_unit = models.ForeignKey(portal_models.Military, on_delete=models.PROTECT,verbose_name="Militar", related_name='spots')
     next_update = models.IntegerField(null=True, blank=True)
     is_temporary = models.BooleanField(null=True, blank=True, default=False)
-    date_initial = models.DateTimeField(null=True, blank=True) # deriva do created_at
+    date_initial = models.DateTimeField(null=True, blank=True)
     date_final = models.DateTimeField(null=True, blank=True)
     active = models.BooleanField(null=True, blank=True, default=True)
     location = models.PointField("Localização", srid=4326, null=True, blank=True)
@@ -78,6 +87,15 @@ class Spot(models.Model):
         through='SpotAddresses',
         through_fields=('spot', 'address'),
     )
+    is_headquarters = models.BooleanField(default=True, null=True, blank=False)
+    cnpj = models.CharField(max_length=20, unique=True, null=True, blank=False)
+    parent_company = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
+    spot_network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=False)
+    QPP = models.CharField("QPP do ponto", max_length=255, null=True, blank=True) #CRIAR UM MODELO PARA CADASTRAR OS QPP's?
+    
+
+
+
        
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

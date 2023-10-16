@@ -26,9 +26,12 @@ class SpotTypeForm(forms.ModelForm):
 
 
 class SpotForm(forms.ModelForm):
+    IS_HEADQUARTERS_CHOICES = [
+        (True, 'Sim'),
+        (False, 'Não'),
+    ]
     latitude = forms.FloatField(label="Latitude", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Clique no mapa ou digite as coordenadas'}))
     longitude = forms.FloatField(label="Longitude", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Clique no mapa ou digite as coordenadas'}))
-    
     address = forms.CharField(label='Endereço', max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Insira um endereço'}))
     street = forms.CharField(label='Logradouro', max_length=255, required=False)
     number = forms.CharField(label='Número', max_length=9, required=False)
@@ -40,15 +43,25 @@ class SpotForm(forms.ModelForm):
     region = forms.CharField(label='Região', max_length=2, required=False)
     country = forms.CharField(label='País', max_length=155, required=False)
     zipcode = forms.CharField(label='CEP', required=False)
+    is_headquarters = forms.ChoiceField(
+        label='É Matriz?',
+        choices=IS_HEADQUARTERS_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True,
+        initial=True,
+    )
 
 
     class Meta:
         model = models.Spot
-        fields = ('name', 'details', 'spot_type', 'latitude', 'longitude', 'tags','location')
+        fields = ('name', 'details', 'spot_type', 'latitude', 'longitude', 'tags','location','spot_network', 'cnpj', 'parent_company')
         labels = {
             'name': 'Ponto',
             'details': 'Informações adicionais',
             'spot_type': 'Tipo',
+            'spot_network': 'Rede',
+            'cnpj': 'CNPJ',
+            'parent_company': 'CNPJ da matriz',
         }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome do ponto'}),

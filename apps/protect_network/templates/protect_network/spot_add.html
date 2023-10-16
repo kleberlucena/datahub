@@ -3,7 +3,7 @@
 
 
 <!-- browser title -->
-{% block title %} Adicionar ponto {% endblock %}
+{% block title %} Adicionar estabelecimento {% endblock %}
 
 <!-- styles -->
 {% block style_sheet %}
@@ -18,11 +18,11 @@
 {% endblock %}
 
 
-{% block title-header %} Pontos de Interesse {% endblock %}
+{% block title-header %} Rede de Proteção {% endblock %}
 
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
-<li class="breadcrumb-item"><a>Adicionar ponto</a></li>
+<li class="breadcrumb-item"><a>Adicionar estabelecimento</a></li>
 {% endblock %}
 
 {% block content %}
@@ -30,7 +30,7 @@
 <div class="callout callout-info">
     <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar pontos</h3>
     <p class="text-muted text-justify px-3 pt-2">
-        <b>Essa tela permite a criação de pontos de interesse no mapa</b>
+        <b>Essa tela permite o cadastro de novos estabelecimentos em uma rede</b>
     </p>
 </div>
 
@@ -38,40 +38,89 @@
     <div class="col-md-12">
         <div class="card card-primary card-outline">
             <div class="card-header">
-                <h3 class="card-title">Adicionar ponto</h3>
+                <h3 class="card-title">Adicionar estabelecimento</h3>
             </div>
             <form class="p-3" method='post' enctype="multipart/form-data">
                 {% csrf_token %}
             <div class="row">
-                <div class="col-sm-8">
+                <div class="col-sm-12">
+                    {{form.spot_network|add_class:"form-control"|as_crispy_field}}
+                </div>
+                <div class="col-sm-8 mt-3">
                     {{form.name|add_class:"form-control"|as_crispy_field}}
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-4 mt-3">
                     {{form.spot_type|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
                 </div>
             </div>
+
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    <label for="{{ form.is_headquarters.id_for_label }}">É Matriz?</label>
+                    {{ form.is_headquarters }}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    {{form.cnpj|add_class:"form-control"|as_crispy_field}}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    {{form.parent_company|add_class:"form-control"|as_crispy_field}}
+                </div>
+            </div>
+
             <div class="row mt-3">
                 <div class="col-sm-12">
                     {{form.details|add_class:"form-control"|as_crispy_field}}
                 </div>
             </div>
-            
+
+            <br>
+            <h3 class="card-title">Endereço</h3>
+            <br>
+            <hr>
+
             <div class="row mt-3">
-                <div class="col-sm-12">
-                    {{form.address|add_class:"form-control"|as_crispy_field}}
+                <div class="col-sm-4">
+                    <b>CEP</b>
+                    <input type="text" id="id_zipcode" name="zipcode" class="form-control", placeholder="Digite o CEP">
+                </div>
+                <div class="col-sm-4">
+                    <b>Cidade</b>
+                    <input type="text" id="id_city" name="city" class="form-control", placeholder="Digite nome da cidade">
+                </div>
+                <div class="col-sm-4">
+                    <b>Bairro</b>
+                    <input type="text" id="id_neighborhood" name="neighborhood" class="form-control", placeholder="Digite o nome do bairro">
                 </div>
             </div>
-            <div class="row mt-1">
-                <div class="col-sm-12">
-                    <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#addressModal">
-                        {% if form.address.value %}
-                            + Alterar endereço
-                        {% else %}
-                            + Adicionar endereço
-                        {% endif %}
-                    </button>
+            <div class="row mt-3">
+                <div class="col-sm-8">
+                    <b>Logradouro</b>
+                    <input type="text" id="id_street" name="street" class="form-control", placeholder="Digite o nome da rua">
+                </div>
+                <div class="col-sm-4">
+                    <b>Número</b>
+                    <input type="text" id="id_number" name="number" class="form-control", placeholder="Digite o número">
                 </div>
             </div>
+            <div class="row mt-3">
+                <div class="col-sm-6">
+                    <b>Complemento</b>
+                    <input type="text" id="id_complement" name="complement" class="form-control", placeholder="Se houver, digite o complento">
+                </div>
+                <div class="col-sm-6">
+                    <b>Referência</b>
+                    <input type="text" id="id_reference" name="reference" class="form-control", placeholder="Se houver, forneça um ponto de referência">
+                </div>
+            </div>
+
+            <br>
+            <h3 class="card-title">Localização</h3>
+            <br>
+            <hr>
 
             <div class="row mt-3">
                 <div class="col-sm-6">
@@ -98,60 +147,6 @@
     </div>
 </div>
 
-<!-- Modal para adicionar endereço -->
-<div class="modal fade" id="addressModal" tabindex="-1" role="dialog" aria-labelledby="addressModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addressModallLabel">Novo endereço</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <div class="modal-body">
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="row mt-3">
-                        <div class="col-sm-12">
-                            {{ form.zipcode|add_class:"form-control"|as_crispy_field}}
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-sm-12">
-                            {{ form.city|add_class:"form-control"|as_crispy_field}}
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-sm-12">
-                            {{ form.neighborhood|add_class:"form-control"|as_crispy_field}}
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-sm-12">
-                            {{ form.street|add_class:"form-control"|as_crispy_field}}
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-sm-12">
-                            {{ form.number|add_class:"form-control"|as_crispy_field}}
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-sm-12">
-                            {{ form.complement|add_class:"form-control"|as_crispy_field}}
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-sm-12">
-                            {{ form.reference|add_class:"form-control"|as_crispy_field}}
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-primary mt-3" id="saveAddressButton">OK</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 
@@ -159,6 +154,7 @@
 <!-- javascripts -->
 {% block js %}
 {% leaflet_js plugins="ALL" %}
+<script src="{% static 'adminlte-3.1.0/plugins/inputmask/jquery.inputmask.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.full.min.js' %}"></script>
 <script>
   $(function () {
@@ -279,25 +275,39 @@
     }
 </script>
 <script>
-    function goBack() {
-        window.history.back();
-    }
+    $(document).ready(function() {
+        var zipcodeInput = $("#id_zipcode");
+        zipcodeInput.inputmask("99999-999", { clearMaskOnLostFocus: false });
+    });
+    </script>
+<script>
+    $(document).ready(function () {
+        $('#id_cnpj').inputmask('99.999.999/9999-99', { "clearIncomplete": true });
+        $('#id_parent_company').inputmask('99.999.999/9999-99', { "clearIncomplete": true });
+    });
 </script>
 <script>
     $(document).ready(function() {
-        $("#saveAddressButton").click(function() {
-            var zipcode = $("#id_zipcode").val();
-            var city = $("#id_city").val();
-            var neighborhood = $("#id_neighborhood").val();
-            var street = $("#id_street").val();
-            var number = $("#id_number").val();
-            var complement = $("#id_complement").val();
-            var reference = $("#id_reference").val();
-            var addressInfo = street + ", " + number + " - " + neighborhood + " - " + city;
+        var headquarters = document.getElementById("id_is_headquarters");
+        var cnpj = document.getElementById("id_cnpj");
+        var parent_company = document.getElementById("id_parent_company");
+        // Ocultar o campo CNPJ inicialmente
+        $(parent_company).prop("disabled", true);
 
-            $("#id_address").val(addressInfo);
-            $("#addressModal").modal("hide");
+        // Detectar a seleção do campo É Matriz?
+        $(headquarters).change(function() {
+            if (headquarters.value === "True"){
+                $(parent_company).text = "";
+                $(parent_company).prop("disabled", true);
+            } else {
+                $(parent_company).prop("disabled", false);
+            }
         });
     });
+</script>
+<script>
+    function goBack() {
+        window.history.back();
+    }
 </script>
 {% endblock %}

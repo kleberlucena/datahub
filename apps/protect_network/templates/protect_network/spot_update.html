@@ -58,7 +58,7 @@
             </div>
             <form class="p-3" method='post' enctype="multipart/form-data">
                 {% csrf_token %}
-        
+                
             <div class="row">
                 <div class="col-sm-8">
                     {{form.name|add_class:"form-control"|as_crispy_field}}
@@ -72,6 +72,57 @@
                     {{form.details|add_class:"form-control"|as_crispy_field}}
                 </div>
             </div>
+
+            <br>
+            <h3 class="card-title">Endereço</h3>
+            <br>
+            <hr>
+
+            {% for address in spot.addresses.all %}
+                <div class="row mt-3">
+                    <div class="col-sm-4">
+                        <b>CEP</b>
+                        <input type="text" id="id_zipcode" name="zipcode" class="form-control" value="{{ address.zipcode }}">
+                    </div>
+                    <div class="col-sm-4">
+                        <b>Cidade</b>
+                        <input type="text" id="id_city" name="city" class="form-control" value="{{ address.city }}">
+                    </div>
+                    <div class="col-sm-4">
+                        <b>Bairro</b>
+                        <input type="text" id="id_neighborhood" name="neighborhood" class="form-control" value="{{ address.neighborhood }}">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-sm-10">
+                        <b>Logradouro</b>
+                        <input type="text" id="id_street" name="street" class="form-control" value="{{ address.street }}">
+                    </div>
+                    <div class="col-sm-2">
+                        <b>Número</b>
+                        <input type="text" id="id_number" name="number" class="form-control" value="{{ address.number }}">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-sm-6">
+                        <b>Complemento</b>
+                        <input type="text" id="id_complement" name="complement" class="form-control" value="{{ address.complement }}">
+                    </div>
+                    <div class="col-sm-6">
+                        <b>Referência</b>
+                        <input type="text" id="id_reference" name="reference" class="form-control" value="{{ address.reference }}">
+                    </div>
+                </div>
+            {% empty %}
+                Nenhum endereço encontrado.
+            {% endfor %}
+
+            <br>
+            <h3 class="card-title">Localização</h3>
+            <br>
+            <hr>
+
+
             <div class="row mt-3">
                 <div class="col-sm-6">
                     {{form.latitude|add_class:"form-control"|as_crispy_field}}
@@ -80,7 +131,7 @@
                     {{form.longitude|add_class:"form-control"|as_crispy_field}}
                 </div>
             </div>
-            </div>
+            
             <br>
             <div class="row">
                 <div class="col-sm-12">
