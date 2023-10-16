@@ -335,7 +335,7 @@ PUBLIC_PATHS = [
     r'^/api/token/refresh/',
     r'^/watermark/.*',
     # Descomentar para expor rota adminitrativa (só para ajustes de configurações do keycloak)
-    r'^/admin/.*',
+    # r'^/admin/.*',
 ]
 
 # Celery Configuration Options
