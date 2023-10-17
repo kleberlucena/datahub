@@ -32,7 +32,6 @@ class SpotForm(forms.ModelForm):
     ]
     latitude = forms.FloatField(label="Latitude", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Clique no mapa ou digite as coordenadas'}))
     longitude = forms.FloatField(label="Longitude", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Clique no mapa ou digite as coordenadas'}))
-    address = forms.CharField(label='Endereço', max_length=255, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Insira um endereço'}))
     street = forms.CharField(label='Logradouro', max_length=255, required=False)
     number = forms.CharField(label='Número', max_length=9, required=False)
     complement = forms.CharField(label='Complemento', max_length=255, required=False)
