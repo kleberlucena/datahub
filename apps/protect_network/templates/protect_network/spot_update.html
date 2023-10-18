@@ -59,19 +59,46 @@
             <form class="p-3" method='post' enctype="multipart/form-data">
                 {% csrf_token %}
                 
-            <div class="row">
-                <div class="col-sm-8">
-                    {{form.name|add_class:"form-control"|as_crispy_field}}
+                <div class="row">
+                    <div class="col-sm-6 mt-3">
+                        {{form.spot_network|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                    <div class="col-sm-6 mt-3">
+                        {{form.QPP|add_class:"form-control"|as_crispy_field}}
+                    </div>
                 </div>
-                <div class="col-sm-4">
-                    {{form.spot_type|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
+    
+                <div class="row">
+                    <div class="col-sm-6 mt-3">
+                        {{form.name|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                    <div class="col-sm-6 mt-3">
+                        {{form.spot_type|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
+                    </div>
                 </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-sm-12">
-                    {{form.details|add_class:"form-control"|as_crispy_field}}
+    
+                <div class="row mt-3">
+                    <div class="col-sm-12">
+                        <label for="{{ form.is_headquarters.id_for_label }}">É Matriz?</label>
+                        {{ form.is_headquarters }}
+                    </div>
                 </div>
-            </div>
+                <div class="row mt-3">
+                    <div class="col-sm-12">
+                        {{form.cnpj|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-sm-12">
+                        {{form.parent_company|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                </div>
+    
+                <div class="row mt-3">
+                    <div class="col-sm-12">
+                        {{form.details|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                </div>
 
             <br>
             <h3 class="card-title">Endereço</h3>
@@ -155,6 +182,7 @@
 {% block js %}
 {% leaflet_js plugins="ALL" %}
 <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.full.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/inputmask/jquery.inputmask.min.js' %}"></script>
 <script>
   $(function () {
     $('.select2bs4').select2({
@@ -279,5 +307,37 @@
             });
         })
     }
+</script>
+<script>
+    $(document).ready(function() {
+        var zipcodeInput = $("#id_zipcode");
+        zipcodeInput.inputmask("99999-999", { clearMaskOnLostFocus: true });
+    });
+    </script>
+<script>
+    $(document).ready(function () {
+        $('#id_cnpj').inputmask('99.999.999/9999-99');
+        $('#id_parent_company').inputmask('99.999.999/9999-99');
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        var headquarters = document.getElementById("id_is_headquarters");
+        var cnpj = document.getElementById("id_cnpj");
+        var parent_company = document.getElementById("id_parent_company");
+        // Ocultar o campo CNPJ inicialmente
+        //$(parent_company).prop("disabled", true);
+
+        // Detectar a seleção do campo É Matriz?
+        $(headquarters).change(function() {
+            if (headquarters.value === "True"){
+                parent_company.value = ""
+                //$(parent_company).prop("disabled", true);
+                console.log(parent_company.value)
+            } else {
+                //$(parent_company).prop("disabled", false);
+            }
+        });
+    });
 </script>
 {% endblock %}

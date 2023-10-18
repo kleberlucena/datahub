@@ -47,7 +47,6 @@ class SpotForm(forms.ModelForm):
         choices=IS_HEADQUARTERS_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control'}),
         required=True,
-        initial=True,
     )
 
 

@@ -11,10 +11,14 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css" />
 {% leaflet_css plugins="ALL" %}
 <style>
+    #map-container {
+        height: 100%;
+    }
     #map {
-            height: 500px;
-        }
+        height: 100%;
+    }
 </style>
+
 <style>
     /* Estilos para o badge */
     .badge {
@@ -84,9 +88,56 @@
     <div class="row">
         <div class="col-md-6">
         <div class="card-header">
-            <h3 class="card-title"><b> Informações do ponto</b></h3>
+            <h3 class="card-title"><b> Informações do estabelecimento</b></h3>
         </div>
         <div class="p-4">
+            <div class="row mb-1">
+                <div>
+                    <b>Rede:</b>
+                </div>
+                <div class="ml-1" id="id_name">
+                    {{ spot.spot_network }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Nome:</b>
+                </div>
+                <div class="ml-1" id="id_name">
+                    {{ spot.name }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>CNPJ:</b>
+                </div>
+                <div class="ml-1 replace-none" id="id_name">
+                    {{ spot.cnpj }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Matriz:</b>
+                </div>
+                <div class="ml-1" id="id_name">
+                    {% if spot.is_headquarters %}
+                        Sim
+                    {% else %}
+                        Não
+                    {% endif %}
+                </div>
+            </div>
+            {% if spot.is_headquarters %}
+            {% else %}
+                <div class="row mb-1">
+                    <div>
+                        <b>CNPJ da matriz:</b>
+                    </div>
+                    <div class="ml-1 replace-none" id="id_name">
+                        {{ spot.cnpj }}
+                    </div>
+                </div>
+            {% endif %}
             <div class="row mb-1">
                 <div>
                     <b>Nome:</b>
@@ -107,26 +158,82 @@
                 <div>
                     <b>Informações adicionais:</b>
                 </div>
-                <div class="ml-1">
+                <div class="ml-1 replace-none">
                     {{ spot.details }}
                 </div>
             </div>
+
+
+            <br>
             <div class="row mb-1">
                 <div>
-                    <b>Latitude:</b>
-                </div>
-                <div class="ml-1" id="id_latitude">
-                    {{ spot.latitude|stringformat:"f" }}
+                    <h3 class="card-title"><b> Informações de endereço</b></h3>
                 </div>
             </div>
+            <hr>
             <div class="row mb-1">
                 <div>
-                    <b>Longitude:</b>
+                    <b>Coordenadas no mapa:</b>
                 </div>
-                <div class="ml-1" id="id_longitude">
-                    {{ spot.longitude|stringformat:"f" }}
+                <div class="ml-1" id="id_location">
+                    {{ spot.latitude|stringformat:"f" }} , {{ spot.longitude|stringformat:"f" }}
                 </div>
             </div>
+            {% for address in spot.addresses.all %}
+                <div class="row mb-1">
+                    <div>
+                        <b>Endereço:</b>
+                    </div>
+                    <div class="ml-1">
+                        {% if address.street %}
+                            {{ address.street }}
+                            {% if address.number %}
+                                , {{ address.number }}
+                            {% else %}
+                                , número não informado
+                            {% endif %}
+                            {% if address.complement %}
+                                - {{ address.complement }}
+                            {% endif %}
+                            {% if address.reference %}
+                                , {{ address.reference }}
+                            {% endif %}
+                        {% else %}
+                            Incompleto ou não informado
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <div>
+                        <b>Localidade:</b>
+                    </div>
+                    <div class="ml-1">
+                        {% if not address.zipcode and not address.city and not address.neighborhood  %}
+                            Não informado
+                        {% else %}
+                            {% if address.zipcode %}
+                                CEP: {{ address.zipcode }}
+                            {% endif %}
+                            {% if address.city %}
+                                - {{ address.city }}
+                            {% endif %}
+                            {% if address.neighborhood %}
+                                - {{ address.neighborhood }}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                Nenhum endereço encontrado.
+            {% endfor %}
+
+            <br>
+            <div class="row mb-1">
+                <div>
+                    <h3 class="card-title"><b> Informações de registro</b></h3>
+                </div>
+            </div>
+            <hr>
             <div class="row mb-1">
                 <div style="width: 50%">
                         <b>Dias para atualizar:</b>
@@ -142,14 +249,6 @@
                         <input type="text" id="slider" name="slider" />
                 </div>
             </div>
-
-            <br><br>
-            <div class="row mb-1">
-                <div>
-                    <h3 class="card-title"><b> Informações de registro</b></h3>
-                </div>
-            </div>
-            <hr>
             <div class="row mb-1">
                 <div>
                     <b>Criado por:</b>
@@ -204,19 +303,46 @@
                     </div>
                 {% endif %}
             </div>
+            
     </div>
-    <div class="row mt-auto ml-3 mb-3">
+    <br><br>
+    <div class="row mt-auto ml-3">
         <div>
             <a class="btn btn-outline-primary" href="{% url 'protect_network:spot_update' spot.pk %}">Editar</a>
         </div>
     </div>
+    
         </div>
         <div class="col-md-6">
             <div class="card-header">
         <h3 class="card-title"><b>Localização no mapa</b></h3>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="height: 100vh;">
                 {% leaflet_map "map" callback="window.map_init" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title"><b>Quadro de funcionários</b></h3>
+            </div>
+            <div class="card-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title"><b>Informações de segurança</b></h3>
+            </div>
+            <div class="card-body">
             </div>
         </div>
     </div>
@@ -567,20 +693,22 @@
             maxZoom: 19,
             attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
         }).addTo(map);
-
-        // Verifica se já existem valores de latitude, longitude e nome
-        var lat = parseFloat(document.getElementById('id_latitude').textContent);
-        var lon = parseFloat(document.getElementById('id_longitude').textContent);
-
-        // Definir zoom e posição inicial
-        var initialZoom = 18;
-        var initialPosition = L.latLng(lat, lon);
-        map.setView(initialPosition, initialZoom);
-        var marker = null;
-
-        // Cria um marcador inicial se os valores já estiverem definidos
-        if (lat && lon) {
-            marker = L.marker([lat, lon]).addTo(map);
+    
+        // Verifica se já existe a informação de localização
+        var locationDiv = document.getElementById('id_location');
+        if (locationDiv) {
+            var locationText = locationDiv.textContent.trim();
+            var coordinates = locationText.split(',');
+            if (coordinates.length === 2) {
+                var lat = parseFloat(coordinates[0]);
+                var lon = parseFloat(coordinates[1]);
+    
+                // Definir zoom e posição inicial
+                var initialZoom = 18;
+                var initialPosition = L.latLng(lat, lon);
+                map.setView(initialPosition, initialZoom);
+                var marker = L.marker([lat, lon]).addTo(map);
+            }
         }
     }
 </script>
@@ -631,6 +759,18 @@
         // Posiciona o marcador na posição 0 inicialmente
         $(".slider-marker").css("left", "50%");
     });
-    </script>
+</script>
+<script type="text/javascript">
+    // Seletor para todos os elementos que podem conter "none"
+    var elementsToCheck = document.querySelectorAll('.replace-none');
+
+    // Loop através dos elementos
+    for (var i = 0; i < elementsToCheck.length; i++) {
+        var element = elementsToCheck[i];
+        if (element.textContent.trim() === 'None') {
+            element.textContent = 'Não informado';
+        }
+    }
+</script>
 
 {% endblock %}

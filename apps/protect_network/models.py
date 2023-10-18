@@ -95,8 +95,8 @@ class Spot(models.Model):
         through_fields=('spot', 'address'),
     )
     is_headquarters = models.BooleanField(default=True, null=False, blank=False)
-    cnpj = models.CharField(max_length=20, unique=True, null=True, blank=True)
-    parent_company = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    cnpj = models.CharField(max_length=20, null=True, blank=True)
+    parent_company = models.CharField(max_length=20, null=True, blank=True)
     spot_network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=False)
     QPP = models.CharField(max_length=255, null=True, blank=True) #CRIAR UM MODELO PARA CADASTRAR OS QPP's?
     

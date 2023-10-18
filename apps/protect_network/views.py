@@ -81,10 +81,10 @@ class CreateSpotView(CreateView):
         self.object.user_unit_id = military.id
         spot_type = self.object.spot_type
         spot_next_update = spot_type.update_time
+        is_headquarters = form.cleaned_data['is_headquarters']
+        self.object.is_headquarters = is_headquarters
         self.object.next_update = spot_next_update
         self.object.save()
-
-        print("OKKKKKKKKKKKKK 1")
         location_value = GEOSGeometry(f"POINT ({longitude} {latitude})", srid=4326)
         zipcode_value = form.cleaned_data.get('zipcode')
         city_value = form.cleaned_data.get('city')
@@ -97,12 +97,7 @@ class CreateSpotView(CreateView):
                                     city=city_value, state="PB", region="NE", zipcode=zipcode_value, place=location_value, created_by=self.request.user,
                                       updated_by=self.request.user)
         address1.save()
-        
-        print("OKKKKKKKKKKKKK 2")
         self.object.addresses.add(address1)
-        
-        print("OKKKKKKKKKKKKK 3")
-
         return super().form_valid(form)
 
 
@@ -150,8 +145,8 @@ class UpdateSpotView(UpdateView):
         existing_address.save()
         self.object.addresses.add(existing_address)
 
-
-
+        is_headquarters = form.cleaned_data['is_headquarters']
+        self.object.is_headquarters = is_headquarters
 
         self.object.save()
         self.object.tags.set(tags)

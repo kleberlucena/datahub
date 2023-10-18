@@ -283,13 +283,13 @@
 <script>
     $(document).ready(function() {
         var zipcodeInput = $("#id_zipcode");
-        zipcodeInput.inputmask("99999-999", { clearMaskOnLostFocus: false });
+        zipcodeInput.inputmask("99999-999", { clearMaskOnLostFocus: true });
     });
     </script>
 <script>
     $(document).ready(function () {
-        $('#id_cnpj').inputmask('99.999.999/9999-99', { "clearIncomplete": true });
-        $('#id_parent_company').inputmask('99.999.999/9999-99', { "clearIncomplete": true });
+        $('#id_cnpj').inputmask('99.999.999/9999-99');
+        $('#id_parent_company').inputmask('99.999.999/9999-99');
     });
 </script>
 <script>
