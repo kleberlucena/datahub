@@ -28,6 +28,7 @@ urlpatterns = [
   path('<int:spot_id>/spot/images', views.ImageListView.as_view(), name='spot_image_list'),
   path('spot/image/<int:pk>/delete/', views.ImageDeleteView.as_view(), name='spot_image_delete'),
 
+  path('<int:pk>/network/detail', views.NetworkDetailView.as_view(), name='network_detail'),
   path('network', views.NetworkListView.as_view(), name='network_list'), 
   #path('tag/add', views.CreateTagView.as_view(), name='tag_add'), 
 ]

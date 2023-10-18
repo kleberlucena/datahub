@@ -33,48 +33,68 @@
   <div class="col-md-12">
     <div class="card card-primary card-outline">
       <div class="card-header">
-        <h3 class="card-title">Lista de redes cadastradas</h3>
+        <h3 class="card-title">Detalhes da rede</h3>
       </div>
       <div class="card-body">
-        <div class="row">
-        </div>
-        <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
-          <div class="table-responsive">
-            <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
-              role="grid" aria-describedby="objects_list_info" width="100%">
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Descrição</th>
-                  <th>Estabelecimentos na rede</th>
-                  <th>Ação</th>
-               </tr>
-              </thead>
-
-              <tboby>
-                {% for network in networks %}
-                <tr>
-                  <td>{{ network.name }}</td>
-                  {% if network.details == None%}
-                    <td> Sem descrição </td>
-                  {% else %}
-                    <td>{{ network.details }}</td>
-                  {% endif %}
-                  {% if network.spot_set.count == 0%}
-                    <td> Nenhum estabelecimento na rede </td>
-                  {% else %}
-                    <td> {{ network.spot_set.count }} </td>
-                  {% endif %}
-                  <td colspan="2" class="project-actions text-center">
-                    <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:network_detail' pk=network.pk %}">Detalhes</a>
-                    <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:network_detail' pk=network.pk %}">Editar</a>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tboby>
-            </table>
+        <div class="row mb-1">
+          <div>
+              <b>Nome da rede:</b>
+          </div>
+          <div class="ml-1">
+              {{ network.name }}
           </div>
         </div>
+        <div class="row mb-1">
+          <div>
+              <b>Informações adicionais:</b>
+          </div>
+          <div class="ml-1 replace-none">
+              {{ network.details }}
+          </div>
+        </div>
+
+
+        <br>
+        <h3 class="card-title"><b>Responsáveis pela rede</b></h3>
+        <br>
+        <hr>
+
+        <div class="card-body">
+          <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+              <div class="table-responsive">
+                  <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
+                      role="grid" aria-describedby="objects_list_info" width="100%">
+                      <thead>
+                          <tr>
+                              <th>Nome</th>
+                              <th>Ativo?</th>
+                              <th>Data de inserção na rede</th>
+                          </tr>
+                      </thead>
+                  
+                      <tboby>
+                        {% for responsible in network_responsibles %}
+                          <tr>
+                            <td>{{ responsible.responsible.nickname }}</td>
+                            <td>
+                              {% if responsible.active %}
+                                Ativo
+                              {% else %}
+                                Inativo
+                              {% endif %}
+                            </td>
+                            <td>{{ responsible.created_at|date:"d/m/Y H:i:s" }}</td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                  </table>
+              </div>
+
+  
+          </div>
+      </div>
+
+
         <div class="row mt-auto ml-0">
           <a href="" alt="type_add">
             <button type="button" class="btn btn-block btn-primary"> Nova rede</button>
@@ -110,4 +130,17 @@
     });
   });
 </script>
+<script type="text/javascript">
+  // Seletor para todos os elementos que podem conter "none"
+  var elementsToCheck = document.querySelectorAll('.replace-none');
+
+  // Loop através dos elementos
+  for (var i = 0; i < elementsToCheck.length; i++) {
+      var element = elementsToCheck[i];
+      if (element.textContent.trim() === 'None') {
+          element.textContent = 'Não informado';
+      }
+  }
+</script>
+
 {% endblock %}

@@ -445,3 +445,22 @@ class NetworkListView(ListView):
         network = models.Network.objects.all()
         context['networks'] = network
         return context
+    
+
+class NetworkDetailView(DetailView):
+    model = models.Network
+    template_name = 'protect_network/network_detail.html'
+    context_object_name = 'network'
+
+class NetworkDetailView(DetailView):
+    model = models.Network
+    template_name = 'protect_network/network_detail.html'
+    context_object_name = 'network'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        network = context['network']
+        network_responsibles = network.networkresponsible_set.all()
+        context['network_responsibles'] = network_responsibles
+
+        return context
