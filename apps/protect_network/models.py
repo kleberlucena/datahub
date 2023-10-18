@@ -31,8 +31,7 @@ class Tag(models.Model):
 class Network(models.Model):
     name = models.CharField("Nome da rede", max_length=200)
     responsibles = models.ManyToManyField(Military, related_name='networks_responsible')
-    #responsible = models.ForeignKey(Military, related_name='responsible_name', on_delete=models.RESTRICT)
-    #responsible = models.ManyToManyField('Military', related_name='networks_responsible')
+    details = models.CharField("Informações adicionais", max_length=300, null=True, blank=True)
     #unit = models.ForeignKey(Entity, related_name='respondible_unit', on_delete=models.RESTRICT)
 
     def __str__(self):

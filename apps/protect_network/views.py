@@ -434,3 +434,14 @@ class UpdateOpeningHoursView(UpdateView):
     def get_success_url(self):
         spot_id = self.object.spot_id
         return reverse('protect_network:spot_detail', args=[spot_id])
+    
+
+class NetworkListView(ListView):
+    model = models.Network
+    template_name = 'protect_network/network_list.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(NetworkListView, self).get_context_data(**kwargs)
+        network = models.Network.objects.all()
+        context['networks'] = network
+        return context
