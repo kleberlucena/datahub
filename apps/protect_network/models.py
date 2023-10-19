@@ -7,7 +7,7 @@ from django_minio_backend import MinioBackend
 from django.contrib.gis.db import models
 from apps.address.models import Address
 from apps.portal import models as portal_models
-from apps.portal.models import Entity, Military
+from apps.portal.models import Entity, Military, Promotion, HistoryTransfer
 
 
 
@@ -41,7 +41,7 @@ class Network(models.Model):
     name = models.CharField("Nome da rede", max_length=200)
     details = models.CharField("Informações adicionais", max_length=300, null=True, blank=True)
     responsibles = models.ManyToManyField(
-        Military,
+        Promotion,
         through='NetworkResponsible',
         through_fields=('network', 'responsible'),
     )
@@ -51,14 +51,17 @@ class Network(models.Model):
 
 class NetworkResponsible(models.Model):
     network = models.ForeignKey(Network, on_delete=models.CASCADE)
-    responsible = models.ForeignKey(Military, on_delete=models.CASCADE)
+    responsible = models.ForeignKey(Promotion, on_delete=models.CASCADE)
     created_at = models.DateTimeField('Criado', auto_now_add=True)
     active = models.BooleanField(null=True, blank=True, default=True)
 
     class Meta:
         unique_together = ['network', 'responsible']
 
-    
+    def __str__(self):
+        return "{} {}".format(self.responsible.rank, self.responsible.military)
+
+        
     
 class Image(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
