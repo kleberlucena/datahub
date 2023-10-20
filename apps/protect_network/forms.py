@@ -69,25 +69,6 @@ class SpotForm(forms.ModelForm):
             'QPP': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite a qual QPP pertence'}),
         }
 
-    # def __init__(self, *args, **kwargs):
-    #     super(SpotForm, self).__init__(*args, **kwargs)
-    #     self.helper = FormHelper()
-    #     self.helper.layout = Layout(
-    #         Field('address'),
-    #         Submit('submit', 'Submit', css_class='btn btn-primary'),
-    #         Field('street', css_class='form-control'),
-    #         Field('number', css_class='form-control'),
-    #         Field('complement', css_class='form-control'),
-    #         Field('reference', css_class='form-control'),
-    #         Field('neighborhood', css_class='form-control'),
-    #         Field('city', css_class='form-control'),
-    #         Field('state', css_class='form-control'),
-    #         Field('region', css_class='form-control'),
-    #         Field('country', css_class='form-control'),
-    #         Field('zipcode', css_class='form-control'),
-    #     )
-
-
     def save(self, commit=True):
         instance = super().save(commit=False)
         if commit:
@@ -189,4 +170,45 @@ class SpotImageForm(forms.ModelForm):
         fields = ['name','imageSpot']
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': 'Digite um nome ou descrição para a imagem'}),
+        }
+
+
+class NetworkForm(forms.ModelForm):
+    class Meta:
+        model = models.Network
+        fields = ['name','details']
+        labels = {
+            'name': 'Nome da rede',
+            'details': 'Informações adicionais',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome da rede'}),
+            'details': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Se houver, insira informações adicionais'}),
+        }
+
+
+class ResponsibleForm(forms.ModelForm):
+    responsible = forms.ModelChoiceField(
+        queryset=models.Promotion.objects.all(),
+        label='Responsável',
+        widget=forms.Select(attrs={'class': 'custom-select'}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['responsible'].label_from_instance = self.label_from_promotion_instance
+
+    def label_from_promotion_instance(self, obj):
+        return f"{obj.rank}  {obj.military}"
+
+    class Meta:
+        model = models.NetworkResponsible
+        fields = ['network', 'responsible', 'active']
+        labels = {
+            'network': 'Rede',
+            'active': 'Ativo',
+        }
+        widgets = {
+            'network': forms.Select(attrs={'class': 'custom-select'}),
+            'active': forms.CheckboxInput(attrs={'class': 'custom-checkbox'}),
         }

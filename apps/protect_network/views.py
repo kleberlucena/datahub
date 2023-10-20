@@ -435,6 +435,25 @@ class UpdateOpeningHoursView(UpdateView):
         spot_id = self.object.spot_id
         return reverse('protect_network:spot_detail', args=[spot_id])
     
+###### NETWORK - REDE ######
+
+@include_toast
+class CreateNetworkView(CreateView):
+    model = models.Network
+    form_class = forms.NetworkForm
+    template_name = 'protect_network/network_form.html'
+    success_url = reverse_lazy('protect_network:network_list')
+
+
+class UpdateNetworkView(UpdateView):
+    model = models.Network
+    template_name = 'protect_network/network_form.html'
+    form_class = forms.NetworkForm
+    context_object_name = 'network'
+
+    def get_success_url(self):
+        return reverse_lazy('protect_network:network_list')
+
 
 class NetworkListView(ListView):
     model = models.Network
@@ -445,12 +464,8 @@ class NetworkListView(ListView):
         network = models.Network.objects.all()
         context['networks'] = network
         return context
-    
 
-class NetworkDetailView(DetailView):
-    model = models.Network
-    template_name = 'protect_network/network_detail.html'
-    context_object_name = 'network'
+
 
 class NetworkDetailView(DetailView):
     model = models.Network
@@ -464,3 +479,39 @@ class NetworkDetailView(DetailView):
         context['network_responsibles'] = network_responsibles
 
         return context
+    
+
+###### RESPONSIBLE - MILITAR RESPONSÁVEL PELA REDE ######
+
+@include_toast
+class CreateResponsibleView(CreateView):
+    model = models.NetworkResponsible
+    form_class = forms.ResponsibleForm
+    template_name = 'protect_network/responsible_form.html'
+    success_url = reverse_lazy('protect_network:network_list')
+
+    
+class UpdateResponsibleView(UpdateView):
+    model = models.NetworkResponsible
+    template_name = 'protect_network/responsible_form.html'
+    form_class = forms.ResponsibleForm
+
+    def get_success_url(self):
+        responsible = self.object
+        network_pk = responsible.network.pk
+        return reverse_lazy('protect_network:network_detail', kwargs={'pk': network_pk})
+    
+class DeleteResponsibleView(DeleteView):
+    model = models.NetworkResponsible
+    template_name = 'protect_network/responsible_delete.html'
+    #success_url = reverse_lazy('protect_network:network_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object_to_delete'] = self.get_object()
+        return context
+    
+    def get_success_url(self):
+        responsible = self.object
+        network_pk = responsible.network.pk
+        return reverse_lazy('protect_network:network_detail', kwargs={'pk': network_pk})

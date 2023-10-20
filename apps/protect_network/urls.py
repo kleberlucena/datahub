@@ -30,5 +30,13 @@ urlpatterns = [
 
   path('<int:pk>/network/detail', views.NetworkDetailView.as_view(), name='network_detail'),
   path('network', views.NetworkListView.as_view(), name='network_list'), 
-  #path('tag/add', views.CreateTagView.as_view(), name='tag_add'), 
+  path('network/add', views.CreateNetworkView.as_view(), name='network_add'),
+  path('<int:pk>/network/update', views.UpdateNetworkView.as_view(), name='network_update'),
+
+  path('network/responsible/add', views.CreateResponsibleView.as_view(), name='responsible_add'),
+  path('<int:pk>/responsible/update', views.UpdateResponsibleView.as_view(), name='responsible_update'),
+  path('<int:pk>/responsible/delete', views.DeleteResponsibleView.as_view(), name='responsible_delete'),
+
+ 
+ 
 ]

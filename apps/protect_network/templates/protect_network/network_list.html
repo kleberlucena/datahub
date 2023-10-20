@@ -67,7 +67,7 @@
                   {% endif %}
                   <td colspan="2" class="project-actions text-center">
                     <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:network_detail' pk=network.pk %}">Detalhes</a>
-                    <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:network_detail' pk=network.pk %}">Editar</a>
+                    <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:network_update' pk=network.pk %}">Editar</a>
                   </td>
                 </tr>
                 {% endfor %}
@@ -76,9 +76,7 @@
           </div>
         </div>
         <div class="row mt-auto ml-0">
-          <a href="" alt="type_add">
-            <button type="button" class="btn btn-block btn-primary"> Nova rede</button>
-          </a>
+          <a href="{% url 'protect_network:network_add' %}" alt="network_add"><button type="button" class="btn btn-primary"> + Adicionar rede</button></a>
         </div>
       </div>
     </div>
