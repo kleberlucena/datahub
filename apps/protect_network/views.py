@@ -6,6 +6,8 @@ from django.shortcuts import  get_object_or_404
 from django.utils import timezone
 from django.contrib.gis.geos import GEOSGeometry
 from . import models, forms
+from apps.portal.models import Promotion
+
 import json
 
 class IndexView(TemplateView):
@@ -77,8 +79,13 @@ class CreateSpotView(CreateView):
         self.object.updated_by = self.request.user
         self.object.updated_at = timezone.now()
         self.object.update_score = 100
-        military = get_object_or_404(models.portal_models.Military, user=self.request.user)
-        self.object.user_unit_id = military.id
+
+        # military = get_object_or_404(models.portal_models.Military, user=self.request.user)
+        # self.object.user_unit_id = military.id
+        
+        promotion = get_object_or_404(Promotion, military__user=self.request.user)
+        self.object.user_unit = promotion
+
         spot_type = self.object.spot_type
         spot_next_update = spot_type.update_time
         is_headquarters = form.cleaned_data['is_headquarters']

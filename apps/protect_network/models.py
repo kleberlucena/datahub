@@ -101,7 +101,7 @@ class Spot(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='spots_updated')
     tags = models.ManyToManyField(Tag, blank=True)
     update_score = models.IntegerField(null=True, blank=True)
-    user_unit = models.ForeignKey(portal_models.Military, on_delete=models.PROTECT,verbose_name="Militar", related_name='spots')
+    user_unit = models.ForeignKey(portal_models.Promotion, on_delete=models.PROTECT,verbose_name="Militar", related_name='spots')
     next_update = models.IntegerField(null=True, blank=True)
     is_temporary = models.BooleanField(null=True, blank=True, default=False)
     date_initial = models.DateTimeField(null=True, blank=True)

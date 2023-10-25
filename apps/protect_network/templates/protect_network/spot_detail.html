@@ -262,7 +262,8 @@
                     <b>Unidade do criador:</b>
                 </div>
                 <div class="ml-1">
-                    {{ spot.user_unit.unit.last}}
+                    <!-- {{ spot.user_unit.unit.last}} -->
+                    {{ spot.user_unit.military.unit.last}}
                 </div>
             </div>
             <div class="row mb-1">
@@ -270,7 +271,8 @@
                     <b>Nome de guerra: </b>
                 </div>
                 <div class="ml-1">
-                    {{ spot.user_unit.nickname}} 
+                    <!-- {{ spot.user_unit.nickname}}  -->
+                    {{ spot.user_unit.rank}} {{ spot.user_unit.military}}
                 </div>
             </div>
             <div class="row mb-1">
@@ -278,15 +280,16 @@
                     <b>Usuário: </b>
                 </div>
                 <div class="ml-1">
-                    {{ spot.user_unit}}
+                    <!-- {{ spot.user_unit}} -->
+                    {{ spot.user_unit.military.user}}
                 </div>
             </div>
             <div class="row mb-1">
                 <div>
-                    <b>Nome completo: </b>
+                    <b>Matrícula: </b>
                 </div>
                 <div class="ml-1">
-                    {{ spot.user_unit.name}}
+                    {{ spot.user_unit.military.register}}
                 </div>
             </div>
             <div class="row mb-1">
