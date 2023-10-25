@@ -22,7 +22,7 @@ class RiskAssessmentForm(forms.ModelForm):
         widgets = {
             'info_responsible': forms.HiddenInput(),
         }
-        
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
