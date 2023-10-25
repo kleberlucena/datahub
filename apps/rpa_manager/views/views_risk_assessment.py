@@ -102,6 +102,7 @@ class CreateAssessmentByRiskView(View):
             assessment = form.save(commit=False)
             assessment.risk_assessment = risk_assessment
             assessment.save()
+            messages.success(self.request, f'Análise criada com sucesso!')
             return redirect('rpa_manager:read_risk_assessment', pk=risk_assessment_id)
         
         return render(request, self.template_name, {'form': form, 'risk_assessment': risk_assessment})
