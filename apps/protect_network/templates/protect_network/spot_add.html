@@ -71,7 +71,7 @@
                     {{form.cnpj|add_class:"form-control"|as_crispy_field}}
                 </div>
             </div>
-            <div class="row mt-3">
+            <div class="row mt-3" id="parent-company-field">
                 <div class="col-sm-12">
                     {{form.parent_company|add_class:"form-control"|as_crispy_field}}
                 </div>
@@ -298,16 +298,18 @@
         var cnpj = document.getElementById("id_cnpj");
         var parent_company = document.getElementById("id_parent_company");
         // Ocultar o campo CNPJ inicialmente
-        //$(parent_company).prop("disabled", true);
+        $(parent_company).prop("hidden", true);
+        $("#parent-company-field").prop("hidden", true);
 
         // Detectar a seleção do campo É Matriz?
         $(headquarters).change(function() {
             if (headquarters.value === "True"){
                 parent_company.value = ""
-                //$(parent_company).prop("disabled", true);
-                console.log(parent_company.value)
+                $(parent_company).prop("hidden", true);
+                $("#parent-company-field").prop("hidden", true);
             } else {
-                //$(parent_company).prop("disabled", false);
+                $(parent_company).prop("hidden", false);
+                $("#parent-company-field").prop("hidden", false);
             }
         });
     });
