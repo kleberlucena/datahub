@@ -13,6 +13,7 @@ from apps.rpa_manager.forms import AircraftSelectionForm, TypeOfBatteryForm
 from apps.rpa_manager.utils.createJsonByLastOperation import createJsonByLastOperation
 from apps.rpa_manager.utils.getTodayLatLonCoordinates import getTodaysCoordinates
 from apps.rpa_manager.utils.getOperationInCourse import getOperationInCourse
+
 from apps.rpa_manager.models import *
 from datetime import datetime
 

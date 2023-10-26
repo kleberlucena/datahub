@@ -2,7 +2,12 @@
 {% load custom_tags %}
 
 <nav class="mt-2">
-    <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
+  
+  <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
+  {% if request.user|has_group:'profile:rpa_manager' %}
+    {% include 'base/apps-nav-content/rpa_manager.html' %}
+  {% endif %}
+  
       {% if request.user|has_group:'fact:fact_intermediate' %}
       <li class="nav-item module-item">
         <a href="#" class="nav-link">
