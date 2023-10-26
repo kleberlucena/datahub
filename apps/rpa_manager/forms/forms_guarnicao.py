@@ -44,7 +44,7 @@ class PoliceGroupForm(forms.ModelForm):
         for campo in campos:
             addAttributes(self, campo, campo, 'form-control')    
             
-    def clean_telefone(self):
+    def clean_phone(self):
         phone = self.cleaned_data['phone']
         if not phone.isdigit():
             raise forms.ValidationError("Favor inserir dígitos numéricos. Por exemplo, '83988776655'.")
