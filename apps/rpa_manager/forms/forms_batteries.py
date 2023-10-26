@@ -3,7 +3,7 @@ from apps.rpa_manager.models import Battery
 from apps.rpa_manager.utils.addAttributes import addAttributes
 from apps.rpa_manager.utils.addPlaceholderToField import addPlaceholder
 
-class BateriaForm(forms.ModelForm):
+class BatteryForm(forms.ModelForm):
     
     class Meta:
         model = Battery

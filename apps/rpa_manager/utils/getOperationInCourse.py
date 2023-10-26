@@ -1,24 +1,24 @@
 
 import json
-from apps.rpa_manager.models import Missao
+from apps.rpa_manager.models import *
 
 def getOperationInCourse():
     operationsInCourse = []
     
-    operations = Missao.objects.filter(concluida=False)
+    operations = Operation.objects.filter(completed=False)
     status_operation = None
     
     operationsNumber = operations.count()
     for operation in operations:
-        if operation.concluida == False:
+        if operation.completed == False:
             status_operation = 'Em andamento'
         else:
             status_operation = 'Encerrada'
         
         if operations.exists() and operationsNumber > 0:
             operationsInCourse.append({
-                'usuario': operation.usuario.username,
-                'titulo': operation.titulo,
+                'usuario': operation.user.username,
+                'titulo': operation.title,
                 'latitude': operation.latitude,
                 'longitude': operation.longitude,
                 'status': status_operation

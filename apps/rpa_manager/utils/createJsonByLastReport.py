@@ -4,8 +4,8 @@ import json
 
 def createJsonByLastReport(coordinates_dict: dict, queryset) -> json:
     if queryset != None:
-        coordinates_dict['usuario'] = queryset.militar.username
-        coordinates_dict['titulo'] = queryset.titulo
+        coordinates_dict['usuario'] = queryset.remote_pilot.username
+        coordinates_dict['titulo'] = queryset.title
         coordinates_dict['latitude'] = queryset.latitude
         coordinates_dict['longitude'] = queryset.longitude
 

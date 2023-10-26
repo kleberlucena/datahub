@@ -226,6 +226,7 @@ class ChecklistImages(models.Model):
         }, delete_orphans=True, blank=True, null=True
     )
      
+     
 class Report(Base):
     title = models.CharField(max_length=250, null=False, blank=False, default='')
     remote_pilot = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='report_remote_pilot', null=True)
@@ -347,7 +348,7 @@ class RiskAssessment(models.Model):
     expiration_date = models.DateTimeField(null=True, blank=True)
     operator = models.CharField(max_length=100, null=False, default='POLÍCIA MILITAR DO ESTADO DA PARAÍBA')
     cnpj = models.CharField(max_length=18, null=False, default='08.907.776/0001-00')
-    aircrafts = models.ManyToManyField('Aeronave')
+    aircrafts = models.ManyToManyField('Aircraft')
     apllied_legislation = models.TextField(
         null=False, 
         default='Lei nº 7.565/1986 – CBA; RBAC-E 94; ICA 100-40, MCA 56-5; IS nº E94-003')

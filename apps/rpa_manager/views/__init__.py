@@ -9,3 +9,5 @@ from .views_points_of_interest import *
 from .views_incidentes import *
 from .views_legislation import *
 from .views_risk_assessment import *
+from .views_typeofbattery import *
+from .views_guarnicao import *

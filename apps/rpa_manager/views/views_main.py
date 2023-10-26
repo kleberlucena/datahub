@@ -13,12 +13,7 @@ from apps.rpa_manager.forms import AircraftSelectionForm, TypeOfBatteryForm
 from apps.rpa_manager.utils.createJsonByLastOperation import createJsonByLastOperation
 from apps.rpa_manager.utils.getTodayLatLonCoordinates import getTodaysCoordinates
 from apps.rpa_manager.utils.getOperationInCourse import getOperationInCourse
-from apps.rpa_manager.models import (Aeronave, Bateria, 
-                                     Checklist, TypeOfBattery, 
-                                     Missao, Relatorio,
-                                     HistoricoAlteracoesAeronave,
-                                     Incidentes, PontosDeInteresse,
-                                     Legislation,)
+from apps.rpa_manager.models import *
 from datetime import datetime
 
 def home(request):
@@ -46,33 +41,33 @@ class PainelView(TemplateView):
         month: int = int(self.request.GET.get('month', default_month))  
         year: int = int(self.request.GET.get('year', default_year))  
         
-        report_by_date = Relatorio.objects.filter(data__month=month, data__year=year)
+        report_by_date = Report.objects.filter(date__month=month, date__year=year)
         for report in report_by_date:
             report_by_date_list.append({
-                'usuario': report.militar.username,
-                'titulo': report.titulo,
+                'usuario': report.remote_pilot.username,
+                'titulo': report.title,
                 'latitude': report.latitude,
                 'longitude': report.longitude
                 })
         
-        localidades = CidadesPB.objects.all()
+        localidades = CitiesPB.objects.all()
         for local in localidades:
-            guarnicoes = Guarnicao.objects.filter(local=local)
+            guarnicoes = PoliceGroup.objects.filter(location=local)
             for guarnicao in guarnicoes:
                 lista_de_guarnicoes.append({
                     'id':  
                         guarnicao.id if(guarnicao.id != None) else 'sem registro',
                     'motorista': 
-                        guarnicao.motorista.username if(guarnicao.motorista != None) else 'sem registro',
+                        guarnicao.driver.username if(guarnicao.driver != None) else 'sem registro',
                     'piloto_remoto': 
-                        guarnicao.piloto_remoto.username if(guarnicao.piloto_remoto != None) else 'sem registro',
+                        guarnicao.remote_pilot.username if(guarnicao.remote_pilot != None) else 'sem registro',
                     'piloto_observador': 
-                        guarnicao.piloto_observador.username 
-                        if(guarnicao.piloto_observador != None) else 'sem registro',
+                        guarnicao.observer_pilot.username 
+                        if(guarnicao.observer_pilot != None) else 'sem registro',
                     'local': 
-                        guarnicao.local.cidades_pb if(guarnicao.local.cidades_pb != None) else 'sem registro',
+                        guarnicao.location.cities_pb if(guarnicao.location.cities_pb != None) else 'sem registro',
                     'telefone': 
-                        guarnicao.telefone if(guarnicao.id != None) else 'sem registro',
+                        guarnicao.phone if(guarnicao.id != None) else 'sem registro',
                 })
                 
         guarnicoes_json = json.dumps(lista_de_guarnicoes, indent=4, ensure_ascii=False)
@@ -80,7 +75,7 @@ class PainelView(TemplateView):
         coordinates_by_date_json = json.dumps(report_by_date_list, indent=4)
         
         try:
-            ultima_operacao = Missao.objects.latest('id')
+            ultima_operacao = Operation.objects.latest('id')
         except ObjectDoesNotExist:
             ultima_operacao = None
 
@@ -105,12 +100,10 @@ class PrincipalView(GroupRequiredMixin, TemplateView):
 
         user = self.request.user
         
-        # Verifica se o usuário é um superuser
         if user.is_superuser or user.groups.filter(name='profile:rpa_view').exists():
-            missoes = Missao.objects.all().order_by('-data', '-horario')
+            missoes = Operation.objects.all().order_by('-date', '-time')
         else:
-            # Filtra os objetos para exibir apenas os que foram criados pelo usuário atual
-            missoes = Missao.objects.filter(usuario=self.request.user).order_by('-data', '-horario')
+            missoes = Operation.objects.filter(user=self.request.user).order_by('-date', '-time')
 
         context['missoes'] = missoes
         context['form'] = form
@@ -119,14 +112,14 @@ class PrincipalView(GroupRequiredMixin, TemplateView):
 
 
 class PointsOfInterestView(GroupRequiredMixin, TemplateView):
-    model = PontosDeInteresse
+    model = PointsOfInterest
     context_object_name = 'points_of_interest'
     template_name = 'rpa_manager/list_points_of_interests.html'
     group_required = ['profile:rpa_view', 'profile:rpa_basic', 'profile:rpa_advanced']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["points_of_interest"] = PontosDeInteresse.objects.all()
+        context["points_of_interest"] = PointsOfInterest.objects.all()
         return context
 
 
@@ -140,12 +133,10 @@ class ChecklistsView(GroupRequiredMixin, TemplateView):
         user = self.request.user
 
         if user.is_superuser or user.groups.filter(name='profile:rpa_view').exists():
-            checklists = Checklist.objects.all().order_by('-data', '-horario')
+            checklists = Checklist.objects.all().order_by('-date', '-time')
         else:
-            checklists = Checklist.objects.filter(piloto=user).order_by('-data', '-horario')
+            checklists = Checklist.objects.filter(piloto=user).order_by('-date', '-time')
 
-        for checklist in checklists:
-            print(checklist.data, checklist.horario)
         form = formulario_missao(self.request)
 
         context['checklists'] = checklists
@@ -160,7 +151,7 @@ class RelatoriosView(GroupRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        relatorios = Relatorio.objects.all().order_by('-data', '-horario_inicial')
+        relatorios = Report.objects.all().order_by('-date', '-initial_time')
 
         form = formulario_missao(self.request)
 
@@ -174,17 +165,17 @@ class IncidentesView(GroupRequiredMixin, TemplateView):
     template_name = 'rpa_manager/list_incidents.html'
     group_required = ['profile:rpa_basic','profile:rpa_advanced']
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
         user = self.request.user
 
         if user.is_superuser or user.groups.filter(name='profile:rpa_view').exists():
-            incidentes = Incidentes.objects.all().order_by('-data')
+            incidentes = Incidents.objects.all().order_by('-date')
         else:
-            incidentes = Incidentes.objects.filter(piloto=self.request.user).order_by('-data')
+            incidentes = Incidents.objects.filter(piloto=self.request.user).order_by('-date')
         context['incidentes'] = incidentes
+        
         return context
 
 
@@ -194,7 +185,7 @@ class AeronavesView(GroupRequiredMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        aeronaves = Aeronave.objects.all()
+        aeronaves = Aircraft.objects.all()
         form = formulario_missao(self.request)
 
         context['aeronaves'] = aeronaves
@@ -210,7 +201,7 @@ class BateriasView(GroupRequiredMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        baterias = Bateria.objects.all()
+        baterias = Battery.objects.all()
         ids_baterias_nivel_critico = baterias_em_nivel_critico(self.limite_de_ciclos)
         form = formulario_missao(self.request)
 
@@ -222,7 +213,7 @@ class BateriasView(GroupRequiredMixin, TemplateView):
 
 
 class HistoricosPorAeronaveView(GroupRequiredMixin, ListView):
-    model = HistoricoAlteracoesAeronave
+    model = AicraftHistoric
     template_name = 'rpa_manager/list_aircraft_historic.html'
     context_object_name = 'aircraft_historic'
     form_class = AircraftSelectionForm
@@ -232,7 +223,7 @@ class HistoricosPorAeronaveView(GroupRequiredMixin, ListView):
         queryset = super().get_queryset()
         aeronave_id = self.request.GET.get('aeronave')
         if aeronave_id:
-            queryset = queryset.filter(aeronave__id=aeronave_id).order_by('-data')
+            queryset = queryset.filter(aircraft__id=aeronave_id).order_by('-date')
         return queryset
 
     def get_context_data(self, **kwargs):

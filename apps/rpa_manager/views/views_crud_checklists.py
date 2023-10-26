@@ -1,5 +1,5 @@
 from django.views.generic import DetailView, UpdateView, DeleteView
-from apps.rpa_manager.forms import ChecklistForm
+from apps.rpa_manager.forms import *
 from django.urls import reverse_lazy
 from django.views import View
 from django.http import JsonResponse
@@ -12,13 +12,12 @@ from base.mixins import GroupRequiredMixin
 from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
 from django.contrib import messages
-from apps.rpa_manager.models import (Checklist, 
-                                     HistoricoAlteracoesAeronave, 
-                                     Guarnicao, 
-                                     Bateria,ImagensChecklist)
+from apps.rpa_manager.models import *
 
 
 MESSAGE_MODEL_NAME = 'Checklist'
+
+
 
 class VerChecklistView(GroupRequiredMixin, DetailView):
     model = Checklist
@@ -29,7 +28,7 @@ class VerChecklistView(GroupRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         checklist = self.get_object()
-        images = ImagensChecklist.objects.filter(checklist=checklist)
+        images = ChecklistImages.objects.filter(checklist=checklist)
         image_urls = [image.imageChecklist.url for image in images]
         
         lista_de_alteracoes = self.object.alteracoes.split('\n')
@@ -48,18 +47,18 @@ class ChecklistFormView(GroupRequiredMixin, View):
     group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
     
     def get(self, request, *args, **kwargs):
-        piloto = request.user
+        remote_pilot = request.user
         historico_checklist_dict = {}
         
         historico_checklist_dict_json = getLastRegisteredChecklistData(historico_checklist_dict)
-        baterias = Bateria.objects.all()
+        baterias = Battery.objects.all()
         
         try:
-            ultima_guarnicao = Guarnicao.objects.filter(piloto_remoto=piloto).latest('data')
+            ultima_guarnicao = PoliceGroup.objects.filter(remote_pilot=remote_pilot).latest('date')
         except:
             ultima_guarnicao = None
             
-        dados_checklist = { 'piloto': piloto,
+        dados_checklist = { 'piloto': remote_pilot,
                            'guarnicao': ultima_guarnicao, }
             
         checklist_form = ChecklistForm(initial=dados_checklist)
@@ -86,7 +85,7 @@ class ChecklistFormView(GroupRequiredMixin, View):
             images = self.request.FILES.getlist('imagens')
              
             for image in images:
-                ImagensChecklist.objects.create(checklist=checklist, imageChecklist=image)
+                ChecklistImages.objects.create(checklist=checklist, imageChecklist=image)
            
             return redirect('rpa_manager:update_all_batteries')
         
@@ -107,21 +106,20 @@ class EditarChecklistView(GroupRequiredMixin, UpdateView):
     
     def form_valid(self, form):
         checklist = form.save(commit=False)
-        aeronave = checklist.aeronave
+        aircraft = checklist.aircraft
 
-        ultimo_checklist = Checklist.objects.filter(aeronave=aeronave).order_by('-data', '-horario').first()
+        ultimo_checklist = Checklist.objects.filter(aircraft=aircraft).order_by('-date', '-time').first()
         if checklist == ultimo_checklist:
-            historico = HistoricoAlteracoesAeronave.objects.filter(aeronave=aeronave).order_by('-data').first()
+            historico = AicraftHistoric.objects.filter(aircraft=aircraft).order_by('-date').first()
             if historico:
                 historico.alteracoes = checklist.alteracoes
                 historico.num_helices = checklist.num_helices
                 historico.num_baterias = checklist.num_baterias
-                # Atualize outros campos de histórico, se necessário
                 historico.save()
             
         images = self.request.FILES.getlist('imagens')
         for image in images:
-            ImagensChecklist.objects.create(checklist=checklist, imageChecklist=image)
+            ChecklistImages.objects.create(checklist=checklist, imageChecklist=image)
                 
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} editado com sucesso!')
         
@@ -132,7 +130,7 @@ class EditarChecklistView(GroupRequiredMixin, UpdateView):
         
         checklist = self.get_object()
 
-        images = ImagensChecklist.objects.filter(checklist=checklist)
+        images = ChecklistImages.objects.filter(checklist=checklist)
         
         image_urls = [image.imageChecklist.url for image in images]
         context['image_urls'] = image_urls
@@ -159,7 +157,7 @@ class DeletarChecklistView(PermissionRequiredMixin, DeleteView):
     
     
 class ChecklistImageDeleteView(DeleteView):
-    model = ImagensChecklist
+    model = ChecklistImages
     template_name = 'rpa_manager/delete_image_checklist.html'
     success_url = reverse_lazy('rpa_manager:checklists')
     

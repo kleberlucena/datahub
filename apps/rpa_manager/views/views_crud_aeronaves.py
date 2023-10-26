@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
-from apps.rpa_manager.forms import AeronavesForm
-from apps.rpa_manager.models import Aeronave 
+from apps.rpa_manager.forms import *
+from apps.rpa_manager.models import * 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from base.mixins import GroupRequiredMixin
@@ -14,7 +14,7 @@ MESSAGE_MODEL_NAME = 'Aeronave'
 
 
 class VerAeronaveView(GroupRequiredMixin, DetailView):
-    model = Aeronave
+    model = Aircraft
     template_name = 'rpa_manager/detail_aircraft.html'
     context_object_name = 'aeronave'
     pk_url_kwarg = 'pk'
@@ -22,8 +22,8 @@ class VerAeronaveView(GroupRequiredMixin, DetailView):
     
 
 class CriarNovaAeronaveView(GroupRequiredMixin, CreateView):
-    model = Aeronave
-    form_class = AeronavesForm
+    model = Aircraft
+    form_class = AircraftsForm
     template_name = 'rpa_manager/create_aircraft.html'
     success_url = reverse_lazy('rpa_manager:aeronaves')
     group_required = ['profile:rpa_advanced']
@@ -35,8 +35,8 @@ class CriarNovaAeronaveView(GroupRequiredMixin, CreateView):
 
     
 class EditarAeronaveView(GroupRequiredMixin, UpdateView):
-    model = Aeronave
-    form_class = AeronavesForm
+    model = Aircraft
+    form_class = AircraftsForm
     template_name = 'rpa_manager/update_aircraft.html'
     context_object_name = 'form'
     pk_url_kwarg = 'pk'
@@ -50,7 +50,7 @@ class EditarAeronaveView(GroupRequiredMixin, UpdateView):
     
     
 class DeletarAeronaveView(PermissionRequiredMixin, DeleteView):
-    model = Aeronave
+    model = Aircraft
     template_name = 'rpa_manager/delete_aircraft.html'
     context_object_name = 'obj'
     pk_url_kwarg = 'pk'

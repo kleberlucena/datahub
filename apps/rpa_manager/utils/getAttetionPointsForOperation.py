@@ -1,4 +1,4 @@
-from apps.rpa_manager.models import Missao, PontosDeInteresse
+from apps.rpa_manager.models import *
 from django.utils import timezone
 import pytz
 
@@ -6,23 +6,12 @@ def exclude_time_passed_points():
         tz = pytz.timezone('America/Recife')
         current_datetime = timezone.now().astimezone(tz)
         
-        pontos_excluir = PontosDeInteresse.objects.filter(date_final__lte=current_datetime)
+        pontos_excluir = PointsOfInterest.objects.filter(final_date__lte=current_datetime)
         
         pontos_excluir.delete()
         return tz
 
 def getAttentionPointsForOperation(points):
-    """O presente método recebe a queryset dos pontos de interesse
-    e retorna uma lista com dicionários que possuem dados a
-    serem renderizados no HTML em formato json.
-
-    Args:
-        points (_type_): queryset do django dos pontos de interesse
-
-    Returns:
-        list: lista com dicionários
-    """
-    
     points_list = []
     tz = exclude_time_passed_points()
     

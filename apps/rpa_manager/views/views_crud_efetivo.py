@@ -1,7 +1,5 @@
-from apps.rpa_manager.forms import MilitarForm
-from apps.rpa_manager.models import Militar
-from django.views.generic import DetailView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from apps.rpa_manager.forms import *
+from apps.rpa_manager.models import *
 from django.urls import reverse_lazy
 
 from django_datatables_view.base_datatable_view import BaseDatatableView

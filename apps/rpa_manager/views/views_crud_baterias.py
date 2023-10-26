@@ -1,7 +1,7 @@
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from apps.rpa_manager.forms import BateriaForm
-from apps.rpa_manager.models import Bateria
+from apps.rpa_manager.forms import *
+from apps.rpa_manager.models import *
 from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,7 +15,7 @@ MESSAGE_MODEL_NAME = 'Bateria'
 
 
 class VerBateriaView(GroupRequiredMixin, DetailView):
-    model = Bateria
+    model = Battery
     template_name = 'rpa_manager/detail_battery.html'
     context_object_name = 'bateria'
     pk_url_kwarg = 'pk'
@@ -23,8 +23,8 @@ class VerBateriaView(GroupRequiredMixin, DetailView):
 
     
 class CriarNovaBateriaView(GroupRequiredMixin, CreateView):
-    model = Bateria
-    form_class = BateriaForm
+    model = Battery
+    form_class = BatteryForm
     template_name = 'rpa_manager/create_battery.html'
     success_url = reverse_lazy('rpa_manager:baterias')
     group_required = ['profile:rpa_advanced']
@@ -36,8 +36,8 @@ class CriarNovaBateriaView(GroupRequiredMixin, CreateView):
 
     
 class EditarBateriaView(GroupRequiredMixin, UpdateView):
-    model = Bateria
-    form_class = BateriaForm
+    model = Battery
+    form_class = BatteryForm
     template_name = 'rpa_manager/update_battery.html'
     context_object_name = 'form'
     pk_url_kwarg = 'pk'
@@ -51,7 +51,7 @@ class EditarBateriaView(GroupRequiredMixin, UpdateView):
 
     
 class DeletarBateriaView(PermissionRequiredMixin, DeleteView):
-    model = Bateria
+    model = Battery
     template_name = 'rpa_manager/delete_battery.html'
     context_object_name = 'obj'
     pk_url_kwarg = 'pk'
@@ -72,13 +72,13 @@ class UpdateAllBateriasView(View):
     template_name = 'rpa_manager/update_all_batteries.html'
 
     def get(self, request):
-        baterias = Bateria.objects.all()
+        baterias = Battery.objects.all()
         return render(request, self.template_name, {'baterias': baterias})
 
     def post(self, request):
         for bateria_id, num_ciclos in request.POST.items():
             if bateria_id.isdigit():
-                bateria = Bateria.objects.get(id=int(bateria_id))
+                bateria = Battery.objects.get(id=int(bateria_id))
                 bateria.num_ciclos = int(num_ciclos)
                 bateria.save()
 

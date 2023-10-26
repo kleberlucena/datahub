@@ -1,7 +1,7 @@
 
 import json
 from datetime import datetime
-from apps.rpa_manager.models import Missao 
+from apps.rpa_manager.models import * 
 
 def getTodaysCoordinates(context):
     operation_by_date_list = []
@@ -11,17 +11,17 @@ def getTodaysCoordinates(context):
     month = today.month
     year = today.year
     
-    operation_by_date = Missao.objects.filter(data__day=today.day, data__month=month, data__year=year)
+    operation_by_date = Operation.objects.filter(date__day=today.day, date__month=month, date__year=year)
     
     for operation in operation_by_date:
-        if operation.concluida == False:
+        if operation.completed == False:
             status_operation = 'Em andamento'
         else:
             status_operation = 'Encerrada'
             
         operation_by_date_list.append({
-            'usuario': operation.usuario.username,
-            'titulo': operation.titulo,
+            'usuario': operation.user.username,
+            'titulo': operation.title,
             'latitude': operation.latitude,
             'longitude': operation.longitude,
             'status': status_operation

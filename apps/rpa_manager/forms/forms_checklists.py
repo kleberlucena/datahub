@@ -4,6 +4,7 @@ from apps.rpa_manager.utils.addAttributes import addAttributes
 
 
 class ChecklistForm(forms.ModelForm):
+    
     ChecklistCheckboxesFields = [
         'batteries_loaded',
         'control_battery_loaded',

@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
-from apps.rpa_manager.forms import ReportForm
-from apps.rpa_manager.models import Missao, Relatorio
+from apps.rpa_manager.forms import *
+from apps.rpa_manager.models import *
 from django.views.generic import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -19,7 +19,7 @@ MESSAGE_MODEL_NAME = 'Caderneta'
 
 
 class VerRelatorioView(GroupRequiredMixin, DetailView):
-    model = Relatorio
+    model = Report
     template_name = 'rpa_manager/detail_report.html'
     context_object_name = 'relatorio'
     group_required = ['profile:rpa_view', 'profile:rpa_basic', 'profile:rpa_advanced']
@@ -34,38 +34,38 @@ class VerRelatorioView(GroupRequiredMixin, DetailView):
         
         
 class CriarNovoRelatorioView(GroupRequiredMixin, CreateView):
-    model = Relatorio
+    model = Report
     form_class = ReportForm
     template_name = 'rpa_manager/create_report.html'
     success_url = reverse_lazy('rpa_manager:add_point')
     group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
     
     def get_initial(self):
-        missao = get_object_or_404(Missao, pk=self.kwargs['pk'])
+        operation = get_object_or_404(Operation, pk=self.kwargs['pk'])
         return {
-            'titulo': missao.titulo,
-            'militar': self.request.user,
-            'piloto_observador': missao.piloto_observador,
-            'quem_solicitou': missao.quem_solicitou,
-            'quem_autorizou': missao.quem_autorizou,
-            'local': missao.local,
-            'latitude': missao.latitude,
-            'longitude': missao.longitude,
-            'relato_da_missao': 'Sem alteração',
-            'aeronave': missao.aeronave,
+            'title': operation.title,
+            'remote_pilot': self.request.user,
+            'observer_pilot': operation.observer_pilot,
+            'who_requested': operation.who_requested,
+            'who_authorized': operation.who_authorized,
+            'location': operation.location,
+            'latitude': operation.latitude,
+            'longitude': operation.longitude,
+            'operation_report': 'Sem alteração',
+            'aircraft': operation.aircraft,
         }
         
     def form_valid(self, form):
         self.object = self.get_context_data()
-        missao = get_object_or_404(Missao, pk=self.kwargs['pk'])
-        missao.concluida = True
-        missao.save()
+        operation = get_object_or_404(Operation, pk=self.kwargs['pk'])
+        operation.completed = True
+        operation.save()
 
-        aeronave = missao.aeronave
+        aeronave = operation.aircraft
         aeronave.em_uso = False
         aeronave.save()
 
-        form.instance.missao = missao
+        form.instance.missao = operation
         
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} criada com sucesso!')
         
@@ -73,7 +73,7 @@ class CriarNovoRelatorioView(GroupRequiredMixin, CreateView):
     
     
 class EditarRelatorioView(GroupRequiredMixin, UpdateView):
-    model = Relatorio
+    model = Report
     form_class = ReportForm
     template_name = 'rpa_manager/update_report.html'
     success_url = reverse_lazy('rpa_manager:relatorios')
@@ -87,8 +87,8 @@ class EditarRelatorioView(GroupRequiredMixin, UpdateView):
         return response
 
     def dispatch(self, *args, **kwargs):
-        relatorio = self.get_object()
-        time_since_creation = timezone.now() - relatorio.created_at
+        report = self.get_object()
+        time_since_creation = timezone.now() - report.created_at
         if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
             messages.error(self.request, 'Não é possível editar esta Caderneta após 24 horas.')
             return HttpResponseRedirect(self.success_url)
@@ -96,7 +96,7 @@ class EditarRelatorioView(GroupRequiredMixin, UpdateView):
     
     
 class DeletarRelatorioView(PermissionRequiredMixin, DeleteView):
-    model = Relatorio
+    model = Report
     template_name = 'rpa_manager/delete_report.html'
     success_url = reverse_lazy('rpa_manager:relatorios')
     context_object_name = 'obj'
@@ -109,8 +109,8 @@ class DeletarRelatorioView(PermissionRequiredMixin, DeleteView):
     
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
-        relatorio = self.get_object()
-        time_since_creation = timezone.now() - relatorio.created_at
+        report = self.get_object()
+        time_since_creation = timezone.now() - report.created_at
         if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
             messages.error(self.request, 'Não é possível excluir esta Caderneta após 24 horas.')
             return HttpResponseRedirect(self.success_url)

@@ -1,12 +1,11 @@
 from apps.rpa_manager.forms import ChecklistForm
-from apps.rpa_manager.models import HistoricoAlteracoesAeronave
+from apps.rpa_manager.models import AicraftHistoric
 
 def saveNewChecklistInAircraftHistoric(request, initial_data):
     checklist_form = ChecklistForm(request, initial=initial_data)
     checklist = checklist_form.save(commit=False)
     
-    # Salvar as informações no histórico de alterações
-    HistoricoAlteracoesAeronave.objects.create(
+    AicraftHistoric.objects.create(
         aeronave=checklist.aeronave,
         num_helices = checklist.num_helices,  
         num_baterias = checklist.num_baterias, 

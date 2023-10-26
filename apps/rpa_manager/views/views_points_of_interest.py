@@ -1,6 +1,6 @@
 from django.views.generic import CreateView, UpdateView, DeleteView
-from apps.rpa_manager.models import PontosDeInteresse, Relatorio
-from apps.rpa_manager.forms import PointsOfInterestForm
+from apps.rpa_manager.models import *
+from apps.rpa_manager.forms import *
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.contrib import messages
@@ -8,13 +8,13 @@ from django.contrib import messages
 MESSAGE_MODEL_NAME = 'Ponto de atenção'
 
 class AddPointOfInterest(CreateView):
-    model = PontosDeInteresse
+    model = PointsOfInterest
     form_class = PointsOfInterestForm
     template_name = 'rpa_manager/create_point.html'
     success_url = reverse_lazy('rpa_manager:painel')
     
     def get_initial(self):
-            last_report = Relatorio.objects.last()
+            last_report = Report.objects.last()
             return {
                 'operacao': last_report,
                 'latitude': last_report.latitude,
@@ -23,7 +23,7 @@ class AddPointOfInterest(CreateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        last_report = Relatorio.objects.last()
+        last_report = Report.objects.last()
         context['latitude'] = last_report.latitude
         context['longitude'] = last_report.longitude
         return context
@@ -36,7 +36,7 @@ class AddPointOfInterest(CreateView):
     
         
 class UpdatePointOfInterest(UpdateView):
-    model = PontosDeInteresse
+    model = PointsOfInterest
     form_class = PointsOfInterestForm
     template_name = 'rpa_manager/update_point.html'
     success_url = reverse_lazy('rpa_manager:criar_nova_missao')
@@ -44,16 +44,15 @@ class UpdatePointOfInterest(UpdateView):
     def get_initial(self):
         initial = super().get_initial()
 
-        # Pegar os valores dos campos date_initial e date_final do objeto atual
         date_initial = self.object.date_initial
         date_final = self.object.date_final
-        # Converter as datas para o fuso horário UTC-3 'America/Recife'
+        
         if date_initial and date_final:
             tz = timezone.pytz.timezone('America/Recife')
             initial['date_initial'] = date_initial.astimezone(tz)
             initial['date_final'] = date_final.astimezone(tz)
-
             return initial
+        
         return
     
     def get_context_data(self, **kwargs):
@@ -71,7 +70,7 @@ class UpdatePointOfInterest(UpdateView):
     
     
 class DeletePointOfInterest(DeleteView):
-    model = PontosDeInteresse
+    model = PointsOfInterest
     template_name = 'rpa_manager/delete_point.html'
     context_object_name = 'form'
     success_url = reverse_lazy('rpa_manager:criar_nova_missao')

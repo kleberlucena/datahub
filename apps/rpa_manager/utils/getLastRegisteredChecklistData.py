@@ -1,13 +1,13 @@
 import json
-from apps.rpa_manager.models import Aeronave, HistoricoAlteracoesAeronave
+from apps.rpa_manager.models import *
 
 # recieve a empty dictionary to be filled with data and returns json
 def getLastRegisteredChecklistData(historico_checklist_dict):
-    aeronaves = Aeronave.objects.all()
-    for aeronave in aeronaves:
-        ultimo_registro = HistoricoAlteracoesAeronave.objects.filter(aeronave=aeronave).order_by('-data').first()
+    aircrafts = Aircraft.objects.all()
+    for aircraft in aircrafts:
+        ultimo_registro = AicraftHistoric.objects.filter(aircraft=aircraft).order_by('-data').first()
         if ultimo_registro:
-            historico_checklist_dict[f'{aeronave.prefixo} - {aeronave.modelo} - {aeronave.marca}'] = {
+            historico_checklist_dict[f'{aircraft.prefixo} - {aircraft.modelo} - {aircraft.marca}'] = {
                 'num_helices': str(ultimo_registro.num_helices),
                 'num_baterias': str(ultimo_registro.num_baterias),
                 'baterias_carregadas': str(ultimo_registro.baterias_carregadas),
@@ -35,7 +35,7 @@ def getLastRegisteredChecklistData(historico_checklist_dict):
                 'alteracoes' : str(ultimo_registro.alteracoes)
             }
         else:
-            historico_checklist_dict[f'{aeronave.prefixo} - {aeronave.modelo} - {aeronave.marca}'] = {
+            historico_checklist_dict[f'{aircraft.prefixo} - {aircraft.modelo} - {aircraft.marca}'] = {
                 'num_helices': 4,
                 'num_baterias': 4,
                 'alteracoes' : 'Sem alteração'

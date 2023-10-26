@@ -1,7 +1,7 @@
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from apps.rpa_manager.models import Guarnicao
-from apps.rpa_manager.forms import PoliceGroupForm
+from apps.rpa_manager.models import *
+from apps.rpa_manager.forms import *
 from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -14,7 +14,7 @@ MESSAGE_MODEL_NAME = 'Guarnição'
 
 
 class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
-    model = Guarnicao
+    model = PoliceGroup
     form_class = PoliceGroupForm
     template_name = 'rpa_manager/create_guarnicao.html'
     success_url = reverse_lazy('rpa_manager:checklist_form')
@@ -22,15 +22,15 @@ class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
     
     def form_valid(self, form):
         user = self.request.user
-        guarnicoes_no_dia = Guarnicao.objects.filter(piloto_remoto=user)
+        guarnicoes_no_dia = PoliceGroup.objects.filter(remote_pilot=user)
         
         if guarnicoes_no_dia.exists():
             form.add_error(None, 'Já existe uma guarnição cadastrada por este usuário no mesmo dia.')
             return self.form_invalid(form)
         
-        piloto_observador = form.cleaned_data.get('piloto_observador')
-        if piloto_observador:
-            guarnicoes_com_piloto = Guarnicao.objects.filter(piloto_observador=piloto_observador)
+        observer_pilot = form.cleaned_data.get('observer_pilot')
+        if observer_pilot:
+            guarnicoes_com_piloto = PoliceGroup.objects.filter(observer_pilot=observer_pilot)
             if guarnicoes_com_piloto.exists():
                 form.add_error('piloto_observador', 'Este piloto observador já foi cadastrado em outra guarnição.')
                 return self.form_invalid(form)
@@ -40,7 +40,7 @@ class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
     
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['initial'] = {'piloto_remoto': self.request.user}
+        kwargs['initial'] = {'remote_pilot': self.request.user}
         return kwargs
     
     @method_decorator(require_permission(permission_required))
@@ -49,14 +49,14 @@ class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
     
     
 class GuarnicaoUpdateView(PermissionRequiredMixin, UpdateView):
-    model = Guarnicao
+    model = PoliceGroup
     form_class = PoliceGroupForm
     template_name = 'rpa_manager/update_guarnicao.html'
     success_url = reverse_lazy('rpa_manager:checklist_form')
     permission_required = 'rpa_manager.change_guarnicao'
     
     def get_object(self, queryset=None):
-        return Guarnicao.objects.latest('data')
+        return PoliceGroup.objects.latest('date')
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -70,7 +70,7 @@ class GuarnicaoUpdateView(PermissionRequiredMixin, UpdateView):
     
     
 class GuarnicaoDeleteView(PermissionRequiredMixin, DeleteView):
-    model = Guarnicao
+    model = PoliceGroup
     # template_name = 'controle/pages/delete_guarnicao.html'
     success_url = reverse_lazy('rpa_manager:painel')
     context_object_name = 'obj'
@@ -88,14 +88,14 @@ class DescadastrarGuarnicao(PermissionRequiredMixin, View):
     
     def get(self, request, *args, **kwargs):
         user = self.request.user
-        last_guarnicao = Guarnicao.objects.filter(piloto_remoto=user).order_by('-id').first()
+        last_guarnicao = PoliceGroup.objects.filter(remote_pilot=user).order_by('-id').first()
         if last_guarnicao:
             return render(request, self.template_name, {'guarnicao': last_guarnicao})
         return redirect(self.success_url)
     
     def post(self, request, *args, **kwargs):
         user = self.request.user
-        last_guarnicao = Guarnicao.objects.filter(piloto_remoto=user).order_by('-id').first()
+        last_guarnicao = PoliceGroup.objects.filter(remote_pilot=user).order_by('-id').first()
         if last_guarnicao:
             last_guarnicao.delete()
             

@@ -1,5 +1,5 @@
 from django import forms
-from apps.rpa_manager.models import RiskAssessment, Assessment
+from apps.rpa_manager.models import *
 from apps.rpa_manager.utils.addAttributes import addAttributes
 from apps.rpa_manager.utils.addPlaceholderToField import addPlaceholder
 
