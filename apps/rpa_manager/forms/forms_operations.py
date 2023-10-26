@@ -48,7 +48,7 @@ class OperationForm(forms.ModelForm):
             'required': True
         })
 
-        self.fields['aeronave'].queryset = Aircraft.objects.filter(in_use=False)
+        self.fields['aircraft'].queryset = Aircraft.objects.filter(in_use=False)
         
         campos = ['title', 
                   'observer_pilot', 
