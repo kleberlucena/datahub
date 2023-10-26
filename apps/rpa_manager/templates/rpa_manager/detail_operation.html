@@ -57,34 +57,34 @@
     <div class="card card-primary col-md-4 mt-3">
 
       <div class="card-body">
-        <strong>Título: </strong> {{ missao.titulo }} 
+        <strong>Título: </strong> {{ missao.title }} 
         <hr>
-        <strong>Piloto remoto: </strong> {{ missao.usuario }}
+        <strong>Piloto remoto: </strong> {{ missao.user }}
         <hr>
         <strong>Piloto Observador: </strong> 
-          {% if piloto_observador == None %}
+          {% if observer_pilot == None %}
             sem registro
           {% else %}
-            {{ missao.piloto_observador }}
+            {{ missao.observer_pilot }}
           {% endif %}
         <hr>
-        <strong>Quem autorizou: </strong> {{ missao.quem_autorizou }}
+        <strong>Quem autorizou: </strong> {{ missao.who_authorized }}
         <hr>
-        <strong>Quem solicitou: </strong> {{ missao.quem_solicitou }}
+        <strong>Quem solicitou: </strong> {{ missao.who_requested }}
         <hr>
-        <strong>Local: </strong> {{ missao.local }}
+        <strong>Local: </strong> {{ missao.location }}
         <hr>
         <strong>Coordenadas: </strong> 
         {{ missao.latitude |stringformat:"s" }},{{ missao.longitude |stringformat:"s" }}
         <hr>
-        <strong>Horário: </strong> {{ missao.horario }}
+        <strong>Horário: </strong> {{ missao.time }}
         <hr>
-        <strong>Data: </strong> {{ missao.data }}
+        <strong>Data: </strong> {{ missao.date }}
         <hr>
-        <strong>Aeronave: </strong> {{ missao.aeronave }}
+        <strong>Aeronave: </strong> {{ missao.aircraft }}
         <hr>
         <strong>Conclusão: </strong> 
-          {% if missao.concluida is True %}
+          {% if missao.completed is True %}
               <span class="badge badge-success">Encerrada</span>
             {% else %}
               <span class="badge badge-warning">Em andamento</span>

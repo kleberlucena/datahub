@@ -65,13 +65,13 @@ class OperationForm(forms.ModelForm):
             
     def clean(self):
         cleaned_data = super().clean()
-        remoted_pilot = cleaned_data.get('user')
+        remote_pilot = cleaned_data.get('user')
         observer_pilot = cleaned_data.get('observer_pilot')
         latitude = cleaned_data.get('latitude')
         longitude = cleaned_data.get('longitude')
         
-        if remoted_pilot == observer_pilot:
-            self.add_error('usuario', "O piloto remoto não pode ser o mesmo que o piloto observador.")
+        if remote_pilot == observer_pilot:
+            self.add_error('user', "O piloto remoto não pode ser o mesmo que o piloto observador.")
             self.add_error('piloto_observador', "O piloto observador não pode ser o mesmo que o piloto remoto.")
         if latitude == 0.0:
             self.add_error('latitude', "Latitude ou Longitude inválidos (marque um ponto no mapa)")

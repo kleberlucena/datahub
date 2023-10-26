@@ -115,21 +115,21 @@
       <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
         <div class="card bg-light d-flex flex-fill">
             <div class="card-header text-muted border-bottom-0">
-              <i class="fas fa-lg fa-building"></i> {{ guarnicao.local.cidades_pb }}
+              <i class="fas fa-lg fa-building"></i> {{ guarnicao.location.cities_pb }}
             </div> 
             <div class="card-body pt-0">
               <div class="card_content">
                 <div class="card_gu_info">
-                  <small class=""><i class="fa fa-car"></i> <b>Motorista:</b> {{ guarnicao.motorista }}</small>
-                  <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> {{ guarnicao.piloto_remoto }} </small>
+                  <small class=""><i class="fa fa-car"></i> <b>Motorista:</b> {{ guarnicao.driver }}</small>
+                  <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> {{ guarnicao.remote_pilot }} </small>
                   <small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b>  
-                    {% if guarnicao.piloto_observador != None %}
-                      {{ guarnicao.piloto_observador }}
+                    {% if guarnicao.observer_pilot != None %}
+                      {{ guarnicao.observer_pilot }}
                     {% else %}
                       sem registro
                     {% endif %}
                   </small>
-                  <small class=""><i class="fa fa-phone"></i> <b>Contato: {{ guarnicao.telefone }}</b></small>
+                  <small class=""><i class="fa fa-phone"></i> <b>Contato:</b> {{ guarnicao.phone }}</small>
                 </div>
                 <div class="grid-container_for-images">
                     <div class="grid-item large-image">

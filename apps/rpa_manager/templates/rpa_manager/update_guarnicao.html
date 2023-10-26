@@ -33,22 +33,22 @@
         <div class="form-row">
           <div class="form-group col-md-12 mb-0">
             {{ form.errors }}
-            <label for="#" class="piloto_observador">Piloto remoto</label>
+            <label for="#" class="observer_pilot">Piloto remoto</label>
             <br>{{ user.username }}<br><hr>
-            <label for="id_piloto_observador" class="quem_solicitou">Piloto observador</label>
-            {{ form.piloto_observador}}
-            {{ form.piloto_observador.errors }}
-            <label for="id_motorista" class="titulo_operacao">Motorista</label>
-            {{ form.motorista }}
-            {{ form.motorista.errors }}
-            <label for="id_telefone" class="quem_autorizou">Telefone</label>
-            {{ form.telefone }}
-            {{ form.telefone.errors }}
-            <label for="id_local" class="local">Local</label>
-            {{ form.local }}
-            {{ form.local.errors }}
+            <label for="id_observer_pilot">Piloto observador</label>
+            {{ form.observer_pilot}}
+            {{ form.observer_pilot.errors }}
+            <label for="id_driver">Motorista</label>
+            {{ form.driver }}
+            {{ form.driver.errors }}
+            <label for="id_phone">Telefone</label>
+            {{ form.phone }}
+            {{ form.phone.errors }}
+            <label for="id_location">Local</label>
+            {{ form.location }}
+            {{ form.location.errors }}
 
-            {{ form.piloto_remoto }}
+            {{ form.remote_pilot }}
           </div>
         </div>
         
@@ -68,20 +68,5 @@
 {% block js %}
 <!-- DataTables  & Plugins -->
   <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
-  <script>
-    const error = document.getElementsByClassName('errorlist');
-    let pilot_error = "piloto_remotoO piloto remoto não pode ser o mesmo que o piloto observador.O piloto observador não pode ser o mesmo que o piloto remoto."
-    console.log();
 
-    if(error[0].textContent.includes('_all_')) {
-      error[0].textContent = error[0].textContent.replace('__all__', '')
-    } 
-    if(error[0].textContent.includes('piloto_observador')) {
-      error[0].textContent = error[0].textContent.replace('piloto_observador', '')
-    } 
-    if(error[0].textContent.includes('piloto_remotoO piloto')) {
-      console.log('cheguei aqui')
-      error[0].textContent = error[0].textContent.replace(pilot_error, 'Piloto remoto e observador não podem ser o mesmo.')
-    } 
-  </script>
 {% endblock %}

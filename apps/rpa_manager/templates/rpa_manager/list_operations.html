@@ -55,7 +55,7 @@
           aria-describedby="objects_list_info" width="100%">
           <thead>
             <tr>
-              <th scope="col">Militar</th>
+              <th scope="col">Operador</th>
               <th scope="col">Operação</th>
               <th scope="col">Data</th>
               <th scope="col">Aeronave</th>
@@ -66,24 +66,24 @@
           <tbody>
             {% for missao in missoes %}
             <tr>
-              <td>{{ missao.usuario.username }} {{ missao.usuario.last_name }}</td>
-              {% if missao.concluida is False %}
-                <td class="border-for-in-course">{{ missao.titulo }}</td>
+              <td>{{ missao.user.first_name }} {{ missao.user.last_name }}</td>
+              {% if missao.completed is False %}
+                <td class="border-for-in-course">{{ missao.title }}</td>
               {% else %}
-                <td class="border-for-done">{{ missao.titulo }}</td>
+                <td class="border-for-done">{{ missao.title }}</td>
               {% endif %}
-              <td data-sort='YYYYMMDD'>{{ missao.data | date:"d/m/Y" }}</td>
-              <td>{{ missao.aeronave.prefixo}} - {{ missao.aeronave.modelo}}</td>
+              <td data-sort='YYYYMMDD'>{{ missao.date | date:"d/m/Y" }}</td>
+              <td>{{ missao.aircraft.prefix}} - {{ missao.aircraft.model}}</td>
 
               <td>
-                {% if missao.concluida is True %}
+                {% if missao.completed is True %}
                   <span class="badge badge-success">Encerrada</span>
                 {% else %}
                   <span class="badge badge-warning">Em andamento</span>
                 {% endif %}
               </td>
 
-              {% if missao.concluida is False %}
+              {% if missao.completed is False %}
                 {% if request.user|has_group:'profile:rpa_view' %}
                   <td>
                     <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">

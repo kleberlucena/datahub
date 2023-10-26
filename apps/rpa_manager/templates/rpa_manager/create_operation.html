@@ -29,7 +29,7 @@
     height: 38px !important;
   }
 
-  #select2-id_aeronave-container {
+  #select2-id_aircraft-container {
     height: 38px !important;
   }
 
@@ -79,7 +79,7 @@
           <div class="form-group col-md-12 mb-0">
             <div class="row mt-3">
               <div class="col-md-6">
-                <!-- {{ form.errors }} -->
+                {{ form.errors }}
                 <label for="id_piloto_remoto" class="piloto_remoto">Piloto Remoto</label>
                 <br>{{ user.username }}<br>
               </div>
@@ -87,58 +87,58 @@
             <hr>
             <div class="row mt-3">
               <div class="col-md-6">
-                <label for="id_titulo" class="titulo_operacao">Título da Operação</label>
-                {{ form.titulo }}
-                {{ form.titulo.errors }}
+                <label for="id_title">Título da Operação</label>
+                {{ form.title }}
+                {{ form.title.errors }}
               </div>
               <div class="col-md-6">
-                <label for="id_piloto_observador" class="piloto_observador">Piloto Observador</label>
-                {{ form.piloto_observador }}
-                {{ form.piloto_observador.errors }}
-              </div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-md-6">
-                <label for="id_quem_solicitou" class="quem_solicitou">Quem Solicitou</label>
-                {{ form.quem_solicitou }}
-                {{ form.quem_solicitou.errors }}
-              </div>
-              <div class="col-md-6">
-                <label for="id_quem_autorizou" class="quem_autorizou">Quem Autorizou</label>
-                {{ form.quem_autorizou }}
-                {{ form.quem_autorizou.errors }}
+                <label for="id_observer_pilot">Piloto Observador</label>
+                {{ form.observer_pilot }}
+                {{ form.observer_pilot.errors }}
               </div>
             </div>
             <div class="row mt-3">
               <div class="col-md-6">
-                <label for="id_aeronave" class="aeronave">Aeronave</label>
-                <select name="aeronave" id="id_aeronave" class="form-control">
+                <label for="id_who_requested">Quem Solicitou</label>
+                {{ form.who_requested }}
+                {{ form.who_requested.errors }}
+              </div>
+              <div class="col-md-6">
+                <label for="id_who_authorized">Quem Autorizou</label>
+                {{ form.who_authorized }}
+                {{ form.who_authorized.errors }}
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <label for="id_aircraft">Aeronave</label>
+                <select name="aircraft" id="id_aircraft" class="form-control">
                   <option value="" selected>Selecione uma aeronave</option>
-                  {% for aeronave in aeronaves_disponiveis %}
-                    <option value="{{ aeronave.pk }}">{{ aeronave.prefixo }} - {{ aeronave.modelo }}</option>
+                  {% for aircraft in aeronaves_disponiveis %}
+                    <option value="{{ aircraft.pk }}">{{ aircraft.prefix }} - {{ aircraft.model }}</option>
                   {% endfor %}
                 </select>
-                {{ form.aeronave.errors }}
+                {{ form.aircraft.errors }}
               </div>
               <div class="col-md-6">
-                <label for="id_local" class="local">Local</label>
-                {{ form.local }}
-                {{ form.local.errors }}
+                <label for="id_location">Local</label>
+                {{ form.location }}
+                {{ form.location.errors }}
               </div>
             </div>
             <div class="row mt-3">
               <div class="col-md-6">
-                <label for="id_latitude" class="local">Ponto de Decolagem: Latitude</label>
+                <label for="id_latitude">Ponto de Decolagem: Latitude</label>
                 {{ form.latitude }}
                 {{ form.latitude.errors }}
               </div>
               <div class="col-md-6">
-                <label for="id_longitude" class="local">Ponto de Decolagem: Longitude</label>
+                <label for="id_longitude">Ponto de Decolagem: Longitude</label>
                 {{ form.longitude }}
                 {{ form.longitude.errors }}
               </div>
             </div>
-            {{ form.usuario }}
+            {{ form.user }}
           </div>
         </div>
 
@@ -184,12 +184,12 @@
     var longitude = document.getElementById('id_longitude');
     var marcacao;
     let dadosMarcadores = {{ points_json | safe }}
-    // Adicionar camada do mapa (pode ser substituído por outras camadas como OpenStreetMap, Mapbox, etc.)
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // Adicionar evento de clique no mapa
+
     map.on('click', function (e) {
       var lat = e.latlng.lat;
       var lng = e.latlng.lng;
@@ -295,31 +295,17 @@
 
   <script>
     $(document).ready(function () {
-      $('.local_escolha').select2();
-      $('.aeronave_escolha').select2();
-      $('.piloto_observador_escolha').select2();
+      $('.location_escolha').select2();
+      $('.aircraft_escolha').select2();
+      $('.observer_pilot_escolha').select2();
     });
   </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      var selectField = document.getElementById("id_usuario");
+      var selectField = document.getElementById("id_user");
       selectField.readonly = true;
     });
   </script>
 
-  <script>
-    /* Verify errors in create operation form*/
-    const error = document.getElementsByClassName('errorlist');
-    const latAndlngError = 'latitudeLatitude ou Longitude inválidos (marque um ponto no mapa)longitudeLatitude ou Longitude inválidos (marque um ponto no mapa)'
-    if(error[0].textContent.includes('_all_')) {
-      error[0].textContent = error[0].textContent.replace('__all__', '')
-    } 
-    if(error[0].textContent.includes('aeronaveEste campo é obrigatório.')) {
-      error[0].textContent = error[0].textContent.replace('_aeronaveEste campo é obrigatório._', '')
-    } 
-    if(error[0].textContent.includes(latAndlngError)) {
-      error[0].textContent = error[0].textContent.replace(latAndlngError, '')
-    } 
-  </script>
   {% endblock %}

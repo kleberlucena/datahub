@@ -5,7 +5,7 @@ from apps.rpa_manager.models import *
 @receiver(post_save, sender=Aircraft)
 def update_titulo_aeronave(sender, instance, **kwargs):
     print("--- Signals iniciado ---")
-    historicos = AicraftHistoric.objects.filter(aeronave=instance)
+    historicos = AicraftHistoric.objects.filter(aircraft=instance)
     
     for historico in historicos:
         historico.titulo_aeronave = instance.prefixo

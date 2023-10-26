@@ -22,18 +22,18 @@ class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
     
     def form_valid(self, form):
         user = self.request.user
-        # guarnicoes_no_dia = PoliceGroup.objects.filter(remote_pilot=user)
+        guarnicoes_no_dia = PoliceGroup.objects.filter(remote_pilot=user)
         
-        # if guarnicoes_no_dia.exists():
-        #     form.add_error(None, 'Já existe uma guarnição cadastrada por este usuário no mesmo dia.')
-        #     return self.form_invalid(form)
+        if guarnicoes_no_dia.exists():
+            form.add_error(None, 'Já existe uma guarnição cadastrada por este usuário no mesmo dia.')
+            return self.form_invalid(form)
         
-        # observer_pilot = form.cleaned_data.get('observer_pilot')
-        # if observer_pilot:
-        #     guarnicoes_com_piloto = PoliceGroup.objects.filter(observer_pilot=observer_pilot)
-        #     if guarnicoes_com_piloto.exists():
-        #         form.add_error('piloto_observador', 'Este piloto observador já foi cadastrado em outra guarnição.')
-        #         return self.form_invalid(form)
+        observer_pilot = form.cleaned_data.get('observer_pilot')
+        if observer_pilot:
+            guarnicoes_com_piloto = PoliceGroup.objects.filter(observer_pilot=observer_pilot)
+            if guarnicoes_com_piloto.exists():
+                form.add_error('piloto_observador', 'Este piloto observador já foi cadastrado em outra guarnição.')
+                return self.form_invalid(form)
 
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} cadastrada com sucesso!')
         return super().form_valid(form)
