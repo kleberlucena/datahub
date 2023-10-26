@@ -116,13 +116,13 @@ class PersonByCpfViewSet(generics.ListAPIView):
 
 
 class AddPersonListView(generics.ListCreateAPIView):
-    permission_classes = [DjangoObjectPermissions, DjangoModelPermissions]
+    permission_classes = [DjangoModelPermissions]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at', 'updated_at']
     queryset = Person.objects.all()
 
-    def get_serializer_class(self):
-        if self.request.user.groups.filter(name__icontains='profile:person').exists():
+    def get_serializer_class(self):            
+        if self.request.user.groups.filter(name__in=['profile:person_intermediate', 'profile:person_advanced', 'profile:person_basic']).exists():
             if self.request.method == 'POST':
                 return serializers.PersonSerializer
             else:
@@ -130,12 +130,13 @@ class AddPersonListView(generics.ListCreateAPIView):
         else:
             raise PermissionDenied
 
-    @action(detail=True, methods=['GET'], permission_classes=DjangoObjectPermissions)
+    @action(detail=True, methods=['GET'], permission_classes=DjangoModelPermissions)
     def list(self, request, *args, **kwargs):
         probable_cpf = self.request.query_params.get('document_number')
         try:
             if probable_cpf:
                 cpf = base_helpers.validate_cpf(probable_cpf)
+                print(cpf)
                 if cpf:
                     person_cortex = helpers_cortex.process_cortex_consult(
                         username=request.user.username, cpf=cpf)
@@ -150,16 +151,18 @@ class AddPersonListView(generics.ListCreateAPIView):
                     helpers_bnmp.process_bnmp_consult(
                         username=request.user.username, cpf=cpf)
         except Exception as e:
-            logger.error('Error while getting person_cortex - {}'.format(e))
-
-        queryset = self.get_queryset().filter(
-            self.build_filter_conditions()
-        )
-        page = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(
-            page, many=True) if page is not None else self.get_serializer(queryset, many=True)
-        print(serializer.data)
-        return self.get_paginated_response(serializer.data)
+            logger.warning('CPF not Found - {}'.format(e))
+        try:
+            queryset = self.get_queryset().filter(
+                self.build_filter_conditions()
+            )
+            page = self.paginate_queryset(queryset)
+            serializer = self.get_serializer(page, many=True) if page is not None else self.get_serializer(queryset, many=True)
+        
+            return self.get_paginated_response(serializer.data)
+        except Exception as e:
+            logger.error('Error while getting person bacinf - {}'.format(e))
+            raise ValidationError(e)        
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -243,7 +246,7 @@ class AddPersonListView(generics.ListCreateAPIView):
 
     def handle_exception(self, exc):
         if isinstance(exc, ValidationError):
-            return Response({"detail": "Erro na validação dos dados."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+            return Response({"detail": "Erro na validação dos dados. {}".format(exc)}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         if isinstance(exc, PermissionDenied):
             return Response({"detail": "Você não tem permissão para acessar este recurso."}, status=status.HTTP_403_FORBIDDEN)
         if isinstance(exc, NotFound):
@@ -253,27 +256,31 @@ class AddPersonListView(generics.ListCreateAPIView):
         return super().handle_exception(exc)
 
     def build_filter_conditions(self):
-        print('No filtro personalizado...')
+        logger.info('No filtro personalizado - {}'.format(self.request.user))
         filters = Q()
         query_params = self.request.query_params
+        try:
+            my_param = query_params.get('my')
+            #logger.info('Meus cadastros - {}'.format(my_param))
 
-        filters &= Q(created_by=self.request.user) if query_params.get(
-            'my') or self.request.user.groups.filter(name='profile:person_basic').exists() else Q()
+            filters &= Q(created_by=self.request.user) if my_param is not None or self.request.user.groups.filter(name='profile:person_basic').exists() else Q()
 
-        query_dict = {'address_city': 'addresses__city', 'address_neighborhood': 'addresses__neighborhood', 'address_street': 'addresses__street',
-                      'address_complement': 'addresses__complement', 'address_reference': 'addresses__reference', 'address_zipcode': 'addresses__zipcode',
-                      'document_name': 'documents__name', 'document_mother': 'documents__mother', 'document_father': 'documents__father',
-                      'document_birth_date': 'documents__birth_date', 'document_number': 'documents__number', 'nickname_label': 'nicknames__label',
-                      'tattoo_label': 'tattoos__label', 'entity_name': 'entity__name'}
+            query_dict = {'address_city': 'addresses__city', 'address_neighborhood': 'addresses__neighborhood', 'address_street': 'addresses__street',
+                        'address_complement': 'addresses__complement', 'address_reference': 'addresses__reference', 'address_zipcode': 'addresses__zipcode',
+                        'document_name': 'documents__name', 'document_mother': 'documents__mother', 'document_father': 'documents__father',
+                        'document_birth_date': 'documents__birth_date', 'document_number': 'documents__number', 'nickname_label': 'nicknames__label',
+                        'tattoo_label': 'tattoos__label', 'entity_name': 'entity__name'}
 
-        for field, flag in query_dict.items():
-            if value := query_params.get(field):
-                q = Q(**{f"{flag}__iexact": value}) if field in ['document_number', 'document_birth_date'] else Q(
-                    **{f"{flag}__unaccent__icontains": value})
-                filters &= q
-        print(filters)
-
-        return filters
+            for field, flag in query_dict.items():
+                if value := query_params.get(field):
+                    q = Q(**{f"{flag}__iexact": value}) if field in ['document_number', 'document_birth_date'] else Q(
+                        **{f"{flag}__unaccent__icontains": value})
+                    filters &= q
+            logger.info('Query_filter - {}'.format(filters))
+            return filters
+        except Exception as e:
+             logger.Error('Exception - {}'.format(e))
+             raise e
 
 
 class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
@@ -328,7 +335,6 @@ class PersonRetrieveDestroyView(generics.RetrieveDestroyAPIView):
 
 
 # views to Add attributes of person
-
 class PersonAddFaceView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Face.objects.all()
     serializer_class = serializers.FaceSerializer
@@ -561,7 +567,6 @@ class PersonAddImageView(mixins.CreateModelMixin, generics.GenericAPIView):
 
 
 # views to recovery, Update or Delete attributes of person
-
 class FaceUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Face.objects.all()
     serializer_class = serializers.FaceSerializer

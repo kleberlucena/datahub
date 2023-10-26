@@ -4,6 +4,7 @@ from typing import List, Tuple
 import environ
 import requests
 import json
+import os
 
 # Environment variable definitions
 env = environ.Env(DEBUG=(bool, False))
@@ -13,6 +14,26 @@ environ.Env.read_env()
 SECRET_KEY = env('DJANGO_SECRET_KEY')
 DEBUG = env('DEBUG', default=False)
 BASE_DIR = Path(__file__).resolve().parent.parent
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+            "propagate": True,
+        },
+    },
+}
 
 ALLOWED_HOSTS = list(
     filter(lambda h: h != '', env('ALLOWED_HOSTS', default='*').split(','))
@@ -84,8 +105,8 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'celery_progress',
     'guardian',
+    'leaflet',
     'corsheaders',
-    'easyaudit',
 
     # Apps
     'base',
@@ -104,6 +125,8 @@ INSTALLED_APPS = [
     'apps.police_report',
     'apps.rpa_manager',
     'apps.radio',
+    'apps.termsofuse',
+
 ]
 
 MIDDLEWARE = [
@@ -117,7 +140,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'global_login_required.GlobalLoginRequiredMiddleware',
-    'easyaudit.middleware.easyaudit.EasyAuditMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -313,7 +335,7 @@ PUBLIC_PATHS = [
     r'^/api/token/refresh/',
     r'^/watermark/.*',
     # Descomentar para expor rota adminitrativa (só para ajustes de configurações do keycloak)
-    r'^/admin/.*',
+    # r'^/admin/.*',
 ]
 
 # Celery Configuration Options

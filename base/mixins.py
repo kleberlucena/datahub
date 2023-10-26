@@ -1,6 +1,9 @@
+
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import ImproperlyConfigured
+
+
 from django.shortcuts import render, redirect
 from base.views import *
 
@@ -18,7 +21,7 @@ class GroupRequiredMixin(UserPassesTestMixin):
         if self.group_required is None:
             raise ImproperlyConfigured(
                 "{0} is missing the group_required attribute".format(
-                    self._class.name_)
+                    self.__class__.__name__)
             )
 
         if isinstance(self.group_required, str):

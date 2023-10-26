@@ -1,12 +1,38 @@
 
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView, UpdateView, RedirectView, DetailView
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView, RedirectView, DetailView
 from django_datatables_view.base_datatable_view import BaseDatatableView
 from django.utils.html import escape
 
 from apps.portal.models import Entity
 from .models import Person, Tattoo
+from .forms import PersonForm
 from .tasks import task_set_entity_person, task_set_entity_tattoo, task_set_entity_face, task_set_entity_physical, task_set_entity_nickname
+
+
+class PersonListView(ListView):
+    model = Person
+    template_name = 'person_list.html'
+    context_object_name = 'persons'
+
+class PersonCreateView(CreateView):
+    model = Person
+    form_class = PersonForm
+    template_name = 'person_form.html'
+    success_url = reverse_lazy('person-list')
+
+class PersonUpdateView(UpdateView):
+    model = Person
+    form_class = PersonForm
+    template_name = 'person_form.html'
+    success_url = reverse_lazy('person-list')
+
+class PersonDeleteView(DeleteView):
+    model = Person
+    template_name = 'person_confirm_delete.html'
+    success_url = reverse_lazy('person-list')
+
 
 
 class PersonListJson(BaseDatatableView):

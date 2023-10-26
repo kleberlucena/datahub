@@ -1,0 +1,134 @@
+{% extends "base/base.html" %}
+{% load static  %}
+{% load custom_tags  %}
+{% load leaflet_tags %}
+
+
+<!-- browser title -->
+{% block title %} Painel Escolas {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+{% endblock %}
+
+<!-- context title -->
+{% block title-header %} Módulo de Fatos {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'base:index' %}">Inicio</a></li>
+  <li class="breadcrumb-item active">Painel Fatos</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %} 
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                <h3 class="card-title">Pontos de referência</h3>
+                </div>
+                <!-- /.card-header -->
+                    <div class="card-body p-2">
+            
+
+                {%  if schools %}
+    
+                    <div id="map" style="height: 300px"></div>  <!-- Create a div for each map -->
+                    
+                {% endif %}
+                    
+                </div>
+            </div>   
+
+            </div>
+        </div>
+        <div class="row">
+        
+            <div class=" col-md-6 col-sm-12">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                    <h3 class="card-title">Últimos fatos cadastrados</h3>
+                    </div>
+                    <!-- /.card-header -->
+                        <div class="card-body p-2">
+                            <div class="table-responsive">
+                            <table class="table m-0">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%  if facts %}
+                                    {% for fact in facts %}
+                                    <tr>
+            
+                                        {% comment %} <td><a href="{% url 'fact:fact_detail' fact.id %}">{{ fact.type_fact }} </a></td> {% endcomment %}
+                                        <td><a href="#">{{ fact.type_fact }} </a></td>
+                                    <td>
+                                        <a href="#">{{ fact.description|truncatechars:40 }} </a>
+                                        {% comment %} <a href="{% url 'fact:fact_detail' fact.id %}">{{ fact.description|truncatechars:40 }} </a> {% endcomment %}
+                                    </td>
+                            </tr>
+                            {% endfor %}
+                                {% else %}
+                                <tr><td>Sem fatos</td></tr>
+                                    
+                                {% endif %}
+                        
+                            </tbody>
+                            </table>
+                        </div>
+                        
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+</section>
+{% endblock %}
+
+{% block js %}
+{% leaflet_js plugins="ALL" %}
+{{ form.media.js }}
+
+<script>
+
+        // Initialize the map
+        var map = L.map('map').setView([-7.122377, -34.881586], 11);
+
+        // Add tiles to the map
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+    
+        // Add a marker for each school
+        {% for fact in facts %}
+            var latStr = "{{ fact.fact.address.location.y }}";
+            var lngStr = "{{ fact.fact.address.location.x }}";
+    
+            // Replace commas with dots
+            latStr = latStr.replace(",", ".");
+            lngStr = lngStr.replace(",", ".");
+    
+            // Parse the coordinates as floats
+            var lat = parseFloat(latStr);
+            var lng = parseFloat(lngStr);
+    
+            // Add a marker for the school location
+            L.marker([lat, lng]).addTo(map);
+        {% endfor %}
+    
+</script>
+
+{% endblock %}

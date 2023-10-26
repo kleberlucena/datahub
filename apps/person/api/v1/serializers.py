@@ -12,7 +12,7 @@ from apps.bnmp.models import RegistryBNMP, PersonBNMP, MandadoPrisao
 from apps.cortex.models import RegistryCortex, PersonCortex
 from base.models import Registry
 from apps.address.api.serializers import AddressSerializer
-from apps.image.api.serializers import ImageSerializer, ImageMediumSerializer
+from apps.image.api.serializers import ImageSerializer
 from apps.document.api.serializers import DocumentSerializer
 from apps.watermark import helpers as watermark_helpers
 from base import helpers
@@ -105,40 +105,7 @@ class RegistryPolymorphicSerializer(PolymorphicSerializer):
         Registry: RegistryPersonSerializer,
         RegistryCortex: RegistryCortexSerializer,
         RegistryBNMP: RegistryBNMPSerializer,
-        RegistryVehicleCortex: RegistryVehicleCortexSerializer
     }
-
-
-class FaceMediumSerializer(serializers.ModelSerializer):
-    file = Base64ImageField(write_only=True)
-    permissions = serializers.SerializerMethodField('_get_permissions')
-    medium = serializers.SerializerMethodField('_get_medium', read_only=True)
-    large = serializers.SerializerMethodField('_get_large', read_only=True)
-    entity = serializers.SerializerMethodField('_get_entity')
-
-    def _get_entity(self, object):
-        if object.entity:
-            return object.entity.name
-        return None
-
-    def _get_medium(self, object):
-        request = self.context.get('request', None)
-        return watermark_helpers.handle(object.file.medium.url, request.user.id)
-
-    def _get_large(self, object):
-        request = self.context.get('request', None)
-        return watermark_helpers.handle(object.file.large.url, request.user.id)
-
-    def _get_permissions(self, object):
-        request = self.context.get('request', None)
-        if request:
-            perms = get_perms(request.user, object)
-            return perms
-
-    class Meta:
-        model = Face
-        fields = ('uuid', 'file', 'medium', 'large', 'created_at',
-                  'updated_at', 'entity', 'permissions')
 
 
 class FaceSerializer(serializers.ModelSerializer):
@@ -205,41 +172,6 @@ class NicknameSerializer(serializers.ModelSerializer):
         model = Nickname
         fields = ('uuid', 'label', 'created_at',
                   'updated_at', 'entity', 'permissions')
-
-
-class TattooMediumSerializer(serializers.ModelSerializer):
-    label = serializers.CharField()
-    point = PointField(required=False)
-    file = Base64ImageField(write_only=True)
-    permissions = serializers.SerializerMethodField('_get_permissions')
-    medium = serializers.SerializerMethodField('_get_medium', read_only=True)
-    large = serializers.SerializerMethodField('_get_large', read_only=True)
-    entity = serializers.SerializerMethodField('_get_entity')
-
-    def _get_entity(self, object):
-        if object.entity:
-            return object.entity.name
-        return None
-
-    def _get_medium(self, object):
-        request = self.context.get('request', None)
-        return watermark_helpers.handle(object.file.medium.url, request.user.id)
-
-    def _get_large(self, object):
-        # return helpers.get_image_variation(self, object, 'large')
-        request = self.context.get('request', None)
-        return watermark_helpers.handle(object.file.large.url, request.user.id)
-
-    def _get_permissions(self, object):
-        request = self.context.get('request', None)
-        if request:
-            perms = get_perms(request.user, object)
-            return perms
-
-    class Meta:
-        model = Tattoo
-        fields = ('uuid', 'label', 'point', 'file', 'medium', 'large',
-                  'created_at', 'updated_at', 'entity', 'permissions')
 
 
 class TattooSerializer(serializers.ModelSerializer):
@@ -340,63 +272,3 @@ class PersonSerializer(WritableNestedModelSerializer, serializers.ModelSerialize
         fields = (
             'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals',
             'created_at', 'updated_at', 'entity', 'registers', 'permissions')
-
-
-class IntermediatePersonSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
-    nicknames = NicknameSerializer(many=True, required=False)
-    faces = FaceMediumSerializer(many=True, required=False)
-    addresses = AddressSerializer(many=True, required=False)
-    images = ImageMediumSerializer(many=True, required=False)
-    tattoos = TattooMediumSerializer(many=True, required=False)
-    physicals = PhysicalSerializer(many=True, required=False)
-    documents = DocumentSerializer(many=True, required=False)
-    registers = RegistryPolymorphicSerializer(
-        many=True, read_only=True, required=False, allow_null=True)
-    permissions = serializers.SerializerMethodField('_get_permissions')
-    entity = serializers.SerializerMethodField('_get_entity')
-
-    def _get_permissions(self, object):
-        request = self.context.get('request', None)
-        if request:
-            perms = get_perms(request.user, object)
-            return perms
-
-    def _get_entity(self, object):
-        if object.entity:
-            return object.entity.name
-        return None
-
-    class Meta:
-        model = Person
-        fields = (
-            'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals',
-            'created_at', 'updated_at', 'registers', 'permissions', 'entity')
-
-
-class BasicPersonSerializer(WritableNestedModelSerializer, serializers.ModelSerializer):
-    nicknames = NicknameSerializer(many=True, required=False)
-    faces = FaceMediumSerializer(many=True, required=False)
-    addresses = AddressSerializer(many=True, required=False)
-    images = ImageMediumSerializer(many=True, required=False)
-    tattoos = TattooMediumSerializer(many=True, required=False)
-    physicals = PhysicalSerializer(many=True, required=False)
-    documents = DocumentSerializer(many=True, required=False)
-    permissions = serializers.SerializerMethodField('_get_permissions')
-    entity = serializers.SerializerMethodField('_get_entity')
-
-    def _get_permissions(self, object):
-        request = self.context.get('request', None)
-        if request:
-            perms = get_perms(request.user, object)
-            return perms
-
-    def _get_entity(self, object):
-        if object.entity:
-            return object.entity.name
-        return None
-
-    class Meta:
-        model = Person
-        fields = (
-            'uuid', 'nicknames', 'addresses', 'images', 'faces', 'documents', 'tattoos', 'physicals',
-            'created_at', 'updated_at', 'registers', 'permissions', 'entity')

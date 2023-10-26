@@ -1,5 +1,6 @@
 active==0.0.5a0
 amqp==5.0.6
+annotated-types==0.5.0
 asgiref==3.4.1
 autopep8==1.7.0
 backports.entry-points-selectable==1.1.0
@@ -32,17 +33,19 @@ dj-rest-auth==2.2.4
 dj-static==0.0.6
 Django==3.2.8
 django-allauth==0.54.0
+django-bootstrap-datepicker-plus==5.0.4
+django-bootstrap4==23.2
 django-celery-beat==2.2.1
 django-celery-results==2.2.0
 django-cors-headers==3.13.0
 django-crispy-forms==1.13.0
 django-datatables-view==1.19.1
-django-easy-audit==1.3.3
 django-environ==0.8.1
 django-filter==21.1
 django-glrm==1.1.3
 django-graylog==0.7.0
 django-guardian==2.4.0
+django-leaflet==0.29.0
 django-localflavor==3.1
 django-minio-backend==3.3.2
 django-polymorphic==3.1.0
@@ -93,6 +96,8 @@ pyasn1==0.4.8
 pycodestyle==2.9.1
 pycosat==0.6.3
 pycparser==2.20
+pydantic==2.0.2
+pydantic_core==2.1.2
 PyJWT==2.4.0
 pylev==1.4.0
 pyparsing==3.0.6
@@ -122,6 +127,7 @@ standardjson==0.3.1
 static3==0.7.0
 toml==0.10.2
 tomli==1.2.2
+typing_extensions==4.7.1
 ua-parser==0.10.0
 uri==2.0.1
 uritemplate==4.1.1
