@@ -1,47 +1,24 @@
 from django.contrib import admin
 
-from apps.rpa_manager.models import (
-    Missao,
-    Aeronave,
-    Checklist,
-    Relatorio,
-    HistoricoAlteracoesAeronave,
-    Bateria,
-    NaturezaDeVoo,
-    TipoDeOperacao,
-    CidadesPB,
-    Guarnicao,
-    Incidentes,
-    Entities,
-    PontosDeInteresse,
-    ImagensIncidente,
-    ImagensChecklist,
-    Legislation,
-    Severity,
-    Probability,
-    Tolerability,
-    Situation,
-    Assessment,
-    RiskAssessment
-)
+from apps.rpa_manager.models import *
 
-class MissaoAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'usuario','concluida', 'horario', 'data')
+class OperationAdmin(admin.ModelAdmin):
+    list_display = ('title', 'user','completed', 'time', 'date')
     
-class GuarnicaoAdmin(admin.ModelAdmin):
-    list_display = ('motorista', 'piloto_remoto','telefone', 'local', 'data')
+class PoliceGroupAdmin(admin.ModelAdmin):
+    list_display = ('driver', 'remote_pilot','phone', 'location', 'date')
     
-class HistoricoAlteracoesAeronaveAdmin(admin.ModelAdmin):
-    list_display = ('aeronave', 'alteracoes', 'data', 'codigo')
+class AircraftHistoricAdmin(admin.ModelAdmin):
+    list_display = ('aircraft', 'changes', 'date', 'code')
 
-class AeronaveAdmin(admin.ModelAdmin):
-    list_display = ('prefixo', 'modelo', 'marca')
+class AircraftAdmin(admin.ModelAdmin):
+    list_display = ('prefix', 'model', 'brand')
 
 class ChecklistAdmin(admin.ModelAdmin):
-    list_display = ('aeronave', 'piloto', 'data', 'alteracoes')
+    list_display = ('aircraft', 'remote_pilot', 'date', 'changes')
 
-class RelatorioAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'militar', 'data', 'aeronave')
+class ReportAdmin(admin.ModelAdmin):
+    list_display = ('title', 'remote_pilot', 'date', 'aircraft')
 
 class MilitarAdmin(admin.ModelAdmin):
     list_display = ('nome_de_guerra', 'total_de_horas_voo', 'matricula',  'display_roles')
@@ -49,21 +26,21 @@ class MilitarAdmin(admin.ModelAdmin):
     def display_roles(self, obj):
         return ", ".join([role.role for role in obj.roles.all()])
 
-admin.site.register(Missao, MissaoAdmin)
-admin.site.register(Aeronave, AeronaveAdmin)
+admin.site.register(Operation, OperationAdmin)
+admin.site.register(Aircraft, AircraftAdmin)
 admin.site.register(Checklist, ChecklistAdmin)
-admin.site.register(Relatorio, RelatorioAdmin)
-admin.site.register(HistoricoAlteracoesAeronave, HistoricoAlteracoesAeronaveAdmin)
-admin.site.register(Guarnicao, GuarnicaoAdmin)
-admin.site.register(Bateria)
-admin.site.register(NaturezaDeVoo)
-admin.site.register(TipoDeOperacao)
-admin.site.register(CidadesPB)
-admin.site.register(Incidentes)
+admin.site.register(Report, ReportAdmin)
+admin.site.register(AicraftHistoric, AircraftHistoricAdmin)
+admin.site.register(PoliceGroup, PoliceGroupAdmin)
+admin.site.register(Battery)
+admin.site.register(FlightNature)
+admin.site.register(TypesOfOperations)
+admin.site.register(CitiesPB)
+admin.site.register(Incidents)
 admin.site.register(Entities)
 admin.site.register(Legislation)
-admin.site.register(PontosDeInteresse)
-admin.site.register(ImagensIncidente)
+admin.site.register(PointsOfInterest)
+admin.site.register(IncidentImage)
 admin.site.register(Severity)
 admin.site.register(Probability)
 admin.site.register(Tolerability)

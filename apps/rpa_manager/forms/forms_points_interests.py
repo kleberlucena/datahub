@@ -1,20 +1,21 @@
 from django import forms
-from apps.rpa_manager.models import PontosDeInteresse, Relatorio
+from apps.rpa_manager.models import PointsOfInterest
 from apps.rpa_manager.utils.addAttributes import addAttributes
+
 
 class PointsOfInterestForm(forms.ModelForm):
     class Meta:
-        model = PontosDeInteresse
-        fields = ['operacao', 
+        model = PointsOfInterest
+        fields = ['operation', 
                   'is_temporary',
-                  'date_initial',
-                  'date_final',
-                  'descricao', 
+                  'initial_date',
+                  'final_date',
+                  'description', 
                   'latitude', 
                   'longitude']
         
         widgets = {
-            'descricao': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
             }
         
     def __init__(self, *args, **kwargs):
@@ -22,21 +23,21 @@ class PointsOfInterestForm(forms.ModelForm):
         super(PointsOfInterestForm, self).__init__( *args, **kwargs)
         
         
-        self.fields['descricao'].widget.attrs.update({
+        self.fields['description'].widget.attrs.update({
             'placeholder': 'Faça uma breve descrição do ponto de interesse.'
         })
-        self.fields['date_initial'].widget.attrs.update({
+        self.fields['initial_date'].widget.attrs.update({
             'placeholder': 'Insira a data inicial do evento.'
         })
-        self.fields['date_final'].widget.attrs.update({
+        self.fields['final_date'].widget.attrs.update({
             'placeholder': 'Insira a data final do evento'
         })
         
-        campos = ['operacao', 
+        campos = ['operation', 
                   'is_temporary',
-                  'date_initial',
-                  'date_final',
-                  'descricao', 
+                  'initial_date',
+                  'final_date',
+                  'description', 
                   'latitude', 
                   'longitude']
         

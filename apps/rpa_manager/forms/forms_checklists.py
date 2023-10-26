@@ -1,67 +1,67 @@
 from django import forms
-from apps.rpa_manager.models import Checklist, Aircraft
+from apps.rpa_manager.models import Checklist
 from apps.rpa_manager.utils.addAttributes import addAttributes
 
 
 class ChecklistForm(forms.ModelForm):
-    camposCheckboxesChecklist = [
+    ChecklistCheckboxesFields = [
         'batteries_loaded',
-        'bateria_controle_carregada',
-        'corpo',
-        'hastes_motor',
-        'helices',
+        'control_battery_loaded',
+        'body',
+        'engine_rods',
+        'propellers',
         'gimbal',
-        'holofote',
-        'auto_falante',
-        'luz_estroboscopica',
-        'cabos',
-        'carregador',
-        'fonte',
+        'spotlight',
+        'load_speaker',
+        'stroboscopic_light',
+        'cables',
+        'charger',
         'smart_controller',
-        'controle',
-        'cartao_sd',
-        'IMU',
+        'controller',
+        'sd_card',
+        'imu',
         'compass',
-        'sinal_transmissao',
-        'sistema_rtk_ppk',
-        'sinal_de_video',
-        'telemetria',
-        'paraquedas',
+        'signal_transmission',
+        'system_rtk_ppk',
+        'video_signal',
+        'telemetry',
+        'parachute',
     ]
     
     class Meta:
         model = Checklist
         
         fields = [
-            'piloto', 'aeronave',
-            'num_helices', 'num_baterias',
-            'batteries_loaded', 'bateria_controle_carregada',
-            'corpo', 'hastes_motor',
-            'helices', 'gimbal',
-            'holofote', 'auto_falante',
-            'luz_estroboscopica', 'cabos',
-            'carregador', 'fonte',
-            'smart_controller', 'controle',
-            'cartao_sd', 'IMU',
-            'compass', 'sinal_transmissao',
-            'sistema_rtk_ppk', 'sinal_de_video',
-            'telemetria', 'paraquedas',
-            'alteracoes']
+            'remote_pilot', 'aircraft',
+            'num_propellers', 'num_batteries',
+            'batteries_loaded', 'control_battery_loaded',
+            'body', 'engine_rods',
+            'propellers', 'gimbal',
+            'spotlight', 'load_speaker',
+            'stroboscopic_light', 'cables',
+            'charger', 
+            'smart_controller', 'controller',
+            'sd_card', 'imu',
+            'compass', 'signal_transmission',
+            'system_rtk_ppk', 'video_signal',
+            'telemetry', 'parachute',
+            'changes']
 
         labels = {
-            'piloto': '',
-            'num_baterias': 'Número de baterias',
-            'num_helices': 'Número de hélices',
+            'remote_pilot': '',
+            'num_batteries': 'Número de baterias',
+            'num_propellers': 'Número de hélices',
         }
-        widgets = {'piloto': forms.HiddenInput()}
+        widgets = {'remote_pilot': forms.HiddenInput()}
                 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        campos = ['aeronave', 'num_baterias', 'num_helices', 'alteracoes']
+        campos = ['aircraft', 'num_batteries', 'num_propellers', 'changes']
         
         for campo in campos:
             addAttributes(self, campo, campo, 'form-control')
         
-        for campo in self.camposCheckboxesChecklist:
+        for campo in self.ChecklistCheckboxesFields:
             addAttributes(self, campo, campo, 'checklist_item')
+            

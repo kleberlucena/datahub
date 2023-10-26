@@ -2,7 +2,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 from apps.rpa_manager.models import Incidentes, ImagensIncidente
-from apps.rpa_manager.forms import IncidentesForm
+from apps.rpa_manager.forms import IncidentsForm
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -42,7 +42,7 @@ class IncidentesDetailView(GroupRequiredMixin, DetailView):
     
 class IncidentesCreateView(GroupRequiredMixin, CreateView):
     model = Incidentes
-    form_class = IncidentesForm
+    form_class = IncidentsForm
     template_name = 'rpa_manager/create_incident.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
     group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
@@ -75,7 +75,7 @@ class IncidentesCreateView(GroupRequiredMixin, CreateView):
     
 class IncidentesUpdateView(GroupRequiredMixin, UpdateView):
     model = Incidentes
-    form_class = IncidentesForm
+    form_class = IncidentsForm
     template_name = 'rpa_manager/create_incident.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
     group_required = ['profile:rpa_advanced']

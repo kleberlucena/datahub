@@ -1,45 +1,45 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from apps.rpa_manager.models import Missao, Aeronave
+from apps.rpa_manager.models import *
 from apps.rpa_manager.utils.addAttributes import addAttributes
 from apps.rpa_manager.utils.addPlaceholderToField import addPlaceholder
 
 
-class MissaoFormulario(forms.ModelForm):
+class OperationForm(forms.ModelForm):
     class Meta:
-        model = Missao
-        fields = ['titulo', 
-                  'piloto_observador', 
-                  'quem_solicitou', 
-                  'quem_autorizou', 
-                  'local', 
+        model = Operation
+        fields = ['title', 
+                  'observer_pilot', 
+                  'who_requested', 
+                  'who_authorized', 
+                  'location', 
                   'latitude', 
                   'longitude', 
-                  'aeronave', 
-                  'usuario'
+                  'aircraft', 
+                  'user'
                   ]
         
         widgets = {
-                   'usuario': forms.HiddenInput(),
-                   'titulo': forms.TextInput(attrs={'class': 'form-control'}),
-                   'concluida': forms.HiddenInput(),
+                   'user': forms.HiddenInput(),
+                   'title': forms.TextInput(attrs={'class': 'form-control'}),
+                   'completed': forms.HiddenInput(),
                    }
 
-    def clean_aeronave(self):
-        aeronave = self.cleaned_data['aeronave']
-        if aeronave.em_uso:
+    def clean_aircraft(self):
+        aircraft = self.cleaned_data['aircraft']
+        if aircraft.in_use:
             raise forms.ValidationError('A aeronave está em uso e não pode ser selecionada.')
-        return aeronave
+        return aircraft
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        addPlaceholder(self, 'titulo', 'Informe um título para operação')
-        addPlaceholder(self, 'quem_autorizou', 'Informe quem autorizou a operação')
-        addPlaceholder(self, 'quem_solicitou', 'Informe um título para operação')
+        addPlaceholder(self, 'title', 'Informe um título para operação')
+        addPlaceholder(self, 'who_authorized', 'Informe quem autorizou a operação')
+        addPlaceholder(self, 'who_requested', 'Informe um título para operação')
         
-        self.fields['aeronave'].widget.attrs.update({
-            'class': 'aeronave_escolha'
+        self.fields['aircraft'].widget.attrs.update({
+            'class': 'aircraft_escolha'
         })
         self.fields['latitude'].widget.attrs.update({
             'required': True
@@ -48,29 +48,29 @@ class MissaoFormulario(forms.ModelForm):
             'required': True
         })
 
-        self.fields['aeronave'].queryset = Aeronave.objects.filter(em_uso=False)
+        self.fields['aeronave'].queryset = Aircraft.objects.filter(in_use=False)
         
-        campos = ['titulo', 
-                  'piloto_observador', 
-                  'quem_solicitou',
-                  'quem_autorizou', 
-                  'local', 
+        campos = ['title', 
+                  'observer_pilot', 
+                  'who_requested',
+                  'who_authorized', 
+                  'location', 
                   'latitude',
                   'longitude',
-                  'aeronave', 
-                  'usuario']
+                  'aircraft', 
+                  'user']
         
         for campo in campos:
             addAttributes(self, campo, campo, 'form-control')
             
     def clean(self):
         cleaned_data = super().clean()
-        piloto_remoto = cleaned_data.get('usuario')
-        piloto_observador = cleaned_data.get('piloto_observador')
+        remoted_pilot = cleaned_data.get('user')
+        observer_pilot = cleaned_data.get('observer_pilot')
         latitude = cleaned_data.get('latitude')
         longitude = cleaned_data.get('longitude')
         
-        if piloto_remoto == piloto_observador:
+        if remoted_pilot == observer_pilot:
             self.add_error('usuario', "O piloto remoto não pode ser o mesmo que o piloto observador.")
             self.add_error('piloto_observador', "O piloto observador não pode ser o mesmo que o piloto remoto.")
         if latitude == 0.0:

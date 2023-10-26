@@ -56,9 +56,9 @@ class CitiesPB(Base):
 
 
 class PoliceGroup(models.Model):
-    driver = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='gu_motorista', null=True)
-    remote_pilot = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='gu_piloto_remoto', null=True)
-    observer_pilot = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='gu_piloto_observador', blank=True, null=True)
+    driver = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='gu_driver', null=True)
+    remote_pilot = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='gu_remote_pilot', null=True)
+    observer_pilot = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='gu_observer_pilot', blank=True, null=True)
     phone = models.CharField(max_length=20, null=False, blank=False)
     location = models.ForeignKey(CitiesPB, on_delete=models.SET_NULL, null=True)
     date = models.DateTimeField(auto_now_add=True)
@@ -196,7 +196,6 @@ class Checklist(Base):
     load_speaker = models.BooleanField(default=True)
     stroboscopic_light = models.BooleanField(default=True)
     cables = models.BooleanField(default=True)
-    carregador = models.BooleanField(default=True)
     charger = models.BooleanField(default=True)
     smart_controller = models.BooleanField(default=True)
     controller = models.BooleanField(default=True)

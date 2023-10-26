@@ -9,7 +9,7 @@ from .views_crud_checklists import *
 from .views_crud_missao import *
 from .views_crud_relatorio import *
 from .views_funcoes_auxiliares import *
-from apps.rpa_manager.forms import AeronaveSelectForm, TypeOfBatteryForm
+from apps.rpa_manager.forms import AircraftSelectionForm, TypeOfBatteryForm
 from apps.rpa_manager.utils.createJsonByLastOperation import createJsonByLastOperation
 from apps.rpa_manager.utils.getTodayLatLonCoordinates import getTodaysCoordinates
 from apps.rpa_manager.utils.getOperationInCourse import getOperationInCourse
@@ -225,7 +225,7 @@ class HistoricosPorAeronaveView(GroupRequiredMixin, ListView):
     model = HistoricoAlteracoesAeronave
     template_name = 'rpa_manager/list_aircraft_historic.html'
     context_object_name = 'aircraft_historic'
-    form_class = AeronaveSelectForm
+    form_class = AircraftSelectionForm
     group_required = ['profile:rpa_advanced']
     
     def get_queryset(self):

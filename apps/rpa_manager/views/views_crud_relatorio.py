@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect
-from apps.rpa_manager.forms import RelatorioFormulario
+from apps.rpa_manager.forms import ReportForm
 from apps.rpa_manager.models import Missao, Relatorio
 from django.views.generic import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -35,7 +35,7 @@ class VerRelatorioView(GroupRequiredMixin, DetailView):
         
 class CriarNovoRelatorioView(GroupRequiredMixin, CreateView):
     model = Relatorio
-    form_class = RelatorioFormulario
+    form_class = ReportForm
     template_name = 'rpa_manager/create_report.html'
     success_url = reverse_lazy('rpa_manager:add_point')
     group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
@@ -74,7 +74,7 @@ class CriarNovoRelatorioView(GroupRequiredMixin, CreateView):
     
 class EditarRelatorioView(GroupRequiredMixin, UpdateView):
     model = Relatorio
-    form_class = RelatorioFormulario
+    form_class = ReportForm
     template_name = 'rpa_manager/update_report.html'
     success_url = reverse_lazy('rpa_manager:relatorios')
     context_object_name = 'relatorio'

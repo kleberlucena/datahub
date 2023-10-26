@@ -1,7 +1,7 @@
 from typing import Any, Dict
 from django.shortcuts import redirect, render
 from django.shortcuts import get_object_or_404
-from apps.rpa_manager.forms import MissaoFormulario
+from apps.rpa_manager.forms import OperationForm
 from apps.rpa_manager.models import Missao, PontosDeInteresse, Aeronave
 from django.views import View
 from django.views.generic import DetailView
@@ -36,7 +36,7 @@ class CriarNovaMissaoView(GroupRequiredMixin, View):
     group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
     
     def get(self, request):
-        form = MissaoFormulario(initial={'usuario': request.user})
+        form = OperationForm(initial={'usuario': request.user})
         aeronaves_disponiveis = Aeronave.objects.filter(em_uso=False)
         
         points = PontosDeInteresse.objects.all()
@@ -51,7 +51,7 @@ class CriarNovaMissaoView(GroupRequiredMixin, View):
         return render(request, 'rpa_manager/create_operation.html', context)
 
     def post(self, request):
-        form = MissaoFormulario(request.POST, initial={'usuario': request.user})
+        form = OperationForm(request.POST, initial={'usuario': request.user})
         if form.is_valid():
             missao = form.save(commit=False)
             aeronave = missao.aeronave
@@ -72,7 +72,7 @@ class CriarNovaMissaoView(GroupRequiredMixin, View):
     
 class EditarMissaoView(GroupRequiredMixin, UpdateView):
     model = Missao
-    form_class = MissaoFormulario
+    form_class = OperationForm
     template_name = 'rpa_manager/update_operation.html'
     context_object_name = 'form'
     success_url = reverse_lazy('rpa_manager:principal')

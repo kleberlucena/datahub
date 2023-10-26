@@ -3,7 +3,7 @@ from django.db.models import Count
 from django.db.models.functions import TruncMonth
 from django.shortcuts import redirect, render
 
-from apps.rpa_manager.forms import MissaoFormulario
+from apps.rpa_manager.forms import OperationForm
 from apps.rpa_manager.models import Relatorio, CidadesPB, Bateria
 
 
@@ -78,10 +78,10 @@ def obtem_numero_de_missoes_por_mes():
 
 
 def formulario_missao(request):
-    form = MissaoFormulario(initial={'usuario': request.user})
+    form = OperationForm(initial={'usuario': request.user})
     
     if request.method == 'POST':
-        form = MissaoFormulario(request.POST, initial={'usuario': request.user})
+        form = OperationForm(request.POST, initial={'usuario': request.user})
         if form.is_valid():
             form.save()
             return redirect('controle:principal')

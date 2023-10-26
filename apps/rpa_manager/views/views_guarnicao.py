@@ -1,7 +1,7 @@
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from apps.rpa_manager.models import Guarnicao
-from apps.rpa_manager.forms import GuarnicaoForm
+from apps.rpa_manager.forms import PoliceGroupForm
 from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,7 +15,7 @@ MESSAGE_MODEL_NAME = 'Guarnição'
 
 class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
     model = Guarnicao
-    form_class = GuarnicaoForm
+    form_class = PoliceGroupForm
     template_name = 'rpa_manager/create_guarnicao.html'
     success_url = reverse_lazy('rpa_manager:checklist_form')
     permission_required = 'rpa_manager.add_guarnicao'
@@ -50,7 +50,7 @@ class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
     
 class GuarnicaoUpdateView(PermissionRequiredMixin, UpdateView):
     model = Guarnicao
-    form_class = GuarnicaoForm
+    form_class = PoliceGroupForm
     template_name = 'rpa_manager/update_guarnicao.html'
     success_url = reverse_lazy('rpa_manager:checklist_form')
     permission_required = 'rpa_manager.change_guarnicao'
