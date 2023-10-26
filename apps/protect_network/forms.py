@@ -48,6 +48,14 @@ class SpotForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'}),
         required=True,
     )
+    QPP = forms.ModelChoiceField(
+        queryset=models.Qpp.objects.all(),
+        label='QPP',
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=False,
+        empty_label='Selecione um QPP'  # Pode personalizar o rótulo vazio
+    )
+
 
 
     class Meta:
@@ -211,4 +219,19 @@ class ResponsibleForm(forms.ModelForm):
         widgets = {
             'network': forms.Select(attrs={'class': 'custom-select'}),
             'active': forms.CheckboxInput(attrs={'class': 'custom-checkbox'}),
+        }
+
+
+
+class QppForm(forms.ModelForm):
+    class Meta:
+        model = models.Qpp
+        fields = ['name', 'details']
+        labels = {
+            'name': 'QPP',
+            'details' : 'Informações adicionais',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome do QPP'}),
+            'details': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Se houver, insira informações adicionais'}),
         }

@@ -95,15 +95,23 @@
                 <div>
                     <b>Rede:</b>
                 </div>
-                <div class="ml-1" id="id_name">
+                <div class="ml-1">
                     {{ spot.spot_network }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>QPP:</b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.QPP }}
                 </div>
             </div>
             <div class="row mb-1">
                 <div>
                     <b>Nome:</b>
                 </div>
-                <div class="ml-1" id="id_name">
+                <div class="ml-1">
                     {{ spot.name }}
                 </div>
             </div>
@@ -111,7 +119,7 @@
                 <div>
                     <b>CNPJ:</b>
                 </div>
-                <div class="ml-1 replace-none" id="id_name">
+                <div class="ml-1 replace-none">
                     {{ spot.cnpj }}
                 </div>
             </div>
@@ -119,7 +127,7 @@
                 <div>
                     <b>Matriz:</b>
                 </div>
-                <div class="ml-1" id="id_name">
+                <div class="ml-1">
                     {% if spot.is_headquarters %}
                         Sim
                     {% else %}
@@ -133,7 +141,7 @@
                     <div>
                         <b>CNPJ da matriz:</b>
                     </div>
-                    <div class="ml-1 replace-none" id="id_name">
+                    <div class="ml-1 replace-none">
                         {{ spot.cnpj }}
                     </div>
                 </div>
@@ -142,7 +150,7 @@
                 <div>
                     <b>Nome:</b>
                 </div>
-                <div class="ml-1" id="id_name">
+                <div class="ml-1">
                     {{ spot.name }}
                 </div>
             </div>

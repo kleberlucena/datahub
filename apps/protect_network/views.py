@@ -79,13 +79,10 @@ class CreateSpotView(CreateView):
         self.object.updated_by = self.request.user
         self.object.updated_at = timezone.now()
         self.object.update_score = 100
-
         # military = get_object_or_404(models.portal_models.Military, user=self.request.user)
         # self.object.user_unit_id = military.id
-        
         promotion = get_object_or_404(Promotion, military__user=self.request.user)
         self.object.user_unit = promotion
-
         spot_type = self.object.spot_type
         spot_next_update = spot_type.update_time
         is_headquarters = form.cleaned_data['is_headquarters']
@@ -117,11 +114,9 @@ class UpdateSpotView(UpdateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-
         latitude = form.cleaned_data['latitude']
         longitude = form.cleaned_data['longitude']
         self.object.location = GEOSGeometry(f"POINT ({longitude} {latitude})", srid=4326)
-
         self.object.updated_by = self.request.user
         self.object.update_score = 100
         self.object.updated_at = timezone.now()
@@ -129,7 +124,6 @@ class UpdateSpotView(UpdateView):
         spot_next_update = spot_type.update_time
         self.object.next_update = spot_next_update
         tags = self.request.POST.getlist('tags')
-
         location_value = GEOSGeometry(f"POINT ({longitude} {latitude})", srid=4326)
         zipcode_value = form.cleaned_data.get('zipcode')
         city_value = form.cleaned_data.get('city')
@@ -138,7 +132,6 @@ class UpdateSpotView(UpdateView):
         number_value = form.cleaned_data.get('number')
         complement_value = form.cleaned_data.get('complement')
         reference_value = form.cleaned_data.get('reference')
-
         address_id = self.object.spotaddresses_set.first().address.id
         existing_address = get_object_or_404(models.Address, id=address_id)
         existing_address.street = street_value
@@ -151,10 +144,8 @@ class UpdateSpotView(UpdateView):
         existing_address.place = location_value
         existing_address.save()
         self.object.addresses.add(existing_address)
-
         is_headquarters = form.cleaned_data['is_headquarters']
         self.object.is_headquarters = is_headquarters
-
         self.object.save()
         self.object.tags.set(tags)
         return super().form_valid(form)
@@ -473,7 +464,6 @@ class NetworkListView(ListView):
         return context
 
 
-
 class NetworkDetailView(DetailView):
     model = models.Network
     template_name = 'protect_network/network_detail.html'
@@ -522,3 +512,32 @@ class DeleteResponsibleView(DeleteView):
         responsible = self.object
         network_pk = responsible.network.pk
         return reverse_lazy('protect_network:network_detail', kwargs={'pk': network_pk})
+
+
+###### QPP - QPP DO SPOT ######
+
+@include_toast
+class CreateQppView(CreateView):
+    model = models.Qpp
+    form_class = forms.QppForm
+    template_name = 'protect_network/qpp_add.html'
+    success_url = reverse_lazy('protect_network:qpp_list')
+
+
+@include_toast
+class UpdateQppView(UpdateView):
+    model = models.Qpp
+    template_name = 'protect_network/qpp_add.html'
+    form_class = forms.QppForm
+    success_url = reverse_lazy('protect_network:qpp_list')
+
+
+class QppListView(ListView):
+    model = models.Qpp
+    template_name = 'protect_network/qpp_list.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(QppListView, self).get_context_data(**kwargs)
+        qpp = models.Qpp.objects.all()
+        context['qpps'] = qpp
+        return context

@@ -37,6 +37,8 @@ urlpatterns = [
   path('<int:pk>/responsible/update', views.UpdateResponsibleView.as_view(), name='responsible_update'),
   path('<int:pk>/responsible/delete', views.DeleteResponsibleView.as_view(), name='responsible_delete'),
 
- 
+  path('qpp', views.QppListView.as_view(), name='qpp_list'), 
+  path('qpp/add', views.CreateQppView.as_view(), name='qpp_add'), 
+  path('<int:pk>/qpp/update', views.UpdateQppView.as_view(), name='qpp_update'),
  
 ]
