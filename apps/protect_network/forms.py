@@ -114,12 +114,14 @@ class TagForm(forms.ModelForm):
 class ContactInfoForm(forms.ModelForm):
     class Meta:
         model = models.ContactInfo
-        fields = ['name', 'phone', 'role', 'email']
+        fields = ['name', 'phone', 'role', 'email', 'rg', 'cpf']
         labels = {
             'name': 'Contato',
             'phone': 'Telefone de contato',
             'role': 'Título ou função',
             'email': 'E-mail',
+            'rg': 'RG',
+            'cpf': 'CPF',
         }
 
     def __init__(self, *args, **kwargs):
@@ -128,6 +130,8 @@ class ContactInfoForm(forms.ModelForm):
         self.fields['phone'].widget.attrs['placeholder'] = '(99) 99999-9999'
         self.fields['role'].widget.attrs['placeholder'] = 'Digite a função'
         self.fields['email'].widget.attrs['placeholder'] = 'exemplo@email.com.br'
+        self.fields['rg'].widget.attrs['placeholder'] = '99.999.999-9'
+        self.fields['cpf'].widget.attrs['placeholder'] = '999.999.999-99'
 
 
 
@@ -235,3 +239,26 @@ class QppForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome do QPP'}),
             'details': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Se houver, insira informações adicionais'}),
         }
+
+
+# class SecuritySurveyForm(forms.ModelForm):
+#     class Meta:
+#         model = models.SecuritySurvey
+#         fields = '__all__'
+#         labels = {
+#             'security_cameras': 'Câmeras de Segurança',
+#             'security_cameras_rec': 'Gravação de Câmeras em DVR',
+#             'private_security': 'Segurança Privada',
+#             'external_lights': 'Iluminação Externa',
+#             'alarm_system': 'Sistema de Alarme',
+#             'fire_extinguisher': 'Extintor de Incêndio',
+#             'emergency_out': 'Saída de Emergência',
+#             'fire_alarm_system': 'Sistema de Detecção de Incêndio',
+#             'security_barriers': 'Barreiras de Segurança',
+#             'other_security_measures': 'Outras Medidas de Segurança',
+#         }
+
+#     def __init__(self, *args, **kwargs):
+#         super(SecuritySurveyForm, self).__init__(*args, **kwargs)
+#         for field_name, field in self.fields.items():
+#             field.required = False

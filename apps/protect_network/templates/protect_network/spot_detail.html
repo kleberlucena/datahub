@@ -364,7 +364,8 @@
                                             <td>{{ spot_contact.phone }}</td>
                                             <td>{{ spot_contact.email }}</td>
                                             <td class="project-actions text-center">
-                                                <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:contact_update' spot_contact.id %}">Editar</a>
+                                                <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:contact_update' spot_contact.id %}">Detalhes</a>
+                                                <a  class="btn btn-outline-primary btn-sm" href="{% url 'protect_network:contact_update' spot_contact.id %}">Editar</a>
                                             </td>
                                         </tr>
                                         {% endfor %}

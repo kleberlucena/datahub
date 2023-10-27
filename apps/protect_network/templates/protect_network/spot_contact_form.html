@@ -3,7 +3,7 @@
 
 
 <!-- browser title -->
-{% block title %} Adicionar contato {% endblock %}
+{% block title %} Adicionar funcionário {% endblock %}
 
 <!-- styles -->
 {% block style_sheet %}
@@ -11,19 +11,19 @@
 {% endblock %}
 
 
-{% block title-header %} Pontos de Interesse {% endblock %}
+{% block title-header %} Rede de Proteção {% endblock %}
 
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
-<li class="breadcrumb-item"><a>Adicionar contato</a></li>
+<li class="breadcrumb-item"><a>Adicionar funcionário</a></li>
 {% endblock %}
 
 {% block content %}
 
 <div class="callout callout-info">
-    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre contatos</h3>
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre funcionários</h3>
     <p class="text-muted text-justify px-3 pt-2">
-        <b>Essa tela permite a adição de informações de contato para o ponto </b>
+        <b>Essa tela permite a adição de informações de funcionários para o estabelecimento </b>
     </p>
 </div>
 
@@ -31,13 +31,13 @@
     <div class="col-md-12">
         <div class="card card-primary card-outline">
             <div class="card-header">
-                <h3 class="card-title">Adicionar contato</h3>
+                <h3 class="card-title">Adicionar funcionário</h3>
             </div>
         <form class="p-3" method='post' enctype="multipart/form-data">
             {% csrf_token %}
         
             <div class="row">
-                <div class="col-sm-8">
+                <div class="col-sm-12">
                     {{form.name|add_class:"form-control"|as_crispy_field}}
                     <br>
                     {{form.role|add_class:"form-control"|as_crispy_field}}
@@ -45,6 +45,10 @@
                     {{form.phone|add_class:"form-control"|as_crispy_field}}
                     <br>
                     {{form.email|add_class:"form-control"|as_crispy_field}}
+                    <br>
+                    {{form.rg|add_class:"form-control"|as_crispy_field}}
+                    <br>
+                    {{form.cpf|add_class:"form-control"|as_crispy_field}}
                 </div>
             </div>
                
@@ -71,6 +75,8 @@
     $(document).ready(function() {
         $("#id_phone").inputmask("(99) 99999-9999");
         $("#id_email").inputmask({alias: "email"});
+        $("#id_rg").inputmask("99.999.999-9");
+        $("#id_cpf").inputmask("999.999.999-99");
     });
 </script>
 {% endblock %}

@@ -95,24 +95,24 @@ class Image(models.Model): #### IMAGEM DO SPOT
         verbose_name_plural = "Imagens"
 
 
-class ContactImage(models.Model): #### IMAGEM DO CONTATO
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    contact = models.ForeignKey('ContactInfo', on_delete=models.CASCADE)
-    created_at = models.DateTimeField('Criado', auto_now_add=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='contact_images_created')
-    imageContact = StdImageField(
-        'Imagem', 
-        storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
-        upload_to='protect_network_img',
-        variations={
-            'large': {'width': 720, 'height': 720, 'crop': True},
-            'medium': {'width': 480, 'height': 480, 'crop': True},
-            'thumbnail': {'width': 128, 'height': 128, 'crop': True},
-        }, delete_orphans=True
-    )
+# class ContactImage(models.Model): #### IMAGEM DO CONTATO
+#     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+#     contact = models.ForeignKey('ContactInfo', on_delete=models.CASCADE)
+#     created_at = models.DateTimeField('Criado', auto_now_add=True)
+#     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='contact_images_created')
+#     imageContact = StdImageField(
+#         'Imagem', 
+#         storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
+#         upload_to='protect_network_img',
+#         variations={
+#             'large': {'width': 720, 'height': 720, 'crop': True},
+#             'medium': {'width': 480, 'height': 480, 'crop': True},
+#             'thumbnail': {'width': 128, 'height': 128, 'crop': True},
+#         }, delete_orphans=True
+#     )
 
-    def __str__(self):
-        return f"{self.imageContact}"
+#     def __str__(self):
+#         return f"{self.imageContact}"
 
     class Meta:
         verbose_name = "Imagem"
@@ -171,11 +171,8 @@ class ContactInfo(models.Model):
     email = models.CharField("E-mail", max_length=200, default="", null=True, blank=True)
     rg = models.CharField("RG", max_length=20, default="", null=True, blank=True)
     cpf = models.CharField("CPF", max_length=14, default="", null=True, blank=True)
-    contact_image = models.ForeignKey('ContactImage', on_delete=models.CASCADE, null=True, blank=True)
+    spot = models.ForeignKey('Spot', on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.name
-    
     
 class OpeningHours(models.Model):
     OPENED_OPTIONS = [
@@ -204,6 +201,24 @@ class OpeningHours(models.Model):
     open_time_sun = models.TimeField(blank=True, null=True)
     close_time_sun = models.TimeField(blank=True, null=True)
     spot = models.ForeignKey('Spot', on_delete=models.CASCADE, related_name='opening_hours')
+
+    def __str__(self):
+        return self.spot
+    
+
+
+class SecyritySurvey(models.Model):
+    spot = models.ForeignKey('Spot', on_delete=models.CASCADE, related_name='security_survey')
+    security_cameras = models.BooleanField(blank=True, null=True)
+    security_cameras_rec = models.BooleanField(blank=True, null=True)
+    private_security = models.BooleanField(blank=True, null=True)
+    external_lights = models.CharField(max_length=50)
+    alarm_system = models.BooleanField(blank=True, null=True)
+    fire_extinguisher = models.BooleanField(blank=True, null=True)
+    emergency_out = models.BooleanField(blank=True, null=True)
+    fire_alarm_system = models.BooleanField(blank=True, null=True)
+    security_barriers = models.BooleanField(blank=True, null=True)
+    other_security_measures = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.spot
