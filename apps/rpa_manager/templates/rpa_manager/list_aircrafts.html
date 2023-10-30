@@ -57,15 +57,15 @@
           {% for aeronave in aeronaves %}
           
           <tr>
-            <td>{{ aeronave.prefixo }}</td>
-            <td>{{ aeronave.modelo }}</td>
-            <td>{{ aeronave.marca }}</td>
-            <td>{{ aeronave.local }}</td>
+            <td>{{ aeronave.prefix }}</td>
+            <td>{{ aeronave.model }}</td>
+            <td>{{ aeronave.brand }}</td>
+            <td>{{ aeronave.location }}</td>
 
             <td>
-              {% if aeronave.em_uso is True %}
+              {% if aeronave.in_use is True %}
                 <span class="badge badge-warning">Em operação</span>
-              {% elif aeronave.em_uso == None %}
+              {% elif aeronave.in_use == None %}
                 <span class="badge badge-danger">Indisponível</span>
               {% else %}
                 <span class="badge badge-success">Disponível</span>

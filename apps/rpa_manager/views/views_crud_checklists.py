@@ -58,7 +58,7 @@ class ChecklistFormView(GroupRequiredMixin, View):
         except:
             ultima_guarnicao = None
             
-        dados_checklist = { 'piloto': remote_pilot,
+        dados_checklist = { 'remote_pilot': remote_pilot,
                            'guarnicao': ultima_guarnicao, }
             
         checklist_form = ChecklistForm(initial=dados_checklist)
@@ -73,7 +73,7 @@ class ChecklistFormView(GroupRequiredMixin, View):
     def post(self, request):
         
         dados_checklist = {
-            'piloto': request.user,
+            'remote_pilot': request.user,
         }
         
         checklist_form = ChecklistForm(request.POST, initial=dados_checklist)
@@ -104,17 +104,34 @@ class EditarChecklistView(GroupRequiredMixin, UpdateView):
     context_object_name = 'form'
     group_required = ['profile:rpa_advanced']
     
-    def form_valid(self, form):
-        checklist = form.save(commit=False)
-        aircraft = checklist.aircraft
+    def get_context_data(self, **kwargs):        
+        context = super().get_context_data(**kwargs)
+        checklist = self.get_object()
+        
+        images = ChecklistImages.objects.filter(checklist=checklist)
+        image_urls = [image.imageChecklist.url for image in images]
+        context['image_urls'] = image_urls
+        context['images'] = images
 
+        return context
+    
+    def form_valid(self, form):
+        obj = self.get_object()
+        checklist = form.save(commit=False)
+        
+        new_aircraft = form.cleaned_data['aircraft']
+        if new_aircraft != obj.aircraft:
+            messages.error(self.request, 'Você não pode mudar a aeronave durante a edição.')
+            return self.form_invalid(form)
+        
+        aircraft = checklist.aircraft
         ultimo_checklist = Checklist.objects.filter(aircraft=aircraft).order_by('-date', '-time').first()
         if checklist == ultimo_checklist:
             historico = AicraftHistoric.objects.filter(aircraft=aircraft).order_by('-date').first()
             if historico:
-                historico.alteracoes = checklist.alteracoes
-                historico.num_helices = checklist.num_helices
-                historico.num_baterias = checklist.num_baterias
+                historico.changes = checklist.changes
+                historico.num_propellers = checklist.num_propellers
+                historico.num_batteries = checklist.num_batteries
                 historico.save()
             
         images = self.request.FILES.getlist('imagens')
@@ -125,18 +142,6 @@ class EditarChecklistView(GroupRequiredMixin, UpdateView):
         
         return super().form_valid(form)
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        checklist = self.get_object()
-
-        images = ChecklistImages.objects.filter(checklist=checklist)
-        
-        image_urls = [image.imageChecklist.url for image in images]
-        context['image_urls'] = image_urls
-        context['images'] = images
-
-        return context
     
     
 class DeletarChecklistView(PermissionRequiredMixin, DeleteView):

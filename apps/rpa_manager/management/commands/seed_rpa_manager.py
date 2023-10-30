@@ -143,71 +143,104 @@ class Command(BaseCommand):
                 )
         
         def generateMilitaries():
-            entity = Entity.objects.create(
+            if Military.objects.count() == 0:
+                entity = Entity.objects.create(
                 name="PMPB",
-                father=None,
+                father='Estado',
                 child_exists=False,
                 category=1,
                 hierarchy=9,
                 code="000"
-            )
+                )
             
-            military1 = Military.objects.create(
-                name="Zé do Biu",
-                entity=Entity.objects.get(name="PMPB"),
-                nickname="Cb José",
-                admission_date="2000-10-26",  
-                birthdate="1980-01-01",  
-                register="1234567",  
-                activity_status="Ativo",  
-                cpf="123.456.789-00",  
-                genre="M",  
-                email="ze@example.com",  
-                father="Pai do Zé", 
-                mather="Mãe do Zé",  
-                place_of_birth="Cidade de Exemplo",  
-                marital_status="Solteiro(a)",  
-                phone="(83) 1234-5678",  
-                address="Rua Exemplo",  
-                number="123",  
-                complement="Apto 456",  
-                district="Bairro Exemplo",  
-                city="Cidade Exemplo",  
-                state="PB",  
-                zipcode="58000-000",  
-            )
-            
-            military2 = Military.objects.create(
-                name="Henrique Elias",
-                entity=Entity.objects.get(name="PMPB"),
-                nickname="Sgt Roberto",
-                admission_date="2000-10-26",  
-                birthdate="1980-01-01",  
-                register="1234567",  
-                activity_status="Ativo",  
-                cpf="123.456.789-00",  
-                genre="M",  
-                email="ze@example.com",  
-                father="Pai do Zé", 
-                mather="Mãe do Zé",  
-                place_of_birth="Cidade de Exemplo",  
-                marital_status="Solteiro(a)",  
-                phone="(11) 1234-5678",  
-                address="Rua Exemplo",  
-                number="123",  
-                complement="Apto 456",  
-                district="Bairro Exemplo",  
-                city="Cidade Exemplo",  
-                state="PB",  
-                zipcode="58000-000",  
-            )
+                military1 = Military.objects.create(
+                    name="Zé do Biu",
+                    entity=Entity.objects.get(name="PMPB"),
+                    nickname="Cb José",
+                    admission_date="2000-10-26",  
+                    birthdate="1980-01-01",  
+                    register="1234567",  
+                    activity_status="Ativo",  
+                    cpf="123.456.789-00",  
+                    genre="M",  
+                    email="ze@example.com",  
+                    father="Pai do Zé", 
+                    mather="Mãe do Zé",  
+                    place_of_birth="Cidade de Exemplo",  
+                    marital_status="Solteiro(a)",  
+                    phone="(83) 1234-5678",  
+                    address="Rua Exemplo",  
+                    number="123",  
+                    complement="Apto 456",  
+                    district="Bairro Exemplo",  
+                    city="Cidade Exemplo",  
+                    state="PB",  
+                    zipcode="58000-000",  
+                )
+                
+                military2 = Military.objects.create(
+                    name="Henrique Elias",
+                    entity=Entity.objects.get(name="PMPB"),
+                    nickname="Sgt Roberto",
+                    admission_date="1980-10-26",  
+                    birthdate="1980-01-01",  
+                    register="7412589",  
+                    activity_status="Ativo",  
+                    cpf="123.456.789-01",  
+                    genre="M",  
+                    email="roro@example.com",  
+                    father="Pai do Roberto", 
+                    mather="Mãe do Roberto",  
+                    place_of_birth="Cidade de Exemplo",  
+                    marital_status="Solteiro(a)",  
+                    phone="(11) 1234-7856",  
+                    address="Rua Exemplo",  
+                    number="123",  
+                    complement="Apto 456",  
+                    district="Bairro Exemplo",  
+                    city="Cidade Exemplo",  
+                    state="PB",  
+                    zipcode="58000-000",  
+                )
 
         
+        def generateRiskAssessementData():
+            if Situation.objects.count() == 0:
+                situation1 = Situation.objects.create(
+                    situation="Perda de Link"
+                )
+                situation2 = Situation.objects.create(
+                    situation="Ventos de X nós"
+                )
+                situation3 = Situation.objects.create(
+                    situation="Aeronaves Tripuladas"
+            )
+            
+            probabilities = ["1", "2", "3", "4", "5"]
+            severeties = ["A", "B", "C", "D", "E",]
+            
+            noProbabilities = Probability.objects.count() == 0
+            noSeverities = Severity.objects.count() == 0
+            
+            if noProbabilities and noSeverities:
+                for probability in probabilities:
+                    Probability.objects.create(
+                        probability=probability
+                    )
+
+                for severity in severeties:
+                    Severity.objects.create(
+                        severity=severity
+                    )
+
         def populateModelsFieldsByList():
             generateCitiesByList(cities_pb)
             generateEntitiesOfFlighs(entities)
             generateNatureOfFlighs(natures_of_flights)
             generateAircrafts()
             generateMilitaries()
+            generateRiskAssessementData()
+            
+            print("As seeds foram implantadas com sucesso!")
             
         populateModelsFieldsByList()

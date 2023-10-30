@@ -18,6 +18,7 @@ class AircraftsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        
         addPlaceholder(self, 'prefix', 'Insira o prefixo da aeronave' )
         addPlaceholder(self, 'model', 'Insira o modelo da aeronave' )
         addPlaceholder(self, 'brand', 'Insira a marca da aeronave' )

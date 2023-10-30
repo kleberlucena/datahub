@@ -54,10 +54,10 @@
           <tbody>
             {% for incidente in incidentes %}
             <tr>
-              <td>{{ incidente.operacao }}</td>
-              <td>{{ incidente.aeronave }}</td>
-              <td>{{ incidente.ponto_de_referencia }}</td>
-              <td data-sort='YYYYMMDD'>{{ incidente.data | date:"d/m/Y" }}</td>
+              <td>{{ incidente.operation }}</td>
+              <td>{{ incidente.aircraft }}</td>
+              <td>{{ incidente.reference_point }}</td>
+              <td data-sort='YYYYMMDD'>{{ incidente.date | date:"d/m/Y" }}</td>
 
               {% if request.user|has_group:'profile:rpa_view' or request.user|has_group:'profile:rpa_basic'%}
                 <td>

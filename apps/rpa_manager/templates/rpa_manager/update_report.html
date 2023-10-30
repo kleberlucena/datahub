@@ -43,53 +43,53 @@
       </div>
       <form class="p-3" method='post' enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.militar }}
+        {{ form.remote_pilot }}
         <div class="row">
           <div class="col-md-6">
-            <label for="id_titulo" class="field_label">Título</label>
-            {{ form.titulo }}
-            {{ form.titulo.errors }}
+            <label for="id_title" class="field_label">Título</label>
+            {{ form.title }}
+            {{ form.title.errors }}
           </div>
           <div class="col-md-6">
-            <label for="id_piloto_observador" class="field_label">Piloto Observador</label>
-            {{ form.piloto_observador }}
-            {{ form.piloto_observador.errors }}
+            <label for="id_observer_pilot" class="field_label">Piloto Observador</label>
+            {{ form.observer_pilot }}
+            {{ form.observer_pilot.errors }}
           </div>
         </div>
         <div class="row">
           <div class="col-md-6">
-            <label for="id_quem_autorizou" class="field_label">Quem Autorizou</label>
-            {{ form.quem_autorizou }}
-            {{ form.quem_autorizou.errors }}
+            <label for="id_who_authorized" class="field_label">Quem Autorizou</label>
+            {{ form.who_authorized }}
+            {{ form.who_authorized.errors }}
           </div>
           <div class="col-md-6">
-            <label for="id_quem_solicitou" class="field_label">Quem Solicitou</label>
-            {{ form.quem_solicitou }}
-            {{ form.quem_solicitou.errors }}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <label for="id_data" class="field_label">Data inicial</label>
-            {{ form.data }}
-            {{ form.data.errors }}
-          </div>
-          <div class="col-md-6">
-            <label for="id_data_final" class="field_label">Data final</label>
-            {{ form.data_final }}
-            {{ form.data_final.errors }}
+            <label for="id_who_requested" class="field_label">Quem Solicitou</label>
+            {{ form.who_requested }}
+            {{ form.who_requested.errors }}
           </div>
         </div>
         <div class="row">
           <div class="col-md-6">
-            <label for="id_horario_inicial" class="field_label">Horário Inicial</label>
-            {{ form.horario_inicial }}
-            {{ form.horario_inicial.errors }}
+            <label for="id_date" class="field_label">Data inicial</label>
+            {{ form.date }}
+            {{ form.date.errors }}
           </div>
           <div class="col-md-6">
-            <label for="id_horario_final" class="field_label">Horário Final</label>
-            {{ form.horario_final }}
-            {{ form.horario_final.errors }}
+            <label for="id_final_date" class="field_label">Data final</label>
+            {{ form.final_date }}
+            {{ form.final_date.errors }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="id_initial_time" class="field_label">Horário Inicial</label>
+            {{ form.initial_time }}
+            {{ form.initial_time.errors }}
+          </div>
+          <div class="col-md-6">
+            <label for="id_final_time" class="field_label">Horário Final</label>
+            {{ form.final_time }}
+            {{ form.final_time.errors }}
           </div>
         </div>
         <div class="row">
@@ -106,15 +106,15 @@
         </div>
         <div class="row">
           <div class="col-md-6">
-            <label for="id_local" class="field_label">Local</label>
-            {{ form.local }}
-            {{ form.local.errors }}
+            <label for="id_location" class="field_label">Local</label>
+            {{ form.location }}
+            {{ form.location.errors }}
           </div>
           <div class="col-md-6">
-            <label for="id_arquivo_solicitacao" class="field_label">Arquivo Solicitação do DECEA</label>
+            <label for="id_decea_request_file" class="field_label">Arquivo Solicitação do DECEA</label>
             <button type="button" class="btn btn-outline-primary ml-3 mt-6" id="fileButton">Selecionar Arquivo</button>
-            {{ form.arquivo_solicitacao }}
-            {{ form.arquivo_solicitacao.errors }}
+            {{ form.decea_request_file }}
+            {{ form.decea_request_file.errors }}
             <p id="fileName"></p>
           </div>
         </div>
@@ -125,46 +125,46 @@
             {{ form.num_sarpas.errors }}
           </div>
           <div class="col-md-6">
-            <label for="id_entidade_apoiada" class="field_label">Entidade Apoiada</label>
-            {{ form.entidade_apoiada }}
-            {{ form.entidade_apoiada.errors }}
+            <label for="id_entity_support" class="field_label">Entidade Apoiada</label>
+            {{ form.entity_support }}
+            {{ form.entity_support.errors }}
           </div>
         </div>
         <div class="row">
           <div class="col-md-6">
-            <label for="id_natureza_de_voo" class="field_label">Natureza de Voo</label>
-            {{ form.natureza_de_voo }}
-            {{ form.natureza_de_voo.errors }}
+            <label for="id_flight_nature" class="field_label">Natureza de Voo</label>
+            {{ form.flight_nature }}
+            {{ form.flight_nature.errors }}
           </div>
           <div class="col-md-6">
-            <label for="id_tipo_de_operacao" class="field_label">Tipo de Operação</label>
-            {{ form.tipo_de_operacao }}
-            {{ form.tipo_de_operacao.errors }}
+            <label for="id_type_of_operation" class="field_label">Tipo de Operação</label>
+            {{ form.type_of_operation }}
+            {{ form.type_of_operation.errors }}
           </div>
         </div>
         <div class="row">
           <div class="col-md-6">
-            <label for="id_aeronave" class="field_label">Aeronave</label>
-            {{ form.aeronave }}
-            {{ form.aeronave.errors }}
+            <label for="id_aircraft" class="field_label">Aeronave</label>
+            {{ form.aircraft }}
+            {{ form.aircraft.errors }}
           </div>
           <div class="col-md-6">
-            <label for="id_numero_ficha_oc" class="field_label">Número da ficha de ocorrência policial</label>
-            {{ form.numero_ficha_oc }}
-            {{ form.numero_ficha_oc.errors }}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <label for="id_relato_da_missao" class="field_label">Relato da operação</label>
-            {{ form.relato_da_missao }}
-            {{ form.relato_da_missao.errors }}
+            <label for="id_police_incident_number" class="field_label">Número da ficha de ocorrência policial</label>
+            {{ form.police_incident_number }}
+            {{ form.police_incident_number.errors }}
           </div>
         </div>
         <div class="row">
           <div class="col-md-12">
-            <label for="id_relato_da_missao" class="field_label">Encerrar operação? <small>marque a caixa ao lado:</small></label>
-            {{ form.status_missao }}
+            <label for="id_operation_report" class="field_label">Relato da operação</label>
+            {{ form.operation_report }}
+            {{ form.operation_report.errors }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <label for="id_completed" class="field_label">Encerrar operação? <small>marque a caixa ao lado:</small></label>
+            {{ form.completed }}
           </div>
         </div>
     </div>

@@ -8,6 +8,6 @@ def update_titulo_aeronave(sender, instance, **kwargs):
     historicos = AicraftHistoric.objects.filter(aircraft=instance)
     
     for historico in historicos:
-        historico.titulo_aeronave = instance.prefixo
+        historico.aircraft_title = instance.prefix
         historico.save()
         

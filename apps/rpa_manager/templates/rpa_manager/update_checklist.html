@@ -42,7 +42,7 @@
       margin-top: 1rem;
   }
   
-  #id_alteracoes {
+  #id_changes {
       margin-top: 20px;
   }
   
@@ -221,73 +221,70 @@
       </div>
       <form  class="p-3" method='post' enctype="multipart/form-data">
         {% csrf_token %}
-
-        {% comment %} Esta variavel verifica se o form esta sendo editado e carrega {% endcomment %}
-        {% comment %} a lista de itens a serem avaliados {% endcomment %}
-        <p class="edicao_checklist">{{ edicao_checklist }}</p> 
-
         <div class="container formulario_checklist_parte1">
-          {{ form.piloto }}
-          <label for="id_aircrart">Aeronave</label>
+          {{ form.remote_pilot }}
+          <label for="id_aircraft">Aeronave</label>
           Selecione uma aeronave para iniciar o checklist
-          {{ form.aircarft }}
-          <input type="hidden" name="aircrart_id" value="{{ form.aircraft.value }}">
-          <label for="id_num_helices">Número de hélices</label>
-          {{ form.num_helices }}
-          <label for="id_num_baterias">Número de baterias</label>
-          {{ form.num_baterias }}
+          {{ form.aircraft }}
+          <input type="hidden" name="aircraft_id" value="{{ form.aircraft.value }}">
+          <label for="id_num_propellers">Número de hélices</label>
+          {{ form.num_propellers }}
+          <label for="id_num_batteries">Número de baterias</label>
+          {{ form.num_batteries }}
         </div>
 
-        <h2 class="formulario_checklist_titulo_selecao">Marcar itens que estão Ok </h2>
+        <blockquote class="quote-info mt-3">
+          <h5>Dica!</h5>
+          <p>Marcar os itens que estão ok.</p>  
+        </blockquote>
+
         <div class="formulario_checklist_selecao_itens ">
           <div class="container formulario_checklist_parte2">
-            <label for="id_baterias_carregadas">Baterias carregadas</label>
-            {{ form.baterias_carregadas }}
-            <label for="id_bateria_controle_carregada">Bateria controle carregada</label>
-            {{ form.bateria_controle_carregada }}
-            <label for="id_corpo">Corpo/Shell</label>
-            {{ form.corpo }}
-            <label for="id_hastes_motor">Hastes</label>
-            {{ form.hastes_motor }}
-            <label for="id_helices">Hélices</label>
-            {{ form.helices }}
+            <label for="id_batteries_loaded">Nível baterias</label>
+            {{ form.batteries_loaded }}
+            <label for="id_control_battery_loaded">Nível bateria controle carregada</label>
+            {{ form.control_battery_loaded }}
+            <label for="id_body">Corpo/Shell</label>
+            {{ form.body }}
+            <label for="id_engine_rods">Hastes</label>
+            {{ form.engine_rods }}
+            <label for="id_engine_rods">Hélices</label>
+            {{ form.engine_rods }}
             <label for="id_gimbal">Gimbal</label>
             {{ form.gimbal }}
-            <label for="id_holofote">Holofote</label>
-            {{ form.holofote }}
-            <label for="id_auto_falante">Auto-falante</label>
-            {{ form.auto_falante }}
-            <label for="id_luz_estroboscopica">Luz Estroboscópica</label>
-            {{ form.luz_estroboscopica }}
-            <label for="id_cabos">Cabos</label>
-            {{ form.cabos }}
-            <label for="id_carregador">Carregador</label>
-            {{ form.carregador }}
+            <label for="id_spotlight">Holofote</label>
+            {{ form.spotlight }}
+            <label for="id_load_speaker">Auto-falante</label>
+            {{ form.load_speaker }}
+            <label for="id_stroboscopic_light">Luz Estroboscópica</label>
+            {{ form.stroboscopic_light }}
+            <label for="id_cables">Cabos</label>
+            {{ form.cables }}
+            <label for="id_charger">Carregador</label>
+            {{ form.charger }}
           </div>
 
           <div class="p-3 formulario_checklist_parte2 ">
-            <label for="id_fonte">Fonte de energia</label>
-            {{ form.fonte }}
             <label for="id_smart_controller">Smart controller</label>
             {{ form.smart_controller }}
-            <label for="id_controle">Controle remoto</label>
-            {{ form.controle }}
-            <label for="id_cartao_sd">Cartão SD</label>
-            {{ form.cartao_sd }}
-            <label for="id_IMU">IMU</label>
-            {{ form.IMU }}
+            <label for="id_controller">Controle remoto</label>
+            {{ form.controller }}
+            <label for="id_sd_card">Cartão SD</label>
+            {{ form.sd_card }}
+            <label for="id_imu">IMU</label>
+            {{ form.imu }}
             <label for="id_compass">Compass/Bússola</label>
             {{ form.compass }}
-            <label for="id_sinal_transmissao">Sinal de transmissão</label>
-            {{ form.sinal_transmissao }}
-            <label for="id_sistema_rtk_ppk">Sistema RTK PPK</label>
-            {{ form.sistema_rtk_ppk }}
-            <label for="id_paraquedas">Paraquedas</label>
-            {{ form.paraquedas }}
-            <label for="id_sinal_de_video">Sinal de vídeo</label>
-            {{ form.sinal_de_video }}
-            <label for="id_telemetria">Telemetria</label>
-            {{ form.telemetria }}
+            <label for="id_signal_transmission">Sinal de transmissão</label>
+            {{ form.signal_transmission }}
+            <label for="id_system_rtk_ppk">Sistema RTK PPK</label>
+            {{ form.system_rtk_ppk }}
+            <label for="id_parachute">Paraquedas</label>
+            {{ form.parachute }}
+            <label for="id_video_signal">Sinal de vídeo</label>
+            {{ form.video_signal }}
+            <label for="id_telemetry">Telemetria</label>
+            {{ form.telemetry }}
           </div>
         </div>
 
@@ -320,11 +317,14 @@
         </div>
 
         <div class="container formulario_checklist_alteracoes">
-          <h4 class="formulario_checklist_titulo_selecao">Caso algum item não esteja ok, descrever abaixo as
-            alterações:</h4>
-          <label class="container_alteracoes_titulo" for="id_alteracoes">Alterações</label>
+          <blockquote class="quote-info mt-3">
+            <h5>Dica!</h5>
+            <p>Caso algum item não esteja ok, descrever abaixo as
+              alterações:</p>  
+          </blockquote>
+          <label class="container_alteracoes_titulo" for="id_changes">Alterações</label>
           <input type="button" class="btn btn-outline-danger ml-3 botao_limpar" value="Limpar" onclick="limpaAlteracoes();" /><br>
-          {{ form.alteracoes }}
+          {{ form.changes }}
         </div>
         <div class="mt-3">
           {{ form.errors }}
@@ -341,17 +341,37 @@
 <!-- javascripts -->
 {% block js %}
   <!-- DataTables  & Plugins -->
-
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  
   <script>
     let checkboxes = document.querySelectorAll('.checklist_item');
-    let textAreaContent = document.querySelector("#id_alteracoes");
+    let textAreaContent = document.querySelector("#id_changes");
     let listaDeAlteracoes = []
 
+    const aeronaveSelect = document.getElementById("id_aircarft");
+
+    const newOptions = [
+        { value: "", text: "Selecione uma aeronave" },
+    ];
+    
+    newOptions.forEach(option => {
+        const newOption = document.createElement("option");
+        newOption.value = option.value;
+        newOption.textContent = option.text;
+
+        // Define a opção padrão como selecionada
+        if (option.value === "") {
+          newOption.selected = true;
+        }
+
+        aeronaveSelect.appendChild(newOption);
+    });
 
     checkboxes.forEach(function(checkbox) {
         checkbox.addEventListener('change', function() {
             if(!checkbox.checked) {
-                listaDeAlteracoes.push(checkbox.previousElementSibling.textContent);
+                listaDeAlteracoes.push(`Alteração no item - ${checkbox.previousElementSibling.textContent}`);
+                console.log(listaDeAlteracoes)
                 adicionaTextoEmTextArea(listaDeAlteracoes);
             } else if(listaDeAlteracoes.includes(checkbox.previousElementSibling.textContent)) {
                 let indice =  listaDeAlteracoes.indexOf(checkbox.previousElementSibling.textContent);
@@ -376,46 +396,80 @@
         listaDeAlteracoes = [];
     }
   </script>
+
   <script>  
     $(document).ready(function() { 
-      $(".aeronave_escolha").on('change', function() {
-        let aeronave_selecionada = $(this).val();
-        console.log(aeronave_selecionada);
-        
-        if (aeronave_selecionada === '1') {
-            console.log("Aeronave 68 selecionada");
-            $('input[name="holofote"]').show();
-            $('label[for="id_holofote"]').show();
+      const main_container_sup = document.querySelector('.main_container_sup');
+      const main_container_options = document.querySelector('.main_container_options');
+      main_container_sup.classList.add('hidden');
+      main_container_options.classList.add('hidden');
 
-            $('input[name="auto_falante"]').show();
-            $('label[for="id_auto_falante"]').show();
-
-            $('input[name="luz_estroboscopica"]').show();
-            $('label[for="id_luz_estroboscopica"]').show();
-
-            $('input[name="smart_controller"]').show();
-            $('label[for="id_smart_controller"]').show();
-
-            $('input[name="controle"]').hide();
-            $('label[for="id_controle"]').hide();
+      $('.aircraft_escolha').select2();
+      $(".aircraft_escolha").on('change', function() {
+        let aeronave_selecionada = $(this).find("option:selected").text();
+        if(aeronave_selecionada !== "") {
+          main_container_sup.classList.remove('hidden');
+          main_container_options.classList.remove('hidden');
         } else {
-            $('input[name="holofote"]').hide();
-            $('label[for="id_holofote"]').hide();
+          main_container_sup.classList.add('hidden');
+          main_container_options.classList.add('hidden');
+        }
 
-            $('input[name="auto_falante"]').hide();
-            $('label[for="id_auto_falante"]').hide();
+        let historico_checklist_dict_json = JSON.parse('{{ historico_checklist_dict_json|escapejs }}');
+        
+        function transformInBooleanValues(notTransformedJson) {
+          let objeto = notTransformedJson;
 
-            $('input[name="luz_estroboscopica"]').hide();
-            $('label[for="id_luz_estroboscopica"]').hide();
+          for (let chave in notTransformedJson) {
+            if (objeto.hasOwnProperty(chave)) {
+              let subObjeto = objeto[chave];
+        
+              for (let subChave in subObjeto) {
+                if (subObjeto.hasOwnProperty(subChave)) {
+                  let valor = subObjeto[subChave];
+        
+                  if (valor === 'False') {
+                    subObjeto[subChave] = false;
+                  } else if (valor === 'True') {
+                    subObjeto[subChave] = true;
+                  }
+                }
+              }
+            }
+          }
+          return objeto;
+        }
 
-            $('input[name="smart_controller"]').hide();
-            $('label[for="id_smart_controller"]').hide();
+        let historico_checklist_json = transformInBooleanValues(historico_checklist_dict_json);
+        let dadosAeronave = historico_checklist_json[aeronave_selecionada];
 
-            $('input[name="controle"]').show();
-            $('label[for="id_controle"]').show();
+        if(dadosAeronave) {
+          $('input[name="num_propellers"]').val(dadosAeronave.num_propellers);
+          $('input[name="num_batteries"]').val(dadosAeronave.num_batteries); 
+          $('input[name="batteries_loaded"]').prop('checked', dadosAeronave.batteries_loaded);
+          $('input[name="control_battery_loaded"]').prop('checked', dadosAeronave.control_battery_loaded);
+          $('input[name="body"]').prop('checked', dadosAeronave.body);
+          $('input[name="engine_rods"]').prop('checked', dadosAeronave.engine_rods);
+          $('input[name="propellers"]').prop('checked', dadosAeronave.propellers);
+          $('input[name="gimbal"]').prop('checked', dadosAeronave.gimbal);
+          $('input[name="spotlight"]').prop('checked', dadosAeronave.spotlight);
+          $('input[name="load_speaker"]').prop('checked', dadosAeronave.spotlight);
+          $('input[name="stroboscopic_light"]').prop('checked', dadosAeronave.stroboscopic_light);
+          $('input[name="cables"]').prop('checked', dadosAeronave.cables);
+          $('input[name="charger"]').prop('checked', dadosAeronave.cables);
+          $('input[name="smart_controller"]').prop('checked', dadosAeronave.smart_controller);
+          $('input[name="controller"]').prop('checked', dadosAeronave.controller);
+          $('input[name="sd_card"]').prop('checked', dadosAeronave.sd_card);
+          $('input[name="imu"]').prop('checked', dadosAeronave.imu);
+          $('input[name="compass"]').prop('checked', dadosAeronave.compass);
+          $('input[name="signal_transmission"]').prop('checked', dadosAeronave.signal_transmission);
+          $('input[name="system_rtk_ppk"]').prop('checked', dadosAeronave.system_rtk_ppk);
+          $('input[name="video_signal"]').prop('checked', dadosAeronave.video_signal);
+          $('input[name="telemetry"]').prop('checked', dadosAeronave.telemetry);
+          $('input[name="parachute"]').prop('checked', dadosAeronave.parachute);
+          $('textarea[name="changes"]').val(dadosAeronave.changes);
         }
       });
-        
     });
   </script>
 
@@ -439,10 +493,8 @@
   
       fileList.innerHTML = fileListText;
   
-      // Remove previous images from the tempImagesView
       tempImagesView.innerHTML = '';
   
-      // Display image previews
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const reader = new FileReader();
@@ -458,7 +510,6 @@
       }
     });
   </script>
-
   <script>
     // Capturando todos os elementos com a classe 'imagem-checklist'
     const imagensIncidente = document.querySelectorAll('.imagem-checklist');

@@ -59,14 +59,14 @@
           {% for bateria in baterias %}
           <tr>
             <td {% if bateria.id in ids_baterias_nivel_critico %} class="critical_value" {% endif %}>
-              <span> {{ bateria.numeracao }} </span>
+              <span> {{ bateria.number }} </span>
             </td>
-            <td>{{ bateria.ciclos_maximo }}</td>
-            <td> {{ bateria.num_ciclos }}</td>
-            <td>{{ bateria.ciclos_maximo.recommended_cicles }}</td>
-            <td>{{ bateria.ciclos_maximo.alert_cicles }}</td>
-            <td>{{ bateria.ciclos_maximo.critical_cicles }}</td>
-            <td>{{ bateria.aeronave }}</td>
+            <td>{{ bateria.maximum_cicles }}</td>
+            <td> {{ bateria.num_cicles }}</td>
+            <td>{{ bateria.maximum_cicles.recommended_cicles }}</td>
+            <td>{{ bateria.maximum_cicles.alert_cicles }}</td>
+            <td>{{ bateria.maximum_cicles.critical_cicles }}</td>
+            <td>{{ bateria.aircraft }}</td>
             <td>
               <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
                 <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown"

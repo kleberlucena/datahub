@@ -76,10 +76,10 @@ class UpdateAllBateriasView(View):
         return render(request, self.template_name, {'baterias': baterias})
 
     def post(self, request):
-        for bateria_id, num_ciclos in request.POST.items():
+        for bateria_id, num_cicles in request.POST.items():
             if bateria_id.isdigit():
                 bateria = Battery.objects.get(id=int(bateria_id))
-                bateria.num_ciclos = int(num_ciclos)
+                bateria.num_cicles = int(num_cicles)
                 bateria.save()
 
         messages.success(self.request, f'Checklist criado com sucesso!')

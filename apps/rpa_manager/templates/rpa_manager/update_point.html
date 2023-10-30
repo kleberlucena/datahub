@@ -103,34 +103,34 @@
           {% csrf_token %}
           <div class="form-row">
             <div class="form-group col-md-12 mb-0">
-            <label for="id_operacao" class="title_operacao">Operação</label>
-            {{ form.operacao }}
-            {{ form.operacao.errors }}
+            <label for="id_operation" class="title_operacao">Operação</label>
+            {{ form.operation }}
+            {{ form.operation.errors }}
             <label for="id_is_temporary" class="title_is_temporary mt-3">O ponto é temporário? <small>Se sim, marque a caixa ao lado:</small> </label>
             {{ form.is_temporary }}
             {{ form.is_temporary.errors }}
             <h5 class="evento">Duração do evento:</h5>
             <div class="row">
               <div class="col-md-6" style="position: relative">
-                {{ form.date_initial }}
-                {{ form.date_initial.errors }}
+                {{ form.dinitial_date }}
+                {{ form.dinitial_date.errors }}
                 <div class="dateTimeOptions">
                   <input type="date" id="dateInitialInput">
                   <input type="time" id="timeInitialInput">
                 </div>
               </div>
               <div class="col-md-6" style="position: relative">
-                {{ form.date_final }}
-                {{ form.date_final.errors }}
+                {{ form.final_date }}
+                {{ form.final_date.errors }}
                 <div class="dateTimeOptions">
                   <input type="date" id="dateFinalInput">
                   <input type="time" id="timeFinalInput">
                 </div>
               </div>
             </div>
-            <label for="id_descricao" class="title_descricao mt-1" style="display: block">Descrição</label>
-            {{ form.descricao }}
-            {{ form.descricao.errors }}
+            <label for="id_description" class="title_descricao mt-1" style="display: block">Descrição</label>
+            {{ form.description }}
+            {{ form.description.errors }}
             <label for="id_latitude" class="title_latitude mt-1">Latitude</label>
             {{ form.latitude }}
             {{ form.latitude.errors }}

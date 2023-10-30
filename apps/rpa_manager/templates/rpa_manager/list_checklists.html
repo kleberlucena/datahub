@@ -57,10 +57,10 @@
         <tbody>
           {% for checklist in checklists %}
           <tr>
-            <td>{{ checklist.piloto }}</td>
-            <td>{{ checklist.aeronave }}</td>
-            <td data-sort='YYYYMMDD'>{{ checklist.data | date:"d/m/Y" }}</td>
-            <td>{{ checklist.horario }}</td>
+            <td>{{ checklist.remote_pilot }}</td>
+            <td>{{ checklist.aircraft }}</td>
+            <td data-sort='YYYYMMDD'>{{ checklist.date | date:"d/m/Y" }}</td>
+            <td>{{ checklist.time }}</td>
 
             {% if request.user|has_group:'profile:rpa_view' or request.user|has_group:'profile:rpa_basic' %}
               <td>

@@ -57,13 +57,13 @@
           <tbody>
             {% for relatorio in relatorios %}
             <tr>
-              <td>{{ relatorio.titulo }}</td>
-              <td>{{ relatorio.militar }}</td>
-              <td data-sort='YYYYMMDD'>{{ relatorio.data|date:"d/m/Y" }}</td>
-              <td>{{ relatorio.horario_inicial }}</td>
-              <td>{{ relatorio.local }}</td>
-              <td>{{ relatorio.aeronave }}</td>
-              <td>{{ relatorio.entidade_apoiada }}</td>
+              <td>{{ relatorio.title }}</td>
+              <td>{{ relatorio.remote_pilot }}</td>
+              <td data-sort='YYYYMMDD'>{{ relatorio.date|date:"d/m/Y" }}</td>
+              <td>{{ relatorio.initial_time }}</td>
+              <td>{{ relatorio.location }}</td>
+              <td>{{ relatorio.aircraft }}</td>
+              <td>{{ relatorio.entity_support }}</td>
 
               {% if request.user|has_group:'profile:rpa_view' or request.user|has_group:'profile:rpa_basic' %}
                 <td>

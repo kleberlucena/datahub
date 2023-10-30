@@ -66,7 +66,7 @@
   <form method="get">
     {% csrf_token %}
     <div class="p-3 aircraft_selection">
-      {{ form.aeronave }}
+      {{ form.aircraft }}
       <button type="submit" class="btn btn-outline-info selection_btn" id="fileButton">Filtrar</button>
     </div>
   </form>
@@ -90,16 +90,16 @@
 
           {% for historico in aircraft_historic %}
           <tr>
-            {% if historico.aeronave == None %}
+            {% if historico.aircraft == None %}
             <td>Desativada</td>
             {% else %}
             <td>Em atividade</td>
             {% endif %}
-            <td>{{ historico.titulo_aeronave }}</td>
-            <td data-sort='YYYYMMDD'>{{ historico.data | date:'d/m/Y'}}</td>
-            <td>{{ historico.num_helices }}</td>
-            <td>{{ historico.num_baterias }}</td>
-            <td>{{ historico.alteracoes }}</td>
+            <td>{{ historico.aircraft_title }}</td>
+            <td data-sort='YYYYMMDD'>{{ historico.date | date:'d/m/Y'}}</td>
+            <td>{{ historico.num_propellers }}</td>
+            <td>{{ historico.num_batteries }}</td>
+            <td>{{ historico.changes }}</td>
           </tr>
           {% endfor %}
 
