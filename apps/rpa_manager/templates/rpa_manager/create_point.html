@@ -107,33 +107,33 @@
           {% csrf_token %}
           <div class="form-row">
             <div class="form-group col-md-12 mb-0">
-            <label for="id_operacao" class="title_operacao">Operação</label>
-            {{ form.operacao }}
-            {{ form.operacao.errors }}
+            <label for="id_operation" class="title_operacao">Operação</label>
+            {{ form.operation }}
+            {{ form.operation.errors }}
             <label for="id_is_temporary" class="title_is_temporary mt-3">O ponto é temporário? <small>Se sim, marque a caixa ao lado:</small> </label>
             {{ form.is_temporary }}
             {{ form.is_temporary.errors }}
             <label for="#" id="evento">Duração do evento</label>
             <div class="row">
-              <div class="input-group date col-md-6" id="datetimepicker_date_initial" data-target-input="nearest">
-                {{ form.date_initial }}
-                {{ form.date_initial.errors }}
-                <div class="input-group-append" data-target="#datetimepicker_date_initial" data-toggle="datetimepicker">
+              <div class="input-group date col-md-6" id="datetimepicker_initial_date" data-target-input="nearest">
+                {{ form.initial_date }}
+                {{ form.initial_date.errors }}
+                <div class="input-group-append" data-target="#datetimepicker_initial_date" data-toggle="datetimepicker">
                   <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                 </div>
               </div>
-              <div class="input-group date col-md-6" id="datetimepicker_date_final" data-target-input="nearest">
+              <div class="input-group date col-md-6" id="datetimepicker_final_date" data-target-input="nearest">
                 <br>
-                {{ form.date_final }}
-                {{ form.date_final.errors }}
-                <div class="input-group-append" data-target="#datetimepicker_date_final" data-toggle="datetimepicker">
+                {{ form.final_date }}
+                {{ form.final_date.errors }}
+                <div class="input-group-append" data-target="#datetimepicker_final_date" data-toggle="datetimepicker">
                   <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                 </div>
               </div>
             </div>
-            <label for="id_descricao" class="title_descricao mt-1" style="display: block">Descrição</label>
-            {{ form.descricao }}
-            {{ form.descricao.errors }}
+            <label for="id_description" class="title_descricao mt-1" style="display: block">Descrição</label>
+            {{ form.description }}
+            {{ form.description.errors }}
             <label for="id_latitude" class="title_latitude mt-1">Latitude</label>
             {{ form.latitude }}
             {{ form.latitude.errors }}
@@ -163,37 +163,37 @@
 
   <script>
     const temporary = document.querySelector('#id_is_temporary');
-    const date_initial = document.querySelector('#id_date_initial');
-    const date_final = document.querySelector('#id_date_final');
-    const date_icon_initial = document.querySelector('#datetimepicker_date_initial');
-    const date_icon_final = document.querySelector('#datetimepicker_date_final');
+    const initial_date = document.querySelector('#id_initial_date');
+    const final_date = document.querySelector('#id_final_date');
+    const date_icon_initial = document.querySelector('#datetimepicker_initial_date');
+    const date_icon_final = document.querySelector('#datetimepicker_final_date');
     const evento = document.querySelector('#evento');
     evento.classList.add('hidden');
-    date_initial.classList.add('hidden');
-    date_final.classList.add('hidden');
+    initial_date.classList.add('hidden');
+    final_date.classList.add('hidden');
     date_icon_initial.classList.add('hidden');
     date_icon_final.classList.add('hidden');
     
     temporary.addEventListener('change', e => {
       if(e.target.checked) {
         evento.classList.remove('hidden');
-        date_initial.classList.remove('hidden');
-        date_final.classList.remove('hidden');
+        initial_date.classList.remove('hidden');
+        final_date.classList.remove('hidden');
         date_icon_initial.classList.remove('hidden');
         date_icon_final.classList.remove('hidden');
         evento.classList.add('visible');
       } else {
         evento.classList.remove('visible');
-        date_initial.classList.remove('visible');
-        date_final.classList.remove('visible');
+        initial_date.classList.remove('visible');
+        final_date.classList.remove('visible');
         date_icon_initial.classList.remove('visible');
         date_icon_final.classList.remove('visible');
         evento.classList.add('hidden');
-        date_initial.classList.add('hidden');
-        date_final.classList.add('hidden');
+        initial_date.classList.add('hidden');
+        final_date.classList.add('hidden');
         date_icon_initial.classList.add('hidden');
         date_icon_final.classList.add('hidden');
-        clearDates(date_initial, date_final);
+        clearDates(initial_date, final_date);
         }
     });
 
@@ -205,14 +205,14 @@
 
   <script>
     $(function () {
-      $('#datetimepicker_date_initial').datetimepicker({
+      $('#datetimepicker_initial_date').datetimepicker({
         format: 'YYYY-MM-DD HH:mm:ss',
         icons: {
           time: 'fa fa-clock',
         }
       });
 
-      $('#datetimepicker_date_final').datetimepicker({
+      $('#datetimepicker_final_date').datetimepicker({
         format: 'YYYY-MM-DD HH:mm:ss',
         icons: {
           time: 'fa fa-clock',

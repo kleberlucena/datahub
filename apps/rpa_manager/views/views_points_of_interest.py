@@ -44,13 +44,13 @@ class UpdatePointOfInterest(UpdateView):
     def get_initial(self):
         initial = super().get_initial()
 
-        date_initial = self.object.date_initial
-        date_final = self.object.date_final
+        date_initial = self.object.initial_date
+        date_final = self.object.final_date
         
         if date_initial and date_final:
             tz = timezone.pytz.timezone('America/Recife')
-            initial['date_initial'] = date_initial.astimezone(tz)
-            initial['date_final'] = date_final.astimezone(tz)
+            initial['initial_date'] = date_initial.astimezone(tz)
+            initial['final_date'] = date_final.astimezone(tz)
             return initial
         
         return

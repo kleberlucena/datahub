@@ -30,7 +30,7 @@ class IncidentesDetailView(GroupRequiredMixin, DetailView):
 
         images = IncidentImage.objects.filter(incident=incident)
         
-        image_urls = [image.imageIncidente.url for image in images]
+        image_urls = [image.imageIncident.url for image in images]
         context['image_urls'] = image_urls
         
         return context
@@ -61,7 +61,7 @@ class IncidentesCreateView(GroupRequiredMixin, CreateView):
         images = self.request.FILES.getlist('imagens')
         self.object = form.save()
         for image in images:
-           IncidentImage.objects.create(incident=self.object, imageIncidente=image)
+           IncidentImage.objects.create(incident=self.object, imageIncident=image)
 
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} criado com sucesso!')
         
@@ -86,7 +86,7 @@ class IncidentesUpdateView(GroupRequiredMixin, UpdateView):
         self.object = form.save()
 
         for image in images:
-            IncidentImage.objects.create(incident=self.object, imageIncidente=image)
+            IncidentImage.objects.create(incident=self.object, imageIncident=image)
 
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} editado com sucesso!')
         
@@ -99,7 +99,7 @@ class IncidentesUpdateView(GroupRequiredMixin, UpdateView):
 
         images = IncidentImage.objects.filter(incident=incident)
         
-        image_urls = [image.imageIncidente.url for image in images]
+        image_urls = [image.imageIncident.url for image in images]
         context['image_urls'] = image_urls
         context['images'] = images
         
@@ -107,8 +107,7 @@ class IncidentesUpdateView(GroupRequiredMixin, UpdateView):
     
     def dispatch(self, *args, **kwargs):
         incidente = self.get_object()
-        time_since_creation = timezone.now() - incidente.data
-        print(time_since_creation)
+        time_since_creation = timezone.now() - incidente.date
         if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
             messages.error(self.request, 'Não é possível editar este incidente após 24 horas.')
             return HttpResponseRedirect(self.success_url)

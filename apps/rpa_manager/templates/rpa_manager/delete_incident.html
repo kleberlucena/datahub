@@ -23,11 +23,11 @@
 {% block content %}
   <div class="card card-primary card-outline">
       <div class="card-header">
-        <h3 class="card-title">Deletar <strong>{{ object.operacao }}</strong> </h3>
+        <h3 class="card-title">Deletar <strong>{{ object.operation }}</strong> </h3>
       </div>
       <form class="p-3" method='post'>
         {% csrf_token %}
-        <p>Tem certeza que dejesar excluir?</p>
+        <p>Tem certeza que dejesar excluir?  <strong>{{ object }}</strong>?</p>
         <div class="mt-3">
           <button type="submit" class="btn btn-primary">Salvar</button>
           <a href="{{ request.META.HTTP_REFERER }}"> 

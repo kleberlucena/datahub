@@ -62,7 +62,7 @@ class CriarNovoRelatorioView(GroupRequiredMixin, CreateView):
         operation.save()
 
         aeronave = operation.aircraft
-        aeronave.em_uso = False
+        aeronave.in_use = False
         aeronave.save()
 
         form.instance.missao = operation

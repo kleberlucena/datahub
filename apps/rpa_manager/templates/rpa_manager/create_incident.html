@@ -75,32 +75,56 @@
 
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.piloto }}
+        {{ form.remote_pilot }}
         
-        <div class="ml-3 mr-3 mt-3">
-          <label for="id_operacao">Operação</label>
-          {{ form.operacao}}
-        </div>
-        <div class="ml-3 mr-3 mt-3">
-          <label for="id_operacao">Aeronave</label>
-          {{ form.aeronave}}
-        </div>
-        
-        <div class="ml-3 mr-3 mt-3">
-          <label for="id_operacao">Local</label>
-          {{ form.local}}
-        </div>
-        <div class="form-group ml-3 mr-3 mt-1">
-          <label for="id_data">Data e Hora</label>
-          <div class="input-group date" id="datetimepicker" data-target-input="nearest">
-            {{ form.data }}
-            <div class="input-group-append" data-target="#datetimepicker" data-toggle="datetimepicker">
-              <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-            </div>
+        <div class="row ml-3 mr-3 mt-1">
+          <div class="col-md-6">
+              <label for="id_operation">Operação</label>
+              {{ form.operation}}
+          </div>
+          <div class="col-md-6">
+              <label for="id_aircraft">Aeronave</label>
+              {{ form.aircraft}}
           </div>
         </div>
-        <div class="ml-3 mr-3 mt-3">
-          <label for="id_operacao">Imagens do incidente</label>
+
+        <div class="row ml-3 mr-3 mt-1">
+          <div class="col-md-6">
+          <label for="id_location">Local</label>
+          {{ form.location}}
+          </div>
+          <div class="col-md-6">
+              <label for="id_data">Data e Hora</label>
+              <div class="input-group date" id="datetimepicker" data-target-input="nearest">
+                {{ form.date }}
+                <div class="input-group-append" data-target="#datetimepicker" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <div class="row ml-3 mr-3 mt-1">
+          <div class="col-md-6">
+            <label for="id_reference_point">Ponto de referência</label>
+            {{ form.reference_point}}
+          </div>
+          <div class="col-md-6">
+            <label for="id_report">Relato do incidente</label>
+            {{ form.report}}
+          </div>
+        </div>
+
+        <div class="row ml-3 mr-3 mt-1">
+          <div class="col-md-12">
+            <label for="id_police_incident_number" class="field_label">Número da ficha de ocorrência policial</label>
+            {{ form.police_incident_number }}
+            {{ form.police_incident_number.errors }}
+          </div>
+        </div>
+
+        <div class="row ml-3 mr-3 mt-3">
+          <label class="ml-1" for="id_operacao">Imagens do incidente</label>
           <input type="file" id="id_imageIncidente", name="imagens" multiple>
           <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
           <p id="fileName"></p>
@@ -119,26 +143,13 @@
               {% if images %}
                 {% for img in images %}
                 <a href="{% url 'rpa_manager:delete_image' img.pk %} ">
-                  <img src="{{ img.imageIncidente.url }}" alt="Image" class="imagem-incidente" data-id="{{ img.pk }}">
+                  <img src="{{ img.imageIncident.url }}" alt="Image" class="imagem-incidente" data-id="{{ img.pk }}">
                 </a>
                 {% endfor %}
               {% else %}
               {% endif %}                
             </div>         
           {% endif %}
-        </div>
-        <div class="ml-3 mr-3 mt-3">
-          <label for="id_operacao">Ponto de referência</label>
-          {{ form.ponto_de_referencia}}
-        </div>
-        <div class="ml-3 mr-3 mt-3">
-          <label for="id_operacao">Relato do incidente</label>
-          {{ form.relato}}
-        </div>
-        <div class="ml-3 mr-3 mt-3">
-          <label for="id_numero_ficha_oc" class="field_label">Número da ficha de ocorrência policial</label>
-          {{ form.numero_ficha_oc }}
-          {{ form.numero_ficha_oc.errors }}
         </div>
 
         <div class="ml-3 mr-3 mt-3 mb-3">
@@ -160,8 +171,8 @@
   <script src="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
   <script>
     $(document).ready(function () {
-      $('.local_escolha').select2();
-      $('.aeronave_escolha').select2();
+      $('.location_escolha').select2();
+      $('.aircraft_escolha').select2();
     });
   </script>
   <script>
@@ -231,7 +242,7 @@
 
             if (confirmarExclusao) {
 
-              const localhostUrl = `http://127.0.0.1:8000/rpa_manager`;
+              const localhostUrl = `http://127.0.0.1:8003/rpa_manager`;
 
               console.log(`${localhostUrl}/delete_image/${imagemId}/`);
 

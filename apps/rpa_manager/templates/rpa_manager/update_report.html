@@ -186,10 +186,10 @@
 <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
 <script>
   document.getElementById("fileButton").addEventListener("click", function () {
-    document.getElementById("id_arquivo_solicitacao").click();
+    document.getElementById("id_decea_request_file").click();
   });
-  document.getElementById("id_arquivo_solicitacao").addEventListener("change", function () {
-    var fileName = document.getElementById("id_arquivo_solicitacao").files[0].name;
+  document.getElementById("id_decea_request_file").addEventListener("change", function () {
+    var fileName = document.getElementById("id_decea_request_file").files[0].name;
     document.getElementById("fileName").innerHTML = "Arquivo selecionado: " + fileName;
   });
 </script>

@@ -31,7 +31,7 @@ class VerChecklistView(GroupRequiredMixin, DetailView):
         images = ChecklistImages.objects.filter(checklist=checklist)
         image_urls = [image.imageChecklist.url for image in images]
         
-        lista_de_alteracoes = self.object.alteracoes.split('\n')
+        lista_de_alteracoes = self.object.changes.split('\n')
         nova_lista_alteracoes = []
         for item in lista_de_alteracoes:
             if len(lista_de_alteracoes) == 1 and lista_de_alteracoes[0] == '':

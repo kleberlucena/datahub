@@ -23,11 +23,6 @@
       margin: 5px;
     }
 
-    .detail_img_container img:hover {
-      scale: 2.0;
-      transition: 500ms;
-    }
-
     .aircraft_img {
       width: 1000px;
       height: 783px;
@@ -74,15 +69,15 @@
     <div class="card card-primary col-md-4 mt-3">
 
       <div class="card-body">
-        <strong>Operação: </strong> {{ object.operacao }} 
+        <strong>Operação: </strong> {{ object.operation }} 
         <hr>
-        <strong>Aeronave: </strong> {{ object.aeronave }} 
+        <strong>Aeronave: </strong> {{ object.aircraft }} 
         <hr>
-        <strong>Relato: </strong> {{ object.relato }} 
+        <strong>Relato: </strong> {{ object.report }} 
         <hr>
-        <strong>Localização: </strong> {{ object.ponto_de_referencia }} 
+        <strong>Localização: </strong> {{ object.reference_point }} 
         <hr>
-        <strong>Data: </strong> {{ object.data }} 
+        <strong>Data: </strong> {{ object.date }} 
         <hr>
       </div>
     </div> 

@@ -515,24 +515,23 @@
     const imagensIncidente = document.querySelectorAll('.imagem-checklist');
 
     imagensIncidente.forEach(imagem => {
+      console.log(imagensIncidente)
         imagem.addEventListener('click', (event) => {
-            event.preventDefault(); // Prevenir o comportamento padrão do link
+            event.preventDefault(); 
 
-            // Obtendo o ID da imagem do atributo 'data-id'
             const imagemId = imagem.dataset.id;
-
-            // Exibindo o alerta de confirmação antes de deletar a imagem
+            console.log(imagemId)
             const confirmarExclusao = window.confirm("Tem certeza que deseja excluir esta imagem?");
 
             if (confirmarExclusao) {
 
-              const localhostUrl = `http://127.0.0.1:8000/rpa_manager`;
+              const localhostUrl = `http://127.0.0.1:8003/rpa_manager`;
 
                 // Enviando a requisição para deletar a imagem
                 fetch(`${localhostUrl}/delete_image_checklist/${imagemId}/`, {
                     method: 'DELETE',
                     headers: {
-                        'X-CSRFToken': getCookie('csrftoken'), // Garante que o Django aceitará a requisição
+                        'X-CSRFToken': getCookie('csrftoken'), 
                     }
                 }).then(response => {
                     if (response.ok) {

@@ -112,8 +112,8 @@
             <h5 class="evento">Duração do evento:</h5>
             <div class="row">
               <div class="col-md-6" style="position: relative">
-                {{ form.dinitial_date }}
-                {{ form.dinitial_date.errors }}
+                {{ form.initial_date }}
+                {{ form.initial_date.errors }}
                 <div class="dateTimeOptions">
                   <input type="date" id="dateInitialInput">
                   <input type="time" id="timeInitialInput">
@@ -181,8 +181,8 @@
     const timeInitialInput = document.getElementById('timeInitialInput');
     const dateFinalInput = document.getElementById('dateFinalInput');
     const timeFinalInput = document.getElementById('timeFinalInput');
-    const dateInitialDisplay = document.getElementById('id_date_initial');
-    const dateFinalDisplay = document.getElementById('id_date_final');
+    const dateInitialDisplay = document.getElementById('id_initial_date');
+    const dateFinalDisplay = document.getElementById('id_final_date');
     dateInitialInput.addEventListener('change', updateInitialResult);
     timeInitialInput.addEventListener('change', updateInitialResult);
     dateFinalInput.addEventListener('change', updateFinalResult);

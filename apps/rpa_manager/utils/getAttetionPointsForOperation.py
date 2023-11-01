@@ -19,17 +19,17 @@ def getAttentionPointsForOperation(points):
         formatted_date_initial = None
         formatted_date_final = None
 
-        if point.date_initial:
-            formatted_date_initial = point.date_initial.astimezone(tz).strftime('%d/%m/%Y %H:%M:%S')
+        if point.initial_date:
+            formatted_date_initial = point.initial_date.astimezone(tz).strftime('%d/%m/%Y %H:%M:%S')
         
-        if point.date_final:
-            formatted_date_final = point.date_final.astimezone(tz).strftime('%d/%m/%Y %H:%M:%S') 
+        if point.final_date:
+            formatted_date_final = point.final_date.astimezone(tz).strftime('%d/%m/%Y %H:%M:%S') 
             
         points_list.append({
                 'temporary': point.is_temporary,
                 'date_initial': formatted_date_initial or '',
                 'date_final': formatted_date_final or '',
-                'descricao': point.descricao,
+                'descricao': point.description,
                 'latitude': point.latitude,
                 'longitude': point.longitude,
                 })

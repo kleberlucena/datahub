@@ -276,7 +276,7 @@
       const descricao = dados.descricao;
       if (dados.temporary) {
         var marker = L.marker([lat, lng], { icon: timerIcon }).addTo(map);
-        marker.bindPopup(descricao + '<br>' + `Evento: ${dados.date_initial} à ${dados.date_final}`);
+        marker.bindPopup(descricao + '<br>' + `Evento: <b>${dados.date_initial}</b> à <b>${dados.date_final}</b>`);
       } else {
         var marker = L.marker([lat, lng], { icon: attentionIcon }).addTo(map);
         marker.bindPopup(descricao);

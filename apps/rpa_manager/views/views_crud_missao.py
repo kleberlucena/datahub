@@ -42,6 +42,11 @@ class CriarNovaMissaoView(GroupRequiredMixin, View):
         points = PointsOfInterest.objects.all()
         points_list = getAttentionPointsForOperation(points)
         points_json = json.dumps(points_list, indent=4, ensure_ascii=False, default=str)
+        
+        availables_aircrafts = Aircraft.objects.filter(in_use=False).count()
+        if(availables_aircrafts == 0):
+            messages.info(request, 'Não há aeronaves disponíveis!')
+        
         context = {
             'form': form,
             'points_json': points_json,
