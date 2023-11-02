@@ -30,8 +30,8 @@
   }
 
   .card_content {
-    display: grid;
-    grid-template-columns: auto auto;
+    display: flex;
+    flex-direction: row;
     gap: 30px;
   }
 
@@ -39,45 +39,43 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    max-height: 200px; /* Defina o limite de altura desejado aqui */
+    min-height: 200px; 
+    min-width: 200px;
   }
-  .card_user_image {
-    display: grid;
-    grid-template-columns: 80px 80px;
-    grid-template-columns: 80px 80px;
+
+  .card-img {
+    width: 60%;
+  }
+
+  .card-container_for-images {
+    display: flex;
+    flex-direction: column;
     gap: 10px;
-    align-items: center;
-    max-height: 200px; /* Defina o limite de altura desejado aqui */
-  }
-
-  /* Make the alignment of images */
-  .grid-container_for-images {
-    display: grid;
-    grid-template-columns: 45px 45px 45px; /* Três colunas com mesmo tamanho */
-    gap: 10px; /* Espaçamento entre as divs (opcional) */
   }  
-
-  .large-image {
-    grid-column: 1 / span 3; /* A primeira imagem ocupa três colunas */
-  }
-  
   .img-circle {
-    border-radius: 50%; /* Para deixar as imagens redondas (opcional) */
-  }
-  
-  .img-fluid {
-    width: 100%; /* Para ocupar todo o espaço disponível na div */
-  }
-
-  .hover-zoom {
-    transition: transform 0.3s ease; /* Adiciona uma transição suave para o efeito hover */
-  }
-  
-  .hover-zoom:hover {
-    transform: scale(3.0); /* Aumenta o tamanho da imagem em 20% no hover */
+    border-radius: 20%; 
   }
 
   @media (max-width: 768px) {
+    .card_content {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .card-img {
+      max-width: 300px;
+    }
+
+    .card-container_for-images {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+      gap: 10px;
+    } 
+
     .select_date_form {
       display: flex;
       flex-direction: row;
@@ -271,13 +269,12 @@
 
     }); // end DOM load
   </script>
-  {% comment %} <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid small-image"> {% endcomment %}
   <script>
     const jsonEquipes = {{ guarnicoes_json|safe }};
-    const user = "{{ request.user | stringformat:"s"|safe }}"; // Recebe o username do usuário logado
-    // Função para criar a estrutura HTML para uma equipe (card)
+    const user = "{{ user.military | stringformat:"s"|safe }}"; 
+    
     function criarEquipeCard(equipe) {
-      const isCurrentUserCreator = equipe.piloto_remoto === user; // Verifica se o usuário logado criou a Guarnicao
+      const isCurrentUserCreator = equipe.piloto_remoto === user; 
       let descadastroButton = ``
       if (isCurrentUserCreator) {
         descadastroButton = `
@@ -297,7 +294,13 @@
       `<small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b> ${equipe.piloto_observador} </small>` : ''
       let telefone = equipe.telefone !== 'sem registro' ? 
       `<small class=""><i class="fa fa-phone"></i> <b>Contato:</b> ${equipe.telefone} </small>` : ''
-      
+      let motorista_img = equipe.motorista_img !== 'sem registro' ?
+      `<img src="${equipe.piloto_remoto_img}" alt="user-avatar" class="card-img img-circle">` : ''
+      let piloto_remoto_img = equipe.motorista_img !== 'sem registro' ?
+      `<img src="${equipe.motorista_img}" alt="user-avatar" class="card-img img-circle">` : ''
+      let piloto_observador_img = equipe.piloto_observador_img !== 'sem registro' ?
+      `<img src="${equipe.piloto_observador_img}" alt="user-avatar" class="card-img img-circle">` : ''
+
       return `
       <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
           <div class="card bg-light d-flex flex-fill">
@@ -312,20 +315,17 @@
                     ${piloto_observador}
                     ${telefone}
                 </div>
-                <div class="grid-container_for-images">
-                  <div class="grid-item large-image">
-                    <img src="{% static 'adminlte-3.1.0/img/user8-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid small-image">
+                <div class="card-container_for-images">
+                  <div class="grid-item">
+                    ${motorista_img}
                   </div>
                   <div class="grid-item">
-                    <img src="{% static 'adminlte-3.1.0/img/user7-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
+                    ${piloto_remoto_img}
                   </div>
                   <div class="grid-item">
-                    <img src="{% static 'adminlte-3.1.0/img/user6-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
+                    ${piloto_observador_img}
                   </div>
-                  <div class="grid-item">
-                    <img src="{% static 'adminlte-3.1.0/img/user5-128x128.jpg' %}" alt="user-avatar" class="img-circle img-fluid large-image hover-zoom">
-                  </div>
-              </div>
+                </div>
               </div>
             </div>
             <div class="card-footer">

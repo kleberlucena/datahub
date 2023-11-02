@@ -6,6 +6,7 @@ from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from base.mixins import GroupRequiredMixin
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
@@ -13,28 +14,14 @@ from apps.rpa_manager.handlers import require_permission
 MESSAGE_MODEL_NAME = 'Guarnição'
 
 
-class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
+class GuarnicaoCreateView(GroupRequiredMixin, CreateView):
     model = PoliceGroup
     form_class = PoliceGroupForm
     template_name = 'rpa_manager/create_guarnicao.html'
     success_url = reverse_lazy('rpa_manager:checklist_form')
-    permission_required = 'rpa_manager.add_guarnicao'
+    group_required = ['profile:rpa_basic', "profile:rpa_advanced"]
     
     def form_valid(self, form):
-        user = self.request.user
-        guarnicoes_no_dia = PoliceGroup.objects.filter(remote_pilot=user)
-        
-        if guarnicoes_no_dia.exists():
-            form.add_error(None, 'Já existe uma guarnição cadastrada por este usuário no mesmo dia.')
-            return self.form_invalid(form)
-        
-        observer_pilot = form.cleaned_data.get('observer_pilot')
-        if observer_pilot:
-            guarnicoes_com_piloto = PoliceGroup.objects.filter(observer_pilot=observer_pilot)
-            if guarnicoes_com_piloto.exists():
-                form.add_error('piloto_observador', 'Este piloto observador já foi cadastrado em outra guarnição.')
-                return self.form_invalid(form)
-
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} cadastrada com sucesso!')
         return super().form_valid(form)
     
@@ -43,17 +30,12 @@ class GuarnicaoCreateView(PermissionRequiredMixin, CreateView):
         kwargs['initial'] = {'remote_pilot': self.request.user}
         return kwargs
     
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-    
-    
-class GuarnicaoUpdateView(PermissionRequiredMixin, UpdateView):
+class GuarnicaoUpdateView(GroupRequiredMixin, UpdateView):
     model = PoliceGroup
     form_class = PoliceGroupForm
     template_name = 'rpa_manager/update_guarnicao.html'
     success_url = reverse_lazy('rpa_manager:checklist_form')
-    permission_required = 'rpa_manager.change_guarnicao'
+    group_required = ['profile:rpa_basic', "profile:rpa_advanced"]
     
     def get_object(self, queryset=None):
         return PoliceGroup.objects.latest('date')
@@ -62,12 +44,7 @@ class GuarnicaoUpdateView(PermissionRequiredMixin, UpdateView):
         response = super().form_valid(form)
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} editada com sucesso!')
         
-        return response
-
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-    
+        return response   
     
 class GuarnicaoDeleteView(PermissionRequiredMixin, DeleteView):
     model = PoliceGroup
@@ -81,10 +58,10 @@ class GuarnicaoDeleteView(PermissionRequiredMixin, DeleteView):
         return super().dispatch(*args, **kwargs)
     
     
-class DescadastrarGuarnicao(PermissionRequiredMixin, View):
+class DescadastrarGuarnicao(GroupRequiredMixin, View):
     template_name = 'rpa_manager/unregister_guarnicao.html'
     success_url = reverse_lazy('rpa_manager:painel')
-    permission_required = 'rpa_manager.delete_guarnicao'
+    group_required = ['profile:rpa_basic', "profile:rpa_advanced"]
     
     def get(self, request, *args, **kwargs):
         user = self.request.user
@@ -102,6 +79,4 @@ class DescadastrarGuarnicao(PermissionRequiredMixin, View):
         messages.info(self.request, f'{MESSAGE_MODEL_NAME} descadastrada com sucesso!')
         return redirect(self.success_url)
     
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+

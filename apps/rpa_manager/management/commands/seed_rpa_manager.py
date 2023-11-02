@@ -143,25 +143,26 @@ class Command(BaseCommand):
                 )
         
         def generateMilitaries():
-            if Military.objects.count() == 0:
+            if Entity.objects.count() == 0:
                 entity = Entity.objects.create(
-                name="PMPB",
-                father='Estado',
-                child_exists=False,
-                category=1,
-                hierarchy=9,
-                code="000"
-                )
+                    name="PMPB",
+                    father='Estado',
+                    child_exists=False,
+                    category=1,
+                    hierarchy=9,
+                    code="000"
+                    )
             
+            if Military.objects.count() == 0:
                 military1 = Military.objects.create(
-                    name="Zé do Biu",
+                    name="João Alves da Silva",
                     entity=Entity.objects.get(name="PMPB"),
-                    nickname="Cb José",
+                    nickname="Cb João",
                     admission_date="2000-10-26",  
                     birthdate="1980-01-01",  
                     register="1234567",  
                     activity_status="Ativo",  
-                    cpf="123.456.789-00",  
+                    cpf="879.926.080-89",  
                     genre="M",  
                     email="ze@example.com",  
                     father="Pai do Zé", 
@@ -181,16 +182,65 @@ class Command(BaseCommand):
                 military2 = Military.objects.create(
                     name="Henrique Elias",
                     entity=Entity.objects.get(name="PMPB"),
-                    nickname="Sgt Roberto",
+                    nickname="Sd Henrique",
                     admission_date="1980-10-26",  
                     birthdate="1980-01-01",  
-                    register="7412589",  
+                    register="1412589",  
                     activity_status="Ativo",  
-                    cpf="123.456.789-01",  
+                    cpf="070.269.390-17",  
                     genre="M",  
                     email="roro@example.com",  
-                    father="Pai do Roberto", 
-                    mather="Mãe do Roberto",  
+                    father="Pai do Henrique", 
+                    mather="Mãe do Henrique",  
+                    place_of_birth="Cidade de Exemplo",  
+                    marital_status="Solteiro(a)",  
+                    phone="(11) 1234-7856",  
+                    address="Rua Exemplo",  
+                    number="123",  
+                    complement="Apto 456",  
+                    district="Bairro Exemplo",  
+                    city="Cidade Exemplo",  
+                    state="PB",  
+                    zipcode="58000-000",  
+                )
+                
+                military3 = Military.objects.create(
+                    name="Fransisco Silva",
+                    entity=Entity.objects.get(name="PMPB"),
+                    nickname="Sgt Fransisco",
+                    admission_date="1980-10-26",  
+                    birthdate="1980-01-01",  
+                    register="7412889",  
+                    activity_status="Ativo",  
+                    cpf="786.589.280-20",  
+                    genre="M",  
+                    email="roro@example.com",  
+                    father="Pai do Fransisco", 
+                    mather="Mãe do Fransisco",  
+                    place_of_birth="Cidade de Exemplo",  
+                    marital_status="Solteiro(a)",  
+                    phone="(11) 1234-7856",  
+                    address="Rua Exemplo",  
+                    number="123",  
+                    complement="Apto 456",  
+                    district="Bairro Exemplo",  
+                    city="Cidade Exemplo",  
+                    state="PB",  
+                    zipcode="58000-000",  
+                )
+                military4 = Military.objects.create(
+                    name="Daniel Caldas",
+                    entity=Entity.objects.get(name="PMPB"),
+                    nickname="Cb Daniel",
+                    admission_date="1980-10-26",  
+                    birthdate="1980-01-01",  
+                    register="7412689",  
+                    activity_status="Ativo",  
+                    cpf="300.700.030-09",  
+                    genre="M",  
+                    email="roro@example.com",  
+                    father="Pai do Daniel", 
+                    mather="Mãe do Daniel",  
                     place_of_birth="Cidade de Exemplo",  
                     marital_status="Solteiro(a)",  
                     phone="(11) 1234-7856",  

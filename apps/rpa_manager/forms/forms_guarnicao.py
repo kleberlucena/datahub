@@ -47,16 +47,46 @@ class PoliceGroupForm(forms.ModelForm):
     def clean_phone(self):
         phone = self.cleaned_data['phone']
         if not phone.isdigit():
-            raise forms.ValidationError("Favor inserir dígitos numéricos. Por exemplo, '83988776655'.")
+            self.add_error("phone", "Favor inserir dígitos numéricos. Por exemplo, 83988776655.")
         return phone
 
+    
     def clean(self):
         cleaned_data = super().clean()
         remote_pilot = cleaned_data.get('remote_pilot')
         observer_pilot = cleaned_data.get('observer_pilot')
+        driver = cleaned_data.get('driver')
+
+        if remote_pilot == observer_pilot or remote_pilot == driver:
+            self.add_error('remote_pilot', "O piloto remoto não pode ser o mesmo que o piloto observador ou motorista.")
         
-        if remote_pilot == observer_pilot:
-            self.add_error('remote_pilot', "O piloto remoto não pode ser o mesmo que o piloto observador.")
-            self.add_error('observer_pilot', "O piloto observador não pode ser o mesmo que o piloto remoto.")
-            
-            
+        if observer_pilot == remote_pilot or observer_pilot == driver:
+            self.add_error('observer_pilot', "O piloto observador não pode ser o mesmo que o piloto remoto ou motorista.")
+        
+        if driver == remote_pilot or driver == observer_pilot:
+            self.add_error('driver', "O motorista não pode ser o mesmo que o piloto remoto ou observador.")
+
+        if PoliceGroup.objects.filter(observer_pilot=remote_pilot).exclude(id=self.instance.id).exists():
+            self.add_error('remote_pilot', "O piloto remoto já está sendo utilizado como piloto observador em outra guarnição.")
+
+        if PoliceGroup.objects.filter(driver=remote_pilot).exclude(id=self.instance.id).exists():
+            self.add_error('remote_pilot', "O piloto remoto já está sendo utilizado como motorista em outra guarnição.")
+
+        if PoliceGroup.objects.filter(remote_pilot=observer_pilot).exclude(id=self.instance.id).exists():
+            self.add_error('observer_pilot', "O piloto observador já está sendo utilizado como piloto remoto em outra guarnição.")
+
+        if PoliceGroup.objects.filter(driver=observer_pilot).exclude(id=self.instance.id).exists():
+            self.add_error('observer_pilot', "O piloto observador já está sendo utilizado como motorista em outra guarnição.")
+
+        if PoliceGroup.objects.filter(remote_pilot=driver).exclude(id=self.instance.id).exists():
+            self.add_error('driver', "O motorista já está sendo utilizado como piloto remoto em outra guarnição.")
+
+        if PoliceGroup.objects.filter(observer_pilot=driver).exclude(id=self.instance.id).exists():
+            self.add_error('driver', "O motorista já está sendo utilizado como piloto observador em outra guarnição.")
+
+        if PoliceGroup.objects.filter(driver=driver).exclude(id=self.instance.id).exists():
+            self.add_error('driver', "O motorista já está sendo utilizado como motorista em outra guarnição.")
+
+        return cleaned_data
+    
+    

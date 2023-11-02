@@ -54,16 +54,24 @@ class PainelView(TemplateView):
         localidades = CitiesPB.objects.all()
         for local in localidades:
             guarnicoes = PoliceGroup.objects.filter(location=local)
+
             for guarnicao in guarnicoes:
                 lista_de_guarnicoes.append({
                     'id':  
                         guarnicao.id if(guarnicao.id != None) else 'sem registro',
                     'motorista': 
-                        guarnicao.driver.username if(guarnicao.driver != None) else 'sem registro',
+                        str(guarnicao.driver.military) if(guarnicao.driver != None) else 'sem registro',
+                    'motorista_img': 
+                        str(guarnicao.driver.military.image.url) if(guarnicao.driver != None) else 'sem registro',
                     'piloto_remoto': 
-                        guarnicao.remote_pilot.username if(guarnicao.remote_pilot != None) else 'sem registro',
+                        str(guarnicao.remote_pilot.military) if(guarnicao.remote_pilot != None) else 'sem registro',
+                    'piloto_remoto_img': 
+                        str(guarnicao.remote_pilot.military.image.url) if(guarnicao.remote_pilot != None) else 'sem registro',
                     'piloto_observador': 
-                        guarnicao.observer_pilot.username 
+                        str(guarnicao.observer_pilot.military) 
+                        if(guarnicao.observer_pilot != None) else 'sem registro',
+                    'piloto_observador_img': 
+                        str(guarnicao.observer_pilot.military.image.url) 
                         if(guarnicao.observer_pilot != None) else 'sem registro',
                     'local': 
                         guarnicao.location.cities_pb if(guarnicao.location.cities_pb != None) else 'sem registro',
