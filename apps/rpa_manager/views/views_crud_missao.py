@@ -46,6 +46,7 @@ class CriarNovaMissaoView(GroupRequiredMixin, View):
         availables_aircrafts = Aircraft.objects.filter(in_use=False).count()
         if(availables_aircrafts == 0):
             messages.info(request, 'Não há aeronaves disponíveis!')
+            return redirect('rpa_manager:principal')
         
         context = {
             'form': form,

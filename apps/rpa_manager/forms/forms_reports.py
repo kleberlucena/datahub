@@ -60,6 +60,7 @@ class ReportForm(forms.ModelForm):
         campos = [
             'title', 
             'remote_pilot',
+            'observer_pilot',
             'who_requested',
             'who_authorized', 
             'date',

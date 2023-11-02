@@ -19,22 +19,22 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Tipos de baterias {% endblock %}
+{% block title %} Pontos de interesse {% endblock %}
 
 <!-- context title -->
 {% block title-header %} Operações aéreas {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
-  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:baterias' %}">Baterias</a></li>
-  <li class="breadcrumb-item active">Tipos de baterias</li>
+  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:principal' %}">Operações</a></li>
+  <li class="breadcrumb-item active">Pontos de interesse</li>
 {% endblock %}
 
 <!-- main container -->
 {% block content %}
   <div class="card card-primary card-outline">
     <div class="card-header">
-      <h3 class="card-title">Tipos de baterias</h3>
+      <h3 class="card-title">Pontos de interesse</h3>
     </div>
     <div class="card-body">
       <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">

@@ -105,13 +105,13 @@ class IncidentesUpdateView(GroupRequiredMixin, UpdateView):
         
         return context
     
-    def dispatch(self, *args, **kwargs):
-        incidente = self.get_object()
-        time_since_creation = timezone.now() - incidente.date
-        if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
-            messages.error(self.request, 'Não é possível editar este incidente após 24 horas.')
-            return HttpResponseRedirect(self.success_url)
-        return super().dispatch(*args, **kwargs)
+    # def dispatch(self, *args, **kwargs):
+    #     incidente = self.get_object()
+    #     time_since_creation = timezone.now() - incidente.date
+    #     if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
+    #         messages.error(self.request, 'Não é possível editar este incidente após 24 horas.')
+    #         return HttpResponseRedirect(self.success_url)
+    #     return super().dispatch(*args, **kwargs)
     
     
 class IncidentesDeleteView(PermissionRequiredMixin, DeleteView):

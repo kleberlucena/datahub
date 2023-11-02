@@ -129,27 +129,31 @@
           <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
           <p id="fileName"></p>
           <p id="fileList"></p>
-          <div class="temp_images_view"></div>
+        </div>
 
+        <div class="row ml-3 mr-3 mt-3">
+          <div class="temp_images_view"></div>
+        </div>
+
+        <div class="row ml-3 mr-3 mt-3">
           {% if request.resolver_match.url_name == 'update_incidente' %}
-            {% if images %}
-              <label for="">Imagens carregadas</label>
-            {% else %}
-              <label for="">Não há Imagens carregadas</label>
-            {% endif %}
-              
-            <div class="temp_images_view_edit">
-              
-              {% if images %}
-                {% for img in images %}
-                <a href="{% url 'rpa_manager:delete_image' img.pk %} ">
-                  <img src="{{ img.imageIncident.url }}" alt="Image" class="imagem-incidente" data-id="{{ img.pk }}">
-                </a>
-                {% endfor %}
-              {% else %}
-              {% endif %}                
-            </div>         
+          {% if images %}
+            <label for="">Imagens carregadas</label>
+          {% else %}
+            <label for="">Não há Imagens carregadas</label>
           {% endif %}
+            
+          <div class="temp_images_view_edit">
+            {% if images %}
+              {% for img in images %}
+              <a href="{% url 'rpa_manager:delete_image' img.pk %} ">
+                <img src="{{ img.imageIncident.url }}" alt="Image" class="imagem-incidente" data-id="{{ img.pk }}">
+              </a>
+              {% endfor %}
+            {% else %}
+            {% endif %}                
+          </div>         
+        {% endif %}
         </div>
 
         <div class="ml-3 mr-3 mt-3 mb-3">

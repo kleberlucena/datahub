@@ -144,7 +144,7 @@ class ChecklistsView(GroupRequiredMixin, TemplateView):
         if user.is_superuser or user.groups.filter(name='profile:rpa_view').exists():
             checklists = Checklist.objects.all().order_by('-date', '-time')
         else:
-            checklists = Checklist.objects.filter(piloto=user).order_by('-date', '-time')
+            checklists = Checklist.objects.filter(remote_pilot=user).order_by('-date', '-time')
 
         form = formulario_missao(self.request)
 
@@ -182,7 +182,7 @@ class IncidentesView(GroupRequiredMixin, TemplateView):
         if user.is_superuser or user.groups.filter(name='profile:rpa_view').exists():
             incidentes = Incidents.objects.all().order_by('-date')
         else:
-            incidentes = Incidents.objects.filter(piloto=self.request.user).order_by('-date')
+            incidentes = Incidents.objects.filter(remote_pilot=self.request.user).order_by('-date')
         context['incidentes'] = incidentes
         
         return context
@@ -230,7 +230,7 @@ class HistoricosPorAeronaveView(GroupRequiredMixin, ListView):
     
     def get_queryset(self):
         queryset = super().get_queryset()
-        aeronave_id = self.request.GET.get('aeronave')
+        aeronave_id = self.request.GET.get('aircraft')
         if aeronave_id:
             queryset = queryset.filter(aircraft__id=aeronave_id).order_by('-date')
         return queryset

@@ -54,7 +54,7 @@
           <tbody>
             {% for incidente in incidentes %}
             <tr>
-              <td>{{ incidente.operation }}</td>
+              <td>{{ incidente.operation.title }}</td>
               <td>{{ incidente.aircraft }}</td>
               <td>{{ incidente.reference_point }}</td>
               <td data-sort='YYYYMMDD'>{{ incidente.date | date:"d/m/Y" }}</td>

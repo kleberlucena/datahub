@@ -296,8 +296,8 @@
               {{ checklist_form.body }}
               <label for="id_engine_rods">Hastes</label>
               {{ checklist_form.engine_rods }}
-              <label for="id_engine_rods">Hélices</label>
-              {{ checklist_form.engine_rods }}
+              <label for="id_propellers">Hélices</label>
+              {{ checklist_form.propellers }}
               <label for="id_gimbal">Gimbal</label>
               {{ checklist_form.gimbal }}
               <label for="id_spotlight">Holofote</label>
@@ -422,7 +422,6 @@
         checkbox.addEventListener('change', function() {
             if(!checkbox.checked) {
                 listaDeAlteracoes.push(`Alteração no item - ${checkbox.previousElementSibling.textContent}`);
-                console.log(listaDeAlteracoes)
                 adicionaTextoEmTextArea(listaDeAlteracoes);
             } else if(listaDeAlteracoes.includes(checkbox.previousElementSibling.textContent)) {
                 let indice =  listaDeAlteracoes.indexOf(checkbox.previousElementSibling.textContent);
@@ -458,6 +457,7 @@
       $('.aircraft_escolha').select2();
       $(".aircraft_escolha").on('change', function() {
         let aeronave_selecionada = $(this).find("option:selected").text();
+        console.log(aeronave_selecionada)
         if(aeronave_selecionada !== "") {
           main_container_sup.classList.remove('hidden');
           main_container_options.classList.remove('hidden');
@@ -467,7 +467,8 @@
         }
 
         let historico_checklist_dict_json = JSON.parse('{{ historico_checklist_dict_json|escapejs }}');
-        
+
+        console.log(historico_checklist_dict_json)
         function transformInBooleanValues(notTransformedJson) {
           let objeto = notTransformedJson;
 
@@ -493,6 +494,7 @@
 
         let historico_checklist_json = transformInBooleanValues(historico_checklist_dict_json);
         let dadosAeronave = historico_checklist_json[aeronave_selecionada];
+        console.log(dadosAeronave)
 
         if(dadosAeronave) {
           $('input[name="num_propellers"]').val(dadosAeronave.num_propellers);

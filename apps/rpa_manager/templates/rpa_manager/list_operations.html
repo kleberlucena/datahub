@@ -98,7 +98,7 @@
                       Filtros
                       </button>
                       <div class="dropdown-menu" role="menu" style="">
-                        {% if missao.concluida is not True %}
+                        {% if missao.completed is not True %}
                           <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver operação</a>
                           <a class="dropdown-item" href="{% url 'rpa_manager:criar_novo_relatorio' missao.id %}">Encerrar operação</a>
                           <a class="dropdown-item" href="{% url 'rpa_manager:editar_missao' missao.id %}">Editar operação</a>
@@ -131,7 +131,7 @@
                       Filtros
                       </button>
                       <div class="dropdown-menu" role="menu" style="">
-                        {% if missao.concluida is not True %}
+                        {% if missao.completed is not True %}
                           <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver operação</a>
                           <a class="dropdown-item" href="{% url 'rpa_manager:criar_novo_relatorio' missao.id %}">Encerrar operação</a>
                           <a class="dropdown-item" href="{% url 'rpa_manager:editar_missao' missao.id %}">Editar operação</a>

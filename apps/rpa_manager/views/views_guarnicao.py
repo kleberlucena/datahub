@@ -10,6 +10,8 @@ from base.mixins import GroupRequiredMixin
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
+from django.db.models import Q 
+
 
 MESSAGE_MODEL_NAME = 'Guarnição'
 
@@ -29,6 +31,17 @@ class GuarnicaoCreateView(GroupRequiredMixin, CreateView):
         kwargs = super().get_form_kwargs()
         kwargs['initial'] = {'remote_pilot': self.request.user}
         return kwargs
+    
+    def get(self, request, *args, **kwargs):
+        existing_guarnicao = PoliceGroup.objects.filter(
+            Q(remote_pilot=request.user) | Q(observer_pilot=request.user) | Q(driver=request.user)
+        ).first()
+
+        if existing_guarnicao:
+            messages.info(self.request, 'O usuário logado já participa de uma guarnição')
+            return redirect('rpa_manager:painel')
+        
+        return super().get(request, *args, **kwargs)
     
 class GuarnicaoUpdateView(GroupRequiredMixin, UpdateView):
     model = PoliceGroup
