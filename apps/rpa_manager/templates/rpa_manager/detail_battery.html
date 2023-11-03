@@ -59,29 +59,27 @@
   <div class="detail_battery">
     <div class="card card-primary col-md-4 mt-3">
       <div class="card-body">
-        <strong>Numeração: </strong> {{ bateria.numeracao }} 
+        <strong>Numeração: </strong> {{ bateria.number }} 
         <hr>
-        <strong>Ciclos: </strong> {{ bateria.num_ciclos }}
+        <strong>Ciclos: </strong> {{ bateria.num_cicles }}
         <hr>
-        <strong>Tipo: </strong> {{ bateria.ciclos_maximo }}
+        <strong>Tipo: </strong> {{ bateria.maximum_cicles }}
         <hr>
-        <strong>Ciclos recomendado </strong> {{ bateria.ciclos_maximo.recommended_cicles }}
+        <strong>Ciclos recomendado </strong> {{ bateria.maximum_cicles.recommended_cicles }}
         <hr>
-        <strong>Ciclos alerta: </strong> {{ bateria.ciclos_maximo.alert_cicles }}
+        <strong>Ciclos alerta: </strong> {{ bateria.maximum_cicles.alert_cicles }}
         <hr>
-        <strong>Ciclos crítico: </strong> {{ bateria.ciclos_maximo.critical_cicles }}
+        <strong>Ciclos crítico: </strong> {{ bateria.maximum_cicles.critical_cicles }}
         <hr>
-        <strong>Associada a aeronave: </strong> {{ bateria.aeronave }}
+        <strong>Associada a aeronave: </strong> {{ bateria.aircraft }}
         <hr>
       </div>
     </div>
 
     <div class="col-md-8">
-      
-      {% if bateria.imagem_bateria %}
-        <div class="detail_battery_img mt-3 mr-3"><img class="battery_img" src="{{ bateria.imagem_bateria.url }}" alt="bateria enterprise">`</div>
+      {% if bateria.battery_image %}
+        <div class="detail_battery_img mt-3 mr-3"><img class="battery_img" src="{{ bateria.battery_image.url }}" alt="bateria enterprise">`</div>
       {% endif %}
-        
     </div>
 </div>
 {% endblock content %}

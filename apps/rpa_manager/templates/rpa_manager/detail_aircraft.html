@@ -59,21 +59,21 @@
   <div class="detail_aircraft">
     <div class="card card-primary col-md-4 mt-3">
       <div class="card-body">
-        <strong>Prefixo: </strong> {{ aeronave.prefixo }} 
+        <strong>Prefixo: </strong> {{ aeronave.prefix }} 
         <hr>
-        <strong>Modelo: </strong> {{ aeronave.modelo }}
+        <strong>Modelo: </strong> {{ aeronave.model }}
         <hr>
-        <strong>Marca: </strong> {{ aeronave.marca }}
+        <strong>Marca: </strong> {{ aeronave.brand }}
         <hr>
-        <strong>Local: </strong> {{ aeronave.local }}
+        <strong>Local: </strong> {{ aeronave.location }}
         <hr>
         <small>Aeronave está em: operação, disponível ou indisponível</small>
         <br>
         <strong>Status: </strong>
-        {% if aeronave.em_uso is True %}
+        {% if aeronave.in_use is True %}
         <span class="badge badge-warning">Em operação</span>
           <hr>
-        {% elif aeronave.em_uso == None %}
+        {% elif aeronave.in_use == None %}
           <span class="badge badge-danger">Indisponível</span>
           <hr>
         {% else %}
@@ -85,8 +85,8 @@
     
     <div class="col-md-8">
      
-     {% if aeronave.imagem_aeronave %}
-      <div class="detail_aircraft_img mt-3 mr-3"><img class="aircraft_img" src="{{ aeronave.imagem_aeronave.url }}" alt="mavic enterprise"></div>
+     {% if aeronave.aircraft_image %}
+      <div class="detail_aircraft_img mt-3 mr-3"><img class="aircraft_img" src="{{ aeronave.aircraft_image.url }}" alt="mavic enterprise"></div>
      {% endif %}
       
     </div>

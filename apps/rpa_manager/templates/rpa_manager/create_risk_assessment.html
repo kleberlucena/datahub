@@ -113,7 +113,7 @@
           <label for="id_accident_procedure">Procedimento em caso de acidente</label>
           {{ form.accident_procedure }}
           {{ form.accident_procedure.errors }}
-          <label for="id_info_responsible">Responsável pelas informações:</label>  {{ request.user }}
+          <label for="id_info_responsible">Responsável pelas informações:</label>  {{ user.military }}
           {{ form.info_responsible }} <br>
           <label for="id_responsible_sign">Assinatura do responsável: </label> 
           {{ form.responsible_sign }}

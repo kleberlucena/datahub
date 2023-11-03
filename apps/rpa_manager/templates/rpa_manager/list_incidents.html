@@ -44,6 +44,7 @@
           <thead>
             <tr>
               <th scope="col">Operação</th>
+              <th scope="col">Operador</th>
               <th scope="col">Aeronave</th>
               <th scope="col">Ponto de referência</th>
               <th scope="col">Data</th>
@@ -55,6 +56,7 @@
             {% for incidente in incidentes %}
             <tr>
               <td>{{ incidente.operation.title }}</td>
+              <td>{{ incidente.remote_pilot.military }}</td>
               <td>{{ incidente.aircraft }}</td>
               <td>{{ incidente.reference_point }}</td>
               <td data-sort='YYYYMMDD'>{{ incidente.date | date:"d/m/Y" }}</td>

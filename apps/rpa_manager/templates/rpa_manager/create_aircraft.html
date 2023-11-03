@@ -5,16 +5,8 @@
 {% block style_sheet %}
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
   <style>
-    #id_imagem_aeronave {
+    #id_aircraft_image {
       display: none;
-    }
-    .errorlist {
-      list-style-type: none;
-      color: red;
-      /* Adicione outros estilos desejados */
-    }
-    .error-border {
-      border: 1px solid red;
     }
 
     /* fix select2 field height */
@@ -52,20 +44,20 @@
         {% csrf_token %}
         <div class="form-row">
           <div class="form-group col-md-12 mb-0 forms_inputs">
-            <label for="id_prefixo">Prefixo</label>
-            {{ form.prefixo }}
-            {{ form.prefixo.errors }}
-            <label for="id_modelo">Modelo</label>
-            {{ form.modelo }}
-            {{ form.modelo.errors }}
-            <label for="id_marca">Marca</label>
-            {{ form.marca }}
-            {{ form.prmarcaefixo.errors }}
-            <label for="id_local">Local</label>
-            {{ form.local }} 
-            {{ form.local.errors }}
-            <label for="id_imagem_aeronave" class="mt-3">Imagem da aeronave</label>
-            {{ form.imagem_aeronave }}
+            <label for="id_prefix">Prefixo</label>
+            {{ form.prefix }}
+            {{ form.prefix.errors }}
+            <label for="id_model">Modelo</label>
+            {{ form.model }}
+            {{ form.model.errors }}
+            <label for="id_brand">Marca</label>
+            {{ form.brand }}
+            {{ form.brand.errors }}
+            <label for="id_location">Local</label>
+            {{ form.location }} 
+            {{ form.location.errors }}
+            <label for="id_aircraft_image" class="mt-3">Imagem da aeronave</label>
+            {{ form.aircraft_image }}
             <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
             <p id="fileName"></p>
           </div>
@@ -100,7 +92,6 @@
             });
         });
 
-        // Verifique novamente quando a página é carregada, caso já haja um erro
         inputs.forEach(input => {
             const nextElement = input.nextElementSibling;
             if (nextElement && nextElement.classList.contains("errorlist")) {
@@ -112,17 +103,17 @@
 
   <script>   
     document.getElementById("fileButton").addEventListener("click", function() {
-      document.getElementById("id_imagem_aeronave").click();
+      document.getElementById("id_aircraft_image").click();
     });
-    document.getElementById("id_imagem_aeronave").addEventListener("change", function() {
-      var fileName = document.getElementById("id_imagem_aeronave").files[0].name;
+    document.getElementById("id_aircraft_image").addEventListener("change", function() {
+      var fileName = document.getElementById("id_aircraft_image").files[0].name;
       document.getElementById("fileName").innerHTML = "Arquivo selecionado: " + fileName;
     });
   </script>
 
   <script>
     $(document).ready(function(){
-      $('.local_escolha').select2();
+      $('.location_escolha').select2();
     })
   </script>
 {% endblock %}

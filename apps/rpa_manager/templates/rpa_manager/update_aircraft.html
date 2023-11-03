@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
   <style>
-    #id_imagem_aeronave {
+    #id_aircraft_image {
       display: none;
     }
     /* fix select2 field height */
@@ -49,17 +49,17 @@
       {% csrf_token %}
       <div class="form-row">
         <div class="form-group col-md-12 mb-0">
-          <label for="id_prefixo">Prefixo</label>
+          <label for="id_prefix">Prefixo</label>
           {{ form.prefix }}
-          <label for="id_modelo">Modelo</label>
+          <label for="id_model">Modelo</label>
           {{ form.model }}
-          <label for="id_marca">Marca</label>
+          <label for="id_brand">Marca</label>
           {{ form.brand }}
-          <label for="id_local">Local</label>
+          <label for="id_location">Local</label>
           {{ form.location }} 
           <label for="id_em_uso">Esta em operação?</label>
           {{ form.in_use }} 
-          <label for="id_imagem_aeronave" class="mt-3">Imagem da aeronave</label>
+          <label for="id_aircraft_image" class="mt-3">Imagem da aeronave</label>
           {{ form.aircraft_image }}
           <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
           <p id="fileName"></p>
@@ -82,17 +82,17 @@
   <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
   <script>
     document.getElementById("fileButton").addEventListener("click", function() {
-      document.getElementById("id_imagem_aeronave").click();
+      document.getElementById("id_aircraft_image").click();
     });
-    document.getElementById("id_imagem_aeronave").addEventListener("change", function() {
-      var fileName = document.getElementById("id_imagem_aeronave").files[0].name;
+    document.getElementById("id_aircraft_image").addEventListener("change", function() {
+      var fileName = document.getElementById("id_aircraft_image").files[0].name;
       document.getElementById("fileName").innerHTML = "Arquivo selecionado: " + fileName;
     });
   </script>
 
   <script>
     $(document).ready(function(){
-      $('.local_escolha').select2();
+      $('.location_escolha').select2();
     })
   </script>
 {% endblock %}

@@ -5,7 +5,17 @@
 {% block style_sheet %}
 <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
 <style>
-  #id_arquivo_solicitacao {
+  /* fix select2 field height */
+  .select2-selection,
+  .select2-selection--single {
+    height: 38px !important;
+  }
+
+  #select2-id_aeronave-container {
+    height: 38px !important;
+  }
+  
+  #id_decea_request_file {
     display: none;
   }
 
@@ -184,6 +194,14 @@
 {% block js %}
 <!-- DataTables  & Plugins -->
 <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+<script>
+  $(document).ready(function () {
+    $('.location_escolha').select2();
+    $('.observer_pilot_escolha').select2();
+    $('.entity_support_escolha').select2();
+    $('.flight_nature_escolha').select2();
+  });
+</script>
 <script>
   document.getElementById("fileButton").addEventListener("click", function () {
     document.getElementById("id_decea_request_file").click();

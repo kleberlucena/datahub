@@ -84,6 +84,7 @@
               </td>
 
               {% if missao.completed is False %}
+              
                 {% if request.user|has_group:'profile:rpa_view' %}
                   <td>
                     <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">
@@ -117,7 +118,7 @@
                   </td>
                 {% endif %}
               {% else %}
-                  {% if request.user|has_group:'profile:rpa_view' %}
+                  {% if request.user|has_group:'profile:rpa_view' or request.user|has_group:'profile:rpa_basic' %}
                   <td>
                     <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">
                       <button type="button" class="btn btn-outline-info btn-block">Ver dados</button>

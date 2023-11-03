@@ -65,31 +65,35 @@
   <div class="detail_report">
     <div class="card card-primary col-md-4 mt-3">  
       <div class="card-body">
-        <strong>Título: </strong> {{ relatorio.titulo }}
+        <strong>Título: </strong> {{ relatorio.title }}
         <hr>
-        <strong>Piloto remoto: </strong> {{ relatorio.militar }}
+        <strong>Piloto remoto: </strong> {{ relatorio.remote_pilot }}
         <hr>
         <strong>Piloto observador: </strong>
-        {% if relatorio.piloto_observador == None %}
+        {% if relatorio.observer_pilot == None %}
           sem registro
         {% else %}
-          {{ relatorio.piloto_observador }} 
+          {{ relatorio.observer_pilot }} 
         {% endif %}
         <hr>
-        <strong>Data inicial: </strong> {{ relatorio.data | date:"d/m/Y"}}
+        <strong>Data inicial: </strong> {{ relatorio.date | date:"d/m/Y"}}
+        <hr>
+        <strong>Quem solicitou: </strong> {{ relatorio.who_requested }}
+        <hr>
+        <strong>Quem autorizou: </strong> {{ relatorio.who_authorized }}
         <hr>
         <strong>Data final: </strong> 
-        {% if relatorio.data_final == None %}
+        {% if relatorio.final_date == None %}
           sem registro
         {% else %}
-          {{ relatorio.data_final | date:"d/m/Y"}}
+          {{ relatorio.final_date | date:"d/m/Y"}}
         {% endif %}
         <hr>
-        <strong>Horário inicial: </strong> {{ relatorio.horario_inicial }}
+        <strong>Horário inicial: </strong> {{ relatorio.initial_time }}
         <hr>
-        <strong>Horário final: </strong> {{ relatorio.horario_final }}
+        <strong>Horário final: </strong> {{ relatorio.final_time }}
         <hr>
-        <strong>Localidade: </strong> {{ relatorio.local }}
+        <strong>Localidade: </strong> {{ relatorio.location }}
         <hr>
         <strong>Coordenadas: </strong> 
         
@@ -100,37 +104,43 @@
         {% endif %}
         <hr>
         <strong>Número Protocolo/Sarpas DECEA: </strong> 
-        <p class="protocol_number" style="display: inline; margin-right: 10px;">{{ relatorio.num_sarpas }}</p> 
+        
+        {% if relatorio.num_sarpas %}
+          <p class="protocol_number" style="display: inline; margin-right: 10px;">{{ relatorio.num_sarpas }}</p> 
           <a type="button" onclick="copyProtocolNumber();" style="margin-right: 5px;">
             <i class="copy_btn fa fa-copy fa-lg"></i>
           <a href="https://sarpas.decea.mil.br/consulta-protocolo" target="_blank" style="text-decoration: none; color:black;">
             <i class="search_btn fa fa-search fa-lg"></i>
           </a>
+        {% else %}
+          <p class="protocol_number" style="display: inline; margin-right: 10px;">Sem registro</p> 
+        {% endif %}
+          
         <hr>
         <strong>Arquivo de solicitação: </strong> 
-        {% if relatorio.arquivo_solicitacao %}
-          <a href="{{ relatorio.arquivo_solicitacao.url }}" download target="_blank">Baixar solicitação 
+        {% if relatorio.decea_request_file %}
+          <a href="{{ relatorio.decea_request_file.url }}" download target="_blank">Baixar solicitação 
             <i class="fas fa-file-pdf"></i> </a>
           {% else %}
            sem registro
         {% endif %}
         <hr>
-        <strong>Entidade apoiada: </strong> {{ relatorio.entidade_apoiada }}
+        <strong>Entidade apoiada: </strong> {{ relatorio.entity_support }}
         <hr>
-        <strong>Natureza de voo: </strong> {{ relatorio.natureza_de_voo }}
+        <strong>Natureza de voo: </strong> {{ relatorio.flight_nature }}
         <hr>
-        <strong>Tipo de operação: </strong> {{ relatorio.tipo_de_operacao }}
+        <strong>Tipo de operação: </strong> {{ relatorio.type_of_operation }}
         <hr>
-        <strong>Aeronave utilizada: </strong> {{ relatorio.aeronave }}
+        <strong>Aeronave utilizada: </strong> {{ relatorio.aircraft }}
         <hr>
         <strong>Número ficha ocorrência CIOP: </strong> 
-        {% if relatorio.numero_ficha_oc %}
-          {{ relatorio.numero_ficha_oc }}
+        {% if relatorio.police_incident_number %}
+          {{ relatorio.police_incident_number }}
         {% else %}
           sem registro
         {% endif %}
         <hr>
-        <strong>Relato da operação: </strong> {{ relatorio.relato_da_missao }}
+        <strong>Relato da operação: </strong> {{ relatorio.operation_report }}
         <hr>
       </div>
     </div>

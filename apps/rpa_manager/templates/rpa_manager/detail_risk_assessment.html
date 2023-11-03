@@ -61,7 +61,7 @@
   <div class="detail_risk">
     <div class="card card-primary col-md-4 mt-3">
       <div class="card-body">
-        <strong>Responsável pelas informações: </strong> {{ risk_assessment.info_responsible }} 
+        <strong>Responsável pelas informações: </strong> {{ risk_assessment.info_responsible.military }} 
         <hr>
         <strong>Cenário operacional: </strong> {{ risk_assessment.operational_scenario }} 
         <hr>
@@ -159,6 +159,9 @@
       <a  style="display: inline" href="{% url 'rpa_manager:create_assessment' risk_assessment.id %}">
           <button type="button" style="display: inline; width: 160px; height: 38px;" class="btn btn-block btn-primary mt-3 mb-3"><i class="fa  fa-plus"></i> Nova análise </button>
       </a>
+      <a  style="display: inline" href="{% url 'rpa_manager:risk_assessment_list' %}">
+          <button type="button" style="display: inline; width: 160px; height: 38px;" class="btn btn-block btn-primary mt-3 mb-3">  Voltar </button>
+      </a>
 
     </div>
     
@@ -182,24 +185,6 @@
   <script>
     var table = $('#objects_list').DataTable( {
         lengthChange: false,
-        buttons: [ 'pageLength',
-        {
-          extend: 'excel',
-          text: 'Excel',
-          exportOptions: {
-            columns: ':not(.removerDoPdf)'
-          }
-        },
-        {
-          extend: 'print',
-          text: 'Imprimir',
-          exportOptions: {
-            columns: ':not(.removerDoPdf)'
-          }
-        },
-        'colvis'
-      ],
-        dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
         language: { "url": "//cdn.datatables.net/plug-ins/1.11.1/i18n/pt_br.json" },
         responsive: true,
         searching: true,
@@ -208,24 +193,3 @@
     } );
   </script>
 {% endblock %}
-
-
-
-<!-- 
-pip install weasyprint
-Jhonata Dias16:32
-class ReportDetailView(DetailView):
-    model = Report
-    template_name = 'idoc/report_detail.html'
-
-    def render_to_response(self, context, **response_kwargs):
-        html = render_to_string(self.template_name, context)
-
-        # Configuração do tamanho de papel para A4 e quebra de palavras
-        css = '''
-        @page { size: A4; margin: 2cm; }
-        body { word-wrap: break-word; }
-        '''
-
-        # Caminho para o diretório que contém a imagem e que será usado como URI base
--->
