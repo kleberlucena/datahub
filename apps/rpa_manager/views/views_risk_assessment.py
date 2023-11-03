@@ -169,6 +169,7 @@ class RiskAssessmentPDFDetailView(DetailView):
         return context
 
     def render_to_response(self, context, **response_kwargs):
+        user = self.request.user
         html = render_to_string(self.template_name, context)
         css = '''
         @page { size: A4; margin: 1cm; }
@@ -180,7 +181,7 @@ class RiskAssessmentPDFDetailView(DetailView):
         # inline - open in the same page
         # attachment - download
         response = HttpResponse(pdf_file, content_type='application/pdf')
-        response['Content-Disposition'] = 'inline; filename="avaliação-de-risco-operacional.pdf"'
+        response['Content-Disposition'] = f'inline; filename="{user.military}-avaliação-de-risco-operacional.pdf"'
 
         return response
 

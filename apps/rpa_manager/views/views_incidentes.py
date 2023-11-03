@@ -35,10 +35,6 @@ class IncidentesDetailView(GroupRequiredMixin, DetailView):
         
         return context
     
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-    
     
 class IncidentesCreateView(GroupRequiredMixin, CreateView):
     model = Incidents
@@ -105,29 +101,43 @@ class IncidentesUpdateView(GroupRequiredMixin, UpdateView):
         
         return context
     
-    # def dispatch(self, *args, **kwargs):
-    #     incidente = self.get_object()
-    #     time_since_creation = timezone.now() - incidente.date
-    #     if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
-    #         messages.error(self.request, 'Não é possível editar este incidente após 24 horas.')
-    #         return HttpResponseRedirect(self.success_url)
-    #     return super().dispatch(*args, **kwargs)
+    def dispatch(self, *args, **kwargs):
+        user = self.request.user
+        
+        if not user.is_superuser or not user.groups.filter(name='profile:rpa_advanced').exists():
+            report = self.get_object()
+            time_since_creation = timezone.now() - report.created_at
+            if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
+                messages.error(self.request, 'Não é possível editar esta Caderneta após 24 horas.')
+                return HttpResponseRedirect(self.success_url)
+            return super().dispatch(*args, **kwargs)
+        else:
+            return super().dispatch(*args, **kwargs)
     
     
-class IncidentesDeleteView(PermissionRequiredMixin, DeleteView):
+class IncidentesDeleteView(GroupRequiredMixin, DeleteView):
     model = Incidents
     template_name = 'rpa_manager/delete_incident.html'
     success_url = reverse_lazy('rpa_manager:incidentes')
-    permission_required = 'rpa_manager.delete_incidente'
+    group_required = ['profile:rpa_advanced']
 
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
         messages.info(self.request, f'{MESSAGE_MODEL_NAME} excluído com sucesso!')
         return response
     
-    @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+        user = self.request.user
+        
+        if not user.is_superuser or not user.groups.filter(name='profile:rpa_advanced').exists():
+            report = self.get_object()
+            time_since_creation = timezone.now() - report.created_at
+            if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
+                messages.error(self.request, 'Não é possível editar esta Caderneta após 24 horas.')
+                return HttpResponseRedirect(self.success_url)
+            return super().dispatch(*args, **kwargs)
+        else:
+            return super().dispatch(*args, **kwargs)
 
 
 class IncidenteImageDeleteView(DeleteView):

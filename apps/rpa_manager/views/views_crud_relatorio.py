@@ -87,31 +87,40 @@ class EditarRelatorioView(GroupRequiredMixin, UpdateView):
         return response
 
     def dispatch(self, *args, **kwargs):
-        report = self.get_object()
-        time_since_creation = timezone.now() - report.created_at
-        if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
-            messages.error(self.request, 'Não é possível editar esta Caderneta após 24 horas.')
-            return HttpResponseRedirect(self.success_url)
-        return super().dispatch(*args, **kwargs)
+        user = self.request.user
+        
+        if not user.is_superuser or not user.groups.filter(name='profile:rpa_advanced').exists():
+            report = self.get_object()
+            time_since_creation = timezone.now() - report.created_at
+            if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
+                messages.error(self.request, 'Não é possível editar esta Caderneta após 24 horas.')
+                return HttpResponseRedirect(self.success_url)
+            return super().dispatch(*args, **kwargs)
+        else:
+            return super().dispatch(*args, **kwargs)
+            
     
-    
-class DeletarRelatorioView(PermissionRequiredMixin, DeleteView):
+class DeletarRelatorioView(GroupRequiredMixin, DeleteView):
     model = Report
     template_name = 'rpa_manager/delete_report.html'
     success_url = reverse_lazy('rpa_manager:relatorios')
     context_object_name = 'obj'
-    permission_required = 'rpa_manager.delete_relatorio'
+    group_required = ['profile:rpa_advanced']
     
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
         messages.info(self.request, f'{MESSAGE_MODEL_NAME} excluída com sucesso!')
         return response
     
-    @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
-        report = self.get_object()
-        time_since_creation = timezone.now() - report.created_at
-        if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
-            messages.error(self.request, 'Não é possível excluir esta Caderneta após 24 horas.')
-            return HttpResponseRedirect(self.success_url)
-        return super().dispatch(*args, **kwargs)
+        user = self.request.user
+        
+        if not user.is_superuser or not user.groups.filter(name='profile:rpa_advanced').exists():
+            report = self.get_object()
+            time_since_creation = timezone.now() - report.created_at
+            if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
+                messages.error(self.request, 'Não é possível editar esta Caderneta após 24 horas.')
+                return HttpResponseRedirect(self.success_url)
+            return super().dispatch(*args, **kwargs)
+        else:
+            return super().dispatch(*args, **kwargs)
