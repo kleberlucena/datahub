@@ -397,6 +397,40 @@
                 <h3 class="card-title"><b>Questionário de segurança</b></h3>
             </div>
             <div class="card-body">
+
+
+                {% if spot_survey %}
+                    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                        <div class="table-responsive">
+                            <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
+                                role="grid" aria-describedby="objects_list_info" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Nível de segurança</th>
+                                    </tr>
+                                </thead>
+                                <tboby>
+                                        <tr>
+                                            <td> <input type="text" id="slider_survey" name="slider_survey" /> </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <a href="{% url 'protect_network:survey_update' spot.id %}">
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class=""></i>
+                            Editar
+                        </button>
+                    </a>
+                {% else %}
+                    <p>Não é possível avaliar o nível de segurança do estabelecimento pois o questionário ainda não foi respondido</p><br>
+                    <a href="{% url 'protect_network:survey_add' spot.id %}">
+                        <button type="button" class="btn btn-outline-primary">
+                            Responder questionário
+                        </button>
+                    </a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -735,9 +769,13 @@
     $(document).ready(function () {
         var maxValue = {{ spot.spot_type.update_time }}; // Valor máximo do slider
         var centerValue = 0; // Valor fixo no centro
-
         var initialValue = {{ spot.next_update }}; // Valor inicial do slider
         var backgroundColor = initialValue <= centerValue ? "red" : "green"; // Cor condicional
+
+        var maxValue_survey = 100; // Valor máximo do slider
+        var centerValue_survey = 50; // Valor fixo no centro
+        var initialValue_survey = {{ spot_survey_score|floatformat:0 }}; // Valor inicial do slider
+        var backgroundColor_survey = initialValue_survey <= centerValue_survey ? "red" : "green"; // Cor condicional
 
         $("#slider").ionRangeSlider({
             min: -maxValue, // Valor mínimo será o oposto do valor máximo
@@ -755,6 +793,24 @@
                 // Define a cor da barra de seleção com base no valor do "from"
                 backgroundColor = currentValue <= centerValue ? "red" : "green";
                 $(".irs .irs-bar").css("background-color", backgroundColor);
+            }
+        });
+        $("#slider_survey").ionRangeSlider({
+            min: 0, // Valor mínimo será o oposto do valor máximo
+            max: maxValue_survey,
+            from: initialValue_survey, // Valor inicial
+            step: 1,
+            from_fixed: true,
+            onStart: function (data) {
+                // Define a cor inicial da barra de seleção
+                $(".irs .irs-bar").css("background-color", backgroundColor_survey);
+            },
+            onChange: function (data) {
+                var currentValue_survey = data.from;
+
+                // Define a cor da barra de seleção com base no valor do "from"
+                backgroundColor_survey = currentValue_survey <= centerValue_survey ? "red" : "green";
+                $(".irs .irs-bar").css("background-color", backgroundColor_survey);
             }
         });
 

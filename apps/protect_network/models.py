@@ -207,18 +207,19 @@ class OpeningHours(models.Model):
     
 
 
-class SecyritySurvey(models.Model):
+class SecuritySurvey(models.Model):
     spot = models.ForeignKey('Spot', on_delete=models.CASCADE, related_name='security_survey')
-    security_cameras = models.BooleanField(blank=True, null=True)
-    security_cameras_rec = models.BooleanField(blank=True, null=True)
-    private_security = models.BooleanField(blank=True, null=True)
-    external_lights = models.CharField(max_length=50)
-    alarm_system = models.BooleanField(blank=True, null=True)
-    fire_extinguisher = models.BooleanField(blank=True, null=True)
-    emergency_out = models.BooleanField(blank=True, null=True)
-    fire_alarm_system = models.BooleanField(blank=True, null=True)
-    security_barriers = models.BooleanField(blank=True, null=True)
+    security_cameras = models.BooleanField(blank=False, null=False)
+    security_cameras_rec = models.BooleanField(blank=False, null=False)
+    private_security = models.BooleanField(blank=False, null=False)
+    external_lights = models.BooleanField(blank=False, null=False)
+    alarm_system = models.BooleanField(blank=False, null=False)
+    fire_extinguisher = models.BooleanField(blank=False, null=False)
+    emergency_out = models.BooleanField(blank=False, null=False)
+    fire_alarm_system = models.BooleanField(blank=False, null=False)
+    security_barriers = models.BooleanField(blank=False, null=False)
     other_security_measures = models.TextField(blank=True, null=True)
+    score = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.spot

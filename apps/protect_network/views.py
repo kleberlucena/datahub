@@ -6,6 +6,7 @@ from django.shortcuts import  get_object_or_404
 from django.utils import timezone
 from django.contrib.gis.geos import GEOSGeometry
 from . import models, forms
+from django.db.models import Avg
 from apps.portal.models import Promotion
 
 import json
@@ -36,14 +37,20 @@ class DetailSpotView(DetailView):
         opening_hours = models.OpeningHours.objects.filter(spot=spot)
         images = models.Image.objects.filter(spot=spot).order_by('-id')[:12]
         spot_types = models.SpotType.objects.filter(spot=spot)
+        survey = models.SecuritySurvey.objects.filter(spot=spot)
         progress_bar_math = (spot.next_update / spot.spot_type.update_time) * 100
         progress_bar_math_rounded = round(progress_bar_math)
+        survey_scores = models.SecuritySurvey.objects.filter(spot=spot).aggregate(average_score=Avg('score'))
+
 
         context['spot_progress_bar_math'] = progress_bar_math_rounded
         context['spot_contacts'] = contact_info
         context['spot_opening_hours'] = opening_hours
         context['spot_images'] = images
         context['spot_types'] = spot_types
+        context['spot_survey'] = survey
+        context['spot_survey_score'] = survey_scores['average_score']
+
 
         return context
     
@@ -336,10 +343,10 @@ class UpdateContactInfoView(UpdateView):
         context['spot_pk'] = self.object.spot_id
         return context
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['spot_pk'] = self.object.spot_id
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['spot_pk'] = self.object.spot_id
+    #     return context
 
     def get_success_url(self):
         spot_id = self.object.spot_id
@@ -541,3 +548,79 @@ class QppListView(ListView):
         qpp = models.Qpp.objects.all()
         context['qpps'] = qpp
         return context
+    
+
+###### SURVEY - QUESTIONÁRIO DE INFORMAÇÕES DE SEGURANÇA ######
+
+@include_toast
+class CreateSurveyView(CreateView):
+    model = models.SecuritySurvey
+    form_class = forms.SecuritySurveyForm
+    template_name = 'protect_network/survey_form.html'
+
+    def get_success_url(self):
+        spot_id = self.kwargs['spot_id']
+        return reverse_lazy('protect_network:spot_detail', kwargs={'pk': spot_id})
+        
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        spot_id = self.kwargs.get('spot_id')
+        spot = get_object_or_404(models.Spot, pk=spot_id)
+        context['spot_pk'] = spot.pk
+        return context
+
+    def form_valid(self, form):
+        spot_id = self.kwargs['spot_id']
+        form.instance.spot_id = spot_id
+
+        score = 0
+        boolean_fields = [
+            'security_cameras', 'security_cameras_rec', 'private_security',
+            'external_lights', 'alarm_system', 'fire_extinguisher',
+            'emergency_out', 'fire_alarm_system', 'security_barriers'
+        ]
+        for field in boolean_fields:
+            value = getattr(self.object, field)
+            if value:
+                score += 10
+        self.object.score = score
+
+        return super().form_valid(form)
+
+
+@include_toast
+class UpdateSurveyView(UpdateView):
+    model = models.SecuritySurvey
+    template_name = 'protect_network/survey_form.html'
+    form_class = forms.SecuritySurveyForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['spot_pk'] = self.object.spot_id
+        return context
+    
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        spot_id = self.kwargs['pk']
+        spot = get_object_or_404(models.Spot, pk=spot_id)
+        self.object.spot = spot
+
+        score = 0
+        boolean_fields = [
+            'security_cameras', 'security_cameras_rec', 'private_security',
+            'external_lights', 'alarm_system', 'fire_extinguisher',
+            'emergency_out', 'fire_alarm_system', 'security_barriers'
+        ]
+        for field in boolean_fields:
+            value = getattr(self.object, field)
+            if value:
+                score += 10
+        self.object.score = score
+
+        self.object.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        spot_id = self.object.spot_id
+        return reverse('protect_network:spot_detail', args=[spot_id])

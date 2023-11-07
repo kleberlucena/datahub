@@ -242,9 +242,16 @@ class QppForm(forms.ModelForm):
 
 
 # class SecuritySurveyForm(forms.ModelForm):
+#     other_security_measures = forms.CharField(
+#         label='Outras Medidas de Segurança',
+#         widget=forms.Textarea(attrs={'rows': 3, 'placeholder': 'Se houver, informe medidas de segurança adicionais'}),
+#         required=False
+#     )
+
 #     class Meta:
 #         model = models.SecuritySurvey
-#         fields = '__all__'
+#         #fields = '__all__'
+#         fields = ['security_cameras','security_cameras_rec','private_security','external_lights','alarm_system','fire_extinguisher','emergency_out','fire_alarm_system','security_barriers']
 #         labels = {
 #             'security_cameras': 'Câmeras de Segurança',
 #             'security_cameras_rec': 'Gravação de Câmeras em DVR',
@@ -255,10 +262,84 @@ class QppForm(forms.ModelForm):
 #             'emergency_out': 'Saída de Emergência',
 #             'fire_alarm_system': 'Sistema de Detecção de Incêndio',
 #             'security_barriers': 'Barreiras de Segurança',
-#             'other_security_measures': 'Outras Medidas de Segurança',
 #         }
 
-#     def __init__(self, *args, **kwargs):
-#         super(SecuritySurveyForm, self).__init__(*args, **kwargs)
-#         for field_name, field in self.fields.items():
-#             field.required = False
+class SecuritySurveyForm(forms.ModelForm):
+    IS_BOOLEAN_CHOICES = [
+        ('', '------'),
+        (True, 'Sim'),
+        (False, 'Não'),
+    ]
+
+    security_cameras = forms.ChoiceField(
+        label='Câmeras de Segurança',
+        choices=IS_BOOLEAN_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True,
+    )
+
+    security_cameras_rec = forms.ChoiceField(
+        label='Gravação de Câmeras em DVR',
+        choices=IS_BOOLEAN_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True,
+    )
+
+    private_security = forms.ChoiceField(
+        label='Segurança Privada',
+        choices=IS_BOOLEAN_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True,
+    )
+
+    external_lights = forms.ChoiceField(
+        label='Iluminação Externa',
+        choices=IS_BOOLEAN_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True,
+    )
+
+    alarm_system = forms.ChoiceField(
+        label='Sistema de Alarme',
+        choices=IS_BOOLEAN_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True,
+    )
+
+    fire_extinguisher = forms.ChoiceField(
+        label='Extintor de Incêndio',
+        choices=IS_BOOLEAN_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True,
+    )
+
+    emergency_out = forms.ChoiceField(
+        label='Saída de Emergência',
+        choices=IS_BOOLEAN_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True,
+    )
+
+    fire_alarm_system = forms.ChoiceField(
+        label='Sistema de Detecção de Incêndio',
+        choices=IS_BOOLEAN_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True,
+    )
+
+    security_barriers = forms.ChoiceField(
+        label='Barreiras de Segurança',
+        choices=IS_BOOLEAN_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True,
+    )
+
+    other_security_measures = forms.CharField(
+        label='Outras Medidas de Segurança',
+        widget=forms.Textarea(attrs={'rows': 3, 'placeholder': 'Se houver, informe medidas de segurança adicionais'}),
+        required=False
+    )
+
+    class Meta:
+        model = models.SecuritySurvey
+        fields = ['security_cameras','security_cameras_rec','private_security','external_lights','alarm_system','fire_extinguisher','emergency_out','fire_alarm_system','security_barriers']
