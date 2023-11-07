@@ -11,7 +11,7 @@
 {% endblock %}
 
 
-{% block title-header %} Pontos de Interesse {% endblock %}
+{% block title-header %} Rede de Proteção {% endblock %}
 
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
@@ -25,12 +25,12 @@
     {% if "/add" in request.path %}
         <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar tag</h3>
         <p class="text-muted text-justify px-3 pt-2">
-            <b>Essa tela permite a criação de tags para cadastro dos pontos.</b>
+            <b>Essa tela permite a criação de tags para cadastro dos estabelecimentos.</b>
         </p>
     {% elif "/update" in request.path %}
         <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre editar tag</h3>
         <p class="text-muted text-justify px-3 pt-2">
-            <b>Essa tela permite a alteração de tags para cadastro dos pontos.</b>
+            <b>Essa tela permite a alteração de tags para cadastro dos estabelecimentos.</b>
         </p>
     {% endif %}
 
@@ -50,7 +50,7 @@
                     {{form.name|add_class:"form-control"|as_crispy_field}}
                 </div>
             </div>
-            <div class="row mb-1">
+            <div class="row mb-1 mt-3">
                 <div class="col-sm-12">
                     {{form.details|add_class:"form-control"|as_crispy_field}}
                 </div>

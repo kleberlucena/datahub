@@ -3,7 +3,7 @@
 
 
 <!-- browser title -->
-{% block title %} Adicionar categoria {% endblock %}
+{% block title %} Adicionar QPP {% endblock %}
 
 <!-- styles -->
 {% block style_sheet %}
@@ -11,29 +11,25 @@
 {% endblock %}
 
 
-{% block title-header %} Pontos de Interesse {% endblock %}
+{% block title-header %} Rede de Proteção {% endblock %}
 
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
-<li class="breadcrumb-item">Adicionar categoria</li>
+<li class="breadcrumb-item">Adicionar QPP</li>
 {% endblock %}
 
 {% block content %}
 
 <div class="callout callout-info">
     {% if "/add" in request.path %}
-        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar categoria</h3>
+        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar QPP</h3>
         <p class="text-muted text-justify px-3 pt-2">
-            <b>Essa tela permite a criação de categorias para cadastro dos pontos.</b>
-            <br>- Se houver hierarquia pai/filho entre duas categorias, a categoria pai deve ser criada para que possa ser selecionada.
-            <br>- O tempo de atualização define o período em dias para que o sistema cobre atualização de dados sobre os ponto
+            <b>Essa tela permite a criação de QPPs</b>
         </p>
     {% elif "/update" in request.path %}
-        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre editar categoria</h3>
+        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre editar QPP</h3>
         <p class="text-muted text-justify px-3 pt-2">
-            <b>Essa tela permite a alteração de categorias para cadastro dos pontos.</b>
-            <br>- Se houver hierarquia pai/filho entre duas categorias, a categoria pai deve ser criada para que possa ser selecionada.
-            <br>- O tempo de atualização define o período em dias para que o sistema cobre atualização de dados sobre os ponto
+            <b>Essa tela permite a alteração de QPPs.</b>
         </p>
     {% endif %}
 </div>
@@ -52,7 +48,7 @@
                     {{form.name|add_class:"form-control"|as_crispy_field}}
                 </div>
             </div>
-            <div class="row mb-1">
+            <div class="row mb-1 mt-3">
                 <div class="col-sm-12">
                     {{form.details|add_class:"form-control"|as_crispy_field}}
                 </div>

@@ -1,7 +1,7 @@
 {% extends "base/base.html" %}
 {% load static %}
 
-{% block title %}Pontos de Interesse - Pontos cadastrados{% endblock %}
+{% block title %}Rede de Proteção - Pontos cadastrados{% endblock %}
 
 {% block style_sheet %}
 <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
@@ -18,19 +18,19 @@
 </style>
 {% endblock %}
 
-{% block title-header %} Pontos de Interesse {% endblock %}
+{% block title-header %} Rede de Proteção {% endblock %}
 
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
-<li class="breadcrumb-item"><a>Lista de pontos</a></li>
+<li class="breadcrumb-item"><a>Lista de estabelecimentos</a></li>
 {% endblock %}
 
 {% block content %}
 <!-- INFO BOX-->
 <div class="callout callout-info">
-    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre lista de pontos</h3>
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre lista de estabelecimentos</h3>
     <p class="text-muted text-justify px-3 pt-2">
-        <b>Essa tela lista dos os pontos criados e permite a visualização dos detalhes de um ponto específico.</b>
+        <b>Essa tela lista dos os estabelecimentos criados e permite a visualização dos detalhes de um estabelecimento específico.</b>
     </p>
 </div>
 
@@ -38,7 +38,7 @@
   <div class="col-md-12">
     <div class="card card-primary card-outline">
       <div class="card-header">
-        <h3 class="card-title">Lista de pontos cadastrados</h3>
+        <h3 class="card-title">Lista de estabelecimentos cadastrados</h3>
       </div>
       <div class="card-body">
         <div class="row">
@@ -50,6 +50,7 @@
               <thead>
                 <tr>
                   <th>Nome</th>
+                  <th>Rede</th>
                   <th>Detalhes</th>
                   <th>Tipo</th>
                   <th>Score</th>
@@ -62,6 +63,7 @@
                   {% for spot in spots %}
                     <tr>
                       <td>{{ spot.name }}</td>
+                      <td>{{ spot.spot_network }}</td>
                       <td>{{ spot.details }}</td>
                       <td>{{ spot.spot_type }}</td>
                       <td>

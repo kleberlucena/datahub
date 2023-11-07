@@ -11,7 +11,7 @@
 {% endblock %}
 
 
-{% block title-header %} Pontos de Interesse {% endblock %}
+{% block title-header %} Rede de Proteção {% endblock %}
 
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
@@ -24,16 +24,16 @@
     {% if "/add" in request.path %}
         <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar categoria</h3>
         <p class="text-muted text-justify px-3 pt-2">
-            <b>Essa tela permite a criação de categorias para cadastro dos pontos.</b>
+            <b>Essa tela permite a criação de categorias para cadastro dos estabelecimentos.</b>
             <br>- Se houver hierarquia pai/filho entre duas categorias, a categoria pai deve ser criada para que possa ser selecionada.
-            <br>- O tempo de atualização define o período em dias para que o sistema cobre atualização de dados sobre os ponto
+            <br>- O tempo de atualização define o período em dias para que o sistema cobre atualização de dados sobre os estabelecimentos.
         </p>
     {% elif "/update" in request.path %}
         <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre editar categoria</h3>
         <p class="text-muted text-justify px-3 pt-2">
-            <b>Essa tela permite a alteração de categorias para cadastro dos pontos.</b>
+            <b>Essa tela permite a alteração de categorias para cadastro dos estabelecimentos.</b>
             <br>- Se houver hierarquia pai/filho entre duas categorias, a categoria pai deve ser criada para que possa ser selecionada.
-            <br>- O tempo de atualização define o período em dias para que o sistema cobre atualização de dados sobre os ponto
+            <br>- O tempo de atualização define o período em dias para que o sistema cobre atualização de dados sobre os estabelecimentos.
         </p>
     {% endif %}
 </div>
@@ -42,7 +42,7 @@
     <div class="col-md-12">
         <div class="card card-primary card-outline">
             <div class="card-header">
-                <h3 class="card-title">Adicionar ponto</h3>
+                <h3 class="card-title">Adicionar categoria</h3>
             </div>
         <form class="p-3" method='post' enctype="multipart/form-data">
             {% csrf_token %}
@@ -52,12 +52,12 @@
                     {{form.name|add_class:"form-control"|as_crispy_field}}
                 </div>
             </div>
-            <div class="row mb-1">
+            <div class="row mb-1 mt-3">
                 <div class="col-sm-12">
                     {{form.spot_type_father|add_class:"form-control"|as_crispy_field}}
                 </div>
             </div>
-            <div class="row mb-1">
+            <div class="row mb-1 mt-3">
                 <div class="col-sm-12">
                     {{form.update_time|add_class:"form-control"|as_crispy_field}}
                 </div>

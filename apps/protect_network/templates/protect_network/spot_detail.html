@@ -411,7 +411,9 @@
                                 </thead>
                                 <tboby>
                                         <tr>
-                                            <td> <input type="text" id="slider_survey" name="slider_survey" /> </td>
+                                            <td>
+                                                <input type="text" id="slider-survey" name="slider-survey" />
+                                            </td>
                                         </tr>
                                 </tbody>
                             </table>
@@ -772,52 +774,44 @@
         var initialValue = {{ spot.next_update }}; // Valor inicial do slider
         var backgroundColor = initialValue <= centerValue ? "red" : "green"; // Cor condicional
 
-        var maxValue_survey = 100; // Valor máximo do slider
-        var centerValue_survey = 50; // Valor fixo no centro
-        var initialValue_survey = {{ spot_survey_score|floatformat:0 }}; // Valor inicial do slider
-        var backgroundColor_survey = initialValue_survey <= centerValue_survey ? "red" : "green"; // Cor condicional
-
         $("#slider").ionRangeSlider({
-            min: -maxValue, // Valor mínimo será o oposto do valor máximo
+            min: -maxValue,
             max: maxValue,
-            from: initialValue, // Valor inicial
+            from: initialValue,
             step: 1,
             from_fixed: true,
             onStart: function (data) {
-                // Define a cor inicial da barra de seleção
                 $(".irs .irs-bar").css("background-color", backgroundColor);
             },
             onChange: function (data) {
                 var currentValue = data.from;
-
-                // Define a cor da barra de seleção com base no valor do "from"
                 backgroundColor = currentValue <= centerValue ? "red" : "green";
                 $(".irs .irs-bar").css("background-color", backgroundColor);
             }
         });
-        $("#slider_survey").ionRangeSlider({
-            min: 0, // Valor mínimo será o oposto do valor máximo
-            max: maxValue_survey,
-            from: initialValue_survey, // Valor inicial
+
+        var centerValueSurvey = 50; // Valor fixo no centro
+        var initialValueSurvey = 40; // {{ spot_survey_score|floatformat:0 }}
+        var backgroundColorSurvey = initialValueSurvey <= centerValueSurvey ? "red" : "green"; // Cor condicional para o segundo slider
+
+        $("#slider-survey").ionRangeSlider({
+            min: 0,
+            max: 100,
+            from: initialValueSurvey,
             step: 1,
             from_fixed: true,
             onStart: function (data) {
-                // Define a cor inicial da barra de seleção
-                $(".irs .irs-bar").css("background-color", backgroundColor_survey);
+                $(".irs .irs-bar").css("background-color", backgroundColorSurvey);
             },
             onChange: function (data) {
-                var currentValue_survey = data.from;
-
-                // Define a cor da barra de seleção com base no valor do "from"
-                backgroundColor_survey = currentValue_survey <= centerValue_survey ? "red" : "green";
-                $(".irs .irs-bar").css("background-color", backgroundColor_survey);
+                var currentValueSurvey = data.from;
+                backgroundColorSurvey = currentValueSurvey <= centerValueSurvey ? "red" : "green";
+                $(".irs .irs-bar").css("background-color", backgroundColorSurvey);
             }
         });
-
-        // Posiciona o marcador na posição 0 inicialmente
-        $(".slider-marker").css("left", "50%");
     });
 </script>
+
 <script type="text/javascript">
     // Seletor para todos os elementos que podem conter "none"
     var elementsToCheck = document.querySelectorAll('.replace-none');
