@@ -7,6 +7,17 @@
   {% comment %} bacinf style_sheet {% endcomment %}
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
   <style>
+    .callout-text {
+      text-align: justify
+    }
+    
+    input[type=checkbox]  {
+      border: 0px;
+      width: 20px;
+      height: 35px;
+      vertical-align: middle;
+    }
+
     #id_legislation_file {
       display: none;
     }
@@ -30,6 +41,11 @@
 {% block content %}
   <div class="row">
     <div class="col-md-12">
+      <div class="callout callout-info">
+        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+        <p class="callout-text">Neste formulário insira os dados sobre a legislação e anexe o arquivo.</p>
+      </div>
+
       <div class="card card-primary card-outline">
         <div class="card-header">
           <h3 class="card-title">Inserir legislação</h3>
@@ -58,8 +74,8 @@
               {{ form.legislation_file }}
               {{ form.legislation_file.errors }}
               <p id="fileName"></p>
-              <label for="id_in_effect">Está em vigor? </label>
-              {{ form.in_effect }}
+              <label for="id_in_effect" class="mr-3">Está em vigor? </label>
+              {{ form.in_effect }} Sim
               {{ form.in_effect.errors }}<br>
             </div>
           </div>

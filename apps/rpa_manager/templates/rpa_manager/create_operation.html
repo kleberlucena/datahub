@@ -5,12 +5,13 @@
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
   <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
 <style>
+  .callout-text {
+    text-align: justify
+  }
   .map_options {
     display: flex;
     gap: 10px;
   }
-
-  /* Estilo para o ícone "x" */
   .input-container {
     position: relative;
     width: 400px;
@@ -68,6 +69,12 @@
 {% block content %}
 <div class="row">
   <div class="col-md-12">
+    <div class="callout callout-info">
+      <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+      <p class="callout-text">Neste formulário insira as informações referente a operação que será realizada.</p>
+      <p class="callout-text">Acima do mapa há opções para inserir as coordenadas no mapa assim como pesquisar um endereço.</p>
+    </div>
+
     <div class="card card-primary card-outline">
       <div class="card-header">
         <h3 class="card-title">Criar nova operação</h3>
@@ -79,7 +86,6 @@
           <div class="form-group col-md-12 mb-0">
             <div class="row mt-3">
               <div class="col-md-6">
-                {{ form.errors }}
                 <label for="id_piloto_remoto" class="piloto_remoto">Piloto Remoto</label>
                 <br>{{ user.username }}<br>
               </div>
@@ -151,7 +157,7 @@
             <input type="text" class="form-control" id="endereco" placeholder="Digite o endereço" />
             <i class="fas fa-times-circle clear-icon" onclick="limparCampo()"></i>
           </div>
-          <button type="button" class="btn btn-outline-info mt-3" onclick="pesquisarEndereco()">Pesquisar
+          <button type="button" class="btn btn-outline-info mt-3" style="max-height: 38px;" onclick="pesquisarEndereco()">Pesquisar
             Endereço</button>
           <div class="loading_search">
             <p style="margin-top: 25px;">Pesquisando...</p>

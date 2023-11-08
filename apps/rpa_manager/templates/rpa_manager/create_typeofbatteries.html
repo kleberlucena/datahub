@@ -5,6 +5,11 @@
 {% block style_sheet %}
   {% comment %} bacinf style_sheet {% endcomment %}
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    .callout-text {
+      text-align: justify
+    }
+  </style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -24,6 +29,11 @@
 {% block content %}
   <div class="row">
     <div class="col-md-12">
+      <div class="callout callout-info">
+        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+        <p class="callout-text">Neste formulário insira os dados referentes ao novo tipo de bateria a ser cadastrado.</p>
+      </div>
+
       <div class="card card-primary card-outline">
         <div class="card-header">
           <h3 class="card-title">Criar novo tipo de bateria</h3>

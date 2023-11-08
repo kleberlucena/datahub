@@ -5,6 +5,10 @@
 {% block style_sheet %}
 {% comment %} bacinf style_sheet {% endcomment %}
 <style>
+  .callout-text {
+    text-align: justify
+  }
+  
   .detail_aircraft {
     display: flex;
     gap: 10px;
@@ -21,11 +25,6 @@
   .detail_img_container img {
     width: 200px;
     margin: 5px;
-  }
-
-  .detail_img_container img:hover {
-    scale: 2.0;
-    transition: 500ms;
   }
 
   .aircraft_img {
@@ -86,11 +85,16 @@
     </div>
 
     <div class="col-md-8">  
-      <div class="detail_img_container mt-3 mr-3">
-        {% for image_url in image_urls %}
-          <img src="{{ image_url }}" alt="Image">
-        {% endfor %}
-      </div>
+      {% if image_urls %}
+        <div class="detail_img_container mt-3 mr-3">
+          {% for image_url in image_urls %}
+            <img src="{{ image_url }}" alt="Image">
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>Não há imagens cadastradas.</p>
+      {% endif %}
+        
     </div>
 </div>
 

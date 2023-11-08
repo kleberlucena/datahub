@@ -5,6 +5,17 @@
 {% block style_sheet %}
 <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
 <style>
+  .callout-text {
+    text-align: justify
+  }
+  
+  input[type=checkbox]  {
+    border: 0px;
+    width: 20px;
+    height: 35px;
+    vertical-align: middle;
+  }
+
   #id_decea_request_file {
     display: none;
   }
@@ -45,6 +56,14 @@
 {% block content %}
 <div class="row">
   <div class="col-md-12">
+    <div class="col-md-12">
+      <div class="callout callout-info">
+        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+        <p class="callout-text">Neste formulário insira informações do pós operação.</p>
+        <p class="callout-text">Caso tenha alguma observação, inserir no campo de texto no final do formulário.</p>
+        <p class="callout-text">Confira os dados e marque a caixa de seleção ao final para encerrar a operação.</p>
+      </div>
+
     <div class="card card-primary card-outline">
       <div class="card-header">
         <h3 class="card-title">Criar nova Caderneta</h3>
@@ -172,11 +191,11 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <label for="id_completed" class="field_label">Encerrar operação? <small>marque a caixa ao lado:</small></label>
-            {{ form.completed }}
+            <label for="id_completed" class="field_label">Encerrar operação? <br> <small>marque a caixa:</small></label> 
+            {{ form.completed }} Sim
           </div>
         </div>
-        <div class="">
+        <div class="mt-3">
           <button type="submit" class="btn btn-primary">Salvar</button>
           <a href="{% url 'rpa_manager:relatorios' %}">
             <button type="button" class="btn btn-warning">Cancelar</button>

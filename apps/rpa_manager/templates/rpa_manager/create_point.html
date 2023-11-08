@@ -6,6 +6,10 @@
     <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
     <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
   <style>
+    .callout-text {
+      text-align: justify
+    }
+    
      .piloto_observador,
      .quem_solicitou,
      .quem_autorizou,
@@ -99,9 +103,14 @@
 {% block content %}
   <div class="row">
     <div class="col-md-12">
+      <div class="callout callout-info">
+        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+        <p class="callout-text">Neste formulário insira as coordenadas dos pontos que considera de risco na operação que foi realizada.</p>
+      </div>
+
       <div class="card card-primary card-outline">
         <div class="card-header">
-          <h3 class="card-title">Inserir ponto de interesse</h3>
+          <h3 class="card-title">Inserir ponto de risco</h3>
         </div>
         <form class="p-3" method='post' enctype="multipart/form-data">
           {% csrf_token %}

@@ -6,6 +6,10 @@
 {% comment %} bacinf style_sheet {% endcomment %}
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
   <style>
+    .callout-text {
+      text-align: justify
+    }
+    
     /* insert error elemets to fields */
     .errorlist {
       list-style: none; 
@@ -45,6 +49,12 @@
 
 <div class="row">
   <div class="col-md-12">
+    <div class="callout callout-info">
+      <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+      <p>Neste formulário, insira os usuários que irão compor a guarnição de serviço, o telefone para contato e a cidade de atuação.</p>
+      <p>O piloto remoto deve ser diferente do piloto observador, porém ambos podem acumular a função de motorista.</p>
+    </div>
+
     <div class="card card-primary card-outline">
       <div class="card-header">
         <h3 class="card-title">Cadastrar nova guarnição</h3>

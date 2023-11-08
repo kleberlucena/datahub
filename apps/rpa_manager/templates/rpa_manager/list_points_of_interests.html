@@ -19,7 +19,7 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Pontos de interesse {% endblock %}
+{% block title %} Pontos de risco {% endblock %}
 
 <!-- context title -->
 {% block title-header %} Operações aéreas {% endblock %}
@@ -27,14 +27,14 @@
 <!-- breadcrumb -->
 {% block breadcrumb %}
   <li class="breadcrumb-item"><a href="{% url 'rpa_manager:principal' %}">Operações</a></li>
-  <li class="breadcrumb-item active">Pontos de interesse</li>
+  <li class="breadcrumb-item active">Pontos de risco</li>
 {% endblock %}
 
 <!-- main container -->
 {% block content %}
   <div class="card card-primary card-outline">
     <div class="card-header">
-      <h3 class="card-title">Pontos de interesse</h3>
+      <h3 class="card-title">Pontos de risco</h3>
     </div>
     <div class="card-body">
       <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
@@ -62,7 +62,9 @@
                     </button>
                     <div class="dropdown-menu" role="menu" style="">
                         <a class="dropdown-item" href="{% url 'rpa_manager:edit_point' point.id %}">Editar ponto</a>
-                        <a class="dropdown-item" href="{% url 'rpa_manager:delete_point' point.id %}">Excluir ponto</a>
+                        {% if request.user.is_superuser %}
+                          <a class="dropdown-item" href="{% url 'rpa_manager:delete_point' point.id %}">Excluir ponto</a>
+                        {% endif %}
                       </div>
                     </div>
                   </td>
@@ -70,6 +72,11 @@
             {% endfor %}
           </tbody>
         </table>
+
+        <a href="{% url 'rpa_manager:add_point' %}">
+          <button type="button" style="display: block; width: 200px" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i>
+            Novo ponto de risco </button>
+        </a>  
       </div>      
     </div>
   </div>

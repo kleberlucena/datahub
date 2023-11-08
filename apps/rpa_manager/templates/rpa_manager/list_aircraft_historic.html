@@ -8,6 +8,10 @@
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
 <style>
+  .callout-text {
+    text-align: justify
+  }
+  
   .aircraft_selection {
     display: flex;
     flex-direction: row;
@@ -59,10 +63,17 @@
 <!-- main container -->
 {% block content %}
 
+<div class="callout callout-info">
+  <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+  <p class="callout-text">Utilize o campo de pesquisa abaixo para filtrar a aeronave que deseja obter o histórico de alterações.</p>
+</div>
+
 <div class="card card-primary card-outline">
+  
   <div class="card-header">
     <h3 class="card-title">Históricos de alterações</h3>
   </div>
+  
   <form method="get">
     {% csrf_token %}
     <div class="p-3 aircraft_selection">

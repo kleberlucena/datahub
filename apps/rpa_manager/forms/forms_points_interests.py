@@ -21,8 +21,7 @@ class PointsOfInterestForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(PointsOfInterestForm, self).__init__( *args, **kwargs)
-        
-        
+                
         self.fields['description'].widget.attrs.update({
             'placeholder': 'Faça uma breve descrição do ponto de interesse.'
         })

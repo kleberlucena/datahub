@@ -6,6 +6,10 @@
   {% comment %} bacinf style_sheet {% endcomment %}
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
   <style>
+    .callout-text {
+      text-align: justify
+    }
+
     .novo_checklist {
         display: flex;
         justify-content: center;
@@ -187,6 +191,14 @@
 
 <div class="row">
   <div class="col-md-12">
+    <div class="callout callout-info">
+      <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+      <p class="callout-text">Neste formulário é possível confirmar a guarnição de serviço, caso detecte algum erro, no botão abaixo poderá editar a guarnicão.</p>
+      <p class="callout-text">Para iniciar o checklist é necessário selecionar uma aeronave.</p>
+      <p class="callout-text">Por padrão os itens estão pré preenchidos, o usuário deve desmarcar itens que estão com alguma alteração e no campo de texto ao final do checklist descrever a alteração.</p>
+      <p class="callout-text">Há também um campo para inserir imagens de alterações das aeronaves.</p>
+    </div>
+
     <div class="card card-primary card-outline">
       <div class="card-header">
         <h3 class="card-title">Novo checklist</h3>

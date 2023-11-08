@@ -48,8 +48,7 @@
           <tr>
             <th scope="col">Piloto</th>
             <th scope="col">Aeronave</th>
-            <th scope="col">Data</th>
-            <th scope="col">Horário</th>
+            <th scope="col">Data e hora</th>
             <th class="removerDoPdf" scope="col">Ações</th>
           </tr>
         </thead>
@@ -57,14 +56,13 @@
         <tbody>
           {% for checklist in checklists %}
           <tr>
-            <td>{{ checklist.remote_pilot }}</td>
+            <td>{{ checklist.remote_pilot.military }}</td>
             <td>{{ checklist.aircraft }}</td>
-            <td data-sort='YYYYMMDD'>{{ checklist.date | date:"d/m/Y" }}</td>
-            <td>{{ checklist.time }}</td>
+            <td data-sort='YYYYMMDD'>{{ checklist.date | date:"d/m/Y" }} {{ checklist.time }}</td>
 
             {% if request.user|has_group:'profile:rpa_view' or request.user|has_group:'profile:rpa_basic' %}
               <td>
-                <a class="dropdown-item" href="{% url 'rpa_manager:ver_checklist' checklist.id %}">
+                <a href="{% url 'rpa_manager:ver_checklist' checklist.id %}">
                   <button type="button" class="btn btn-outline-info btn-block">Ver dados</button>
                 </a>
               </td>

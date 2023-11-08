@@ -5,6 +5,10 @@
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
   <style>
+    .callout-text {
+      text-align: justify
+    }
+    
     .hidden {
       display: none;
     }
@@ -68,6 +72,16 @@
 {% block content %}
 <div class="row">
   <div class="col-md-12">
+    <div class="callout callout-info">
+      <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+      <p class="callout-text">Neste formulário deve ser registrada a operação a qual ocorreu o incidente com a aeronave.</p>
+      <p class="callout-text">Insira os dados de local, data e hora.</p>
+      <p class="callout-text">Descreva a localidade, insira o ponto de referência onde ocorreu o incidente.</p>
+      <p class="callout-text">Faça um relato detalhado do incidente.</p>
+      <p class="callout-text">Caso o incidente tenha ocorrida durante uma ocorrência, informe o número da ficha do CIOP.</p>
+      <p class="callout-text">Insira imagens do incidente.</p>
+    </div>
+
     <div class="card card-primary card-outline">
       <div class="card-header">
         <h3 class="card-title">{% if request.resolver_match.url_name == 'create_incidente' %}Novo Incidente{% else %}Editar Incidente{% endif %}</h3>

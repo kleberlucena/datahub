@@ -44,7 +44,7 @@
           <thead>
             <tr>
               <th scope="col">Título</th>
-              <th scope="col">Militar</th>
+              <th scope="col">Operador</th>
               <th scope="col">Data</th>
               <th scope="col">Horário</th>
               <th scope="col">Local</th>
@@ -58,7 +58,7 @@
             {% for relatorio in relatorios %}
             <tr>
               <td>{{ relatorio.title }}</td>
-              <td>{{ relatorio.remote_pilot }}</td>
+              <td>{{ relatorio.remote_pilot.military }}</td>
               <td data-sort='YYYYMMDD'>{{ relatorio.date|date:"d/m/Y" }}</td>
               <td>{{ relatorio.initial_time }}</td>
               <td>{{ relatorio.location }}</td>
@@ -67,7 +67,7 @@
 
               {% if request.user|has_group:'profile:rpa_view' or request.user|has_group:'profile:rpa_basic' %}
                 <td>
-                  <a class="dropdown-item" href="{% url 'rpa_manager:ver_relatorio' relatorio.id %}">
+                  <a href="{% url 'rpa_manager:ver_relatorio' relatorio.id %}">
                     <button type="button" class="btn btn-outline-info btn-block">Ver dados</button>
                   </a>
                 </td>
