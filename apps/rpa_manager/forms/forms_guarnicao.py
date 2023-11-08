@@ -57,14 +57,14 @@ class PoliceGroupForm(forms.ModelForm):
         observer_pilot = cleaned_data.get('observer_pilot')
         driver = cleaned_data.get('driver')
 
-        if remote_pilot == observer_pilot or remote_pilot == driver:
+        if remote_pilot == observer_pilot:
             self.add_error('remote_pilot', "O piloto remoto não pode ser o mesmo que o piloto observador ou motorista.")
         
-        if observer_pilot == remote_pilot or observer_pilot == driver:
-            self.add_error('observer_pilot', "O piloto observador não pode ser o mesmo que o piloto remoto ou motorista.")
+        if observer_pilot == remote_pilot:
+            self.add_error('observer_pilot', "O piloto observador não pode ser o mesmo que o piloto remoto.")
         
-        if driver == remote_pilot or driver == observer_pilot:
-            self.add_error('driver', "O motorista não pode ser o mesmo que o piloto remoto ou observador.")
+        # if driver == remote_pilot or driver == observer_pilot:
+        #     self.add_error('driver', "O motorista não pode ser o mesmo que o piloto remoto ou observador.")
 
         if PoliceGroup.objects.filter(observer_pilot=remote_pilot).exclude(id=self.instance.id).exists():
             self.add_error('remote_pilot', "O piloto remoto já está sendo utilizado como piloto observador em outra guarnição.")

@@ -6,7 +6,17 @@
 {% comment %} bacinf style_sheet {% endcomment %}
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
   <style>
-       /* fix select2 field height */
+    /* insert error elemets to fields */
+    .errorlist {
+      list-style: none; 
+      color: red; 
+    }
+
+    .display-error {
+      border: 1px solid red; 
+    }
+
+    /* fix select2 field height */
     .select2-selection,
     .select2-selection--single {
       height: 38px !important;
@@ -44,7 +54,6 @@
         {% csrf_token %}
         <div class="form-row">
           <div class="form-group col-md-12 mb-0">
-            {{ form.errors }}
             <label for="#" class="piloto_observador">Piloto remoto</label>
             <br>{{ user.username }}<br><hr>
             <label for="id_remote_pilot" class="quem_solicitou">Piloto observador</label>
@@ -87,6 +96,14 @@
       $('.remote_pilot_escolha').select2();
       $('.driver_escolha').select2();
     });
+  </script>
+
+  <script>
+    const errorList = document.querySelectorAll('ul.errorlist');
+
+    if (errorList) {
+      errorList.forEach((element) => element.previousElementSibling.classList.toggle('display-error'));
+    }
   </script>
 
 {% endblock %}
