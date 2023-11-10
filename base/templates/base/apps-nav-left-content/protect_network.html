@@ -17,30 +17,11 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="{% url 'protect_network:network_list' %}" class="nav-link">
-                <i class="far fa-circle nav-icon"></i><p>Redes cadastradas</p>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="{% url 'protect_network:network_add' %}" class="nav-link">
-                <i class="far fa-circle nav-icon"></i><p>Nova rede</p>
-            </a>
-        </li>
-        <li class="nav-item">
             <a href="{% url 'protect_network:spot_list_created' %}" class="nav-link">
-                <i class="far fa-circle nav-icon"></i><p>Minha rede</p>
+                <i class="far fa-circle nav-icon"></i><p>Meus cadastros</p>
             </a>
         </li>
-        <li class="nav-item">
-            <a href="{% url 'protect_network:qpp_add' %}" class="nav-link">
-                <i class="far fa-circle nav-icon"></i><p>Adicionar QPP</p>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="{% url 'protect_network:qpp_list' %}" class="nav-link">
-                <i class="far fa-circle nav-icon"></i><p>Listar QPPs</p>
-            </a>
-        </li>
+
         <li class="nav-item">
             <a href="{% url 'protect_network:spot_list' %}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i><p>Listar estabelecimentos</p>
@@ -52,6 +33,26 @@
                 <p>Configurações<i class="fas fa-angle-left right"></i></p>
             </a>
             <ul class="nav nav-treeview" style="display: none;">
+                <li class="nav-item">
+                    <a href="{% url 'protect_network:network_list' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i><p>Redes cadastradas</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'protect_network:network_add' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i><p>Nova rede</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'protect_network:qpp_add' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i><p>Adicionar QPP</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'protect_network:qpp_list' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i><p>Listar QPPs</p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a href="{% url 'protect_network:type_add' %}" class="nav-link">
                         <i class="far fa-circle nav-icon"></i><p>Adicionar catetoria</p>

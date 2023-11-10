@@ -1,5 +1,5 @@
 from typing import Any, Dict
-from django.views.generic import CreateView, TemplateView, UpdateView, ListView, DetailView, DeleteView, FormView
+from django.views.generic import CreateView, TemplateView, UpdateView, ListView, DetailView, DeleteView
 from base.decorations.toast_decorator import include_toast
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import  get_object_or_404
@@ -9,17 +9,16 @@ from . import models, forms
 from django.db.models import Avg
 from apps.portal.models import Promotion
 
-import json
 
 class IndexView(TemplateView):
     template_name = 'protect_network/index.html'
-    model = models.SpotType
-    form_class = forms.SpotTypeForm
+    model = models.Network
+    form_class = forms.NetworkForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        spot_types = models.SpotType.objects.all()
-        context['spot_types'] = spot_types
+        spot_networks = models.Network.objects.all()
+        context['spot_networks'] = spot_networks
     
         return context
 
@@ -31,7 +30,6 @@ class DetailSpotView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
         spot = self.get_object()
         contact_info = models.ContactInfo.objects.filter(spot=spot)
         opening_hours = models.OpeningHours.objects.filter(spot=spot)
@@ -41,8 +39,6 @@ class DetailSpotView(DetailView):
         progress_bar_math = (spot.next_update / spot.spot_type.update_time) * 100
         progress_bar_math_rounded = round(progress_bar_math)
         survey_scores = models.SecuritySurvey.objects.filter(spot=spot).aggregate(average_score=Avg('score'))
-
-
         context['spot_progress_bar_math'] = progress_bar_math_rounded
         context['spot_contacts'] = contact_info
         context['spot_opening_hours'] = opening_hours
@@ -51,9 +47,7 @@ class DetailSpotView(DetailView):
         context['spot_survey'] = survey
         context['spot_survey_score'] = survey_scores['average_score']
 
-
-        return context
-    
+        return context    
 
 
 class DetailCardSpotView(DetailView):
@@ -110,7 +104,6 @@ class CreateSpotView(CreateView):
         address1.save()
         self.object.addresses.add(address1)
         return super().form_valid(form)
-
 
 
 @include_toast
@@ -343,10 +336,21 @@ class UpdateContactInfoView(UpdateView):
         context['spot_pk'] = self.object.spot_id
         return context
     
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['spot_pk'] = self.object.spot_id
-    #     return context
+    def get_success_url(self):
+        spot_id = self.object.spot_id
+        return reverse('protect_network:spot_detail', args=[spot_id])
+    
+    
+@include_toast
+
+class DeleteContactInfoView(DeleteView):
+    model = models.ContactInfo
+    template_name = 'protect_network/spot_contact_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object_to_delete'] = self.get_object()
+        return context
 
     def get_success_url(self):
         spot_id = self.object.spot_id
@@ -522,7 +526,6 @@ class DeleteResponsibleView(DeleteView):
 
 
 ###### QPP - QPP DO SPOT ######
-
 @include_toast
 class CreateQppView(CreateView):
     model = models.Qpp
@@ -551,7 +554,6 @@ class QppListView(ListView):
     
 
 ###### SURVEY - QUESTIONÁRIO DE INFORMAÇÕES DE SEGURANÇA ######
-
 @include_toast
 class CreateSurveyView(CreateView):
     model = models.SecuritySurvey
@@ -573,7 +575,6 @@ class CreateSurveyView(CreateView):
     def form_valid(self, form):
         spot_id = self.kwargs['spot_id']
         form.instance.spot_id = spot_id
-
         score = 0
         boolean_fields = [
             'security_cameras', 'security_cameras_rec', 'private_security',
@@ -605,7 +606,6 @@ class UpdateSurveyView(UpdateView):
         spot_id = self.kwargs['pk']
         spot = get_object_or_404(models.Spot, pk=spot_id)
         self.object.spot = spot
-
         score = 0
         boolean_fields = [
             'security_cameras', 'security_cameras_rec', 'private_security',
@@ -617,7 +617,6 @@ class UpdateSurveyView(UpdateView):
             if value:
                 score += 10
         self.object.score = score
-
         self.object.save()
         return super().form_valid(form)
 

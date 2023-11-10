@@ -21,6 +21,7 @@ urlpatterns = [
   path('<int:pk>/tag/update', views.UpdateTagView.as_view(), name='tag_update'),
   path('<int:spot_id>/contact/add', views.CreateContactInfoView.as_view(), name='contact_add'), 
   path('<int:pk>/contact/update', views.UpdateContactInfoView.as_view(), name='contact_update'),
+  path('<int:pk>/contact/delete', views.DeleteContactInfoView.as_view(), name='contact_delete'),
   path('<int:spot_id>/opening_hours/add/<str:day_of_week>/', views.CreateOpeningHoursView.as_view(), name='opening_hours_add_monday'),
   path('<int:spot_id>/opening_hours/add', views.CreateOpeningHoursView.as_view(), name='opening_hours_add'), 
   path('<int:pk>/opening_hours/update', views.UpdateOpeningHoursView.as_view(), name='opening_hours_update'),

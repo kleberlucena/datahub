@@ -24,7 +24,7 @@
 {% endblock %}
 
 <!-- context title -->
-{% block title-header %} Rede de proteção{% endblock %}
+{% block title-header %} Rede de Proteção{% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
@@ -53,8 +53,8 @@
             <div class="col-md-2">
                 <form id="filter-form" class="ml-3 mt-3">
                     <label for="spot-types">Filtrar</label><br>
-                    {% for spot_type in spot_types %}
-                        <input type="checkbox" name="spot_type" value="{{ spot_type.name }}"> {{ spot_type.name }}<br>
+                    {% for spot_network in spot_networks %}
+                        <input type="checkbox" name="spot_network" value="{{ spot_network.name }}"> {{ spot_network.name }}<br>
                     {% endfor %}
                     <button type="button" id="apply-filter" class="btn btn-outline-primary mb-3" data-api-url="{% url 'protect_network_api:list_filter_spots_index' %}">Aplicar Filtro</button>
                 </form>
@@ -100,7 +100,7 @@
             var apiUrl = $(this).data('api-url'); // Obtenha a URL da API a partir do atributo de dados
 
             var selectedSpotTypes = [];
-            $('input[name="spot_type"]:checked').each(function() {
+            $('input[name="spot_network"]:checked').each(function() {
                 selectedSpotTypes.push($(this).val());
             });
 
@@ -117,7 +117,7 @@
                     type: 'GET',
                     dataType: 'json',
                     data: {
-                        'spot_type_name': spotTypes
+                        'spot_network_name': spotTypes
                     },
                     success: function(data) {
                         // Remove os marcadores existentes do mapa
@@ -172,95 +172,4 @@
         loadPointsOfInterest([]);
     }
 </script>
-
-
-<!-- <script type="text/javascript">
-    function map_init(map, options) {
-        // Configurações do mapa
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        // Definir zoom e posição inicial
-        var initialZoom = 12;
-        var initialPosition = L.latLng(-7.121651, -34.88033);
-        map.setView(initialPosition, initialZoom);
-
-        // Captura o evento de clique no botão "Aplicar Filtro"
-        $('#apply-filter').on('click', function() {
-            var apiUrl = $(this).data('api-url'); // Obtenha a URL da API a partir do atributo de dados
-
-            var selectedSpotTypes = [];
-            $('input[name="spot_type"]:checked').each(function() {
-                selectedSpotTypes.push($(this).val());
-            });
-
-            // Transforme o array em uma string separada por vírgulas
-            var spotTypesString = selectedSpotTypes.join(',');
-
-            loadPointsOfInterest(apiUrl, spotTypesString);
-        });
-
-        function loadPointsOfInterest(apiUrl, spotTypes) {
-            if (spotTypes) {
-                $.ajax({
-                    url: apiUrl,
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {
-                        'spot_type_name': spotTypes
-                    },
-                    success: function(data) {
-                        // Remove os marcadores existentes do mapa
-                        map.eachLayer(function(layer) {
-                            if (layer instanceof L.Marker) {
-                                map.removeLayer(layer);
-                            }
-                        });
-
-                        data = data.results;
-                        for (var i = 0; i < data.length; i++) {
-                            var spot = data[i];
-                            var lat = spot.latitude;
-                            var lon = spot.longitude;
-                            var name = spot.name;
-                            var detailUrl = spot.detail_url;
-                            var updateUrl = spot.update_url; // Assumindo que você também esteja passando update_url
-
-                            // Cria um marcador para o ponto
-                            var marker = L.marker([lat, lon]).addTo(map);
-
-                            // Cria um objeto XMLHttpRequest para carregar o conteúdo HTML
-                            var xhr = new XMLHttpRequest();
-                            xhr.open("GET", detailUrl, true);
-                            xhr.onreadystatechange = function() {
-                                if (xhr.readyState === 4 && xhr.status === 200) {
-                                    var popupContent = xhr.responseText;
-                                    marker.bindPopup(popupContent, { autoClose: false });
-                                } else {
-                                    marker.bindPopup('<a href="' + updateUrl + '">' + name + '</a>', { autoClose: false });
-                                }
-                            };
-                            xhr.send();
-                        }
-                    },
-                    error: function(error) {
-                        console.log('Erro ao carregar os pontos:', error);
-                    }
-                });
-            } else {
-                // Lidar com o caso em que nenhum tipo de ponto foi selecionado (opcional)
-                map.eachLayer(function(layer) {
-                    if (layer instanceof L.Marker) {
-                        map.removeLayer(layer);
-                    }
-                });
-            }
-        }
-
-        // Inicializa o mapa com todos os pontos de interesse
-        loadPointsOfInterest([]);
-    }
-</script> -->
 {% endblock %}

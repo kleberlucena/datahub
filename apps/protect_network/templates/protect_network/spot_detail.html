@@ -3,7 +3,7 @@
 
 
 <!-- browser title -->
-{% block title %} Detalhes do ponto {% endblock %}
+{% block title %} Detalhes do estabelecimento {% endblock %}
 
 <!-- styles -->
 {% block style_sheet %}
@@ -48,6 +48,9 @@
     .irs .irs-bar {
         background-color: gray; /* Cor padrão */
     }
+    .irs2 .irs-bar {
+        background-color: gray; /* Cor padrão */
+    }
     .outdated {
         color: red;
     }
@@ -58,29 +61,31 @@
 {% endblock %}
 
 
-{% block title-header %} Pontos de Interesse {% endblock %}
+{% block title-header %} Rede de Proteção {% endblock %}
 
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
-<li class="breadcrumb-item"><a>Detalhes do ponto</a></li>
+<li class="breadcrumb-item"><a>Detalhes do estabelecimento</a></li>
 {% endblock %}
 
 {% block content %}
 
 <div class="callout callout-info">
-    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Detalhes do ponto</h3>
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Detalhes do estabelecimento</h3>
         <p class="text-muted text-justify px-3 pt-2">
-            <b>Essa tela permite a visualização de todas as cadastradas sobre um ponto, como:</b>
+            <b>Essa tela permite a visualização de todas as cadastradas sobre um estabelecimento, como:</b>
             <br>
-            - Detalhes sobre o ponto;
+            - Detalhes sobre o estabelecimento;
             <br>
-            - Lista de tags cadastradas para o ponto;
+            - Coordenadas geográficas e localização do estabelecimento no mapa;
             <br>
-            - Coordenadas geográficas e localização do ponto no mapa;
+            - Lista de tags cadastradas para o estabelecimento;
             <br>
-            - Visualização e inserção de imagens referentes ao ponto;
+            - Visualização e inserção de imagens referentes ao estabelecimento;
             <br>
-            - Visualização e cadastro de informações de contato e horário de funcionamento de estabelecimentos, caso exista.
+            - Visualização e cadastro de informações referentes a segurança orgânica do estabelecimento;
+            <br>
+            - Visualização e cadastro de informações de funcionários e horário de funcionamento de estabelecimentos, caso exista.
         </p>
 </div>
 
@@ -254,7 +259,9 @@
                         {% else %}
                             Desatualizado
                         {% endif %}
-                        <input type="text" id="slider" name="slider" />
+                        <div class="irs ">
+                            <input type="text" id="slider" name="slider" />
+                        </div>
                 </div>
             </div>
             <div class="row mb-1">
@@ -359,13 +366,14 @@
                                     {% if spot_contacts %}
                                         {% for spot_contact in spot_contacts %} 
                                         <tr>
-                                            <td>{{ spot_contact.name }}</td>
-                                            <td>{{ spot_contact.role }}</td>
-                                            <td>{{ spot_contact.phone }}</td>
-                                            <td>{{ spot_contact.email }}</td>
+                                            <td class="replace-none">{{ spot_contact.name }}</td>
+                                            <td class="replace-none">{{ spot_contact.role }}</td>
+                                            <td class="replace-none">{{ spot_contact.phone }}</td>
+                                            <td class="replace-none">{{ spot_contact.email }}</td>
                                             <td class="project-actions text-center">
                                                 <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:contact_update' spot_contact.id %}">Detalhes</a>
                                                 <a  class="btn btn-outline-primary btn-sm" href="{% url 'protect_network:contact_update' spot_contact.id %}">Editar</a>
+                                                <a  class="btn btn-outline-danger btn-sm" href="{% url 'protect_network:contact_delete' spot_contact.id %}">Excluir</a>
                                             </td>
                                         </tr>
                                         {% endfor %}
@@ -412,7 +420,9 @@
                                 <tboby>
                                         <tr>
                                             <td>
-                                                <input type="text" id="slider-survey" name="slider-survey" />
+                                                <div class="irs2">
+                                                    <input type="text" id="slider-survey" name="slider-survey" />
+                                                </div>
                                             </td>
                                         </tr>
                                 </tbody>
@@ -474,7 +484,7 @@
     <div class="col-md-12">
         <div class="card card-primary card-outline">
             <div class="card-header">
-                <h3 class="card-title"><b>Imagens do ponto</b></h3>
+                <h3 class="card-title"><b>Imagens do estabelecimento</b></h3>
             </div>
             <div class="card-body">
                 <div class="image-container">
@@ -791,8 +801,8 @@
         });
 
         var centerValueSurvey = 50; // Valor fixo no centro
-        var initialValueSurvey = 40; // {{ spot_survey_score|floatformat:0 }}
-        var backgroundColorSurvey = initialValueSurvey <= centerValueSurvey ? "red" : "green"; // Cor condicional para o segundo slider
+        var initialValueSurvey = {{ spot_survey_score|floatformat:0 }};
+        var backgroundColorSurvey = initialValueSurvey >= centerValueSurvey ? "green" : "red"; // Cor condicional para o segundo slider
 
         $("#slider-survey").ionRangeSlider({
             min: 0,
@@ -801,11 +811,11 @@
             step: 1,
             from_fixed: true,
             onStart: function (data) {
-                $(".irs .irs-bar").css("background-color", backgroundColorSurvey);
+                $(".irs2 .irs-bar").css("background-color", backgroundColorSurvey);
             },
             onChange: function (data) {
                 var currentValueSurvey = data.from;
-                backgroundColorSurvey = currentValueSurvey <= centerValueSurvey ? "red" : "green";
+                backgroundColorSurvey = currentValueSurvey >= centerValueSurvey ? "green" : "red";
                 $(".irs .irs-bar").css("background-color", backgroundColorSurvey);
             }
         });

@@ -222,7 +222,7 @@ class ResponsibleForm(forms.ModelForm):
         }
         widgets = {
             'network': forms.Select(attrs={'class': 'custom-select'}),
-            'active': forms.CheckboxInput(attrs={'class': 'custom-checkbox'}),
+            'active': forms.Select(choices=((True, 'Sim'), (False, 'Não')), attrs={'class': 'custom-select'}),
         }
 
 
