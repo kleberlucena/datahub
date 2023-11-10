@@ -199,6 +199,21 @@ class NetworkForm(forms.ModelForm):
         }
 
 
+# class ResponsibleForm(forms.ModelForm):
+#     class Meta:
+#         model = models.NetworkResponsible
+#         fields = ['network', 'responsible', 'active']
+#         labels = {
+#             'network': 'Rede',
+#             'active': 'Ativo',
+#             'responsible' : 'Responsável',
+#         }
+#         widgets = {
+#             'network': forms.Select(attrs={'class': 'custom-select'}),
+#             'active': forms.Select(choices=((True, 'Sim'), (False, 'Não')), attrs={'class': 'custom-select'}),
+#         }
+
+
 class ResponsibleForm(forms.ModelForm):
     responsible = forms.ModelChoiceField(
         queryset=models.Promotion.objects.all(),
@@ -227,6 +242,7 @@ class ResponsibleForm(forms.ModelForm):
 
 
 
+
 class QppForm(forms.ModelForm):
     class Meta:
         model = models.Qpp
@@ -240,29 +256,6 @@ class QppForm(forms.ModelForm):
             'details': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Se houver, insira informações adicionais'}),
         }
 
-
-# class SecuritySurveyForm(forms.ModelForm):
-#     other_security_measures = forms.CharField(
-#         label='Outras Medidas de Segurança',
-#         widget=forms.Textarea(attrs={'rows': 3, 'placeholder': 'Se houver, informe medidas de segurança adicionais'}),
-#         required=False
-#     )
-
-#     class Meta:
-#         model = models.SecuritySurvey
-#         #fields = '__all__'
-#         fields = ['security_cameras','security_cameras_rec','private_security','external_lights','alarm_system','fire_extinguisher','emergency_out','fire_alarm_system','security_barriers']
-#         labels = {
-#             'security_cameras': 'Câmeras de Segurança',
-#             'security_cameras_rec': 'Gravação de Câmeras em DVR',
-#             'private_security': 'Segurança Privada',
-#             'external_lights': 'Iluminação Externa',
-#             'alarm_system': 'Sistema de Alarme',
-#             'fire_extinguisher': 'Extintor de Incêndio',
-#             'emergency_out': 'Saída de Emergência',
-#             'fire_alarm_system': 'Sistema de Detecção de Incêndio',
-#             'security_barriers': 'Barreiras de Segurança',
-#         }
 
 class SecuritySurveyForm(forms.ModelForm):
     IS_BOOLEAN_CHOICES = [

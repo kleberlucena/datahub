@@ -8,6 +8,8 @@ from django.contrib.gis.geos import GEOSGeometry
 from . import models, forms
 from django.db.models import Avg
 from apps.portal.models import Promotion
+from django.http import JsonResponse
+
 
 
 class IndexView(TemplateView):
@@ -623,3 +625,10 @@ class UpdateSurveyView(UpdateView):
     def get_success_url(self):
         spot_id = self.object.spot_id
         return reverse('protect_network:spot_detail', args=[spot_id])
+    
+
+def get_responsibles(request):
+    responsibles = models.Promotion.objects.all()
+    data = [{'id': responsible.id, 'text': f"{responsible.rank} {responsible.military}"} for responsible in responsibles]
+    print("OKKKKK")
+    return JsonResponse(data, safe=False)
