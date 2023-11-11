@@ -365,3 +365,16 @@ if DEBUG:
     # MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
     REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append(
         'rest_framework.authentication.SessionAuthentication')
+
+
+# REDIS CACHE LOCAL CONFIG
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        # Replace for cloud server IP
+        'LOCATION': 'redis://127.0.0.1:6379/1',  
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}

@@ -14,6 +14,8 @@ from apps.rpa_manager.utils.createJsonByLastOperation import createJsonByLastOpe
 from apps.rpa_manager.utils.getTodayLatLonCoordinates import getTodaysCoordinates
 from apps.rpa_manager.utils.getOperationInCourse import getOperationInCourse
 
+from apps.rpa_manager.utils.rpaManagerDashboard import *
+from apps.portal.models import *
 from apps.rpa_manager.models import *
 from datetime import datetime
 
@@ -87,7 +89,7 @@ class PainelView(TemplateView):
             ultima_operacao = Operation.objects.latest('id')
         except ObjectDoesNotExist:
             ultima_operacao = None
-
+        
         coordinates_json = createJsonByLastOperation(coordinates_dict, ultima_operacao)
         context['coordinates_json'] = coordinates_json
         context['coordinates_by_date_json'] = coordinates_by_date_json
@@ -96,6 +98,18 @@ class PainelView(TemplateView):
         context['guarnicoes_json'] = guarnicoes_json
         context['years'] = years
         
+        # dashboard data
+        rpa_dashboard = RpaManagerDashboard()
+        chart_data = rpa_dashboard.get_chart_data()
+        context['amount_of_operations'] = rpa_dashboard.get_amount_of_operations
+        context['pilot_with_max_operations'] = rpa_dashboard.get_pilot_with_max_operations
+        context['number_of_pilot_max_oper'] = rpa_dashboard.get_number_of_pilot_max_oper
+        context['most_supported_location'] = rpa_dashboard.get_most_supported_location()
+        context['operations_in_course'] = rpa_dashboard.get_operations_in_course()
+        context['available_aircrafts'] = rpa_dashboard.get_available_aircrafts()
+        context['most_used_aircraft'] = rpa_dashboard.get_most_used_aircraft()
+        context['battery_info'] = rpa_dashboard.get_batteries_cicles_level()
+        context['chart_data'] = chart_data
         return context
 
 

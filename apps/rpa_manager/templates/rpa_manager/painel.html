@@ -1,13 +1,14 @@
 {% extends "base/base.html" %}
 {% load static %}
+{% load cache %}
 
 <!-- styles -->
 {% block style_sheet %}
 {% comment %} bacinf style_sheet {% endcomment %}
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
-  <link rel="stylesheet"href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
-  <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
 <style>
   .select_date_form {
     display: flex;
@@ -23,7 +24,7 @@
     width: 120px;
     margin-top: 32px;
   }
-  
+
   #equipes-container {
     width: 100rem;
     max-width: 100%;
@@ -39,7 +40,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    min-height: 200px; 
+    min-height: 200px;
     min-width: 200px;
   }
 
@@ -51,12 +52,27 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-  }  
-  .img-circle {
-    border-radius: 20%; 
   }
 
+  .img-circle {
+    border-radius: 20%;
+  }
+
+  .card-body h3,
+  .card-body p {
+      font-size: 18px; 
+      margin-bottom: 10px; 
+  }
+
+
+
   @media (max-width: 768px) {
+    .card-body h3,
+    .card-body p {
+        font-size: 16px; 
+        margin-bottom: 8px; 
+    }
+
     .card_content {
       display: flex;
       flex-direction: column;
@@ -74,7 +90,7 @@
       align-items: center;
       margin: 0 auto;
       gap: 10px;
-    } 
+    }
 
     .select_date_form {
       display: flex;
@@ -84,7 +100,8 @@
       gap: 10px;
       margin-bottom: 10px;
     }
-    .select_year{
+
+    .select_year {
       width: 100px;
     }
   }
@@ -100,9 +117,125 @@
 <!-- breadcrumb -->
 {% block breadcrumb %}
 {% endblock %}
-  
+
 {% block content %}
-  
+
+{% cache 300 dashboard %}
+<div class="card card-primary card-outline" style="margin-bottom: 30px;">
+  <div class="card-header">
+    <h3 class="card-title">Dashboard</h3>
+  </div>
+
+  <div class="card-body">
+    <div class="row">
+      <div class="col-lg-3 col-6">
+
+        <div class="small-box bg-info">
+          <div class="inner">
+            <h3>{{ amount_of_operations}}</h3>
+            <p><strong>Total de operacões realizadas</strong></p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-lg fa-rocket"></i>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-6">
+
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>{{ pilot_with_max_operations }} - {{ number_of_pilot_max_oper }}</h3>
+            <p><strong>Operador com mais operações</strong></p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-lg fa-trophy"></i>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-6">
+
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>{{ most_supported_location }}</h3>
+            <p><strong>Localização com maior apoio</strong></p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-lg fa-map"></i>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-6">
+
+        <div class="small-box bg-danger">
+          <div class="inner">
+            <h3>{{ most_used_aircraft }}</h3>
+            <p><strong>Aeronave mais utilizada</strong></p>
+          </div>
+          <div class="icon">
+            <i class="fas fa-lg fa-paper-plane"></i>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="card card-warning col-md-12">
+        <div class="card-header">
+          <h3 class="card-title"><strong>Localizações mais apoiadas</strong></h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="chartjs-size-monitor">
+            <div class="chartjs-size-monitor-expand">
+              <div class=""></div>
+            </div>
+            <div class="chartjs-size-monitor-shrink">
+              <div class=""></div>
+            </div>
+          </div>
+          <canvas id="donutChart"
+            style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 418px;"
+            width="418" height="250" class="chartjs-render-monitor"></canvas>
+        </div>
+      </div>
+
+      <div class="card card-info col-md-12">
+        <div class="card-header">
+          <h3 class="card-title"><strong>Ciclos das baterias</strong></h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+          
+        <div class="card-body">
+          <div class="chart"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+          <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 325px;" width="650" height="500" class="chartjs-render-monitor"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endcache %}	
+
 <div class="card card-primary card-outline" style="margin-bottom: 30px;">
   <div class="card-header">
     <h3 class="card-title">Voos realizados</h3>
@@ -111,12 +244,28 @@
   <div class="card-body">
     <form id="coordinatesForm" method='GET'>
       {% csrf_token %}
+      <div>
+        <h1><strong>Operações em andamento: {{ operations_in_course }}</strong></h1>
+        
+        <h5><strong>Aeronaves disponíveis:
+        
+        {% if available_aircrafts %}
+          {% for aircraft in available_aircrafts %}
+          {{ aircraft }}
+          {%if not forloop.last%},{%endif%}
+          {% endfor %}
+        {% else %}
+          Não há aeronaves disponíveis
+        {% endif %}
+        </strong>
+        </h5>
+      </div>
       <div class="select_date_form">
         <div class="select_year">
           <label for="year">Ano:</label>
           <select id="year" class="form-control row-md-3" name="year">
             {% for year in years %}
-              <option value="{{ year }}">{{ year }}</option>
+            <option value="{{ year }}">{{ year }}</option>
             {% endfor %}
           </select>
         </div>
@@ -141,20 +290,20 @@
         <button type="submit" class="btn btn-outline-primary ml-3 select_date_btn">Filtrar</button>
       </div>
     </form>
-    
+
     <div id="map" style="height: 500px;"></div>
   </div>
 </div>
-  
+
 <div class="card card-primary card-outline">
   <div class="card-header">
     <h3 class="card-title">Guarnições cadastradas</h3>
   </div>
   <div class="card-body">
     <div class="container-fluid">
-        <div class="row d-flex flex-wrap" id="equipes-container">
-          <!-- Os cards serão adicionados aqui via script js -->
-        </div>
+      <div class="row d-flex flex-wrap" id="equipes-container">
+        <!-- Os cards serão adicionados aqui via script js -->
+      </div>
       <div class="row" id="mensagem-container">
         <!-- A mensagem será exibida aqui caso o JSON esteja vazio -->
       </div>
@@ -166,143 +315,145 @@
 
 <!-- javascripts -->
 {% block js %}
-  <!-- DataTables  & Plugins -->
-  <script src="{% static 'leaflet/leaflet.js' %}"></script>
-  <script type="text/javascript">
-    // Função que será executada quando o documento estiver pronto
-    document.addEventListener('DOMContentLoaded', function () {
-      const coordinatesJson = {{ coordinates_json|safe }}
-      const coordinatesByDate = {{ coordinates_by_date_json|safe }}
-      const operationsInCourse = {{ operationsInCourse|safe }}
-      const popUpFontSizeValueinPx = 10;
+<!-- DataTables  & Plugins -->
+<script src="{% static 'leaflet/leaflet.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="text/javascript">
+  // Função que será executada quando o documento estiver pronto
+  document.addEventListener('DOMContentLoaded', function () {
+    const coordinatesJson = {{ coordinates_json| safe }}
+      const coordinatesByDate = {{ coordinates_by_date_json| safe }}
+  const operationsInCourse = {{ operationsInCourse| safe }}
+  const popUpFontSizeValueinPx = 10;
 
-      let centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude];
-      let zoomLevel = 11;
-      let map = L.map('map').setView(centerCoordinates, zoomLevel);
-      let staticUrl = "{% static 'leaflet/images/marker-icon.png' %}"
-      
-      const urlLocalImg = "{% static '/sti/img/drone.png' %}"
-      var droneMarkerIcon = L.icon({
-        iconUrl: urlLocalImg,
-        iconSize: [13, 13], 
-        iconAnchor: [6.5, 6.5], 
-        popupAnchor: [0, -32] 
-      });
+  let centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude];
+  let zoomLevel = 11;
+  let map = L.map('map').setView(centerCoordinates, zoomLevel);
+  let staticUrl = "{% static 'leaflet/images/marker-icon.png' %}"
 
-      if(operationsInCourse.length > 0) {
-        showCoordinatesInCourseOperations(droneMarkerIcon)
-      }
+  const urlLocalImg = "{% static '/sti/img/drone.png' %}"
+  var droneMarkerIcon = L.icon({
+    iconUrl: urlLocalImg,
+    iconSize: [13, 13],
+    iconAnchor: [6.5, 6.5],
+    popupAnchor: [0, -32]
+  });
 
-      showTodaysCoordinates(droneMarkerIcon);
+  if (operationsInCourse.length > 0) {
+    showCoordinatesInCourseOperations(droneMarkerIcon)
+  }
 
-      showCoordinatesByFilter();
-      
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  showTodaysCoordinates(droneMarkerIcon);
+
+  showCoordinatesByFilter();
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  function showCoordinatesInCourseOperations(makerIcon = null) {
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    operationsInCourse.forEach(function (coordinate) {
+      L.marker([coordinate.latitude, coordinate.longitude], { icon: makerIcon }).addTo(map)
+        .bindPopup(`<strong style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.usuario}</span>` +
+          '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.latitude}</span>` + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.longitude}</span>` + '<br>'
+          + `<span class="badge badge-warning">${coordinate.status}</span>`);
+
+      let circle = L.circle([coordinate.latitude, coordinate.longitude], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.1,
+        radius: 500
       }).addTo(map);
-      
-      function showCoordinatesInCourseOperations(makerIcon = null) {
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-        
-        operationsInCourse.forEach(function(coordinate) {
-          L.marker([coordinate.latitude, coordinate.longitude], {icon: makerIcon}).addTo(map)
-            .bindPopup(`<strong style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.usuario}</span>` + 
-            '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.latitude}</span>` + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.longitude }</span>`+ '<br>'
-            + `<span class="badge badge-warning">${coordinate.status}</span>`);
-      
-          let circle = L.circle([coordinate.latitude, coordinate.longitude], {
-            color: 'red',
-            fillColor: '#f03',
-            fillOpacity: 0.1,
-            radius: 500
-          }).addTo(map); 
-        });
-      };
+    });
+  };
 
-      function showCoordinatesByFilter() {
-        for (let i = 0; i < coordinatesByDate.length; i++) {
-          usuario = coordinatesByDate[i].usuario
-          titulo = coordinatesByDate[i].titulo
-          latitude = coordinatesByDate[i].latitude !== null ? coordinatesByDate[i].latitude : 0.0
-          longitude = coordinatesByDate[i].longitude !== null ? coordinatesByDate[i].longitude : 0.0
-  
-          if (latitude !== 0.0 && longitude !== 0.0) {
-            let marker = new L.marker([latitude, longitude], {icon: droneMarkerIcon})
-              .addTo(map)
-              .bindPopup(`<span style="font-size: ${popUpFontSizeValueinPx}px;">${usuario}</span>` + '<br>' + `<strong style="font-size: ${popUpFontSizeValueinPx}px;">${titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${latitude}</span>`  + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${longitude}</span>` )
-            
-              let circle = L.circle([latitude, longitude], {
-              color: 'gray',
-              fillColor: '#f030303',
-              fillOpacity: 0.1,
-              radius: 500 })
-              .addTo(map); 
-          }
-        }
+  function showCoordinatesByFilter() {
+    for (let i = 0; i < coordinatesByDate.length; i++) {
+      usuario = coordinatesByDate[i].usuario
+      titulo = coordinatesByDate[i].titulo
+      latitude = coordinatesByDate[i].latitude !== null ? coordinatesByDate[i].latitude : 0.0
+      longitude = coordinatesByDate[i].longitude !== null ? coordinatesByDate[i].longitude : 0.0
+
+      if (latitude !== 0.0 && longitude !== 0.0) {
+        let marker = new L.marker([latitude, longitude], { icon: droneMarkerIcon })
+          .addTo(map)
+          .bindPopup(`<span style="font-size: ${popUpFontSizeValueinPx}px;">${usuario}</span>` + '<br>' + `<strong style="font-size: ${popUpFontSizeValueinPx}px;">${titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${latitude}</span>` + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${longitude}</span>`)
+
+        let circle = L.circle([latitude, longitude], {
+          color: 'gray',
+          fillColor: '#f030303',
+          fillOpacity: 0.1,
+          radius: 500
+        })
+          .addTo(map);
       }
+    }
+  }
 
-      function showTodaysCoordinates(makerIcon = null) {
-        var todayCoordinatesOfOperations = {{ today_coordinates_operations|safe }};
+  function showTodaysCoordinates(makerIcon = null) {
+    var todayCoordinatesOfOperations = {{ today_coordinates_operations| safe }};
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-        
-        todayCoordinatesOfOperations.forEach(function(coordinate) {
-          let operationStatus = coordinate.status === 'Em andamento' ? `<span class="badge badge-warning">${coordinate.status}</span>` : `<span class="badge badge-success">${coordinate.status}</span>`;
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
 
-          L.marker([coordinate.latitude, coordinate.longitude], {icon: makerIcon}).addTo(map)
-            .bindPopup(`<strong style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.usuario}</span>`  + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.latitude}</span>`  + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.longitude}</span>` + '<br>'
-            + operationStatus);
-      
-          let circle = L.circle([coordinate.latitude, coordinate.longitude], {
-            color: 'red',
-            fillColor: '#f03',
-            fillOpacity: 0.1,
-            radius: 500
-          }).addTo(map); 
-        });
+  todayCoordinatesOfOperations.forEach(function (coordinate) {
+    let operationStatus = coordinate.status === 'Em andamento' ? `<span class="badge badge-warning">${coordinate.status}</span>` : `<span class="badge badge-success">${coordinate.status}</span>`;
+
+    L.marker([coordinate.latitude, coordinate.longitude], { icon: makerIcon }).addTo(map)
+      .bindPopup(`<strong style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.usuario}</span>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.latitude}</span>` + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.longitude}</span>` + '<br>'
+        + operationStatus);
+
+    let circle = L.circle([coordinate.latitude, coordinate.longitude], {
+      color: 'red',
+      fillColor: '#f03',
+      fillOpacity: 0.1,
+      radius: 500
+    }).addTo(map);
+  });
       }
 
     }); // end DOM load
-  </script>
-  <script>
-    const jsonEquipes = {{ guarnicoes_json|safe }};
-    const user = "{{ user.military | stringformat:"s"|safe }}"; 
-    
-    function criarEquipeCard(equipe) {
-      const isCurrentUserCreator = equipe.piloto_remoto === user; 
-      let descadastroButton = ``
-      if (isCurrentUserCreator) {
-        descadastroButton = `
+</script>
+<script>
+  const jsonEquipes = {{ guarnicoes_json| safe }};
+  const user = "{{ user.military | stringformat:"s"|safe }}";
+
+  function criarEquipeCard(equipe) {
+    const isCurrentUserCreator = equipe.piloto_remoto === user;
+    let descadastroButton = ``
+    if (isCurrentUserCreator) {
+      descadastroButton = `
         <a href="{% url 'rpa_manager:descadastrar_guarnicao' %}">
           <button type="button" class="btn btn-outline-danger ml-3">Descadastrar</button>
         </a>`
-      } else {
-        descadastroButton = 
+    } else {
+      descadastroButton =
         `<button type="button" style="cursor: not-allowed;"class="btn btn-outline-secondary ml-3 disabled">Descadastrar</button>`
-      }
+    }
 
-      let motorista = equipe.motorista !== 'sem registro' ? 
+    let motorista = equipe.motorista !== 'sem registro' ?
       `<small class=""><i class="fa fa-car"></i> <b>Motorista:</b> ${equipe.motorista} </small>` : ''
-      let piloto_remoto = equipe.piloto_remoto !== 'sem registro' ? 
+    let piloto_remoto = equipe.piloto_remoto !== 'sem registro' ?
       `<small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> ${equipe.piloto_remoto} </small>` : ''
-      let piloto_observador = equipe.piloto_observador !== 'sem registro' ? 
+    let piloto_observador = equipe.piloto_observador !== 'sem registro' ?
       `<small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b> ${equipe.piloto_observador} </small>` : ''
-      let telefone = equipe.telefone !== 'sem registro' ? 
+    let telefone = equipe.telefone !== 'sem registro' ?
       `<small class=""><i class="fa fa-phone"></i> <b>Contato:</b> ${equipe.telefone} </small>` : ''
-      
-      let motorista_img = equipe.motorista_img !== 'sem registro' ?
+
+    let motorista_img = equipe.motorista_img !== 'sem registro' ?
       `<img src="${equipe.piloto_remoto_img}" alt="user-avatar" class="card-img img-circle">` : ''
-      let piloto_remoto_img = equipe.motorista_img !== 'sem registro' ?
+    let piloto_remoto_img = equipe.motorista_img !== 'sem registro' ?
       `<img src="${equipe.motorista_img}" alt="user-avatar" class="card-img img-circle">` : ''
-      let piloto_observador_img = equipe.piloto_observador_img !== 'sem registro' ?
+    let piloto_observador_img = equipe.piloto_observador_img !== 'sem registro' ?
       `<img src="${equipe.piloto_observador_img}" alt="user-avatar" class="card-img img-circle">` : ''
 
-      if(equipe.motorista === equipe.piloto_observador) {
-        return `
+    if (equipe.motorista === equipe.piloto_observador) {
+      return `
         <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
             <div class="card bg-light d-flex flex-fill">
               <div class="card-header text-muted border-bottom-0">
@@ -334,8 +485,8 @@
             </div>
           </div>
           `;
-        } else if(equipe.motorista === equipe.piloto_remoto) {
-        return `
+    } else if (equipe.motorista === equipe.piloto_remoto) {
+      return `
         <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
             <div class="card bg-light d-flex flex-fill">
               <div class="card-header text-muted border-bottom-0">
@@ -367,63 +518,61 @@
             </div>
           </div>
           `;
-      } else {
-        return `
-        <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
-            <div class="card bg-light d-flex flex-fill">
-              <div class="card-header text-muted border-bottom-0">
-                <i class="fas fa-lg fa-building"></i> ${equipe.local}
-              </div> 
-              <div class="card-body pt-0">
-                <div class="card_content">
-                  <div class="card_gu_info">
-                      ${motorista}
-                      ${piloto_remoto} 
-                      ${piloto_observador}
-                      ${telefone}
-                  </div>
-                  <div class="card-container_for-images">
-                    <div class="grid-item">
-                      ${motorista_img}
-                    </div>
-                    <div class="grid-item">
-                      ${piloto_remoto_img}
-                    </div>
-                    <div class="grid-item">
-                      ${piloto_observador_img}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="card-footer">
-                <div class="text-right">
-                  ${descadastroButton}
-                </div>
-              </div>
-            </div>
-          </div>
-          `;
-      }
-
-
-    }
-
-    function exibirMensagem() {
-      document.getElementById('mensagem-container').innerHTML = '<h2>Nenhuma guarnição disponível.</h2>';
-    }
-
-    // Verificando se o JSON está vazio (sem equipes)
-    if (jsonEquipes.length === 0) {
-      exibirMensagem();
     } else {
-      const localidades = [...new Set(jsonEquipes.map(equipe => equipe.local))];
+      return `
+        <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
+            <div class="card bg-light d-flex flex-fill">
+              <div class="card-header text-muted border-bottom-0">
+                <i class="fas fa-lg fa-building"></i> ${equipe.local}
+              </div> 
+              <div class="card-body pt-0">
+                <div class="card_content">
+                  <div class="card_gu_info">
+                      ${motorista}
+                      ${piloto_remoto} 
+                      ${piloto_observador}
+                      ${telefone}
+                  </div>
+                  <div class="card-container_for-images">
+                    <div class="grid-item">
+                      ${motorista_img}
+                    </div>
+                    <div class="grid-item">
+                      ${piloto_remoto_img}
+                    </div>
+                    <div class="grid-item">
+                      ${piloto_observador_img}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <div class="text-right">
+                  ${descadastroButton}
+                </div>
+              </div>
+            </div>
+          </div>
+          `;
+    }
+  }
 
-      const localidadesHTML = localidades.map(localidade => {
-        const equipesLocalidade = jsonEquipes.filter(equipe => equipe.local === localidade);
+  function exibirMensagem() {
+    document.getElementById('mensagem-container').innerHTML = '<h2>Nenhuma guarnição disponível.</h2>';
+  }
 
-        const equipesCardsHTML = equipesLocalidade.map(equipe => criarEquipeCard(equipe)).join('');
+  // Verificando se o JSON está vazio (sem equipes)
+  if (jsonEquipes.length === 0) {
+    exibirMensagem();
+  } else {
+    const localidades = [...new Set(jsonEquipes.map(equipe => equipe.local))];
 
-        return `
+    const localidadesHTML = localidades.map(localidade => {
+      const equipesLocalidade = jsonEquipes.filter(equipe => equipe.local === localidade);
+
+      const equipesCardsHTML = equipesLocalidade.map(equipe => criarEquipeCard(equipe)).join('');
+
+      return `
             <div class="col-md-12">
               <blockquote class="quote-info">
                 <h6>${localidade}</h6>
@@ -436,8 +585,76 @@
           `;
     }).join('');
 
-      // Adicionando o HTML criado ao elemento com o id 'equipes-container'
-      document.getElementById('equipes-container').innerHTML = localidadesHTML;
-    }
+    // Adicionando o HTML criado ao elemento com o id 'equipes-container'
+    document.getElementById('equipes-container').innerHTML = localidadesHTML;
+  }
+</script>
+
+<script>
+  // Dashboard chart
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var ctx = document.getElementById('donutChart').getContext('2d');
+    
+    var chartData = JSON.parse('{{ chart_data|safe }}');  
+    console.log(chartData)
+    var donutChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: chartData.labels,
+        datasets: [{
+          data: chartData.data,
+          backgroundColor: [
+          'rgba(255, 99, 132, 0.7)',
+          'rgba(54, 162, 235, 0.7)',
+          'rgba(255, 206, 86, 0.7)',
+          'rgba(75, 192, 192, 0.7)',
+          'rgba(153, 102, 255, 0.7)'
+          ],
+        }],
+      },
+    });
+  });
+</script>
+
+<script>  
+  var batteries = JSON.parse('{{ battery_info|safe }}');  
+  var labels = batteries.map(function(battery) {
+      return battery.number;
+  });
+  var numCiclesData = batteries.map(function(battery) {
+      return battery.num_cicles;
+  });
+  var maxCiclesData = batteries.map(function(battery) {
+      return battery.maximum_cicles;
+  });
+
+  var ctx = document.getElementById('barChart').getContext('2d');
+  var barChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: labels,
+          datasets: [{
+              label: 'Número de Ciclos',
+              data: numCiclesData,
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+          }, {
+              label: 'Máximo de Ciclos',
+              data: maxCiclesData,
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          }
+      }
+  });
 </script>
 {% endblock %}
