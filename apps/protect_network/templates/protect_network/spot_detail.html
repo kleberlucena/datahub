@@ -259,7 +259,7 @@
                         {% else %}
                             Desatualizado
                         {% endif %}
-                        <div class="irs ">
+                        <div class="irs">
                             <input type="text" id="slider" name="slider" />
                         </div>
                 </div>
@@ -278,7 +278,7 @@
                 </div>
                 <div class="ml-1">
                     <!-- {{ spot.user_unit.unit.last}} -->
-                    {{ spot.user_unit.military.unit.last}}
+                    {{ spot.user_unit.military.unit.last|default_if_none:"Sem unidade cadastrada"}}
                 </div>
             </div>
             <div class="row mb-1">
@@ -287,7 +287,7 @@
                 </div>
                 <div class="ml-1">
                     <!-- {{ spot.user_unit.nickname}}  -->
-                    {{ spot.user_unit.rank}} {{ spot.user_unit.military}}
+                    {{ spot.user_unit.rank|default_if_none:""}} {{ spot.user_unit.military|default_if_none:"Sem nome de guerra cadastrado"}}
                 </div>
             </div>
             <div class="row mb-1">
@@ -304,7 +304,7 @@
                     <b>Matrícula: </b>
                 </div>
                 <div class="ml-1">
-                    {{ spot.user_unit.military.register}}
+                    {{ spot.user_unit.military.register|default_if_none:"Sem matrícula cadastrada"}}
                 </div>
             </div>
             <div class="row mb-1">
@@ -414,7 +414,7 @@
                                 role="grid" aria-describedby="objects_list_info" width="100%">
                                 <thead>
                                     <tr>
-                                        <th>Nível de segurança</th>
+                                        <th>Itens de segurança</th>
                                     </tr>
                                 </thead>
                                 <tboby>
@@ -799,7 +799,11 @@
                 $(".irs .irs-bar").css("background-color", backgroundColor);
             }
         });
+    });
+</script>
 
+<script>
+    $(document).ready(function () {
         var centerValueSurvey = 50; // Valor fixo no centro
         var initialValueSurvey = {{ spot_survey_score|floatformat:0 }};
         var backgroundColorSurvey = initialValueSurvey >= centerValueSurvey ? "green" : "red"; // Cor condicional para o segundo slider
@@ -816,7 +820,7 @@
             onChange: function (data) {
                 var currentValueSurvey = data.from;
                 backgroundColorSurvey = currentValueSurvey >= centerValueSurvey ? "green" : "red";
-                $(".irs .irs-bar").css("background-color", backgroundColorSurvey);
+                $(".irs2 .irs-bar").css("background-color", backgroundColorSurvey);
             }
         });
     });

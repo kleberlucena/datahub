@@ -565,7 +565,6 @@ class CreateSurveyView(CreateView):
     def get_success_url(self):
         spot_id = self.kwargs['spot_id']
         return reverse_lazy('protect_network:spot_detail', kwargs={'pk': spot_id})
-        
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -575,8 +574,10 @@ class CreateSurveyView(CreateView):
         return context
 
     def form_valid(self, form):
-        spot_id = self.kwargs['spot_id']
-        form.instance.spot_id = spot_id
+        response = super().form_valid(form)
+        return response
+
+    def post_save(self, instance, created):
         score = 0
         boolean_fields = [
             'security_cameras', 'security_cameras_rec', 'private_security',
@@ -584,12 +585,20 @@ class CreateSurveyView(CreateView):
             'emergency_out', 'fire_alarm_system', 'security_barriers'
         ]
         for field in boolean_fields:
-            value = getattr(self.object, field)
+            value = getattr(instance, field)
             if value:
                 score += 10
-        self.object.score = score
 
-        return super().form_valid(form)
+        instance.score = score
+        instance.save()
+
+    def form_valid(self, form):
+        spot_id = self.kwargs['spot_id']
+        form.instance.spot_id = spot_id
+        response = super().form_valid(form)
+        self.post_save(self.object, True)
+
+        return response
 
 
 @include_toast
@@ -630,5 +639,5 @@ class UpdateSurveyView(UpdateView):
 def get_responsibles(request):
     responsibles = models.Promotion.objects.all()
     data = [{'id': responsible.id, 'text': f"{responsible.rank} {responsible.military}"} for responsible in responsibles]
-    print("OKKKKK")
+    print("###### OKKKKK #######")
     return JsonResponse(data, safe=False)

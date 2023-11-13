@@ -5,7 +5,6 @@
         <p>Rede de Proteção<i class="fas fa-angle-left right"></i></p>
     </a>
     <ul class="nav nav-treeview" style="display: none;">
-
         <li class="nav-item ">
             <a href="{% url 'protect_network:index' %}" class="nav-link">
                 <i class="fa fa-circle nav-icon"></i><p>Mapa da rede</p>
@@ -13,7 +12,7 @@
         </li>
         <li class="nav-item">
             <a href="{% url 'protect_network:spot_add' %}" class="nav-link">
-                <i class="far fa-circle nav-icon"></i><p>Adicionar estabelcimento</p>
+                <i class="far fa-circle nav-icon"></i><p>Novo estabelcimento</p>
             </a>
         </li>
         <li class="nav-item">
@@ -39,33 +38,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'protect_network:network_add' %}" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i><p>Nova rede</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'protect_network:qpp_add' %}" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i><p>Adicionar QPP</p>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="{% url 'protect_network:qpp_list' %}" class="nav-link">
                         <i class="far fa-circle nav-icon"></i><p>Listar QPPs</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{% url 'protect_network:type_add' %}" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i><p>Adicionar catetoria</p>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="{% url 'protect_network:type_list' %}" class="nav-link">
                         <i class="far fa-circle nav-icon"></i><p>Listar categorias</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'protect_network:tag_add' %}" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i><p>Adicionar tag</p>
                     </a>
                 </li>
                 <li class="nav-item">

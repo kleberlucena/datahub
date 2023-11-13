@@ -62,7 +62,7 @@ class SpotForm(forms.ModelForm):
         model = models.Spot
         fields = ('name', 'details', 'spot_type', 'latitude', 'longitude', 'tags','location','spot_network', 'cnpj', 'parent_company','QPP')
         labels = {
-            'name': 'Ponto',
+            'name': 'Nome',
             'details': 'Informações adicionais',
             'spot_type': 'Tipo',
             'spot_network': 'Rede',
