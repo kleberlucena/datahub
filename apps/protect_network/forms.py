@@ -222,8 +222,15 @@ class ResponsibleForm(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
+        network = kwargs.pop('network', None)
         super().__init__(*args, **kwargs)
         self.fields['responsible'].label_from_instance = self.label_from_promotion_instance
+        if network is not None:
+            # Faça algo com o ID, por exemplo, adicione um campo oculto ao formulário
+            self.fields['network'] = forms.ModelChoiceField(
+                queryset=models.Network.objects.all(),
+                initial=network, 
+                widget=forms.HiddenInput())
 
     def label_from_promotion_instance(self, obj):
         return f"{obj.rank}  {obj.military}"

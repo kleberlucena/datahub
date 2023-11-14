@@ -4,7 +4,6 @@
 <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
       {% include 'base/apps-nav-left-content/protect_network.html' %}
-    <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
       {% if request.user|has_group:'fact:fact_intermediate' %}
       <li class="nav-item module-item">
         <a href="#" class="nav-link">

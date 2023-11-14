@@ -500,6 +500,13 @@ class CreateResponsibleView(CreateView):
     template_name = 'protect_network/responsible_form.html'
     success_url = reverse_lazy('protect_network:network_list')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        # Recupere o ID da URL e passe para o formulário
+        network = get_object_or_404(models.Network, id=self.kwargs['pk'])
+        kwargs['network'] = network
+        return kwargs
+
     
 class UpdateResponsibleView(UpdateView):
     model = models.NetworkResponsible
@@ -639,5 +646,4 @@ class UpdateSurveyView(UpdateView):
 def get_responsibles(request):
     responsibles = models.Promotion.objects.all()
     data = [{'id': responsible.id, 'text': f"{responsible.rank} {responsible.military}"} for responsible in responsibles]
-    print("###### OKKKKK #######")
     return JsonResponse(data, safe=False)
