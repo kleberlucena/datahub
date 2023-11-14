@@ -104,9 +104,8 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'celery_progress',
     'guardian',
-    'corsheaders',
-    'easyaudit',
     'leaflet',
+    'corsheaders',
 
     # Apps
     'base',
@@ -139,7 +138,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'global_login_required.GlobalLoginRequiredMiddleware',
-    'easyaudit.middleware.easyaudit.EasyAuditMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -336,7 +334,7 @@ PUBLIC_PATHS = [
     r'^/api/token/refresh/',
     r'^/watermark/.*',
     # Descomentar para expor rota adminitrativa (só para ajustes de configurações do keycloak)
-    r'^/admin/.*',
+    # r'^/admin/.*',
 ]
 
 # Celery Configuration Options
