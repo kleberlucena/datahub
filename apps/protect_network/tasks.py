@@ -4,6 +4,8 @@ from datetime import timedelta
 from .models import Spot
 import math
 
+
+
 @shared_task
 def task_update_scores():
     spots = Spot.objects.all()

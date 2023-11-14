@@ -20,7 +20,6 @@
 </style>
 
 <style>
-    /* Estilos para o badge */
     .badge {
         display: inline-block;
         padding: 0.5em 0.5em;
@@ -30,26 +29,26 @@
 </style>
 <style>
     .image-container {
-        display: flex; /* Usar flexbox para exibir as divs em linha */
-        flex-wrap: wrap; /* Permitir que as divs quebrem para a próxima linha, se necessário */
-        gap: 20px; /* Espaçamento horizontal entre as divs */
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
     }
     .image-wrapper {
-        display: inline-block; /* Exibir as divs lado a lado */
+        display: inline-block;
     }
     .image-wrapper img {
-        width: auto; /* Ajuste o valor conforme necessário */
-        height: auto; /* Manter a proporção original da imagem */
+        width: auto;
+        height: auto;
     }
     .progress_bar {
-        width: 200px; /* Ou outra largura desejada */
+        width: 200px;
         font-size: 1.4em;
     }
     .irs .irs-bar {
-        background-color: gray; /* Cor padrão */
+        background-color: gray;
     }
     .irs2 .irs-bar {
-        background-color: gray; /* Cor padrão */
+        background-color: gray;
     }
     .outdated {
         color: red;
@@ -277,7 +276,6 @@
                     <b>Unidade do criador:</b>
                 </div>
                 <div class="ml-1">
-                    <!-- {{ spot.user_unit.unit.last}} -->
                     {{ spot.user_unit.military.unit.last|default_if_none:"Sem unidade cadastrada"}}
                 </div>
             </div>
@@ -286,7 +284,6 @@
                     <b>Nome de guerra: </b>
                 </div>
                 <div class="ml-1">
-                    <!-- {{ spot.user_unit.nickname}}  -->
                     {{ spot.user_unit.rank|default_if_none:""}} {{ spot.user_unit.military|default_if_none:"Sem nome de guerra cadastrado"}}
                 </div>
             </div>
@@ -295,7 +292,6 @@
                     <b>Usuário: </b>
                 </div>
                 <div class="ml-1">
-                    <!-- {{ spot.user_unit}} -->
                     {{ spot.user_unit.military.user}}
                 </div>
             </div>
@@ -736,13 +732,13 @@
 {% leaflet_js plugins="ALL" %}
 <script type="text/javascript">
     function map_init(map, options) {
-        // Configurações do mapa
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
         }).addTo(map);
     
-        // Verifica se já existe a informação de localização
+
         var locationDiv = document.getElementById('id_location');
         if (locationDiv) {
             var locationText = locationDiv.textContent.trim();
@@ -751,7 +747,6 @@
                 var lat = parseFloat(coordinates[0]);
                 var lon = parseFloat(coordinates[1]);
     
-                // Definir zoom e posição inicial
                 var initialZoom = 18;
                 var initialPosition = L.latLng(lat, lon);
                 map.setView(initialPosition, initialZoom);
@@ -779,10 +774,10 @@
 
 <script>
     $(document).ready(function () {
-        var maxValue = {{ spot.spot_type.update_time }}; // Valor máximo do slider
-        var centerValue = 0; // Valor fixo no centro
-        var initialValue = {{ spot.next_update }}; // Valor inicial do slider
-        var backgroundColor = initialValue <= centerValue ? "red" : "green"; // Cor condicional
+        var maxValue = {{ spot.spot_type.update_time }};
+        var centerValue = 0;
+        var initialValue = {{ spot.next_update }};
+        var backgroundColor = initialValue <= centerValue ? "red" : "green";
 
         $("#slider").ionRangeSlider({
             min: -maxValue,
@@ -804,9 +799,9 @@
 
 <script>
     $(document).ready(function () {
-        var centerValueSurvey = 50; // Valor fixo no centro
+        var centerValueSurvey = 50;
         var initialValueSurvey = {{ spot_survey_score|floatformat:0 }};
-        var backgroundColorSurvey = initialValueSurvey >= centerValueSurvey ? "green" : "red"; // Cor condicional para o segundo slider
+        var backgroundColorSurvey = initialValueSurvey >= centerValueSurvey ? "green" : "red";
 
         $("#slider-survey").ionRangeSlider({
             min: 0,
@@ -827,10 +822,10 @@
 </script>
 
 <script type="text/javascript">
-    // Seletor para todos os elementos que podem conter "none"
+
     var elementsToCheck = document.querySelectorAll('.replace-none');
 
-    // Loop através dos elementos
+
     for (var i = 0; i < elementsToCheck.length; i++) {
         var element = elementsToCheck[i];
         if (element.textContent.trim() === 'None') {

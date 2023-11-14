@@ -7,8 +7,7 @@ from django_minio_backend import MinioBackend
 from django.contrib.gis.db import models
 from apps.address.models import Address
 from apps.portal import models as portal_models
-from apps.portal.models import Entity, Military, Promotion, HistoryTransfer
-
+from apps.portal.models import Promotion
 
 
 
@@ -27,22 +26,15 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 class Qpp(models.Model):
     name = models.CharField("QPP", max_length=50)
     details = models.CharField("Descrição", max_length=300, null=True, blank=True)
 
     def __str__(self):
         return self.name
-    
-# class Network(models.Model):
-#     name = models.CharField("Nome da rede", max_length=200)
-#     responsibles = models.ManyToManyField(Military, related_name='networks_responsible')
-#     details = models.CharField("Informações adicionais", max_length=300, null=True, blank=True)
-#     #unit = models.ForeignKey(Entity, related_name='respondible_unit', on_delete=models.RESTRICT)
 
-#     def __str__(self):
-#         return self.name
 
 class Network(models.Model):
     name = models.CharField("Nome da rede", max_length=200)
@@ -56,6 +48,7 @@ class Network(models.Model):
     def __str__(self):
         return self.name
 
+
 class NetworkResponsible(models.Model):
     network = models.ForeignKey(Network, on_delete=models.CASCADE)
     responsible = models.ForeignKey(Promotion, on_delete=models.CASCADE)
@@ -67,10 +60,9 @@ class NetworkResponsible(models.Model):
 
     def __str__(self):
         return "{} {}".format(self.responsible.rank, self.responsible.military)
-
-        
+  
     
-class Image(models.Model): #### IMAGEM DO SPOT
+class Image(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField("descrição", max_length=255, blank=True, null=True)
     spot = models.ForeignKey('Spot', on_delete=models.CASCADE)
@@ -173,7 +165,7 @@ class ContactInfo(models.Model):
     cpf = models.CharField("CPF", max_length=14, default="", null=True, blank=True)
     spot = models.ForeignKey('Spot', on_delete=models.CASCADE)
 
-    
+
 class OpeningHours(models.Model):
     OPENED_OPTIONS = [
         (True, 'Sim'),
@@ -205,7 +197,6 @@ class OpeningHours(models.Model):
     def __str__(self):
         return self.spot
     
-
 
 class SecuritySurvey(models.Model):
     spot = models.ForeignKey('Spot', on_delete=models.CASCADE, related_name='security_survey')

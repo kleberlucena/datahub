@@ -2,6 +2,8 @@ from django.contrib import admin
 from .models import *
 from apps.protect_network import models
 
+
+
 admin.site.register(models.Tag)
 admin.site.register(models.SpotType)
 admin.site.register(models.ContactInfo)

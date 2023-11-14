@@ -146,10 +146,8 @@
   });
 </script>
 <script type="text/javascript">
-  // Seletor para todos os elementos que podem conter "none"
   var elementsToCheck = document.querySelectorAll('.replace-none');
 
-  // Loop através dos elementos
   for (var i = 0; i < elementsToCheck.length; i++) {
       var element = elementsToCheck[i];
       if (element.textContent.trim() === 'None') {

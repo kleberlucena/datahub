@@ -90,21 +90,18 @@
             attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Definir zoom e posição inicial
         var initialZoom = 12;
         var initialPosition = L.latLng(-7.121651, -34.88033);
         map.setView(initialPosition, initialZoom);
 
-        // Captura o evento de clique no botão "Aplicar Filtro"
         $('#apply-filter').on('click', function() {
-            var apiUrl = $(this).data('api-url'); // Obtenha a URL da API a partir do atributo de dados
+            var apiUrl = $(this).data('api-url');
 
             var selectedSpotTypes = [];
             $('input[name="spot_network"]:checked').each(function() {
                 selectedSpotTypes.push($(this).val());
             });
 
-            // Transforme o array em uma string separada por vírgulas
             var spotTypesString = selectedSpotTypes.join(',');
 
             loadPointsOfInterest(apiUrl, spotTypesString);
@@ -120,7 +117,6 @@
                         'spot_network_name': spotTypes
                     },
                     success: function(data) {
-                        // Remove os marcadores existentes do mapa
                         map.eachLayer(function(layer) {
                             if (layer instanceof L.Marker) {
                                 map.removeLayer(layer);
@@ -137,7 +133,6 @@
                     }
                 });
             } else {
-                // Lidar com o caso em que nenhum tipo de ponto foi selecionado (opcional)
                 map.eachLayer(function(layer) {
                     if (layer instanceof L.Marker) {
                         map.removeLayer(layer);
@@ -151,10 +146,7 @@
             var lon = spot.longitude;
             var name = spot.name;
             var detailUrl = spot.detail_url;
-            // Cria um marcador para o ponto
             var marker = L.marker([lat, lon]).addTo(map);
-
-            // Cria um objeto XMLHttpRequest para carregar o conteúdo HTML
             var xhr = new XMLHttpRequest();
             xhr.open("GET", detailUrl, true);
             xhr.onreadystatechange = function() {
@@ -168,7 +160,6 @@
             xhr.send();
         }
 
-        // Inicializa o mapa com todos os pontos de interesse
         loadPointsOfInterest([]);
     }
 </script>
