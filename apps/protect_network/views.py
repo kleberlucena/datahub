@@ -1,4 +1,3 @@
-from typing import Any, Dict
 from django.views.generic import CreateView, TemplateView, UpdateView, ListView, DetailView, DeleteView
 from base.decorations.toast_decorator import include_toast
 from django.urls import reverse_lazy, reverse
@@ -21,7 +20,6 @@ class IndexView(TemplateView):
         context = super().get_context_data(**kwargs)
         spot_networks = models.Network.objects.all()
         context['spot_networks'] = spot_networks
-    
         return context
 
 
@@ -48,7 +46,6 @@ class DetailSpotView(DetailView):
         context['spot_types'] = spot_types
         context['spot_survey'] = survey
         context['spot_survey_score'] = survey_scores['average_score']
-
         return context    
 
 
@@ -62,9 +59,8 @@ class DetailCardSpotView(DetailView):
         spot = self.get_object()
         images = models.Image.objects.filter(spot=spot).order_by('-id')[:1]
         context['spot_images'] = images
-        
         return context
-    
+
 
 @include_toast
 class CreateSpotView(CreateView):
@@ -82,8 +78,6 @@ class CreateSpotView(CreateView):
         self.object.updated_by = self.request.user
         self.object.updated_at = timezone.now()
         self.object.update_score = 100
-        # military = get_object_or_404(models.portal_models.Military, user=self.request.user)
-        # self.object.user_unit_id = military.id
         promotion = get_object_or_404(Promotion, military__user=self.request.user)
         self.object.user_unit = promotion
         spot_type = self.object.spot_type
@@ -164,7 +158,6 @@ class SpotListView(ListView):
     def get_context_data(self, *args, **kwargs):
         context = super(SpotListView, self).get_context_data(**kwargs)
         spot = models.Spot.objects.all()
-
         context['spots'] = spot
         return context
 
@@ -230,12 +223,14 @@ class UpdateSpotTagsView(UpdateView):
         return reverse('protect_network:spot_detail', kwargs={'pk': spot_pk})
     
 
+
 @include_toast
 class UpdateTagView(UpdateView):
     model = models.Tag
     template_name = 'protect_network/tag_add.html'
     form_class = forms.TagForm
     success_url = reverse_lazy('protect_network:tag_list')
+
 
 
 class TagListView(ListView):
@@ -248,6 +243,7 @@ class TagListView(ListView):
         context['tags'] = tag
         return context
     
+
 
 @include_toast
 class CreateImageSpotView(CreateView):
@@ -269,6 +265,7 @@ class CreateImageSpotView(CreateView):
         spot_image.save()
         return super().form_valid(form)
     
+
 
 @include_toast
 class ImageDeleteView(DeleteView):
@@ -344,7 +341,6 @@ class UpdateContactInfoView(UpdateView):
     
     
 @include_toast
-
 class DeleteContactInfoView(DeleteView):
     model = models.ContactInfo
     template_name = 'protect_network/spot_contact_delete.html'
@@ -445,8 +441,7 @@ class UpdateOpeningHoursView(UpdateView):
     def get_success_url(self):
         spot_id = self.object.spot_id
         return reverse('protect_network:spot_detail', args=[spot_id])
-    
-###### NETWORK - REDE ######
+
 
 @include_toast
 class CreateNetworkView(CreateView):
@@ -456,6 +451,7 @@ class CreateNetworkView(CreateView):
     success_url = reverse_lazy('protect_network:network_list')
 
 
+@include_toast
 class UpdateNetworkView(UpdateView):
     model = models.Network
     template_name = 'protect_network/network_form.html'
@@ -464,6 +460,7 @@ class UpdateNetworkView(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('protect_network:network_list')
+
 
 
 class NetworkListView(ListView):
@@ -475,6 +472,7 @@ class NetworkListView(ListView):
         network = models.Network.objects.all()
         context['networks'] = network
         return context
+
 
 
 class NetworkDetailView(DetailView):
@@ -491,7 +489,6 @@ class NetworkDetailView(DetailView):
         return context
     
 
-###### RESPONSIBLE - MILITAR RESPONSÁVEL PELA REDE ######
 
 @include_toast
 class CreateResponsibleView(CreateView):
@@ -502,12 +499,11 @@ class CreateResponsibleView(CreateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        # Recupere o ID da URL e passe para o formulário
         network = get_object_or_404(models.Network, id=self.kwargs['pk'])
         kwargs['network'] = network
         return kwargs
 
-    
+  
 class UpdateResponsibleView(UpdateView):
     model = models.NetworkResponsible
     template_name = 'protect_network/responsible_form.html'
@@ -517,11 +513,11 @@ class UpdateResponsibleView(UpdateView):
         responsible = self.object
         network_pk = responsible.network.pk
         return reverse_lazy('protect_network:network_detail', kwargs={'pk': network_pk})
-    
+
+
 class DeleteResponsibleView(DeleteView):
     model = models.NetworkResponsible
     template_name = 'protect_network/responsible_delete.html'
-    #success_url = reverse_lazy('protect_network:network_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -534,7 +530,6 @@ class DeleteResponsibleView(DeleteView):
         return reverse_lazy('protect_network:network_detail', kwargs={'pk': network_pk})
 
 
-###### QPP - QPP DO SPOT ######
 @include_toast
 class CreateQppView(CreateView):
     model = models.Qpp
@@ -562,7 +557,6 @@ class QppListView(ListView):
         return context
     
 
-###### SURVEY - QUESTIONÁRIO DE INFORMAÇÕES DE SEGURANÇA ######
 @include_toast
 class CreateSurveyView(CreateView):
     model = models.SecuritySurvey
@@ -595,7 +589,6 @@ class CreateSurveyView(CreateView):
             value = getattr(instance, field)
             if value:
                 score += 10
-
         instance.score = score
         instance.save()
 

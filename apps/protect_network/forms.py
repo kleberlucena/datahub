@@ -1,7 +1,6 @@
 from django import forms
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Submit
 from . import models
+
 
 
 class SpotTypeForm(forms.ModelForm):
@@ -22,7 +21,6 @@ class SpotTypeForm(forms.ModelForm):
             'spot_type_father': forms.Select(attrs={'class': 'form-control'}),
             'update_time': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o tempo de atualização em dias'}),
         }
-
 
 
 class SpotForm(forms.ModelForm):
@@ -53,10 +51,8 @@ class SpotForm(forms.ModelForm):
         label='QPP',
         widget=forms.Select(attrs={'class': 'form-control'}),
         required=False,
-        empty_label='Selecione um QPP'  # Pode personalizar o rótulo vazio
+        empty_label='Selecione um QPP'
     )
-
-
 
     class Meta:
         model = models.Spot
@@ -92,6 +88,7 @@ class SpotTagsForm(forms.ModelForm):
         required=False,
     )
     
+
     class Meta:
         model = models.Spot
         fields = ('tags',)
@@ -108,7 +105,6 @@ class TagForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome da tag'}),
             'details': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Descrição sobre a tag'}),
         }
-
 
 
 class ContactInfoForm(forms.ModelForm):
@@ -132,7 +128,6 @@ class ContactInfoForm(forms.ModelForm):
         self.fields['email'].widget.attrs['placeholder'] = 'exemplo@email.com.br'
         self.fields['rg'].widget.attrs['placeholder'] = '99.999.999-9'
         self.fields['cpf'].widget.attrs['placeholder'] = '999.999.999-99'
-
 
 
 class OpeningHoursForm(forms.ModelForm):
@@ -175,7 +170,6 @@ class OpeningHoursForm(forms.ModelForm):
         self.fields['close_time_sun'].widget.attrs['placeholder'] = 'HH:MM'
 
 
-
 class SpotImageForm(forms.ModelForm):
     class Meta:
         model = models.Image
@@ -199,21 +193,6 @@ class NetworkForm(forms.ModelForm):
         }
 
 
-# class ResponsibleForm(forms.ModelForm):
-#     class Meta:
-#         model = models.NetworkResponsible
-#         fields = ['network', 'responsible', 'active']
-#         labels = {
-#             'network': 'Rede',
-#             'active': 'Ativo',
-#             'responsible' : 'Responsável',
-#         }
-#         widgets = {
-#             'network': forms.Select(attrs={'class': 'custom-select'}),
-#             'active': forms.Select(choices=((True, 'Sim'), (False, 'Não')), attrs={'class': 'custom-select'}),
-#         }
-
-
 class ResponsibleForm(forms.ModelForm):
     responsible = forms.ModelChoiceField(
         queryset=models.Promotion.objects.all(),
@@ -226,7 +205,6 @@ class ResponsibleForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['responsible'].label_from_instance = self.label_from_promotion_instance
         if network is not None:
-            # Faça algo com o ID, por exemplo, adicione um campo oculto ao formulário
             self.fields['network'] = forms.ModelChoiceField(
                 queryset=models.Network.objects.all(),
                 initial=network, 
@@ -246,8 +224,6 @@ class ResponsibleForm(forms.ModelForm):
             'network': forms.Select(attrs={'class': 'custom-select'}),
             'active': forms.Select(choices=((True, 'Sim'), (False, 'Não')), attrs={'class': 'custom-select'}),
         }
-
-
 
 
 class QppForm(forms.ModelForm):

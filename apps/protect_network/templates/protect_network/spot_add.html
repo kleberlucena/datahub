@@ -175,13 +175,11 @@
 <script type="text/javascript">
     var markers = [];
     function map_init(map, options) {
-        // Configurações do mapa
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Definir zoom e posição inicial
         var initialZoom = 12;
         var initialPosition = L.latLng(-7.121651, -34.88033);
         var marker = [];
@@ -190,8 +188,8 @@
 
         var grayIcon = new L.Icon({
             iconUrl: '{% static "sti/img/icons/marker-icon-2x-grey.png" %}',
-            iconSize: [26, 40], // Tamanho do ícone em pixels
-            iconAnchor: [13, 40 ] // Âncora do ícone em relação à posição do marcador
+            iconSize: [26, 40], 
+            iconAnchor: [13, 40 ] 
         });;
 
 
@@ -210,11 +208,11 @@
                             var name = spot.name;
                             var detailUrl = spot.detail_url;
 
-                            // Cria um marcador para o ponto
+                            
                             var marker = L.marker([lat, lon],{ icon: grayIcon }).addTo(map);
-                            markers.push(marker); // Adicione o marcador ao array
+                            markers.push(marker); 
 
-                            // Cria um objeto XMLHttpRequest para carregar o conteúdo HTML
+                            
                             var xhr = new XMLHttpRequest();
                             xhr.open("GET", detailUrl, true);
                             xhr.onreadystatechange = function() {
@@ -237,7 +235,7 @@
             for (var i = 0; i < markers.length; i++) {
                 map.removeLayer(markers[i]);
             }
-            markers = []; // Limpa o array de marcadores
+            markers = []; 
         }
 
 
@@ -249,24 +247,24 @@
 
         $('#id_spot_type').on('change', getType);
 
-        // NOVO MARCADOR
+        
         var marker_new = null;
 
         map.on('click', function(e) {
             var lat = e.latlng.lat;
             var lon = e.latlng.lng;
 
-            // Atualiza os campos de localização no formulário
+            
             document.getElementById('id_latitude').value = lat;
             document.getElementById('id_longitude').value = lon;
             var coord = lat + ', ' + lon;
 
-            // Remove o marcador existente, se houver
+            
             if (marker_new) {
                 map.removeLayer(marker_new);
             }
 
-            // Adiciona um novo marcador
+            
             marker_new = L.marker([lat, lon], { draggable: true }).addTo(map);
             marker_new.on('dragend', function(event) {
                 var updatedMarker = event.target;
@@ -274,7 +272,7 @@
                 var lat = position.lat;
                 var lon = position.lng;
 
-                // Atualiza os campos de localização no formulário
+                
                 document.getElementById('id_latitude').value = lat;
                 document.getElementById('id_longitude').value = lon;
             });
@@ -298,11 +296,11 @@
         var headquarters = document.getElementById("id_is_headquarters");
         var cnpj = document.getElementById("id_cnpj");
         var parent_company = document.getElementById("id_parent_company");
-        // Ocultar o campo CNPJ inicialmente
+        
         $(parent_company).prop("hidden", true);
         $("#parent-company-field").prop("hidden", true);
 
-        // Detectar a seleção do campo É Matriz?
+        
         $(headquarters).change(function() {
             if (headquarters.value === "True"){
                 parent_company.value = ""
