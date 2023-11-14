@@ -2,69 +2,66 @@
 {% load custom_tags %}
 
 <nav class="mt-2">
-    <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+      {% include 'base/apps-nav-left-content/protect_network.html' %}
       {% if request.user|has_group:'fact:fact_intermediate' %}
-      <li class="nav-item module-item">
-        <a href="#" class="nav-link">
-          <i class="fas fa-users nav-icon"></i>
-          <p>
-            Consulta de Fatos
-            <i class="fas fa-angle-left right"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview" style="display: none;">
-          <li class="nav-item">
-              <a href="{% url 'fact:index' %}" class="nav-link">
-                <i class="fas fa-circle nav-icon"></i>
-                <p>Painel de Fatos</p>
-              </a>
-          </li>
-          {% if request.user|has_group:'fact:fact_basic' %}
-
-            <li class="nav-item menu-item">
+        <li class="nav-item module-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-users nav-icon"></i>
+            <p>
+              Consulta de Fatos
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview" style="display: none;">
+            <li class="nav-item">
+                <a href="{% url 'fact:index' %}" class="nav-link">
+                  <i class="fas fa-circle nav-icon"></i>
+                  <p>Painel de Fatos</p>
+                </a>
+            </li>
+            {% if request.user|has_group:'fact:fact_basic' %}
+              <li class="nav-item menu-item">
                 <a href="#" class="nav-link">
                 <i class="fas fa-comment nav-icon"></i>
                 <p>
-                    Veículos
-                    <i class="fas fa-angle-left right"></i>
+                  Fatos
+                  <i class="fas fa-angle-left right"></i>
                 </p>
                 </a>
                 <ul class="nav nav-treeview" style="display: none;">
                 <li class="nav-item">
-                    <a href="{% url 'school:facts' %}" class="nav-link">
+                  <a href="{% url 'fact:index' %}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Lista de veículos</p>
-                    </a>
+                    <p>Lista de fatos</p>
+                  </a>
                 </li>
-
                 {% if request.user|has_group:'profile:vehicle_intermediate, profile:vehicle_advanced' %}
-                    <li class="nav-item">
-                        <a href="{% url 'vehicle:vehicle_form' %}" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Cadastrar Veículo</p>
-                        </a>
-                    </li>
+                  <li class="nav-item">
+                    <a href="{% url 'vehicle:vehicle_form' %}" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Cadastrar Veículo</p>
+                    </a>
+                  </li>
                 {% endif %}
-
                 {% if request.user|has_group:'profile:person_basic, profile:person_intermediate, profile:person_advanced' %}
-                <li class="nav-item">
+                  <li class="nav-item">
                     <a href="{% url 'person:index' %}" class="nav-link">
                       <i class="far fa-user nav-icon"></i>
                       <p>Pessoas</p>
                     </a>
-                </li>
+                  </li>
                 {% endif %}
-
                 </ul>
-            </li>
-          {% endif %}
-        </ul>
-      </li>
+              </li>
+            {% endif %}
+          </ul>
+        </li>
       {% endif %}
 
       {% if user.is_superuser %}
-      <!--Módulo técnico-->
-      <li class="nav-item module-item">
+        <!--Módulo técnico-->
+        <li class="nav-item module-item">
           <a href="#" class="nav-link">
             <i class="fas fa-code nav-icon"></i>
             <p>Área técnica<i class="fas fa-angle-left right"></i></p>
@@ -76,7 +73,7 @@
                 <p>Área Administrativa</p>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item"> 
               <a href="#" class="nav-link">
                 <i class="fas fa-sync-alt nav-icon"></i>
                 <p>
@@ -84,8 +81,7 @@
                   <i class="fas fa-angle-left right"></i>
                 </p>
               </a>
-              <ul class="nav nav-treeview" style="display: none;">
-                
+              <ul class="nav nav-treeview" style="display: none;">   
                 <li class="nav-item">
                   <a href="{% url 'person:list_person' %}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
@@ -108,8 +104,7 @@
                   <i class="fas fa-angle-left right"></i>
                 </p>
               </a>
-              <ul class="nav nav-treeview" style="display: none;">
-                
+              <ul class="nav nav-treeview" style="display: none;">        
                 <li class="nav-item">
                   <a href="{% url 'address:list_address' %}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
@@ -132,8 +127,7 @@
                   <i class="fas fa-angle-left right"></i>
                 </p>
               </a>
-              <ul class="nav nav-treeview" style="display: none;">
-                
+              <ul class="nav nav-treeview" style="display: none;">      
                 <li class="nav-item">
                   <a href="{% url 'document:list_document' %}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
@@ -162,8 +156,7 @@
                   <i class="fas fa-angle-left right"></i>
                 </p>
               </a>
-              <ul class="nav nav-treeview" style="display: none;">
-                
+              <ul class="nav nav-treeview" style="display: none;">        
                 <li class="nav-item">
                   <a href="{% url 'image:list_image' %}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
@@ -179,7 +172,7 @@
               </ul>
             </li>
           </ul>
-      </li>      
+        </li>      
       {% endif %}
       {% if user.is_superuser %}
         <li class="nav-header">INTEGRAÇÕES</li>
@@ -224,15 +217,14 @@
             </li>
           </ul>
         </li>
-        {% endif %}
-        <li class="nav-header">INFORMAÇÕES</li>
-        <li class="nav-item">
-            <a href="{% url 'base:about' %}" class="nav-link">
-              <i class="fas fa-info-circle nav-icon"></i>
-              <p>Sobre</p>
-            </a>
-        </li>
-
+      {% endif %}
+      <li class="nav-header">INFORMAÇÕES</li>
+      <li class="nav-item">
+        <a href="{% url 'base:about' %}" class="nav-link">
+          <i class="fas fa-info-circle nav-icon"></i>
+          <p>Sobre</p>
+        </a>
+      </li>
     </ul>
 </nav>
 

@@ -124,6 +124,7 @@ INSTALLED_APPS = [
     'apps.police_report',
     'apps.radio',
     'apps.termsofuse',
+    'apps.protect_network',
 
 ]
 MIDDLEWARE = [

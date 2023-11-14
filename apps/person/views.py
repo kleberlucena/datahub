@@ -15,6 +15,7 @@ class PersonListView(ListView):
     model = Person
     template_name = 'person_list.html'
     context_object_name = 'persons'
+    permission_required = 'person.view_person'
 
 class PersonCreateView(CreateView):
     model = Person
