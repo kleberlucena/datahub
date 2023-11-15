@@ -3,7 +3,9 @@
 
 <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-      {% include 'base/apps-nav-left-content/protect_network.html' %}
+      {% if request.user|has_group:'profile:protect_network_manager'  %}
+        {% include 'base/apps-nav-left-content/protect_network.html' %}
+      {% endif %}
       {% if request.user|has_group:'fact:fact_intermediate' %}
         <li class="nav-item module-item">
           <a href="#" class="nav-link">
