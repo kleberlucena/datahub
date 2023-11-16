@@ -1,6 +1,6 @@
 from django.views.generic import DetailView, UpdateView, DeleteView
 from apps.rpa_manager.forms import *
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -16,8 +16,6 @@ from apps.rpa_manager.models import *
 
 
 MESSAGE_MODEL_NAME = 'Checklist'
-
-
 
 class VerChecklistView(GroupRequiredMixin, DetailView):
     model = Checklist
@@ -95,7 +93,6 @@ class ChecklistFormView(GroupRequiredMixin, View):
         
         return render(request, 'rpa_manager/create_checklist.html', context)
     
-    
 class EditarChecklistView(GroupRequiredMixin, UpdateView):
     model = Checklist
     form_class = ChecklistForm
@@ -112,7 +109,7 @@ class EditarChecklistView(GroupRequiredMixin, UpdateView):
         image_urls = [image.imageChecklist.url for image in images]
         context['image_urls'] = image_urls
         context['images'] = images
-
+        
         return context
     
     def form_valid(self, form):

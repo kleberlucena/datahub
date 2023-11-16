@@ -2,231 +2,225 @@
 {% load custom_tags %}
 
 <nav class="mt-2">
-  {% comment %} <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
-    data-accordion="false"> {% endcomment %}
-    <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu"
-      data-accordion="false">
-
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
       {% if request.user|has_group:'profile:rpa_manager' %}
-      {% include 'base/apps-nav-content/rpa_manager.html' %}
+        {% include 'base/apps-nav-content/rpa_manager.html' %}
       {% endif %}
-
+      
       {% include 'base/apps-nav-left-content/protect_network.html' %}
       {% if request.user|has_group:'fact:fact_intermediate' %}
-      <li class="nav-item module-item">
-        <a href="#" class="nav-link">
-          <i class="fas fa-users nav-icon"></i>
-          <p>
-            Consulta de Fatos
-            <i class="fas fa-angle-left right"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview" style="display: none;">
-          <li class="nav-item">
-            <a href="{% url 'fact:index' %}" class="nav-link">
-              <i class="fas fa-circle nav-icon"></i>
-              <p>Painel de Fatos</p>
-            </a>
-          </li>
-          {% if request.user|has_group:'fact:fact_basic' %}
-          <li class="nav-item menu-item">
-            <a href="#" class="nav-link">
-              <i class="fas fa-comment nav-icon"></i>
-              <p>
-                Fatos
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview" style="display: none;">
-              <li class="nav-item">
+        <li class="nav-item module-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-users nav-icon"></i>
+            <p>
+              Consulta de Fatos
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview" style="display: none;">
+            <li class="nav-item">
                 <a href="{% url 'fact:index' %}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Lista de fatos</p>
+                  <i class="fas fa-circle nav-icon"></i>
+                  <p>Painel de Fatos</p>
                 </a>
-              </li>
-              {% if request.user|has_group:'profile:vehicle_intermediate, profile:vehicle_advanced' %}
-              <li class="nav-item">
-                <a href="{% url 'vehicle:vehicle_form' %}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Cadastrar Veículo</p>
+            </li>
+            {% if request.user|has_group:'fact:fact_basic' %}
+              <li class="nav-item menu-item">
+                <a href="#" class="nav-link">
+                <i class="fas fa-comment nav-icon"></i>
+                <p>
+                  Fatos
+                  <i class="fas fa-angle-left right"></i>
+                </p>
                 </a>
+                <ul class="nav nav-treeview" style="display: none;">
+                <li class="nav-item">
+                  <a href="{% url 'fact:index' %}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Lista de fatos</p>
+                  </a>
+                </li>
+                {% if request.user|has_group:'profile:vehicle_intermediate, profile:vehicle_advanced' %}
+                  <li class="nav-item">
+                    <a href="{% url 'vehicle:vehicle_form' %}" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Cadastrar Veículo</p>
+                    </a>
+                  </li>
+                {% endif %}
+                {% if request.user|has_group:'profile:person_basic, profile:person_intermediate, profile:person_advanced' %}
+                  <li class="nav-item">
+                    <a href="{% url 'person:index' %}" class="nav-link">
+                      <i class="far fa-user nav-icon"></i>
+                      <p>Pessoas</p>
+                    </a>
+                  </li>
+                {% endif %}
+                </ul>
               </li>
-              {% endif %}
-              {% if request.user|has_group:'profile:person_basic, profile:person_intermediate, profile:person_advanced'
-              %}
-              <li class="nav-item">
-                <a href="{% url 'person:index' %}" class="nav-link">
-                  <i class="far fa-user nav-icon"></i>
-                  <p>Pessoas</p>
-                </a>
-              </li>
-              {% endif %}
-            </ul>
-          </li>
-          {% endif %}
-        </ul>
-      </li>
+            {% endif %}
+          </ul>
+        </li>
       {% endif %}
 
       {% if user.is_superuser %}
-      <!--Módulo técnico-->
-      <li class="nav-item module-item">
-        <a href="#" class="nav-link">
-          <i class="fas fa-code nav-icon"></i>
-          <p>Área técnica<i class="fas fa-angle-left right"></i></p>
-        </a>
-        <ul class="nav nav-treeview" style="display: none;">
-          <li class="nav-item">
-            <a href="{% url 'admin:index' %}" class="nav-link">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Área Administrativa</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="fas fa-sync-alt nav-icon"></i>
-              <p>
-                Tarefas Pessoas
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview" style="display: none;">
-              <li class="nav-item">
-                <a href="{% url 'person:list_person' %}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Visualizar Pessoas</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'person:command_person' %}" class="nav-link">
-                  <i class="fas fa-terminal nav-icon"></i>
-                  <p>Comandos Disponíveis</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="fas fa-sync-alt nav-icon"></i>
-              <p>
-                Tarefas Endereços
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview" style="display: none;">
-              <li class="nav-item">
-                <a href="{% url 'address:list_address' %}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Visualizar Endereços</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'address:command_address' %}" class="nav-link">
-                  <i class="fas fa-terminal nav-icon"></i>
-                  <p>Comandos Disponíveis</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="fas fa-sync-alt nav-icon"></i>
-              <p>
-                Tarefas Documentos
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview" style="display: none;">
-              <li class="nav-item">
-                <a href="{% url 'document:list_document' %}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Visualizar Documentos</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'document:list_document_image' %}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Visualizar Imagens de Documentos</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'document:command_document' %}" class="nav-link">
-                  <i class="fas fa-terminal nav-icon"></i>
-                  <p>Comandos Disponíveis</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="fas fa-sync-alt nav-icon"></i>
-              <p>
-                Tarefas Imagens
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview" style="display: none;">
-              <li class="nav-item">
-                <a href="{% url 'image:list_image' %}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Visualizar Imagens</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'image:command_image' %}" class="nav-link">
-                  <i class="fas fa-terminal nav-icon"></i>
-                  <p>Comandos Disponíveis</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </li>
+        <!--Módulo técnico-->
+        <li class="nav-item module-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-code nav-icon"></i>
+            <p>Área técnica<i class="fas fa-angle-left right"></i></p>
+          </a>
+          <ul class="nav nav-treeview" style="display: none;">
+            <li class="nav-item">
+              <a href="{% url 'admin:index' %}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Área Administrativa</p>
+              </a>
+            </li>
+            <li class="nav-item"> 
+              <a href="#" class="nav-link">
+                <i class="fas fa-sync-alt nav-icon"></i>
+                <p>
+                  Tarefas Pessoas
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">   
+                <li class="nav-item">
+                  <a href="{% url 'person:list_person' %}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Visualizar Pessoas</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'person:command_person' %}" class="nav-link">
+                    <i class="fas fa-terminal nav-icon"></i>
+                    <p>Comandos Disponíveis</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="fas fa-sync-alt nav-icon"></i>
+                <p>
+                  Tarefas Endereços
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">        
+                <li class="nav-item">
+                  <a href="{% url 'address:list_address' %}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Visualizar Endereços</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'address:command_address' %}" class="nav-link">
+                    <i class="fas fa-terminal nav-icon"></i>
+                    <p>Comandos Disponíveis</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="fas fa-sync-alt nav-icon"></i>
+                <p>
+                  Tarefas Documentos
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">      
+                <li class="nav-item">
+                  <a href="{% url 'document:list_document' %}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Visualizar Documentos</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'document:list_document_image' %}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Visualizar Imagens de Documentos</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'document:command_document' %}" class="nav-link">
+                    <i class="fas fa-terminal nav-icon"></i>
+                    <p>Comandos Disponíveis</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="fas fa-sync-alt nav-icon"></i>
+                <p>
+                  Tarefas Imagens
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview" style="display: none;">        
+                <li class="nav-item">
+                  <a href="{% url 'image:list_image' %}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Visualizar Imagens</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{% url 'image:command_image' %}" class="nav-link">
+                    <i class="fas fa-terminal nav-icon"></i>
+                    <p>Comandos Disponíveis</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>      
       {% endif %}
-
       {% if user.is_superuser %}
-      <li class="nav-header">INTEGRAÇÕES</li>
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          <i class="fas fa-sync-alt nav-icon"></i>
-          <p>
-            PORTAL
-            <i class="fas fa-angle-left right"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview" style="display: none;">
-
-          <li class="nav-item">
-            <a href="{% url 'portal:list_entity' %}" class="nav-link">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Visualizar Unidades</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{% url 'portal:command_portal' %}" class="nav-link">
-              <i class="fas fa-terminal nav-icon"></i>
-              <p>Comandos Disponíveis</p>
-            </a>
-          </li>
-        </ul>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          <i class="fas fa-sync-alt nav-icon"></i>
-          <p>
-            AUTH-OIDC
-            <i class="fas fa-angle-left right"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview" style="display: none;">
-          <li class="nav-item">
-            <a href="{% url 'auth_oidc:command_auth_oidc' %}" class="nav-link">
-              <i class="fas fa-terminal nav-icon"></i>
-              <p>Comandos Disponíveis</p>
-            </a>
-          </li>
-        </ul>
-      </li>
+        <li class="nav-header">INTEGRAÇÕES</li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-sync-alt nav-icon"></i>
+            <p>
+              PORTAL
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview" style="display: none;">
+            
+            <li class="nav-item">
+              <a href="{% url 'portal:list_entity' %}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Visualizar Unidades</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'portal:command_portal' %}" class="nav-link">
+                <i class="fas fa-terminal nav-icon"></i>
+                <p>Comandos Disponíveis</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-sync-alt nav-icon"></i>
+            <p>
+              AUTH-OIDC
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview" style="display: none;">
+            <li class="nav-item">
+              <a href="{% url 'auth_oidc:command_auth_oidc' %}" class="nav-link">
+                <i class="fas fa-terminal nav-icon"></i>
+                <p>Comandos Disponíveis</p>
+              </a>
+            </li>
+          </ul>
+        </li>
       {% endif %}
       <li class="nav-header">INFORMAÇÕES</li>
       <li class="nav-item">
@@ -234,156 +228,6 @@
           <i class="fas fa-info-circle nav-icon"></i>
           <p>Sobre</p>
         </a>
-
-        <ul class="nav nav-treeview" style="display: none;">
-          <li class="nav-item">
-            <a href="{% url 'admin:index' %}" class="nav-link">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Área Administrativa</p>
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="fas fa-sync-alt nav-icon"></i>
-              <p>
-                Tarefas Pessoas
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview" style="display: none;">
-              <li class="nav-item">
-                <a href="{% url 'person:list_person' %}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Visualizar Pessoas</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'person:command_person' %}" class="nav-link">
-                  <i class="fas fa-terminal nav-icon"></i>
-                  <p>Comandos Disponíveis</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="fas fa-sync-alt nav-icon"></i>
-              <p>
-                Tarefas Endereços
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview" style="display: none;">
-
-              <li class="nav-item">
-                <a href="% url 'address:list_address' %}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Visualizar Endereços</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'address:command_address' %}" class="nav-link">
-                  <i class="fas fa-terminal nav-icon"></i>
-                  <p>Comandos Disponíveis</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="fas fa-sync-alt nav-icon"></i>
-              <p>
-                Tarefas Documentos
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview" style="display: none;">
-
-              <li class="nav-item">
-                <a href="{% url 'document:list_document' %}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Visualizar Documentos</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'document:list_document_image' %}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Visualizar Imagens de Documentos</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'document:command_document' %}" class="nav-link">
-                  <i class="fas fa-terminal nav-icon"></i>
-                  <p>Comandos Disponíveis</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="fas fa-sync-alt nav-icon"></i>
-              <p>
-                Tarefas Imagens
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview" style="display: none;">
-
-              <li class="nav-item">
-                <a href="{% url 'image:list_image' %}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Visualizar Imagens</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{% url 'image:command_image' %}" class="nav-link">
-                  <i class="fas fa-terminal nav-icon"></i>
-                  <p>Comandos Disponíveis</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          {% comment %} {% endif %} {% endcomment %}
-          {% if user.is_superuser %}
-          <li class="nav-header">INTEGRAÇÕES</li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="fas fa-sync-alt nav-icon"></i>
-              <p>
-                PORTAL
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview" style="display: none;">
-
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Visualizar Unidades</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="fas fa-terminal nav-icon"></i>
-                  <p>Comandos Disponíveis</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          {% endif %}
-          <li class="nav-header">INFORMAÇÕES</li>
-          <li class="nav-item">
-            <a href="{% url 'base:about' %}" class="nav-link">
-              <i class="fas fa-info-circle nav-icon"></i>
-              <p>Sobre</p>
-            </a>
-          </li>
-
-        </ul>
       </li>
     </ul>
 </nav>

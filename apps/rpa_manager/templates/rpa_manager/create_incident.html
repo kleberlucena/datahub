@@ -151,23 +151,23 @@
 
         <div class="row ml-3 mr-3 mt-3">
           {% if request.resolver_match.url_name == 'update_incidente' %}
-          {% if images %}
-            <label for="">Imagens carregadas</label>
-          {% else %}
-            <label for="">Não há Imagens carregadas</label>
-          {% endif %}
+              {% if images %}
+                <label for="">Imagens carregadas</label>
+              {% else %}
+                <label for="">Não há Imagens carregadas</label>
+            {% endif %}
             
-          <div class="temp_images_view_edit">
-            {% if images %}
-              {% for img in images %}
-              <a href="{% url 'rpa_manager:delete_image' img.pk %} ">
-                <img src="{{ img.imageIncident.url }}" alt="Image" class="imagem-incidente" data-id="{{ img.pk }}">
-              </a>
-              {% endfor %}
-            {% else %}
-            {% endif %}                
-          </div>         
-        {% endif %}
+            <div class="temp_images_view_edit">
+              {% if images %}
+                {% for img in images %}
+                <a href="{% url 'rpa_manager:delete_image' img.pk %} ">
+                  <img src="{{ img.imageIncident.url }}" alt="Image" class="imagem-incidente" data-id="{{ img.pk }}">
+                </a>
+                {% endfor %}
+              {% else %}
+              {% endif %}                
+            </div>         
+          {% endif %}
         </div>
 
         <div class="ml-3 mr-3 mt-3 mb-3">
@@ -223,11 +223,8 @@
       }
   
       fileList.innerHTML = fileListText;
-  
-      // Remove previous images from the tempImagesView
       tempImagesView.innerHTML = '';
   
-      // Display image previews
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const reader = new FileReader();
@@ -245,45 +242,40 @@
   </script>
 
   <script>
-    // Capturando todos os elementos com a classe 'imagem-incidente'
     const imagensIncidente = document.querySelectorAll('.imagem-incidente');
 
     imagensIncidente.forEach(imagem => {
         imagem.addEventListener('click', (event) => {
-            event.preventDefault(); // Prevenir o comportamento padrão do link
+            event.preventDefault(); 
 
-            // Obtendo o ID da imagem do atributo 'data-id'
             const imagemId = imagem.dataset.id;
 
-            // Exibindo o alerta de confirmação antes de deletar a imagem
             const confirmarExclusao = window.confirm("Tem certeza que deseja excluir esta imagem?");
 
             if (confirmarExclusao) {
+              const protocol = window.location.protocol;
+              const host = window.location.host;
 
-              const localhostUrl = `http://127.0.0.1:8003/rpa_manager`;
+              console.log(`${protocol}//${host}/rpa_manager/delete_image/${imagemId}/`);
 
-              console.log(`${localhostUrl}/delete_image/${imagemId}/`);
-
-                // Enviando a requisição para deletar a imagem
-                fetch(`${localhostUrl}/delete_image/${imagemId}/`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken'), // Garante que o Django aceitará a requisição
-                    }
-                }).then(response => {
-                    if (response.ok) {
-                      window.location.reload();
-                    } else {
-                        alert('A requisição falhou.');
-                    }
-                }).catch(error => {
-                    console.error('Erro ao deletar a imagem:', error);
-                });
+              fetch(`${protocol}//${host}/rpa_manager/delete_image/${imagemId}/`, {
+                  method: 'DELETE',
+                  headers: {
+                      'X-CSRFToken': getCookie('csrftoken'), 
+                  }
+              }).then(response => {
+                  if (response.ok) {
+                    window.location.reload();
+                  } else {
+                      alert('A requisição falhou.');
+                  }
+              }).catch(error => {
+                  console.error('Erro ao deletar a imagem:', error);
+              });
             }
         });
     });
 
-    // Função auxiliar para obter o valor do cookie 'csrftoken'
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);

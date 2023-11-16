@@ -16,11 +16,11 @@
       }
 
       .border-for-in-course{
-        border-right: 5px solid #FFC107 !important;
+        border-left: 5px solid #FFC107 !important;
       }
 
       .border-for-done {
-        border-right: 5px solid lightblue !important;
+        border-left: 5px solid lightblue !important;
       }
 
       #new_operation_btn {
@@ -66,12 +66,12 @@
           <tbody>
             {% for missao in missoes %}
             <tr>
-              <td>{{ missao.user.military }}</td>
               {% if missao.completed is False %}
-                <td class="border-for-in-course">{{ missao.title }}</td>
+                <td class="border-for-in-course">{{ missao.user.military }}</td>
               {% else %}
-                <td class="border-for-done">{{ missao.title }}</td>
+                <td class="border-for-done">{{ missao.user.military }}</td>
               {% endif %}
+                <td >{{ missao.title }}</td>
               <td data-sort='YYYYMMDD'>{{ missao.date | date:"d/m/Y" }}</td>
               <td>{{ missao.aircraft.prefix}} - {{ missao.aircraft.model}}</td>
 

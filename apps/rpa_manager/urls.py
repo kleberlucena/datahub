@@ -79,7 +79,4 @@ urlpatterns = [
     path('baterias/', BateriasView.as_view(), name="baterias"),
     path('incidentes/', IncidentesView.as_view(), name="incidentes"),
     path('legislations/', LegislationsView.as_view(), name="legislations"),
-
-    # API externa (vem do app portal)
-    # path('api-v1/military_list_json/', MilitaryListJson.as_view(), name='military_list_json'),
 ]

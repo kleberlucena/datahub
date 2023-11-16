@@ -59,7 +59,7 @@
       <div class="card-body">
         <strong>Título: </strong> {{ missao.title }} 
         <hr>
-        <strong>Piloto remoto: </strong> {{ missao.user }}
+        <strong>Piloto remoto: </strong> {{ missao.user.military }}
         <hr>
         <strong>Piloto Observador: </strong> 
           {% if observer_pilot == None %}
@@ -104,19 +104,16 @@
   <!-- DataTables  & Plugins -->
   <script src="{% static 'leaflet/leaflet.js' %}"></script>
   <script>
-    		// Função que será executada quando o documento estiver pronto
 		document.addEventListener('DOMContentLoaded', function () {
       var latitude = {{ missao.latitude | safe }}
       var longitude = {{ missao.longitude | safe }}
      
       let map = L.map('map').setView([latitude, longitude], 16);
 
-      // Adicionando uma camada de mapa (neste caso, o OpenStreetMap)
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
       
-      // Adicionando um marcador no mapa
       let marker = L.marker([latitude, longitude]).addTo(map);
     });
   </script>

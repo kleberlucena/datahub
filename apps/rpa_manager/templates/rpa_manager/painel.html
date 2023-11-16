@@ -1,6 +1,5 @@
 {% extends "base/base.html" %}
 {% load static %}
-{% load cache %}
 
 <!-- styles -->
 {% block style_sheet %}
@@ -120,7 +119,7 @@
 
 {% block content %}
 
-{% cache 300 dashboard %}
+
 <div class="card card-primary card-outline" style="margin-bottom: 30px;">
   <div class="card-header">
     <h3 class="card-title">Dashboard</h3>
@@ -234,7 +233,6 @@
     </div>
   </div>
 </div>
-{% endcache %}	
 
 <div class="card card-primary card-outline" style="margin-bottom: 30px;">
   <div class="card-header">

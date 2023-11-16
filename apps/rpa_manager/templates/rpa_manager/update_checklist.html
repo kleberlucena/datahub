@@ -371,7 +371,6 @@
         checkbox.addEventListener('change', function() {
             if(!checkbox.checked) {
                 listaDeAlteracoes.push(`Alteração no item - ${checkbox.previousElementSibling.textContent}`);
-                console.log(listaDeAlteracoes)
                 adicionaTextoEmTextArea(listaDeAlteracoes);
             } else if(listaDeAlteracoes.includes(checkbox.previousElementSibling.textContent)) {
                 let indice =  listaDeAlteracoes.indexOf(checkbox.previousElementSibling.textContent);
@@ -511,24 +510,22 @@
     });
   </script>
   <script>
-    // Capturando todos os elementos com a classe 'imagem-checklist'
     const imagensIncidente = document.querySelectorAll('.imagem-checklist');
 
     imagensIncidente.forEach(imagem => {
-      console.log(imagensIncidente)
+
         imagem.addEventListener('click', (event) => {
             event.preventDefault(); 
 
             const imagemId = imagem.dataset.id;
-            console.log(imagemId)
+
             const confirmarExclusao = window.confirm("Tem certeza que deseja excluir esta imagem?");
 
             if (confirmarExclusao) {
+              const protocol = window.location.protocol;
+              const host = window.location.host;
 
-              const localhostUrl = `http://127.0.0.1:8003/rpa_manager`;
-
-                // Enviando a requisição para deletar a imagem
-                fetch(`${localhostUrl}/delete_image_checklist/${imagemId}/`, {
+                fetch(`${protocol}//${host}/rpa_manager/delete_image_checklist/${imagemId}/`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRFToken': getCookie('csrftoken'), 
@@ -553,4 +550,5 @@
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
   </script>
+
 {% endblock %}

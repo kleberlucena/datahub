@@ -70,7 +70,7 @@
                 </button>
                 <div class="dropdown-menu" role="menu" style="">
                   <a class="dropdown-item" href="{% url 'rpa_manager:read_risk_assessment' risk_assessment.id %}">Ver avaliação</a>
-                  <a class="dropdown-item" href="{% url 'rpa_manager:generate_pdf' risk_assessment.id %}">Emitir avaliação</a>
+                  <a class="dropdown-item" href="{% url 'rpa_manager:generate_pdf' risk_assessment.id %}" target="_blank">Emitir avaliação</a>
                   
                   {% if request.user.is_superuser or request.user|has_group:'profile:advanced' %}
                     <a class="dropdown-item" href="{% url 'rpa_manager:update_risk_assessment' risk_assessment.id %}">Editar avaliação</a>
