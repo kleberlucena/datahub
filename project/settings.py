@@ -126,6 +126,7 @@ INSTALLED_APPS = [
     'apps.rpa_manager',
     'apps.radio',
     'apps.termsofuse',
+    'apps.protect_network',
 
 ]
 

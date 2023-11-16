@@ -1,0 +1,166 @@
+{% extends "base/base.html" %}
+{% load static leaflet_tags crispy_forms_tags widget_tweaks %}
+
+
+<!-- browser title -->
+{% block title %} Mapa de pontos {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% leaflet_css plugins="ALL" %}
+<style>
+    #map {
+        height: 600px;
+    }
+    .div-pai {
+    position: relative;
+    }
+
+    #apply-filter {
+        position: absolute;
+        bottom: 0;
+    }
+</style>
+{% endblock %}
+
+<!-- context title -->
+{% block title-header %} Rede de Proteção{% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="#">Painel</a></li>
+  <li class="breadcrumb-item active">Mapa da rede</li>
+{% endblock %}
+
+{% block content %}
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Mapa da rede</h3>
+        <p class="text-muted text-justify px-3 pt-2">
+            <b>Essa tela exibe no mapa todos os estabelecimentos cadastrados na rede.</b>
+            <br>
+            - Clique em Detalhes após escolher um estabelecimento para exibir informações detalhadas sobre ele.
+        </p>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Mapa da rede</h3>
+            </div>
+
+        <div class="row">
+            <div class="col-md-2">
+                <form id="filter-form" class="ml-3 mt-3">
+                    <label for="spot-types">Filtrar</label><br>
+                    {% for spot_network in spot_networks %}
+                        <input type="checkbox" name="spot_network" value="{{ spot_network.name }}"> {{ spot_network.name }}<br>
+                    {% endfor %}
+                    <button type="button" id="apply-filter" class="btn btn-outline-primary mb-3" data-api-url="{% url 'protect_network_api:list_filter_spots_index' %}">Aplicar Filtro</button>
+                </form>
+            </div>
+            <div class="col-md-10 pai">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card-body">
+                            {% leaflet_map "map" callback="window.map_init" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+<!-- javascripts -->
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+{% leaflet_js plugins="ALL" %}
+<script type="text/javascript">
+    function map_init(map, options) {
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var initialZoom = 12;
+        var initialPosition = L.latLng(-7.121651, -34.88033);
+        map.setView(initialPosition, initialZoom);
+
+        $('#apply-filter').on('click', function() {
+            var apiUrl = $(this).data('api-url');
+
+            var selectedSpotTypes = [];
+            $('input[name="spot_network"]:checked').each(function() {
+                selectedSpotTypes.push($(this).val());
+            });
+
+            var spotTypesString = selectedSpotTypes.join(',');
+
+            loadPointsOfInterest(apiUrl, spotTypesString);
+        });
+
+        function loadPointsOfInterest(apiUrl, spotTypes) {
+            if (spotTypes) {
+                $.ajax({
+                    url: apiUrl,
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        'spot_network_name': spotTypes
+                    },
+                    success: function(data) {
+                        map.eachLayer(function(layer) {
+                            if (layer instanceof L.Marker) {
+                                map.removeLayer(layer);
+                            }
+                        });
+
+                        data = data.results;
+                        for (var i = 0; i < data.length; i++) {
+                            addMarker(data[i]);
+                        }
+                    },
+                    error: function(error) {
+                        console.log('Erro ao carregar os pontos:', error);
+                    }
+                });
+            } else {
+                map.eachLayer(function(layer) {
+                    if (layer instanceof L.Marker) {
+                        map.removeLayer(layer);
+                    }
+                });
+            }
+        }
+
+        function addMarker(spot) {
+            var lat = spot.latitude;
+            var lon = spot.longitude;
+            var name = spot.name;
+            var detailUrl = spot.detail_url;
+            var marker = L.marker([lat, lon]).addTo(map);
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", detailUrl, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var popupContent = xhr.responseText;
+                    marker.bindPopup(popupContent, { autoClose: false });
+                } else {
+                    marker.bindPopup('<a href="' + detailUrl + '">' + name + '</a>', { autoClose: false });
+                }
+            };
+            xhr.send();
+        }
+
+        loadPointsOfInterest([]);
+    }
+</script>
+{% endblock %}
