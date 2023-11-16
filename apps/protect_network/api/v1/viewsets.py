@@ -1,8 +1,16 @@
-from rest_framework import generics
-from rest_framework import viewsets, filters
+from rest_framework import filters, generics, permissions, exceptions
 from apps.protect_network import models
 from apps.protect_network.api.v1 import serializers
 from django.db.models import Q
+
+
+
+class IsProtectNetworkManager(permissions.BasePermission):
+    def has_permission(self, request, view):
+        has_permission = request.user.groups.filter(name='profile:protect_network_manager').exists()
+        if not has_permission:
+            raise exceptions.PermissionDenied("Você não tem permissão para acessar esta funcionalidade.")
+        return has_permission
 
 
 
@@ -11,6 +19,7 @@ class SpotListView(generics.ListAPIView):
     serializer_class = serializers.SpotSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['spot_network__name']
+    permission_classes = [IsProtectNetworkManager]
 
     def get_queryset(self):
         queryset = models.Spot.objects.order_by('-created_at')[:1000]
@@ -26,6 +35,7 @@ class SpotListbyNetworkView(generics.ListAPIView):
     serializer_class = serializers.SpotSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['spot_network__name']
+    permission_classes = [IsProtectNetworkManager]
 
     def get_queryset(self):
         queryset = models.Spot.objects.all()
@@ -43,6 +53,7 @@ class SpotListbyTypeView(generics.ListAPIView):
     serializer_class = serializers.SpotSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['spot_type__name']
+    permission_classes = [IsProtectNetworkManager]
 
     def get_queryset(self):
         queryset = models.Spot.objects.all()
@@ -60,6 +71,7 @@ class SpotListFilterView(generics.ListAPIView):
     serializer_class = serializers.SpotSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['spot_network__name']
+    permission_classes = [IsProtectNetworkManager]
 
     def get_queryset(self):
         queryset = models.Spot.objects.all()
