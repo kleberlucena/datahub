@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED=1
 # Instalação de bibliotecas necessárias para funcionamento do Postgis
 RUN apt-get update \
   && apt-get install -y binutils \
-  && apt-get install libglib2.0-0 \
+  && apt-get install -y libglib2.0-0 \
   && apt-get install -y gdal-bin \
   && apt-get install -y libproj-dev \
   && apt-get install -y postgis \
