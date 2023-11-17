@@ -7,11 +7,11 @@ from django.db.models import Q
 
 class IsProtectNetworkManager(permissions.BasePermission):
     def has_permission(self, request, view):
-        has_permission = request.user.groups.filter(name='profile:protect_network_manager').exists()
+        required_groups = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
+        has_permission = request.user.groups.filter(name__in=required_groups).exists()
         if not has_permission:
             raise exceptions.PermissionDenied("Você não tem permissão para acessar esta funcionalidade.")
         return has_permission
-
 
 
 class SpotListView(generics.ListAPIView):
