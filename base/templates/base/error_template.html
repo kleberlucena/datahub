@@ -1,0 +1,38 @@
+{% extends "base/base.html" %}
+
+<!-- browser title -->
+{% block title %} Erro de permissão {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+
+<style>
+    .full-height {
+        height: 70vh;
+    }
+</style>
+{% endblock %}
+
+<!-- context title -->
+{% block title-header %} {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item active">Início</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+    <div class="d-flex justify-content-center align-items-center full-height">
+        <div class="text-center">
+            <h1>Acesso negado</h1>
+            <p class="lead">{{ message }}</p>
+        </div>
+    </div>
+
+{% endblock %}
+
+<!-- javascripts -->
+{% block js %}
+{% endblock %}

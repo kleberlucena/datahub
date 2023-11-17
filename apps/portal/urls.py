@@ -11,7 +11,7 @@ urlpatterns = [
     path('task-entity-api-portal/', TaskGetEntityFromPortalView.as_view(), name='task_entity_api_portal'),
     path('command_portal/', ComandosAPIPortalView.as_view(), name='command_portal'),
     path('search-military/', SearchMilitaryView.as_view(), name='search_military'),
-
+    
 
 
 ]

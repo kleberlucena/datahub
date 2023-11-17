@@ -38,4 +38,3 @@ def include_toast(cls):
         cls.delete = delete
 
     return cls
-

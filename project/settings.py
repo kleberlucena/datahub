@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     'django_minio_backend.apps.DjangoMinioBackendConfig',
     'stdimage',
     'crispy_forms',
+    'crispy_bootstrap5',
     'widget_tweaks',
     'localflavor',
     'django_filters',
@@ -122,11 +123,13 @@ INSTALLED_APPS = [
     'apps.watermark',
     'apps.fact',
     'apps.police_report',
+    'apps.rpa_manager',
     'apps.radio',
     'apps.termsofuse',
     'apps.protect_network',
 
 ]
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -211,7 +214,6 @@ DEFAULT_FILE_STORAGE = 'django_minio_backend.models.MinioBackend'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 # Expiration Cookie
 SESSION_COOKIE_AGE = 1800
 SESSION_SAVE_EVERY_REQUEST = True
@@ -265,7 +267,7 @@ KEYCLOAK_SERVER_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n{}\n-----END PUBLIC KE
 # Python Social Auth https://github.com/coriolinus/oauth2-article
 SOCIAL_AUTH_KEYCLOAK_KEY = env('SOCIAL_AUTH_KEYCLOAK_KEY')
 SOCIAL_AUTH_KEYCLOAK_SECRET = env('SOCIAL_AUTH_KEYCLOAK_SECRET')
-SOCIAL_AUTH_KEYCLOAK_PUBLIC_KEY = sso_public_key
+# SOCIAL_AUTH_KEYCLOAK_PUBLIC_KEY = sso_public_key
 SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL = env(
     'SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL')
 SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL = env(
@@ -364,3 +366,16 @@ if DEBUG:
     # MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
     REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append(
         'rest_framework.authentication.SessionAuthentication')
+
+
+# REDIS CACHE LOCAL CONFIG
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         # Replace for cloud server IP
+#         'LOCATION': 'redis://127.0.0.1:6379/1',  
+#         'OPTIONS': {
+#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+#         }
+#     }
+# }

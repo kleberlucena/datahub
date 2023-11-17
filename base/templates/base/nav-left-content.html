@@ -3,6 +3,10 @@
 
 <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+      {% if request.user|has_group:'profile:rpa_manager' %}
+        {% include 'base/apps-nav-content/rpa_manager.html' %}
+      {% endif %}
+      
       {% include 'base/apps-nav-left-content/protect_network.html' %}
       {% if request.user|has_group:'fact:fact_intermediate' %}
         <li class="nav-item module-item">
@@ -227,4 +231,3 @@
       </li>
     </ul>
 </nav>
-
