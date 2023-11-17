@@ -9,9 +9,7 @@ ENV PYTHONUNBUFFERED=1
 RUN apt-get update \
   && apt-get install -y binutils \
   && apt-get install -y apt-utils \
-  && apt-get install -y libcairo2 \
   && apt-get install -y libpango-1.0-0 \
-  && apt-get install -y libpangocairo-1.0-0 \
   && apt-get install -y libglib2.0-0 \
   && apt-get install -y gdal-bin \
   && apt-get install -y libproj-dev \
