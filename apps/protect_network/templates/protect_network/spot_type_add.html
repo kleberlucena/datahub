@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load static crispy_forms_tags widget_tweaks %}
+{% load static crispy_forms_tags widget_tweaks custom_tags %}
 
 
 <!-- browser title -->
@@ -38,6 +38,7 @@
     {% endif %}
 </div>
 
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
 <div class="row">
     <div class="col-md-12">
         <div class="card card-primary card-outline">
@@ -71,6 +72,7 @@
         </form>
     </div>
 </div>
+{% endif %}
 
 
 

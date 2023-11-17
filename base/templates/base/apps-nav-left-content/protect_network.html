@@ -1,5 +1,5 @@
 {% load custom_tags %}
-{% if request.user|has_group:'profile:protect_network_basic, profile:protect_network_advanced, profile:protect_network_manager'  %}
+{% if request.user|has_group:'profile:protect_network_basic,profile:protect_network_advanced,profile:protect_network_manager'  %}
 <!--Módulo Rede de Proteção-->
 <li class="nav-item module-item">
     <a href="" class="nav-link">
@@ -22,7 +22,7 @@
                 <i class="far fa-circle nav-icon"></i><p>Estabelecimentos</p>
             </a>
         </li>
-        {% if request.user|has_group:'profile:protect_network_advanced, profile:protect_network_manager'  %}
+        {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager'  %}
         <li class="nav-item menu-item">
             <a href="#" class="nav-link">
                 <i class="fas fa-wrench nav-icon"></i> 

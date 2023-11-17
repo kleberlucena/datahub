@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load static crispy_forms_tags widget_tweaks %}
+{% load static crispy_forms_tags widget_tweaks custom_tags %}
 
 
 <!-- browser title -->
@@ -20,7 +20,7 @@
 {% endblock %}
 
 
-{% block title-header %} Pontos de Interesse {% endblock %}
+{% block title-header %} Redes de Proteção {% endblock %}
 
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
@@ -32,33 +32,34 @@
 <div class="callout callout-info">
     <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar tags</h3>
     <p class="text-muted text-justify px-3 pt-2">
-        <b>Essa tela permite a criação tags</b>
-        <br>Tags são palavras-chave usadas para categorizar e identificar os pontos. Devem ser concisas e relevantes, de maneira a facilitar buscas específicas.
+        <b>Essa tela permite a inserção de tags em um estabelecimento</b>
+        <br>Tags são palavras-chave usadas para categorizar e identificar os estabelecimentos. Devem ser concisas e relevantes, de maneira a facilitar buscas específicas.
     </p>
 </div>
-
-<div class="row">
-    <div class="col-md-12">
-        <div class="card card-primary card-outline">
-            <div class="card-header">
-                <h3 class="card-title">Adicionar tags</h3>
-            </div>
-        <form class="p-3" method='post' enctype="multipart/form-data">
-            {% csrf_token %}
-        
-            <div class="row">
-                <div class="col-sm-12">
-                    {{form.tags|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Adicionar tags</h3>
                 </div>
-            </div>
-               
-            <div class="mt-3">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="{% url 'protect_network:spot_detail' spot.pk %}"><button type="button" class="btn btn-warning">Cancelar</button></a>
-            </div>
-        </form>
+            <form class="p-3" method='post' enctype="multipart/form-data">
+                {% csrf_token %}
+            
+                <div class="row">
+                    <div class="col-sm-12">
+                        {{form.tags|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <a href="{{ request.META.HTTP_REFERER  }}"><button type="button" class="btn btn-warning ml-1"> Cancelar </button></a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+{% endif %}
 
 
 
