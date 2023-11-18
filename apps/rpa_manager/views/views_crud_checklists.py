@@ -141,22 +141,17 @@ class EditarChecklistView(GroupRequiredMixin, UpdateView):
         
         return super().form_valid(form)
     
-class DeletarChecklistView(PermissionRequiredMixin, DeleteView):
+class DeletarChecklistView(GroupRequiredMixin, DeleteView):
     model = Checklist
     template_name = 'rpa_manager/delete_checklist.html'
     success_url = reverse_lazy('rpa_manager:checklists')
     context_object_name = 'obj'
-    permission_required = 'rpa_manager.delete_checklist'
+    group_required = ['profile:rpa_advanced']
 
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
         messages.info(self.request, f'{MESSAGE_MODEL_NAME} excluído com sucesso!')
         return response
-    
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-    
     
 class ChecklistImageDeleteView(DeleteView):
     model = ChecklistImages

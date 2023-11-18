@@ -125,10 +125,10 @@ class EditarMissaoView(GroupRequiredMixin, UpdateView):
         return response
 
                 
-class DeleteMissaoView(PermissionRequiredMixin, View):
+class DeleteMissaoView(GroupRequiredMixin, View):
     template_name = 'rpa_manager/delete_operation.html'
     success_url = reverse_lazy('rpa_manager:principal')
-    permission_required = 'rpa_manager.delete_missao'
+    group_required = ['profile:rpa_basic', 'profile:rpa_advanced']
     
     def get(self, request, *args, **kwargs):
         missao = get_object_or_404(Operation, pk=self.kwargs['pk'])
@@ -147,6 +147,3 @@ class DeleteMissaoView(PermissionRequiredMixin, View):
         
         return HttpResponseRedirect(self.success_url)
 
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
