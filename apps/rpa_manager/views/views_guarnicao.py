@@ -29,12 +29,14 @@ class GuarnicaoCreateView(GroupRequiredMixin, CreateView):
     
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['initial'] = {'remote_pilot': self.request.user}
+        user = self.request.user.military
+        kwargs['initial'] = {'remote_pilot': user}
         return kwargs
     
     def get(self, request, *args, **kwargs):
+        user = self.request.user.military.pk
         existing_guarnicao = PoliceGroup.objects.filter(
-            Q(remote_pilot=request.user) | Q(observer_pilot=request.user) | Q(driver=request.user)
+            Q(remote_pilot=user) | Q(observer_pilot=user) | Q(driver=user)
         ).first()
 
         if existing_guarnicao:
@@ -77,14 +79,14 @@ class DescadastrarGuarnicao(GroupRequiredMixin, View):
     group_required = ['profile:rpa_basic', "profile:rpa_advanced"]
     
     def get(self, request, *args, **kwargs):
-        user = self.request.user
+        user = self.request.user.military
         last_guarnicao = PoliceGroup.objects.filter(remote_pilot=user).order_by('-id').first()
         if last_guarnicao:
             return render(request, self.template_name, {'guarnicao': last_guarnicao})
         return redirect(self.success_url)
     
     def post(self, request, *args, **kwargs):
-        user = self.request.user
+        user = self.request.user.military
         last_guarnicao = PoliceGroup.objects.filter(remote_pilot=user).order_by('-id').first()
         if last_guarnicao:
             last_guarnicao.delete()

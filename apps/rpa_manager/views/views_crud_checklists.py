@@ -49,10 +49,12 @@ class ChecklistFormView(GroupRequiredMixin, View):
         historico_checklist_dict = {}
         
         historico_checklist_dict_json = getLastRegisteredChecklistData(historico_checklist_dict)
-        baterias = Battery.objects.all()
+        baterias = Battery.objects.all()       
+        
         
         try:
-            ultima_guarnicao = PoliceGroup.objects.filter(remote_pilot=remote_pilot).latest('date')
+            ultima_guarnicao = PoliceGroup.objects.filter(remote_pilot=request.user.military).latest('date')
+            print(ultima_guarnicao)
         except:
             ultima_guarnicao = None
             
@@ -138,8 +140,6 @@ class EditarChecklistView(GroupRequiredMixin, UpdateView):
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} editado com sucesso!')
         
         return super().form_valid(form)
-    
-    
     
 class DeletarChecklistView(PermissionRequiredMixin, DeleteView):
     model = Checklist

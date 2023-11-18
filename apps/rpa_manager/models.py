@@ -11,7 +11,7 @@ from stdimage.models import StdImageField
 from django_minio_backend import MinioBackend
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-
+from apps.portal.models import Military
 
 class Base(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -56,9 +56,9 @@ class CitiesPB(Base):
 
 
 class PoliceGroup(models.Model):
-    driver = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='gu_driver', null=True)
-    remote_pilot = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='gu_remote_pilot', null=True)
-    observer_pilot = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='gu_observer_pilot', blank=True, null=True)
+    driver = models.ForeignKey(Military, on_delete=models.SET_NULL, related_name='gu_driver', null=True)
+    remote_pilot = models.ForeignKey(Military, on_delete=models.SET_NULL, related_name='gu_remote_pilot', null=True)
+    observer_pilot = models.ForeignKey(Military, on_delete=models.SET_NULL, related_name='gu_observer_pilot', blank=True, null=True)
     phone = models.CharField(max_length=20, null=False, blank=False)
     location = models.ForeignKey(CitiesPB, on_delete=models.SET_NULL, null=True)
     date = models.DateTimeField(auto_now_add=True)
@@ -132,7 +132,7 @@ def update_titulo_aeronave(sender, instance, **kwargs):
 
 class Operation(Base):
     title = models.CharField(max_length=100)
-    observer_pilot = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='operation_observer_pilot', blank=True, null=True)
+    observer_pilot = models.ForeignKey(Military, on_delete=models.SET_NULL, related_name='operation_observer_pilot', blank=True, null=True)
     who_authorized = models.CharField(max_length=100, null=True, blank=True)
     who_requested = models.CharField(max_length=100, null=True, blank=True)
     location = models.ForeignKey(CitiesPB, on_delete=models.SET_NULL, null=True)
@@ -209,7 +209,7 @@ class Checklist(Base):
     changes = models.TextField()
 
     def __str__(self):
-        return "Piloto: {} | {} | {} ".format(self.remote_pilot, self.aircraft, self.date)
+        return "Piloto: {} | {} | {} ".format(self.remote_pilot.military, self.aircraft, self.date)
 
 
 class ChecklistImages(models.Model):
@@ -229,7 +229,7 @@ class ChecklistImages(models.Model):
 class Report(Base):
     title = models.CharField(max_length=250, null=False, blank=False, default='')
     remote_pilot = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='report_remote_pilot', null=True)
-    observer_pilot = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='report_observer_pilot', blank=True, null=True)
+    observer_pilot = models.ForeignKey(Military, on_delete=models.SET_NULL, related_name='report_observer_pilot', blank=True, null=True)
     who_authorized = models.CharField(max_length=100, null=True, blank=True)
     who_requested = models.CharField(max_length=100, null=True, blank=True)
     date = models.DateField(blank=False, null=False)
@@ -253,7 +253,7 @@ class Report(Base):
     operation_report = models.TextField(max_length=500)
     
     def __str__(self):
-        return f'{self.title} - {self.remote_pilot} - {self.location}'
+        return f'{self.title} - {self.remote_pilot.military.nickname} - {self.location}'
 
 
 class Incidents(models.Model):

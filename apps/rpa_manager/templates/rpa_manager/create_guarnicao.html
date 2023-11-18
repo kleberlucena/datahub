@@ -1,4 +1,5 @@
 {% extends "base/base.html" %}
+{% load custom_tags %}
 {% load static %}
 
 <!-- styles -->
@@ -59,23 +60,22 @@
       <div class="card-header">
         <h3 class="card-title">Cadastrar nova guarnição</h3>
       </div>
-
       <form class="p-3" method='post' enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-row">
           <div class="form-group col-md-12 mb-0">
-            <label for="#" class="piloto_observador">Piloto remoto</label>
+            <label for="#">Piloto remoto</label>
             <br>{{ user.military.nickname }}<br><hr>
-            <label for="id_remote_pilot" class="quem_solicitou">Piloto observador</label>
-            {{ form.observer_pilot}}
+            <label for="id_remote_pilot">Piloto observador</label>
+            {{ form.observer_pilot }}
             {{ form.observer_pilot.errors }}
-            <label for="id_driver" class="titulo_operacao">Motorista</label>
+            <label for="id_driver">Motorista</label>
             {{ form.driver }}
             {{ form.driver.errors }}
-            <label for="id_phone" class="quem_autorizou">Telefone</label>
+            <label for="id_phone">Telefone</label>
             {{ form.phone }}
             {{ form.phone.errors }}
-            <label for="id_location" class="local">Local</label>
+            <label for="id_location">Local</label>
             {{ form.location }}
             {{ form.location.errors }}
             {{ form.remote_pilot }}

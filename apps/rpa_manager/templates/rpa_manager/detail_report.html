@@ -67,13 +67,13 @@
       <div class="card-body">
         <strong>Título: </strong> {{ relatorio.title }}
         <hr>
-        <strong>Piloto remoto: </strong> {{ relatorio.remote_pilot }}
+        <strong>Piloto remoto: </strong> {{ relatorio.remote_pilot.military.nickname }}
         <hr>
         <strong>Piloto observador: </strong>
         {% if relatorio.observer_pilot == None %}
           sem registro
         {% else %}
-          {{ relatorio.observer_pilot }} 
+          {{ relatorio.observer_pilot.military.nickname }} 
         {% endif %}
         <hr>
         <strong>Data inicial: </strong> {{ relatorio.date | date:"d/m/Y"}}

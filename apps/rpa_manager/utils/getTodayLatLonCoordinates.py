@@ -21,7 +21,7 @@ def getTodaysCoordinates(context):
                 status_operation = 'Encerrada'
                 
             operation_by_date_list.append({
-                'usuario': operation.user.username,
+                'usuario': operation.user.military.nickname,
                 'titulo': operation.title,
                 'latitude': operation.latitude,
                 'longitude': operation.longitude,

@@ -47,7 +47,7 @@ class PainelView(TemplateView):
         report_by_date = Report.objects.filter(date__month=month, date__year=year)
         for report in report_by_date:
             report_by_date_list.append({
-                'usuario': report.remote_pilot.username,
+                'usuario': report.remote_pilot.military.nickname,
                 'titulo': report.title,
                 'latitude': report.latitude,
                 'longitude': report.longitude
@@ -62,18 +62,18 @@ class PainelView(TemplateView):
                     'id':  
                         guarnicao.id if(guarnicao.id != None) else 'sem registro',
                     'motorista': 
-                        str(guarnicao.driver.military) if(guarnicao.driver != None) else 'sem registro',
+                        str(guarnicao.driver) if(guarnicao.driver != None) else 'sem registro',
                     'motorista_img': 
-                        str(guarnicao.driver.military.image.url) if(guarnicao.driver != None) else 'sem registro',
+                        str(guarnicao.driver.image.url) if(guarnicao.driver != None) else 'sem registro',
                     'piloto_remoto': 
-                        str(guarnicao.remote_pilot.military) if(guarnicao.remote_pilot != None) else 'sem registro',
+                        str(guarnicao.remote_pilot) if(guarnicao.remote_pilot != None) else 'sem registro',
                     'piloto_remoto_img': 
-                        str(guarnicao.remote_pilot.military.image.url) if(guarnicao.remote_pilot != None) else 'sem registro',
+                        str(guarnicao.remote_pilot.image.url) if(guarnicao.remote_pilot != None) else 'sem registro',
                     'piloto_observador': 
-                        str(guarnicao.observer_pilot.military) 
+                        str(guarnicao.observer_pilot) 
                         if(guarnicao.observer_pilot != None) else 'sem registro',
                     'piloto_observador_img': 
-                        str(guarnicao.observer_pilot.military.image.url) 
+                        str(guarnicao.observer_pilot.image.url) 
                         if(guarnicao.observer_pilot != None) else 'sem registro',
                     'local': 
                         guarnicao.location.cities_pb if(guarnicao.location.cities_pb != None) else 'sem registro',

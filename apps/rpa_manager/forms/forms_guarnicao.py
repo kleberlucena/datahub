@@ -1,10 +1,13 @@
 
 from django import forms
+from django.contrib.auth.models import User
+from apps.portal.models import Military
 from apps.rpa_manager.models import PoliceGroup
 from apps.rpa_manager.utils.addAttributes import addAttributes
 
 
 class PoliceGroupForm(forms.ModelForm):
+ 
     class Meta:
         model = PoliceGroup
         fields = ['driver', 
@@ -20,6 +23,7 @@ class PoliceGroupForm(forms.ModelForm):
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         
         self.fields['driver'].widget.attrs.update({
             'placeholder': 'Insira um motorista'
@@ -43,7 +47,7 @@ class PoliceGroupForm(forms.ModelForm):
         
         for campo in campos:
             addAttributes(self, campo, campo, 'form-control')    
-            
+    
     def clean_phone(self):
         phone = self.cleaned_data['phone']
         if not phone.isdigit():
@@ -62,9 +66,6 @@ class PoliceGroupForm(forms.ModelForm):
         
         if observer_pilot == remote_pilot:
             self.add_error('observer_pilot', "O piloto observador não pode ser o mesmo que o piloto remoto.")
-        
-        # if driver == remote_pilot or driver == observer_pilot:
-        #     self.add_error('driver', "O motorista não pode ser o mesmo que o piloto remoto ou observador.")
 
         if PoliceGroup.objects.filter(observer_pilot=remote_pilot).exclude(id=self.instance.id).exists():
             self.add_error('remote_pilot', "O piloto remoto já está sendo utilizado como piloto observador em outra guarnição.")

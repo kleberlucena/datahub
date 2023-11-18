@@ -362,7 +362,6 @@ class Migration(migrations.Migration):
                 ('load_speaker', models.BooleanField(default=True)),
                 ('stroboscopic_light', models.BooleanField(default=True)),
                 ('cables', models.BooleanField(default=True)),
-                ('carregador', models.BooleanField(default=True)),
                 ('charger', models.BooleanField(default=True)),
                 ('smart_controller', models.BooleanField(default=True)),
                 ('controller', models.BooleanField(default=True)),
