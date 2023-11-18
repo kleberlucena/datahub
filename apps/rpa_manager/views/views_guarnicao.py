@@ -32,7 +32,7 @@ class GuarnicaoCreateView(GroupRequiredMixin, CreateView):
         user = self.request.user.military
         kwargs['initial'] = {'remote_pilot': user}
         return kwargs
-    
+        
     def get(self, request, *args, **kwargs):
         user = self.request.user.military.pk
         existing_guarnicao = PoliceGroup.objects.filter(
