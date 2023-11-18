@@ -50,8 +50,6 @@ class ChecklistFormView(GroupRequiredMixin, View):
         
         historico_checklist_dict_json = getLastRegisteredChecklistData(historico_checklist_dict)
         baterias = Battery.objects.all()       
-        
-        
         try:
             ultima_guarnicao = PoliceGroup.objects.filter(remote_pilot=request.user.military).latest('date')
             print(ultima_guarnicao)

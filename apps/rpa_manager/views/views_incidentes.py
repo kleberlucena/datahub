@@ -78,9 +78,7 @@ class IncidentesUpdateView(GroupRequiredMixin, UpdateView):
     
     def form_valid(self, form):
         images = self.request.FILES.getlist('imagens')
-        
         self.object = form.save()
-
         for image in images:
             IncidentImage.objects.create(incident=self.object, imageIncident=image)
 
@@ -90,9 +88,7 @@ class IncidentesUpdateView(GroupRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
         incident = self.get_object()
-
         images = IncidentImage.objects.filter(incident=incident)
         
         image_urls = [image.imageIncident.url for image in images]
