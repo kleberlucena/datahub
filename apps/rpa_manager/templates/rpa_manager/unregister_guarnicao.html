@@ -1,0 +1,79 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% comment %} bacinf style_sheet {% endcomment %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    .select_date_form {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: end;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+  
+    .select_date_btn {
+      height: 40px;
+      width: 120px;
+      margin-top: 32px;
+    }
+  
+    @media (max-width: 768px) {
+      .select_date_form {
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .select_year{
+        width: 100px;
+      }
+  
+    }
+  </style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Descadastrar {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:painel' %}">Painel</a></li>
+  <li class="breadcrumb-item active">Descadastrar</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+<div class="card card-primary card-outline">
+    <div class="card-header">
+      <h3 class="card-title">Confirmar o descadastramento?</h3>
+    </div>
+        <div class="mt-3 ml-3 mb-3">
+          <form method="post">
+            {% csrf_token %}
+            <p>Tem certeza que dejesar realizar o descadastramento da guarnição?</p>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'rpa_manager:painel' %}">
+              <button type="button" class="btn btn-warning">Cancelar</button>
+            </a>
+        </form>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+  <!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+{% endblock %}

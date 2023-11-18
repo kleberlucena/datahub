@@ -1,0 +1,250 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block style_sheet %}
+    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+  <style>
+    .callout-text {
+      text-align: justify
+    }
+    
+     .piloto_observador,
+     .quem_solicitou,
+     .quem_autorizou,
+     .local,
+     .aeronave{
+      margin-top: 10px;
+    }
+    
+    .map_options {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Estilo para o ícone "x" */
+    .input-container {
+      position: relative;
+      width: 400px;
+    }
+    .clear-icon {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      cursor: pointer;
+    }
+
+    #id_is_temporary {
+      display: inline;
+      width: 15px;
+      height: 15px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .visible {
+      display: block;
+    }
+
+    .evento {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    /* fix select2 field height */
+    .select2-selection, .select2-selection--single{
+      height: 38px !important;
+    }
+  
+    #select2-id_aeronave-container {
+      height: 38px !important;
+    }
+
+    @media (max-width: 768px) {
+      .map_options {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .input-container {
+        position: relative;
+        width: 100%;
+      }
+      .title_is_temporary {
+        display: inline;
+      }
+
+      #id_is_temporary {
+        display: inline;
+        width: 15px;
+        height: 15px;
+      }
+  }
+
+  </style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Inserir ponto {% endblock %}
+
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="callout callout-info">
+        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+        <p class="callout-text">Neste formulário insira as coordenadas dos pontos que considera de risco na operação que foi realizada.</p>
+      </div>
+
+      <div class="card card-primary card-outline">
+        <div class="card-header">
+          <h3 class="card-title">Inserir ponto de risco</h3>
+        </div>
+        <form class="p-3" method='post' enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group col-md-12 mb-0">
+            <label for="id_operation" class="title_operacao">Operação</label>
+            {{ form.operation }}
+            {{ form.operation.errors }}
+            <label for="id_is_temporary" class="title_is_temporary mt-3">O ponto é temporário? <small>Se sim, marque a caixa ao lado:</small> </label>
+            {{ form.is_temporary }}
+            {{ form.is_temporary.errors }}
+            <label for="#" id="evento">Duração do evento</label>
+            <div class="row">
+              <div class="input-group date col-md-6" id="datetimepicker_initial_date" data-target-input="nearest">
+                {{ form.initial_date }}
+                {{ form.initial_date.errors }}
+                <div class="input-group-append" data-target="#datetimepicker_initial_date" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+              <div class="input-group date col-md-6" id="datetimepicker_final_date" data-target-input="nearest">
+                <br>
+                {{ form.final_date }}
+                {{ form.final_date.errors }}
+                <div class="input-group-append" data-target="#datetimepicker_final_date" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+            </div>
+            <label for="id_description" class="title_descricao mt-1" style="display: block">Descrição</label>
+            {{ form.description }}
+            {{ form.description.errors }}
+            <label for="id_latitude" class="title_latitude mt-1">Latitude</label>
+            {{ form.latitude }}
+            {{ form.latitude.errors }}
+            <label for="id_longitude" class="title_longitude mt-1">Longitude</label>
+            {{ form.longitude }}
+            {{ form.longitude.errors }}
+            <div class="mt-3">
+              <button type="submit" class="btn btn-primary">Salvar</button>
+              <a href="{% url 'rpa_manager:painel' %}">
+                <button type="button" class="btn btn-warning">Cancelar</button>
+              </a>
+            </div>
+          </form>
+          <div id="map" class="mt-3" style="height: 500px;"></div>
+      </div>
+    </div>
+  </div>
+  {% endblock content %}
+
+  <!-- javascripts -->
+  {% block js %}
+  <!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/moment/moment.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+  <script src="{% static 'leaflet/leaflet.js' %}"></script>
+
+  <script>
+    const temporary = document.querySelector('#id_is_temporary');
+    const initial_date = document.querySelector('#id_initial_date');
+    const final_date = document.querySelector('#id_final_date');
+    const date_icon_initial = document.querySelector('#datetimepicker_initial_date');
+    const date_icon_final = document.querySelector('#datetimepicker_final_date');
+    const evento = document.querySelector('#evento');
+    evento.classList.add('hidden');
+    initial_date.classList.add('hidden');
+    final_date.classList.add('hidden');
+    date_icon_initial.classList.add('hidden');
+    date_icon_final.classList.add('hidden');
+    
+    temporary.addEventListener('change', e => {
+      if(e.target.checked) {
+        evento.classList.remove('hidden');
+        initial_date.classList.remove('hidden');
+        final_date.classList.remove('hidden');
+        date_icon_initial.classList.remove('hidden');
+        date_icon_final.classList.remove('hidden');
+        evento.classList.add('visible');
+      } else {
+        evento.classList.remove('visible');
+        initial_date.classList.remove('visible');
+        final_date.classList.remove('visible');
+        date_icon_initial.classList.remove('visible');
+        date_icon_final.classList.remove('visible');
+        evento.classList.add('hidden');
+        initial_date.classList.add('hidden');
+        final_date.classList.add('hidden');
+        date_icon_initial.classList.add('hidden');
+        date_icon_final.classList.add('hidden');
+        clearDates(initial_date, final_date);
+        }
+    });
+
+    function clearDates(initial, final) {
+      initial.value = '';
+      final.value = '';
+    }
+  </script>
+
+  <script>
+    $(function () {
+      $('#datetimepicker_initial_date').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss',
+        icons: {
+          time: 'fa fa-clock',
+        }
+      });
+
+      $('#datetimepicker_final_date').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm:ss',
+        icons: {
+          time: 'fa fa-clock',
+        }
+      });
+    });
+  </script>
+  <script>
+    let latitude = {{ latitude | safe }}
+    let longitude = {{ longitude | safe }}
+    var map = L.map('map').setView([latitude, longitude], 17);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    var marker = L.marker([latitude, longitude]).addTo(map);
+
+    map.on('click', function (e) {
+        if (marker) {
+            map.removeLayer(marker);
+        }
+
+        marker = L.marker(e.latlng).addTo(map);
+        document.getElementById('id_latitude').value = e.latlng.lat;
+        document.getElementById('id_longitude').value = e.latlng.lng;
+    });
+  </script>
+{% endblock %}

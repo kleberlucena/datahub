@@ -1,66 +1,94 @@
 {% load static %}
+
 <!DOCTYPE html>
 
 <html lang="pt-br">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="{% static '/sti/img/coint_64.png' %}">
-    <title>
-      BACINF | {% block title %}{% endblock %}
-    </title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="{% static '/sti/img/coint_64.png' %}">
+  <title>
+    BACINF | {% block title %}{% endblock %}
+  </title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
     <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/toastr/toastr.min.css' %}">
     <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
-    {% block style_sheet %}{% endblock %}
-    <style>
-      .pm-nav-header-red{ background-color: #B22222; color: white;}
-      a.nav-link { color: #fff !important; }
-      a.nav-link:hover { color: rgba(255,255,255,.75) !important; }
-      a.nav-link:hover { color: rgba(255,255,255,.75) !important; }
-    </style>
-  </head>
-  <body class="hold-transition sidebar-mini">
-    <div class="wrapper">
+  
+  {% block style_sheet %}{% endblock style_sheet %}
+  <style>
+    .pm-nav-header-yellow{ background-color: #f4ca16; color: black;}
+    .nav-item nav-link:hover { color: rgba(255,255,255,.75) !important; }
+    .navbar-dark .navbar-nav .nav-link {
+      color: rgb(0, 0, 0);
+    } /* Adicione outros estilos desejados */
 
-      {% include 'base/nav-header.html' %}
-      {% include 'base/nav-left.html' %}
+  </style>
+</head>
 
-      <div class="content-wrapper">
-          <section class="content-header">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-sm-6">
-                  <h4>{% block title-header %}{% endblock %}</h4>
-                </div>
-                <div class="col-sm-6 d-sm-inline-block d-none">
-                  <ol class="breadcrumb float-sm-right">
-                    {% block breadcrumb %} {% endblock %}
-                  </ol>
-                </div>
-              </div>
+<body class="hold-transition sidebar-mini">
+  <div class="wrapper">
+
+    {% include 'base/nav-header.html' %}
+    {% include 'base/nav-left.html' %}
+
+    <div class="content-wrapper">
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-sm-6">
+              <h4>{% block title-header %}{% endblock %}</h4>
             </div>
-          </section>
-        <section class="content">
-          <div class="container-fluid mt-3">
-            {% block content %} {% endblock %}
+            <div class="col-sm-6 d-sm-inline-block d-none">
+              <ol class="breadcrumb float-sm-right">
+                {% block breadcrumb %} {% endblock %}
+              </ol>
+            </div>
           </div>
-        </section>
-      </div>
-
-      {% include 'base/footer.html' %}
-      {% include 'base/nav-right.html' %}
-
+        </div>
+      </section>
+      <section class="content">
+        <div class="container-fluid mt-3">
+          {% block content %} {% endblock %}
+        </div>
+      </section>
     </div>
-    <!-- ./wrapper -->
 
-    <script src="{% static 'adminlte-3.1.0/plugins/jquery/jquery.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'adminlte-3.1.0/plugins/toastr/toastr.min.js' %}"></script>
-    {% block js %}{% endblock %}
-    <script src="{% static 'adminlte-3.1.0/js/adminlte.min.js' %}"></script>
-    {% if messages %}
+    {% include 'base/footer.html' %}
+    {% include 'base/nav-right.html' %}
+
+  </div>
+  <!-- ./wrapper -->
+
+  <script src="{% static 'adminlte-3.1.0/plugins/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/toastr/toastr.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/js/adminlte.min.js' %}"></script>
+  {% block js %}{% endblock %}
+  <!-- Nav right statements-->
+  <script src="{% static 'adminlte-3.1.0/js/demo.js' %}"></script>
+
+  <!-- active menu itens -->
+  <script>
+    $(function () {
+      var currentPage = window.location.pathname;
+      var navItem = $('.nav-item a[href="' + currentPage + '"]');
+      navItem.closest('li').css({
+        'border':'1px solid white',
+        'border-radius': '5px'
+      });
+      menuModule = navItem.closest('.module-item')
+      menuModule.children('a').addClass('active');
+      menuModule.addClass('menu-is-opening menu-open');
+      menuModule.children('ul').css('display', 'block');
+      menuitem = navItem.closest('.menu-item')
+      menuitem.children('a').addClass('active');
+      menuitem.addClass('menu-is-opening menu-open');
+      menuitem.children('ul').css('display', 'block');
+    });
+  </script>
+
+  {% if messages %}
     <!-- Toasts -->
     <script>
       $(function () {
@@ -70,7 +98,7 @@
         init: function(){
           toastr.options = {
             "progressBar": true,
-            "positionClass": "toast-bottom-right",
+            "positionClass": "toast-bottom-right", 
             "timeOut": "5000",
             "showEasing": "swing",
             "preventDuplicates": true,
@@ -82,5 +110,5 @@
       }
     </script>
     {% endif %}
-  </body>
+</body>
 </html>

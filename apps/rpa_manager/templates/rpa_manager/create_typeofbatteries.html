@@ -1,0 +1,63 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+  {% comment %} bacinf style_sheet {% endcomment %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    .callout-text {
+      text-align: justify
+    }
+  </style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Criar Tipo de Bateria {% endblock %}
+
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:baterias' %}">Baterias</a></li>
+  <li class="breadcrumb-item active">Nova tipo</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="callout callout-info">
+        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+        <p class="callout-text">Neste formulário insira os dados referentes ao novo tipo de bateria a ser cadastrado.</p>
+      </div>
+
+      <div class="card card-primary card-outline">
+        <div class="card-header">
+          <h3 class="card-title">Criar novo tipo de bateria</h3>
+        </div>
+        <form class="p-3" method='post' enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group col-md-12 mb-0">
+                {{ form }}
+            </div>
+          </div>
+          <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'rpa_manager:baterias' %}">
+              <button type="button" class="btn btn-warning">Cancelar</button>
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+  <!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+{% endblock %}

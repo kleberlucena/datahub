@@ -1,0 +1,579 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+  {% comment %} bacinf style_sheet {% endcomment %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    .callout-text {
+      text-align: justify
+    }
+
+    .novo_checklist {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .formulario_checklist_parte1 {
+        display: flex;
+        flex-direction: column;
+        gap: 10px; 
+        max-width: 100%;   
+    }
+    
+    .formulario_checklist_selecao_itens, .formulario_checklist_parte2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        max-width: 100%;
+    }
+    
+    .formulario_checklist_titulo_selecao {
+        margin-top: 50px;
+        margin-bottom: 50px;
+    }
+    
+    .checklist_item {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .formulario_checklist_parte2 > input {
+        margin-left: 100px;
+    }
+    
+    .container_alteracoes_titulo {
+        margin-top: 1rem;
+    }
+    
+    #id_changes {
+        margin-top: 20px;
+    }
+    
+    .edicao_checklist {
+        display: none;
+    }
+    .formulario_checklist_alteracoes {
+      max-width: 100%;
+    }
+
+    .formulario_checklist_parte2 > input {
+      width: 1rem;
+    }
+    
+    /* Correção da altura do campo selec2 */
+    .select2-selection, .select2-selection--single{
+      height: 38px !important;
+    }
+
+    #select2-id_aeronave-container {
+      height: 38px !important;
+    }
+
+    #equipes-container {
+      width: 100rem;
+      max-width: 100%;
+    }
+  
+    .card_content {
+      display: flex;
+      flex-direction: row;
+      gap: 30px;
+    }
+  
+    .card_gu_info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      min-height: 200px; 
+      min-width: 200px;
+    }
+  
+    .card-img {
+      width: 60%;
+    }
+  
+    .card-container_for-images {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }  
+    .img-circle {
+      border-radius: 20%; 
+    }
+
+
+
+    .hidden {
+      display: none;
+    }
+
+    /* handle checklist images */
+    .hidden {
+      display: none;
+    }
+    #id_imageIncidente {
+      display: none;
+    }
+    #fileList {
+      display: none;
+    }
+    .temp_images_view {
+      display: flex;
+      flex-wrap: nowrap;
+      max-height: 200px; /* Adjust the max height to control overflow */
+      overflow-x: auto;
+    }
+    
+    .temp_images_view img {
+      margin: 5px;
+      max-width: 150px; /* Adjust the max width of each image as needed */
+      max-height: 150px; /* Adjust the max height of each image as needed */
+    }
+    
+    .temp_images_view_edit {
+      display: flex;
+      flex-wrap: nowrap;
+      max-height: 200px; /* Adjust the max height to control overflow */
+      overflow-x: auto;
+    }
+    .temp_images_view_edit img {
+      margin: 5px;
+      max-width: 150px; /* Adjust the max width of each image as needed */
+      max-height: 150px; /* Adjust the max height of each image as needed */
+    }
+    
+    @media (max-width: 768px) {
+      .card_content {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+  
+      .card-img {
+        max-width: 300px;
+      }
+  
+      .card-container_for-images {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        gap: 10px;
+      } 
+
+      .formulario_checklist_selecao_itens {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 5px;
+          max-width: 800px;
+      } 
+  }
+</style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Novo checklist {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'rpa_manager:checklists' %}">Checklists</a></li>
+<li class="breadcrumb-item active">Novo checklist</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="callout callout-info">
+      <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+      <p class="callout-text">Neste formulário é possível confirmar a guarnição de serviço, caso detecte algum erro, no botão abaixo poderá editar a guarnicão.</p>
+      <p class="callout-text">Para iniciar o checklist é necessário selecionar uma aeronave.</p>
+      <p class="callout-text">Por padrão os itens estão pré preenchidos, o usuário deve desmarcar itens que estão com alguma alteração e no campo de texto ao final do checklist descrever a alteração.</p>
+      <p class="callout-text">Há também um campo para inserir imagens de alterações das aeronaves.</p>
+    </div>
+
+    <div class="card card-primary card-outline">
+      <div class="card-header">
+        <h3 class="card-title">Novo checklist</h3>
+      </div>
+
+      {% if guarnicao %}
+      <div class="card-body">
+        <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
+          <div class="card bg-light d-flex flex-fill">
+              <div class="card-header text-muted border-bottom-0">
+                <i class="fas fa-lg fa-building"></i> {{ guarnicao.location.cities_pb }}
+              </div> 
+              <div class="card-body pt-0">
+                <div class="card_content">
+                  <div class="card_gu_info">
+                    <small class=""><i class="fa fa-car"></i> <b>Motorista:</b> {{ guarnicao.driver.military }}</small>
+                    <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> {{ guarnicao.remote_pilot.military }} </small>
+                    <small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b>  
+                      {% if guarnicao.observer_pilot != None %}
+                        {{ guarnicao.observer_pilot.military }}
+                      {% else %}
+                        sem registro
+                      {% endif %}
+                    </small>
+                    <small class=""><i class="fa fa-phone"></i> <b>Contato:</b> {{ guarnicao.phone }}</small>
+                  </div>
+                  <div class="card-container_for-images">
+                    <div class="grid-item">
+                      {% if guarnicao.driver %}
+                        <img src="{{ guarnicao.driver.military.image.url }}" alt="user-avatar" class="card-img img-circle">
+                      {% endif %}
+                    </div>
+                    <div class="grid-item">
+                      {% if guarnicao.remote_pilot %}
+                        <img src="{{ guarnicao.remote_pilot.military.image.url }}" alt="user-avatar" class="card-img img-circle">
+                      {% endif %}
+                    </div>
+                    <div class="grid-item">
+                      {% if guarnicao.observer_pilot %}
+                        <img src="{{ guarnicao.observer_pilot.military.image.url }}" alt="user-avatar" class="card-img img-circle">
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+              </div>
+            </div>
+          </div>
+
+          {% if request.user == guarnicao.remote_pilot %}
+            <a href="{% url 'rpa_manager:guarnicao_edit' guarnicao.pk %}">
+              <button type="button" style="display: inline;" class="btn btn-block btn-primary mt-3 col-md-4"><i class="fa fa-pen"></i> Editar guarnição </button>
+            </a>
+          {% else %}
+            <a href="{% url 'rpa_manager:guarnicao_edit' guarnicao.pk %}">
+              <button type="button" style="display: inline; cursor: not-allowed;" class="btn btn-block btn-secondary mt-3 col-md-4"><i class="fa fa-pen"></i> Editar guarnição </button>
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <form  class="p-3" method='post' enctype="multipart/form-data">
+        {% csrf_token %}
+        <p class="edicao_checklist">{{ edicao_checklist }}</p> 
+        {{ checklist_form.errors }}
+        <div class="container formulario_checklist_parte1">
+          {{ checklist_form.remote_pilot }}
+          {{ checklist_form.remote_pilot.errors }}
+          <label for="id_aircraft">Aeronave</label>
+          <small>Selecione uma aeronave para iniciar o checklist</small>
+          {{ checklist_form.aircraft }}
+          {{ checklist_form.aircraft.errors }}
+          <div class="main_container_sup">
+            <div class="row">
+              <div class="col-md-6">
+                <label for="id_num_porpellers">Número de hélices</label>
+                {{ checklist_form.num_propellers }}
+                {{ checklist_form.num_propellers.errors }}
+              </div>
+              <div class="col-md-6">
+                <label for="id_num_batteries">Número de baterias</label>
+                {{ checklist_form.num_batteries }}
+                {{ checklist_form.num_batteries.errors }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="main_container_options">
+          <h2 class="formulario_checklist_titulo_selecao"> </h2>
+
+          <blockquote class="quote-info mt-0">
+            <h5>Dica!</h5>
+            <p>Marcar os itens que estão ok.</p>  
+          </blockquote>
+  
+          <div class="formulario_checklist_selecao_itens ">
+            <div class="container formulario_checklist_parte2">
+              <label for="id_batteries_loaded">Nível baterias</label>
+              {{ checklist_form.batteries_loaded }}
+              <label for="id_control_battery_loaded">Nível bateria controle carregada</label>
+              {{ checklist_form.control_battery_loaded }}
+              <label for="id_body">Corpo/Shell</label>
+              {{ checklist_form.body }}
+              <label for="id_engine_rods">Hastes</label>
+              {{ checklist_form.engine_rods }}
+              <label for="id_propellers">Hélices</label>
+              {{ checklist_form.propellers }}
+              <label for="id_gimbal">Gimbal</label>
+              {{ checklist_form.gimbal }}
+              <label for="id_spotlight">Holofote</label>
+              {{ checklist_form.spotlight }}
+              <label for="id_load_speaker">Auto-falante</label>
+              {{ checklist_form.load_speaker }}
+              <label for="id_stroboscopic_light">Luz Estroboscópica</label>
+              {{ checklist_form.stroboscopic_light }}
+              <label for="id_cables">Cabos</label>
+              {{ checklist_form.cables }}
+              <label for="id_charger">Carregador</label>
+              {{ checklist_form.charger }}
+            </div>
+  
+            <div class="p-3 formulario_checklist_parte2 ">
+              <label for="id_smart_controller">Smart controller</label>
+              {{ checklist_form.smart_controller }}
+              <label for="id_controller">Controle remoto</label>
+              {{ checklist_form.controller }}
+              <label for="id_sd_card">Cartão SD</label>
+              {{ checklist_form.sd_card }}
+              <label for="id_imu">IMU</label>
+              {{ checklist_form.imu }}
+              <label for="id_compass">Compass/Bússola</label>
+              {{ checklist_form.compass }}
+              <label for="id_signal_transmission">Sinal de transmissão</label>
+              {{ checklist_form.signal_transmission }}
+              <label for="id_system_rtk_ppk">Sistema RTK PPK</label>
+              {{ checklist_form.system_rtk_ppk }}
+              <label for="id_parachute">Paraquedas</label>
+              {{ checklist_form.parachute }}
+              <label for="id_video_signal">Sinal de vídeo</label>
+              {{ checklist_form.video_signal }}
+              <label for="id_telemetry">Telemetria</label>
+              {{ checklist_form.telemetry }}
+            </div>
+          </div>
+          
+          <div class="ml-1 mr-3 mt-3">
+            <label for="id_operacao">Imagens de alterações</label>
+            <input type="file" id="id_imageIncidente", name="imagens" multiple>
+            <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
+            <p id="fileName"></p>
+            <p id="fileList"></p>
+            <div class="temp_images_view"></div>
+  
+            {% if request.resolver_match.url_name == 'editar_checklist' %}
+              {% if images %}
+                <label for="">Imagens carregadas</label>
+              {% else %}
+                <label for="">Não há Imagens carregadas</label>
+              {% endif %}
+                
+              <div class="temp_images_view_edit">
+                {% if images %}
+                  {% for img in images %}
+                  <a href="{% url 'rpa_manager:delete_image_checklist' img.pk %} ">
+                    <img src="{{ img.imageChecklist.url }}" alt="Image" class="imagem-checklist" data-id="{{ img.pk }}">
+                  </a>
+                  {% endfor %}
+                {% else %}
+                {% endif %}                
+              </div>         
+            {% endif %}
+          </div>
+          
+          <hr>
+          <div class="container formulario_checklist_alteracoes">
+            <h4 class="formulario_checklist_titulo_selecao"></h4>
+            <blockquote class="quote-info mt-0">
+              <h5>Dica!</h5>
+              <p>Caso algum item não esteja ok, descrever abaixo as
+                alterações:</p>  
+            </blockquote>
+            <label class="container_alteracoes_titulo" for="id_changes">Alterações</label>
+            <button type="button" style="display: inline" class="btn btn-outline-danger ml-3" onclick="limpaAlteracoes();">Limpar</button>
+            {{ checklist_form.changes }}
+            {{ checklist_form.changes.errors }}
+          </div>
+          <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'rpa_manager:checklists' %}">
+                <button type="button" class="btn btn-warning">Cancelar</button>
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+  <!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  
+  <script>
+    let checkboxes = document.querySelectorAll('.checklist_item');
+    let textAreaContent = document.querySelector("#id_changes");
+    let listaDeAlteracoes = []
+
+    const aeronaveSelect = document.getElementById("id_aircarft");
+
+    const newOptions = [
+        { value: "", text: "Selecione uma aeronave" },
+    ];
+    
+    newOptions.forEach(option => {
+        const newOption = document.createElement("option");
+        newOption.value = option.value;
+        newOption.textContent = option.text;
+
+        // Define a opção padrão como selecionada
+        if (option.value === "") {
+          newOption.selected = true;
+        }
+
+        aeronaveSelect.appendChild(newOption);
+    });
+
+    checkboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            if(!checkbox.checked) {
+                listaDeAlteracoes.push(`Alteração no item - ${checkbox.previousElementSibling.textContent}`);
+                adicionaTextoEmTextArea(listaDeAlteracoes);
+            } else if(listaDeAlteracoes.includes(checkbox.previousElementSibling.textContent)) {
+                let indice =  listaDeAlteracoes.indexOf(checkbox.previousElementSibling.textContent);
+                listaDeAlteracoes.splice(indice, 1);
+            }
+        })
+    })
+
+    function adicionaTextoEmTextArea(vetor) {
+        vetor.forEach(function(indice) {
+            if(!textAreaContent.value.includes(indice)) {
+                textAreaContent.value += indice + ':' + '\n';
+            } 
+        })
+    }
+
+    function limpaAlteracoes() {
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = true;
+        })
+        textAreaContent.value = '';
+        listaDeAlteracoes = [];
+    }
+  </script>
+
+  <script>  
+    $(document).ready(function() { 
+      const main_container_sup = document.querySelector('.main_container_sup');
+      const main_container_options = document.querySelector('.main_container_options');
+      main_container_sup.classList.add('hidden');
+      main_container_options.classList.add('hidden');
+
+      $('.aircraft_escolha').select2();
+      $(".aircraft_escolha").on('change', function() {
+        let aeronave_selecionada = $(this).find("option:selected").text();
+        console.log(aeronave_selecionada)
+        if(aeronave_selecionada !== "") {
+          main_container_sup.classList.remove('hidden');
+          main_container_options.classList.remove('hidden');
+        } else {
+          main_container_sup.classList.add('hidden');
+          main_container_options.classList.add('hidden');
+        }
+
+        let historico_checklist_dict_json = JSON.parse('{{ historico_checklist_dict_json|escapejs }}');
+
+        console.log(historico_checklist_dict_json)
+        function transformInBooleanValues(notTransformedJson) {
+          let objeto = notTransformedJson;
+
+          for (let chave in notTransformedJson) {
+            if (objeto.hasOwnProperty(chave)) {
+              let subObjeto = objeto[chave];
+        
+              for (let subChave in subObjeto) {
+                if (subObjeto.hasOwnProperty(subChave)) {
+                  let valor = subObjeto[subChave];
+        
+                  if (valor === 'False') {
+                    subObjeto[subChave] = false;
+                  } else if (valor === 'True') {
+                    subObjeto[subChave] = true;
+                  }
+                }
+              }
+            }
+          }
+          return objeto;
+        }
+
+        let historico_checklist_json = transformInBooleanValues(historico_checklist_dict_json);
+        let dadosAeronave = historico_checklist_json[aeronave_selecionada];
+        console.log(dadosAeronave)
+
+        if(dadosAeronave) {
+          $('input[name="num_propellers"]').val(dadosAeronave.num_propellers);
+          $('input[name="num_batteries"]').val(dadosAeronave.num_batteries); 
+          $('input[name="batteries_loaded"]').prop('checked', dadosAeronave.batteries_loaded);
+          $('input[name="control_battery_loaded"]').prop('checked', dadosAeronave.control_battery_loaded);
+          $('input[name="body"]').prop('checked', dadosAeronave.body);
+          $('input[name="engine_rods"]').prop('checked', dadosAeronave.engine_rods);
+          $('input[name="propellers"]').prop('checked', dadosAeronave.propellers);
+          $('input[name="gimbal"]').prop('checked', dadosAeronave.gimbal);
+          $('input[name="spotlight"]').prop('checked', dadosAeronave.spotlight);
+          $('input[name="load_speaker"]').prop('checked', dadosAeronave.spotlight);
+          $('input[name="stroboscopic_light"]').prop('checked', dadosAeronave.stroboscopic_light);
+          $('input[name="cables"]').prop('checked', dadosAeronave.cables);
+          $('input[name="charger"]').prop('checked', dadosAeronave.cables);
+          $('input[name="smart_controller"]').prop('checked', dadosAeronave.smart_controller);
+          $('input[name="controller"]').prop('checked', dadosAeronave.controller);
+          $('input[name="sd_card"]').prop('checked', dadosAeronave.sd_card);
+          $('input[name="imu"]').prop('checked', dadosAeronave.imu);
+          $('input[name="compass"]').prop('checked', dadosAeronave.compass);
+          $('input[name="signal_transmission"]').prop('checked', dadosAeronave.signal_transmission);
+          $('input[name="system_rtk_ppk"]').prop('checked', dadosAeronave.system_rtk_ppk);
+          $('input[name="video_signal"]').prop('checked', dadosAeronave.video_signal);
+          $('input[name="telemetry"]').prop('checked', dadosAeronave.telemetry);
+          $('input[name="parachute"]').prop('checked', dadosAeronave.parachute);
+          $('textarea[name="changes"]').val(dadosAeronave.changes);
+        }
+      });
+    });
+  </script>
+
+  <script>
+    const fileInput = document.getElementById("id_imageIncidente");
+    const fileList = document.getElementById('fileList');
+    const tempImagesView = document.querySelector('.temp_images_view');
+  
+    document.getElementById("fileButton").addEventListener("click", function() {
+      fileInput.click();
+    });
+  
+    fileInput.addEventListener("change", function() {
+
+      const files = fileInput.files;
+      let fileListText = '';
+  
+      for (let i = 0; i < files.length; i++) {
+        fileListText += files[i].name + '<br>';
+      }
+  
+      fileList.innerHTML = fileListText;
+  
+      tempImagesView.innerHTML = '';
+  
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+  
+        reader.onload = function(e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.alt = file.name;
+          tempImagesView.appendChild(img);
+        };
+  
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+
+{% endblock %}
