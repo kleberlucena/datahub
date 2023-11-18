@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load static crispy_forms_tags widget_tweaks %}
+{% load static crispy_forms_tags widget_tweaks custom_tags %}
 
 {% block title %}Rede de Proteção - Excluir funcionário{% endblock %}
 
@@ -17,6 +17,10 @@
 {% endblock %}
 
 {% block content %}
+
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+
+
 <div class="row">
     <div class="col-md-12">
         <div class="card card-primary card-outline">
@@ -44,6 +48,9 @@
         </div>
     </div>
 </div>
+
+{% endif %}
+
 
 
     {% endblock %}

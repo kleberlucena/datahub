@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load static %}
+{% load static custom_tags %}
 
 {% block title %}Rede de Proteção - Pontos cadastrados{% endblock %}
 
@@ -90,7 +90,7 @@
                   {% endfor %}
                 {% else %}
                   <tr>
-                    <td colspan="4">Não existem pontos cadastrados</td>
+                    <td colspan="4">Não existem estabelecimentos cadastrados</td>
                   </tr>
                 {% endif %}
               </tboby>
@@ -98,9 +98,11 @@
           </div>
         </div>
         <div class="row mt-auto ml-0">
-          <a href="{% url 'protect_network:spot_add' %}" alt="spot_add">
-            <button type="button" class="btn btn-block btn-primary"><i class="fa fa-plus"></i> Inserir</button>
-          </a>
+          {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+            <a href="{% url 'protect_network:spot_add' %}" alt="spot_add">
+              <button type="button" class="btn btn-block btn-primary"><i class="fa fa-plus"></i> Cadastrar novo estabelecimento</button>
+            </a>
+          {% endif %}
         </div>
       </div>
     </div>
