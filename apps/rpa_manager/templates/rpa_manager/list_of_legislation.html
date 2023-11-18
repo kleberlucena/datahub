@@ -69,10 +69,6 @@
                   Filtros
                   </button>
                   <div class="dropdown-menu" role="menu"> 
-                    
-                    {% if legislation.legislation_file %}
-                      <a class="dropdown-item" href="{% url 'rpa_manager:detail_legislation' legislation.pk %}" style="text-decoration: none;">Ver legislação</a>
-                    {% endif %}
 
                     {% if legislation.legislation_file %}
                       <a class="dropdown-item" href="{{ legislation.legislation_file.url }}" download target="_blank" style="text-decoration: none;">Baixar legislação</a>

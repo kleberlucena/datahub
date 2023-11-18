@@ -31,7 +31,6 @@ urlpatterns = [
 
     # Legislation
     path('create_legislation/', LegislationCreateView.as_view(), name='create_legislation'),
-    path('detail_legislation/<int:pk>/', LegislationDetailView.as_view(), name='detail_legislation'),
     path('update_legislation/<int:pk>/', LegislationUpdateView.as_view(), name='update_legislation'),
     path('delete_legislation/<int:pk>/', LegislationDeleteView.as_view(), name='delete_legislation'),
     
