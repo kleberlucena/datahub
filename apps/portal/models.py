@@ -119,7 +119,7 @@ class Military(Base):
         verbose_name_plural = 'Policiais Militares'
 
     def __str__(self):
-        return self.nickname
+        return f'{self.nickname.upper()} - {self.register}'
 
 #     def get_absolute_url(self):
 #         return reverse('capabilities:add_student', kwargs={'pk': self.pk})
