@@ -17,6 +17,13 @@
         <p>Painel</p>
       </a>
     </li>
+
+    <li class="nav-item">
+      <a href="{% url 'rpa_manager:dashboard_rpa' %}" class="nav-link">
+        <i class="far fa-circle nav-icon"></i>
+        <p>Dashboard</p>
+      </a>
+    </li>
     
     {% if request.user|has_group:'profile:rpa_basic' or request.user|has_group:'profile:rpa_advanced'  %}
       <li class="nav-item">

@@ -205,51 +205,51 @@
       </div>
 
       {% if guarnicao %}
-      <div class="card-body">
-        <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
-          <div class="card bg-light d-flex flex-fill">
-              <div class="card-header text-muted border-bottom-0">
-                <i class="fas fa-lg fa-building"></i> {{ guarnicao.location.cities_pb }}
-              </div> 
-              <div class="card-body pt-0">
-                <div class="card_content">
-                  <div class="card_gu_info">
-                    <small class=""><i class="fa fa-car"></i> <b>Motorista:</b> {{ guarnicao.driver.military }}</small>
-                    <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> {{ guarnicao.remote_pilot.military }} </small>
-                    <small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b>  
-                      {% if guarnicao.observer_pilot != None %}
-                        {{ guarnicao.observer_pilot.military }}
-                      {% else %}
-                        sem registro
-                      {% endif %}
-                    </small>
-                    <small class=""><i class="fa fa-phone"></i> <b>Contato:</b> {{ guarnicao.phone }}</small>
-                  </div>
-                  <div class="card-container_for-images">
-                    <div class="grid-item">
-                      {% if guarnicao.driver %}
-                        <img src="{{ guarnicao.driver.military.image.url }}" alt="user-avatar" class="card-img img-circle">
-                      {% endif %}
+        <div class="card-body">
+          <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
+            <div class="card bg-light d-flex flex-fill">
+                <div class="card-header text-muted border-bottom-0">
+                  <i class="fas fa-lg fa-building"></i> {{ guarnicao.location.cities_pb }}
+                </div> 
+                <div class="card-body pt-0">
+                  <div class="card_content">
+                    <div class="card_gu_info">
+                      <small class=""><i class="fa fa-car"></i> <b>Motorista:</b> {{ guarnicao.driver.nickname }}</small>
+                      <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> {{ guarnicao.remote_pilot.nickname }} </small>
+                      <small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b>  
+                        {% if guarnicao.observer_pilot != None %}
+                          {{ guarnicao.observer_pilot.nickname }}
+                        {% else %}
+                          sem registro
+                        {% endif %}
+                      </small>
+                      <small class=""><i class="fa fa-phone"></i> <b>Contato:</b> {{ guarnicao.phone }}</small>
                     </div>
-                    <div class="grid-item">
-                      {% if guarnicao.remote_pilot %}
-                        <img src="{{ guarnicao.remote_pilot.military.image.url }}" alt="user-avatar" class="card-img img-circle">
-                      {% endif %}
-                    </div>
-                    <div class="grid-item">
-                      {% if guarnicao.observer_pilot %}
-                        <img src="{{ guarnicao.observer_pilot.military.image.url }}" alt="user-avatar" class="card-img img-circle">
-                      {% endif %}
+                    <div class="card-container_for-images">
+                      <div class="grid-item">
+                        {% if guarnicao.driver %}
+                          <img src="{{ guarnicao.driver.image.url }}" alt="user-avatar" class="card-img img-circle">
+                        {% endif %}
+                      </div>
+                      <div class="grid-item">
+                        {% if guarnicao.remote_pilot %}
+                          <img src="{{ guarnicao.remote_pilot.image.url }}" alt="user-avatar" class="card-img img-circle">
+                        {% endif %}
+                      </div>
+                      <div class="grid-item">
+                        {% if guarnicao.observer_pilot %}
+                          <img src="{{ guarnicao.observer_pilot.image.url }}" alt="user-avatar" class="card-img img-circle">
+                        {% endif %}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="card-footer">
+                <div class="card-footer">
+                </div>
               </div>
             </div>
-          </div>
 
-          {% if request.user == guarnicao.remote_pilot %}
+          {% if request.user.military == guarnicao.remote_pilot %}
             <a href="{% url 'rpa_manager:guarnicao_edit' guarnicao.pk %}">
               <button type="button" style="display: inline;" class="btn btn-block btn-primary mt-3 col-md-4"><i class="fa fa-pen"></i> Editar guarnição </button>
             </a>
@@ -259,6 +259,8 @@
             </a>
           {% endif %}
         </div>
+      {% else %}
+        <p style="text-align: center;" class="display-4"> Usuário não cadastrado em guarnição.</p>
       {% endif %}
 
       <form  class="p-3" method='post' enctype="multipart/form-data">
@@ -320,8 +322,6 @@
               {{ checklist_form.stroboscopic_light }}
               <label for="id_cables">Cabos</label>
               {{ checklist_form.cables }}
-              <label for="id_charger">Carregador</label>
-              {{ checklist_form.charger }}
             </div>
   
             <div class="p-3 formulario_checklist_parte2 ">

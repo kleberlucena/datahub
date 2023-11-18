@@ -17,7 +17,7 @@ def getOperationInCourse():
         
         if operations.exists() and operationsNumber > 0:
             operationsInCourse.append({
-                'usuario': operation.user.username,
+                'usuario': operation.user.military.nickname,
                 'titulo': operation.title,
                 'latitude': operation.latitude,
                 'longitude': operation.longitude,

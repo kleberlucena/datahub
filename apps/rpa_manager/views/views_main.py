@@ -22,6 +22,26 @@ from datetime import datetime
 def home(request):
     return render(request, 'rpa_manager/base.html')
 
+class DashboardRpaManager(TemplateView):
+    template_name = 'rpa_manager/dashboard_rpamanager.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        rpa_dashboard = RpaManagerDashboard()
+        chart_data = rpa_dashboard.get_chart_data()
+        context['amount_of_operations'] = rpa_dashboard.get_amount_of_operations
+        context['pilot_with_max_operations'] = rpa_dashboard.get_pilot_with_max_operations
+        context['number_of_pilot_max_oper'] = rpa_dashboard.get_number_of_pilot_max_oper
+        context['most_supported_location'] = rpa_dashboard.get_most_supported_location()
+        context['operations_in_course'] = rpa_dashboard.get_operations_in_course()
+        context['available_aircrafts'] = rpa_dashboard.get_available_aircrafts()
+        context['most_used_aircraft'] = rpa_dashboard.get_most_used_aircraft()
+        context['battery_info'] = rpa_dashboard.get_batteries_cicles_level()
+        context['chart_data'] = chart_data
+        
+        return context
+
 class PainelView(TemplateView):
     template_name = 'rpa_manager/painel.html'
     
@@ -47,7 +67,7 @@ class PainelView(TemplateView):
         report_by_date = Report.objects.filter(date__month=month, date__year=year)
         for report in report_by_date:
             report_by_date_list.append({
-                'usuario': report.remote_pilot.username,
+                'usuario': report.remote_pilot.military.nickname,
                 'titulo': report.title,
                 'latitude': report.latitude,
                 'longitude': report.longitude
@@ -62,18 +82,18 @@ class PainelView(TemplateView):
                     'id':  
                         guarnicao.id if(guarnicao.id != None) else 'sem registro',
                     'motorista': 
-                        str(guarnicao.driver.military) if(guarnicao.driver != None) else 'sem registro',
+                        str(guarnicao.driver) if(guarnicao.driver != None) else 'sem registro',
                     'motorista_img': 
-                        str(guarnicao.driver.military.image.url) if(guarnicao.driver != None) else 'sem registro',
+                        str(guarnicao.driver.image.url) if(guarnicao.driver != None) else 'sem registro',
                     'piloto_remoto': 
-                        str(guarnicao.remote_pilot.military) if(guarnicao.remote_pilot != None) else 'sem registro',
+                        str(guarnicao.remote_pilot) if(guarnicao.remote_pilot != None) else 'sem registro',
                     'piloto_remoto_img': 
-                        str(guarnicao.remote_pilot.military.image.url) if(guarnicao.remote_pilot != None) else 'sem registro',
+                        str(guarnicao.remote_pilot.image.url) if(guarnicao.remote_pilot != None) else 'sem registro',
                     'piloto_observador': 
-                        str(guarnicao.observer_pilot.military) 
+                        str(guarnicao.observer_pilot) 
                         if(guarnicao.observer_pilot != None) else 'sem registro',
                     'piloto_observador_img': 
-                        str(guarnicao.observer_pilot.military.image.url) 
+                        str(guarnicao.observer_pilot.image.url) 
                         if(guarnicao.observer_pilot != None) else 'sem registro',
                     'local': 
                         guarnicao.location.cities_pb if(guarnicao.location.cities_pb != None) else 'sem registro',
@@ -97,19 +117,9 @@ class PainelView(TemplateView):
         context['operationsInCourse'] = operationsInCourseJson
         context['guarnicoes_json'] = guarnicoes_json
         context['years'] = years
-        
-        # dashboard data
+
         rpa_dashboard = RpaManagerDashboard()
-        chart_data = rpa_dashboard.get_chart_data()
-        context['amount_of_operations'] = rpa_dashboard.get_amount_of_operations
-        context['pilot_with_max_operations'] = rpa_dashboard.get_pilot_with_max_operations
-        context['number_of_pilot_max_oper'] = rpa_dashboard.get_number_of_pilot_max_oper
-        context['most_supported_location'] = rpa_dashboard.get_most_supported_location()
         context['operations_in_course'] = rpa_dashboard.get_operations_in_course()
-        context['available_aircrafts'] = rpa_dashboard.get_available_aircrafts()
-        context['most_used_aircraft'] = rpa_dashboard.get_most_used_aircraft()
-        context['battery_info'] = rpa_dashboard.get_batteries_cicles_level()
-        context['chart_data'] = chart_data
         return context
 
 

@@ -1,5 +1,6 @@
 from apps.rpa_manager.models import *
 from apps.portal.models import *
+from django.core.exceptions import ObjectDoesNotExist
 import json
 
 class RpaManagerDashboard:
@@ -9,80 +10,130 @@ class RpaManagerDashboard:
     def get_max_pilot_operations(self):
         max_pilot_operations = {}
 
-        militaries = Military.objects.all().select_related('user')
-
+        try:
+            militaries = Military.objects.all().select_related('user')  
+        except Military.DoesNotExist as error:
+            print(error)
+            
         for military in militaries:
-            number = Report.objects.filter(remote_pilot=military.user).count()
-            max_pilot_operations[military] = number
+            try:
+                number = Report.objects.filter(remote_pilot=military.user).count()
+                max_pilot_operations[military] = number
+            except Report.DoesNotExist:
+                max_pilot_operations[military] = 0  
 
         return max_pilot_operations
 
     def get_amount_of_operations(self):
-        return Report.objects.all().count() or None
-
+        try:
+            reports = Report.objects.all().count()
+            return reports
+        except Report.DoesNotExist as error:
+            print(error)
+            
     def get_pilot_with_max_operations(self):
-        return max(self.get_max_pilot_operations(), key=self.get_max_pilot_operations().get) or None
+        try:
+            return max(self.get_max_pilot_operations(), key=self.get_max_pilot_operations().get, default={})
+
+        except ObjectDoesNotExist:
+            return {}
 
     def get_number_of_pilot_max_oper(self):
-        return max(self.get_max_pilot_operations().values()) or None  
+        try:
+            return max(self.get_max_pilot_operations().values(), default={})
+
+        except ObjectDoesNotExist:
+            return {}
 
     def get_most_supported_locations(self):
-        most_supported_locations = {}
-        
-        cities = CitiesPB.objects.all()
-        
-        for city in cities:
-            number = Report.objects.filter(location=city).count()
-            most_supported_locations[city.cities_pb] = number
+        try:
+            most_supported_locations = {}
             
-        return most_supported_locations
-    
+            cities = CitiesPB.objects.all()
+            
+            for city in cities:
+                number = Report.objects.filter(location=city).count()
+                most_supported_locations[city.cities_pb] = number
+                
+            return most_supported_locations
+        except CitiesPB.DoesNotExist or Report.DoesNotExist as error:
+            print(error)
+            
     def get_most_supported_location(self):
-        return max(self.get_most_supported_locations(), key=self.get_most_supported_locations().get) or None
-    
-    
+        try:
+            return max(self.get_most_supported_locations(), key=self.get_most_supported_locations().get, default={})
+
+        except ObjectDoesNotExist:
+            return {}
+
     def get_chart_data(self):
-        most_supported_locations = self.get_most_supported_locations()
-        sorted_locations = sorted(most_supported_locations.items(), key=lambda x: x[1], reverse=True)
-        top_locations = sorted_locations[:5]
+        try:
+            most_supported_locations = self.get_most_supported_locations()
+            sorted_locations = sorted(most_supported_locations.items(), key=lambda x: x[1], reverse=True)
+            top_locations = sorted_locations[:5]
 
-        labels = [location[0] for location in top_locations]
-        data = [location[1] for location in top_locations]
+            labels = [location[0] for location in top_locations]
+            data = [location[1] for location in top_locations]
 
-        return json.dumps({'labels': labels, 'data': data})
+            return json.dumps({'labels': labels, 'data': data})
+
+        except Exception as e:
+            print(f"Erro ao obter dados do gráfico: {e}")
+            return json.dumps({'error': 'Ocorreu um erro ao obter dados do gráfico'})
     
     def get_operations_in_course(self):
-        return Operation.objects.filter(completed=False).count()
+        try:
+            return Operation.objects.filter(completed=False).count()
+        except ObjectDoesNotExist:
+            return 0
     
     def get_available_aircrafts(self):
-        return list(Aircraft.objects.filter(in_use=False))
+        try:
+            return list(Aircraft.objects.filter(in_use=False))
+        except ObjectDoesNotExist:
+            return []
     
     def get_most_used_airctafts(self):
         most_used_aircrafts = {}
-        aircrafts = Aircraft.objects.all()
         
-        for aircraft in aircrafts:
-            number = Report.objects.filter(aircraft=aircraft).count()
-            most_used_aircrafts[f"{aircraft.prefix}"] = number
+        try:
+            aircrafts = Aircraft.objects.all()
+
+            for aircraft in aircrafts:
+                number = Report.objects.filter(aircraft=aircraft).count()
+                most_used_aircrafts[f"{aircraft.prefix}"] = number
             
-        return most_used_aircrafts
+            return most_used_aircrafts
+
+        except ObjectDoesNotExist:
+            return {}
+
     
     def get_most_used_aircraft(self):
-        return max(self.get_most_used_airctafts(), key=self.get_most_used_airctafts().get) or None
+        try:
+            most_used_aircrafts = self.get_most_used_airctafts()
+            return max(most_used_aircrafts, key=most_used_aircrafts.get) or None
+
+        except ObjectDoesNotExist:
+            return None
     
     def get_batteries_cicles_level(self):
-        batteries_info = []
+        try:
+            batteries_info = []
 
-        batteries = Battery.objects.all()
+            batteries = Battery.objects.all()
 
-        for battery in batteries:
-            battery_info = {
-                'number': battery.number,
-                'num_cicles': battery.num_cicles,
-                'maximum_cicles': battery.maximum_cicles.recommended_cicles, 
-            }
+            for battery in batteries:
+                battery_info = {
+                    'number': battery.number,
+                    'num_cicles': battery.num_cicles,
+                    'maximum_cicles': battery.maximum_cicles.recommended_cicles, 
+                }
 
-            batteries_info.append(battery_info)
+                batteries_info.append(battery_info)
 
-        return json.dumps(batteries_info)
+            return json.dumps(batteries_info)
+
+        except ObjectDoesNotExist:
+            return json.dumps({'error': 'Ocorreu um erro ao obter informações da bateria'})
             

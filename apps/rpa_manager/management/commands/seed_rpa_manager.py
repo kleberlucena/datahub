@@ -107,13 +107,8 @@ class Command(BaseCommand):
                     Entities.objects.create(entity=list_of_entities[index])
         
         def generateCitiesByList(listOfCities = []):
-            CitiesPB.objects.all().delete()
-            count = 0
-            if CitiesPB.objects.all().count() >= 223:
-                return
-            else:
+            if CitiesPB.objects.count() == 0:
                 for index in range(len(listOfCities)):
-                    count += 1
                     CitiesPB.objects.create(cities_pb=listOfCities[index])
                 
     
@@ -122,6 +117,16 @@ class Command(BaseCommand):
                 for index in range(len(list_of_natures)):
                     FlightNature.objects.create(nature=list_of_natures[index])
 
+        def generateTypesOfOperation():
+            if TypesOfOperations.objects.count == 0:
+                type1 = TypesOfOperations.objects.create(
+                    type_operation="VLOS"
+                )
+                type2 = TypesOfOperations.objects.create(
+                    type_operation="BVLOS"
+                )
+                print("Tipos de voos criados.")
+                
         def generateAircrafts():
             aircrafts = Aircraft.objects.count()
             
@@ -255,16 +260,21 @@ class Command(BaseCommand):
 
         
         def generateRiskAssessementData():
-            if Situation.objects.count() == 0:
-                situation1 = Situation.objects.create(
-                    situation="Perda de Link"
-                )
-                situation2 = Situation.objects.create(
-                    situation="Ventos de X nós"
-                )
-                situation3 = Situation.objects.create(
-                    situation="Aeronaves Tripuladas"
-            )
+            situations = [
+                "Perda de Link", 
+                "Existência de tráfego aéreo local", 
+                "Presença de pessoas não anuentes", 
+                "Ventos acima de X nós no local da operação"
+            ]
+            
+            with transaction.atomic():
+                for situation in situations:
+                    situation, created = Situation.objects.get_or_create(situation=situation)
+                    if created:
+                        print(f'Grupo "{situation}" criado com sucesso.')
+                    else:
+                        print(f'Grupo "{situation}" já existe.')
+
             
             probabilities = ["1", "2", "3", "4", "5"]
             severeties = ["A", "B", "C", "D", "E",]
@@ -287,9 +297,10 @@ class Command(BaseCommand):
             generateCitiesByList(cities_pb)
             generateEntitiesOfFlighs(entities)
             generateNatureOfFlighs(natures_of_flights)
-            generateAircrafts()
-            generateMilitaries()
             generateRiskAssessementData()
+            generateMilitaries()
+            generateAircrafts()
+            generateTypesOfOperation()
             
             print("As seeds foram implantadas com sucesso!")
             

@@ -14,20 +14,27 @@ class AddPointOfInterest(CreateView):
     success_url = reverse_lazy('rpa_manager:painel')
     
     def get_initial(self):
+        try:
             last_report = Report.objects.last()
             return {
                 'operacao': last_report,
                 'latitude': last_report.latitude,
                 'longitude': last_report.longitude
-        }
-    
+            }
+        except Report.DoesNotExist as error:
+            print(error)
+            
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        last_report = Report.objects.last()
-        context['latitude'] = last_report.latitude
-        context['longitude'] = last_report.longitude
-        return context
-
+        
+        try:
+            last_report = Report.objects.last()
+            context['latitude'] = last_report.latitude
+            context['longitude'] = last_report.longitude
+            return context
+        except Report.DoesNotExist as error:
+            print(error)
+            
     def form_valid(self, form):
         response = super().form_valid(form)
         

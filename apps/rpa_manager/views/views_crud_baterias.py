@@ -50,22 +50,19 @@ class EditarBateriaView(GroupRequiredMixin, UpdateView):
         return response
 
     
-class DeletarBateriaView(PermissionRequiredMixin, DeleteView):
+class DeletarBateriaView(GroupRequiredMixin, DeleteView):
     model = Battery
     template_name = 'rpa_manager/delete_battery.html'
     context_object_name = 'obj'
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('rpa_manager:baterias')
-    permission_required = 'rpa_manager.delete_bateria'
+    group_required = ['profile:rpa_advanced']
     
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} excluída com sucesso!')
         return response
     
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
     
     
 class UpdateAllBateriasView(View):

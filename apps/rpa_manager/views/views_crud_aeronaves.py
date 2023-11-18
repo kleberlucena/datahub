@@ -49,19 +49,16 @@ class EditarAeronaveView(GroupRequiredMixin, UpdateView):
         return response
     
     
-class DeletarAeronaveView(PermissionRequiredMixin, DeleteView):
+class DeletarAeronaveView(GroupRequiredMixin, DeleteView):
     model = Aircraft
     template_name = 'rpa_manager/delete_aircraft.html'
     context_object_name = 'obj'
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('rpa_manager:aeronaves')
-    permission_required = 'rpa_manager.delete_aeronave'
+    group_required = ['profile:rpa_advanced']
     
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
         messages.info(self.request, f'{MESSAGE_MODEL_NAME} excluída com sucesso!')
         return response
     
-    @method_decorator(require_permission(permission_required))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
