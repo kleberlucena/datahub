@@ -119,121 +119,6 @@
 
 {% block content %}
 
-
-<div class="card card-primary card-outline" style="margin-bottom: 30px;">
-  <div class="card-header">
-    <h3 class="card-title">Dashboard</h3>
-  </div>
-
-  <div class="card-body">
-    <div class="row">
-      <div class="col-lg-3 col-6">
-
-        <div class="small-box bg-info">
-          <div class="inner">
-            <h3>{{ amount_of_operations}}</h3>
-            <p><strong>Total de operacões realizadas</strong></p>
-          </div>
-          <div class="icon">
-            <i class="fas fa-lg fa-rocket"></i>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-6">
-
-        <div class="small-box bg-success">
-          <div class="inner">
-            <h3>{{ pilot_with_max_operations }} - {{ number_of_pilot_max_oper }}</h3>
-            <p><strong>Operador com mais operações</strong></p>
-          </div>
-          <div class="icon">
-            <i class="fas fa-lg fa-trophy"></i>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-6">
-
-        <div class="small-box bg-warning">
-          <div class="inner">
-            <h3>{{ most_supported_location }}</h3>
-            <p><strong>Localização com maior apoio</strong></p>
-          </div>
-          <div class="icon">
-            <i class="fas fa-lg fa-map"></i>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-6">
-
-        <div class="small-box bg-danger">
-          <div class="inner">
-            <h3>{{ most_used_aircraft }}</h3>
-            <p><strong>Aeronave mais utilizada</strong></p>
-          </div>
-          <div class="icon">
-            <i class="fas fa-lg fa-paper-plane"></i>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="card card-warning col-md-12">
-        <div class="card-header">
-          <h3 class="card-title"><strong>Localizações mais apoiadas</strong></h3>
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="chartjs-size-monitor">
-            <div class="chartjs-size-monitor-expand">
-              <div class=""></div>
-            </div>
-            <div class="chartjs-size-monitor-shrink">
-              <div class=""></div>
-            </div>
-          </div>
-          <canvas id="donutChart"
-            style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 418px;"
-            width="418" height="250" class="chartjs-render-monitor"></canvas>
-        </div>
-      </div>
-
-      <div class="card card-info col-md-12">
-        <div class="card-header">
-          <h3 class="card-title"><strong>Ciclos das baterias</strong></h3>
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-          
-        <div class="card-body">
-          <div class="chart"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-          <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 325px;" width="650" height="500" class="chartjs-render-monitor"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="card card-primary card-outline" style="margin-bottom: 30px;">
   <div class="card-header">
     <h3 class="card-title">Voos realizados</h3>
@@ -244,19 +129,6 @@
       {% csrf_token %}
       <div>
         <h1><strong>Operações em andamento: {{ operations_in_course }}</strong></h1>
-        
-        <h5><strong>Aeronaves disponíveis:
-        
-        {% if available_aircrafts %}
-          {% for aircraft in available_aircrafts %}
-          {{ aircraft }}
-          {%if not forloop.last%},{%endif%}
-          {% endfor %}
-        {% else %}
-          Não há aeronaves disponíveis
-        {% endif %}
-        </strong>
-        </h5>
       </div>
       <div class="select_date_form">
         <div class="select_year">
@@ -315,7 +187,7 @@
 {% block js %}
 <!-- DataTables  & Plugins -->
 <script src="{% static 'leaflet/leaflet.js' %}"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script type="text/javascript">
   // Função que será executada quando o documento estiver pronto
   document.addEventListener('DOMContentLoaded', function () {
@@ -417,6 +289,7 @@
 
     }); // end DOM load
 </script>
+
 <script>
   const jsonEquipes = {{ guarnicoes_json| safe }};
   const user = "{{ user.military | stringformat:"s"|safe }}";
@@ -586,73 +459,5 @@
     // Adicionando o HTML criado ao elemento com o id 'equipes-container'
     document.getElementById('equipes-container').innerHTML = localidadesHTML;
   }
-</script>
-
-<script>
-  // Dashboard chart
-
-  document.addEventListener('DOMContentLoaded', function () {
-    var ctx = document.getElementById('donutChart').getContext('2d');
-    
-    var chartData = JSON.parse('{{ chart_data|safe }}');  
-    console.log(chartData)
-    var donutChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: chartData.labels,
-        datasets: [{
-          data: chartData.data,
-          backgroundColor: [
-          'rgba(255, 99, 132, 0.7)',
-          'rgba(54, 162, 235, 0.7)',
-          'rgba(255, 206, 86, 0.7)',
-          'rgba(75, 192, 192, 0.7)',
-          'rgba(153, 102, 255, 0.7)'
-          ],
-        }],
-      },
-    });
-  });
-</script>
-
-<script>  
-  var batteries = JSON.parse('{{ battery_info|safe }}');  
-  var labels = batteries.map(function(battery) {
-      return battery.number;
-  });
-  var numCiclesData = batteries.map(function(battery) {
-      return battery.num_cicles;
-  });
-  var maxCiclesData = batteries.map(function(battery) {
-      return battery.maximum_cicles;
-  });
-
-  var ctx = document.getElementById('barChart').getContext('2d');
-  var barChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-          labels: labels,
-          datasets: [{
-              label: 'Número de Ciclos',
-              data: numCiclesData,
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
-              borderColor: 'rgba(75, 192, 192, 1)',
-              borderWidth: 1
-          }, {
-              label: 'Máximo de Ciclos',
-              data: maxCiclesData,
-              backgroundColor: 'rgba(255, 99, 132, 0.2)',
-              borderColor: 'rgba(255, 99, 132, 1)',
-              borderWidth: 1
-          }]
-      },
-      options: {
-          scales: {
-              y: {
-                  beginAtZero: true
-              }
-          }
-      }
-  });
 </script>
 {% endblock %}

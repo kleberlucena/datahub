@@ -107,13 +107,8 @@ class Command(BaseCommand):
                     Entities.objects.create(entity=list_of_entities[index])
         
         def generateCitiesByList(listOfCities = []):
-            CitiesPB.objects.all().delete()
-            count = 0
-            if CitiesPB.objects.all().count() >= 223:
-                return
-            else:
+            if CitiesPB.objects.count() == 0:
                 for index in range(len(listOfCities)):
-                    count += 1
                     CitiesPB.objects.create(cities_pb=listOfCities[index])
                 
     
@@ -287,8 +282,6 @@ class Command(BaseCommand):
             generateCitiesByList(cities_pb)
             generateEntitiesOfFlighs(entities)
             generateNatureOfFlighs(natures_of_flights)
-            generateAircrafts()
-            generateMilitaries()
             generateRiskAssessementData()
             
             print("As seeds foram implantadas com sucesso!")

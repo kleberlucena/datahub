@@ -22,6 +22,26 @@ from datetime import datetime
 def home(request):
     return render(request, 'rpa_manager/base.html')
 
+class DashboardRpaManager(TemplateView):
+    template_name = 'rpa_manager/dashboard_rpamanager.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        rpa_dashboard = RpaManagerDashboard()
+        chart_data = rpa_dashboard.get_chart_data()
+        context['amount_of_operations'] = rpa_dashboard.get_amount_of_operations
+        context['pilot_with_max_operations'] = rpa_dashboard.get_pilot_with_max_operations
+        context['number_of_pilot_max_oper'] = rpa_dashboard.get_number_of_pilot_max_oper
+        context['most_supported_location'] = rpa_dashboard.get_most_supported_location()
+        context['operations_in_course'] = rpa_dashboard.get_operations_in_course()
+        context['available_aircrafts'] = rpa_dashboard.get_available_aircrafts()
+        context['most_used_aircraft'] = rpa_dashboard.get_most_used_aircraft()
+        context['battery_info'] = rpa_dashboard.get_batteries_cicles_level()
+        context['chart_data'] = chart_data
+        
+        return context
+
 class PainelView(TemplateView):
     template_name = 'rpa_manager/painel.html'
     
@@ -97,19 +117,9 @@ class PainelView(TemplateView):
         context['operationsInCourse'] = operationsInCourseJson
         context['guarnicoes_json'] = guarnicoes_json
         context['years'] = years
-        
-        # dashboard data
+
         rpa_dashboard = RpaManagerDashboard()
-        chart_data = rpa_dashboard.get_chart_data()
-        context['amount_of_operations'] = rpa_dashboard.get_amount_of_operations
-        context['pilot_with_max_operations'] = rpa_dashboard.get_pilot_with_max_operations
-        context['number_of_pilot_max_oper'] = rpa_dashboard.get_number_of_pilot_max_oper
-        context['most_supported_location'] = rpa_dashboard.get_most_supported_location()
         context['operations_in_course'] = rpa_dashboard.get_operations_in_course()
-        context['available_aircrafts'] = rpa_dashboard.get_available_aircrafts()
-        context['most_used_aircraft'] = rpa_dashboard.get_most_used_aircraft()
-        context['battery_info'] = rpa_dashboard.get_batteries_cicles_level()
-        context['chart_data'] = chart_data
         return context
 
 
