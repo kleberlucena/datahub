@@ -258,8 +258,14 @@ class Command(BaseCommand):
                     situation="Ventos de X nós"
                 )
                 situation3 = Situation.objects.create(
-                    situation="Aeronaves Tripuladas"
-            )
+                    situation="Existência de tráfego aéreo local"
+                )
+                situation4 = Situation.objects.create(
+                    situation="Presença de pessoas não anuentes"
+                )
+                situation5 = Situation.objects.create(
+                    situation="Ventos acima de X nós no local da operação"
+                )
             
             probabilities = ["1", "2", "3", "4", "5"]
             severeties = ["A", "B", "C", "D", "E",]
