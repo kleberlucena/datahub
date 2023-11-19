@@ -17,7 +17,6 @@ from apps.cortex.services import PortalCortexService
 from apps.person.models import Person
 from apps.person.api.v1.serializers import PersonSerializer
 from apps.document.models import Document, DocumentType
-from base import helpers as helpers_base
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -64,7 +63,7 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
     @action(detail=True, methods=['GET'])
     def get(self, request, cpf):
         username = request.user.username
-        cpf = helpers_base.validate_cpf(cpf)
+        cpf = helpers.validate_cpf(cpf)
     
         instance = helpers.process_cortex_consult(
             username=username, cpf=cpf)
