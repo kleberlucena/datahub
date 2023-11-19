@@ -293,8 +293,9 @@
 <script>
   const jsonEquipes = {{ guarnicoes_json| safe }};
   const user = "{{ user.military | stringformat:"s"|safe }}";
-
+  console.log(user)
   function criarEquipeCard(equipe) {
+    console.log(equipe.piloto_remoto)
     const isCurrentUserCreator = equipe.piloto_remoto === user;
     let descadastroButton = ``
     if (isCurrentUserCreator) {

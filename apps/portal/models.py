@@ -161,7 +161,7 @@ class Military(Base):
         verbose_name_plural = 'Policiais Militares'
 
     def __str__(self):
-        return "{} {}".format(self.rank, self.nickname)
+        return "{} {} {}".format(self.rank, self.nickname, self.register)
 
 
 # class HistoryTransfer(Base):
