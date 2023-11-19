@@ -13,7 +13,6 @@ urlpatterns = [
     path('baterias/', BateriasView.as_view(), name="baterias"),
     path('incidentes/', IncidentesView.as_view(), name="incidentes"),
     path('legislations/', LegislationsView.as_view(), name="legislations"),
-    path('legislations/', LegislationsView.as_view(), name="legislations"),
     path('dashboard_rpa/', DashboardRpaManager.as_view(), name="dashboard_rpa"),
     
     # Risk assessment

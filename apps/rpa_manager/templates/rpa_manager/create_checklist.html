@@ -214,11 +214,11 @@
                 <div class="card-body pt-0">
                   <div class="card_content">
                     <div class="card_gu_info">
-                      <small class=""><i class="fa fa-car"></i> <b>Motorista:</b> {{ guarnicao.driver.nickname }}</small>
-                      <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> {{ guarnicao.remote_pilot.nickname }} </small>
+                      <small class=""><i class="fa fa-car"></i> <b>Motorista:</b>{{ guarnicao.driver.rank }} {{ guarnicao.driver.nickname }}</small>
+                      <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b>{{ guarnicao.remote_pilot.rank }} {{ guarnicao.remote_pilot.nickname }} </small>
                       <small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b>  
                         {% if guarnicao.observer_pilot != None %}
-                          {{ guarnicao.observer_pilot.nickname }}
+                        {{ guarnicao.observer_pilot.rank }} {{ guarnicao.observer_pilot.nickname }}
                         {% else %}
                           sem registro
                         {% endif %}

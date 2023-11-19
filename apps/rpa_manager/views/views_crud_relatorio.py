@@ -85,21 +85,7 @@ class EditarRelatorioView(GroupRequiredMixin, UpdateView):
         messages.success(self.request, f'{MESSAGE_MODEL_NAME} editada com sucesso!')
         
         return response
-
-    def dispatch(self, *args, **kwargs):
-        user = self.request.user
-        
-        if not user.is_superuser or not user.groups.filter(name='profile:rpa_advanced').exists():
-            report = self.get_object()
-            time_since_creation = timezone.now() - report.created_at
-            if time_since_creation.total_seconds() > 24 * 60 * 60:  # 24 horas em segundos
-                messages.error(self.request, 'Não é possível editar esta Caderneta após 24 horas.')
-                return HttpResponseRedirect(self.success_url)
-            return super().dispatch(*args, **kwargs)
-        else:
-            return super().dispatch(*args, **kwargs)
             
-    
 class DeletarRelatorioView(GroupRequiredMixin, DeleteView):
     model = Report
     template_name = 'rpa_manager/delete_report.html'

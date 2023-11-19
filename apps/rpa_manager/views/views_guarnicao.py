@@ -33,17 +33,6 @@ class GuarnicaoCreateView(GroupRequiredMixin, CreateView):
         kwargs['initial'] = {'remote_pilot': user}
         return kwargs
         
-    def get(self, request, *args, **kwargs):
-        user = self.request.user.military.pk
-        existing_guarnicao = PoliceGroup.objects.filter(
-            Q(remote_pilot=user) | Q(observer_pilot=user) | Q(driver=user)
-        ).first()
-
-        if existing_guarnicao:
-            messages.info(self.request, 'O usuário logado já participa de uma guarnição')
-            return redirect('rpa_manager:painel')
-        
-        return super().get(request, *args, **kwargs)
     
 class GuarnicaoUpdateView(GroupRequiredMixin, UpdateView):
     model = PoliceGroup

@@ -67,10 +67,10 @@ class PainelView(TemplateView):
         report_by_date = Report.objects.filter(date__month=month, date__year=year)
         for report in report_by_date:
             report_by_date_list.append({
-                'usuario': report.remote_pilot.military,
-                'titulo': report.title,
-                'latitude': report.latitude,
-                'longitude': report.longitude
+                'usuario': str(report.remote_pilot),
+                'titulo': str(report.title),
+                'latitude': str(report.latitude),
+                'longitude': str(report.longitude)
                 })
         
         localidades = CitiesPB.objects.all()
