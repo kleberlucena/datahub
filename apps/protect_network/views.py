@@ -1,14 +1,16 @@
 from django.views.generic import CreateView, TemplateView, UpdateView, ListView, DetailView, DeleteView
-from base.decorations.toast_decorator import include_toast
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import  get_object_or_404
 from django.utils import timezone
 from django.contrib.gis.geos import GEOSGeometry
-from . import models, forms
 from django.db.models import Avg
-from apps.portal.models import Promotion
 from django.http import JsonResponse
 from base.mixins import GroupRequiredMixin
+
+from base.decorations.toast_decorator import include_toast
+from apps.portal import models as portal_models
+
+from . import models, forms
 
 
 
@@ -83,8 +85,8 @@ class CreateSpotView(GroupRequiredMixin, CreateView):
         self.object.updated_by = self.request.user
         self.object.updated_at = timezone.now()
         self.object.update_score = 100
-        promotion = get_object_or_404(Promotion, military__user=self.request.user)
-        self.object.user_unit = promotion
+        military = get_object_or_404(portal_models.Military, military__user=self.request.user)
+        self.object.user_unit = military
         spot_type = self.object.spot_type
         spot_next_update = spot_type.update_time
         is_headquarters = form.cleaned_data['is_headquarters']
@@ -672,6 +674,6 @@ class UpdateSurveyView(GroupRequiredMixin, UpdateView):
     
 
 def get_responsibles(request):
-    responsibles = models.Promotion.objects.all()
+    responsibles = portal_models.Military.objects.all()
     data = [{'id': responsible.id, 'text': f"{responsible.rank} {responsible.military}"} for responsible in responsibles]
     return JsonResponse(data, safe=False)
