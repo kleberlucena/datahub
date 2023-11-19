@@ -23,14 +23,6 @@ class AboutView(TemplateView):
 
 class IndexView(TemplateView):
     def get(self, request):
-        user = request.user
-        group_list = Group.objects.filter(user=user).values()
-        if any("fact" in item['name'] for item in group_list):
-            return redirect('fact:index')
-
-        if any("profile:person" in item['name'] for item in group_list):
-            return redirect('person:list_person')
-
         return render(request, 'base/index.html',)
 
 
