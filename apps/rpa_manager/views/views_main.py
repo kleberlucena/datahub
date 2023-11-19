@@ -30,9 +30,9 @@ class DashboardRpaManager(TemplateView):
         
         rpa_dashboard = RpaManagerDashboard()
         chart_data = rpa_dashboard.get_chart_data()
-        context['amount_of_operations'] = rpa_dashboard.get_amount_of_operations
-        context['pilot_with_max_operations'] = rpa_dashboard.get_pilot_with_max_operations
-        context['number_of_pilot_max_oper'] = rpa_dashboard.get_number_of_pilot_max_oper
+        context['amount_of_operations'] = rpa_dashboard.get_amount_of_operations()
+        context['pilot_with_max_operations'] = rpa_dashboard.get_pilot_with_max_operations()
+        context['number_of_pilot_max_oper'] = rpa_dashboard.get_number_of_pilot_max_oper()
         context['most_supported_location'] = rpa_dashboard.get_most_supported_location()
         context['operations_in_course'] = rpa_dashboard.get_operations_in_course()
         context['available_aircrafts'] = rpa_dashboard.get_available_aircrafts()
@@ -67,7 +67,7 @@ class PainelView(TemplateView):
         report_by_date = Report.objects.filter(date__month=month, date__year=year)
         for report in report_by_date:
             report_by_date_list.append({
-                'usuario': report.remote_pilot.military.nickname,
+                'usuario': report.remote_pilot.military,
                 'titulo': report.title,
                 'latitude': report.latitude,
                 'longitude': report.longitude

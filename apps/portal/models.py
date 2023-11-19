@@ -151,6 +151,7 @@ class Military(Base):
     )
     
     entity = models.ForeignKey(Entity, null=True, blank=True, related_name='military', on_delete=models.SET_NULL)
+    user = models.OneToOneField(User, related_name='military', null=True, blank=True, on_delete=models.SET_NULL)
 
 
     class Meta:

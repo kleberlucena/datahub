@@ -1,14 +1,14 @@
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
-from apps.rpa_manager.forms import *
-from apps.rpa_manager.models import * 
+from django.contrib import messages
+from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from base.mixins import GroupRequiredMixin
 
-from django.contrib import messages
-from django.utils.decorators import method_decorator
 from apps.rpa_manager.handlers import require_permission
+from apps.rpa_manager.forms import *
+from apps.rpa_manager.models import * 
 
 MESSAGE_MODEL_NAME = 'Aeronave'
 
