@@ -128,7 +128,7 @@
     <form id="coordinatesForm" method='GET'>
       {% csrf_token %}
       <div>
-        <h1><strong>Operações em andamento: {{ operations_in_course }}</strong></h1>
+        <p><strong>Operações em andamento: {{ operations_in_course }}</strong></p>
       </div>
       <div class="select_date_form">
         <div class="select_year">
@@ -429,7 +429,7 @@
   }
 
   function exibirMensagem() {
-    document.getElementById('mensagem-container').innerHTML = '<h2>Nenhuma guarnição disponível.</h2>';
+    document.getElementById('mensagem-container').innerHTML = '<p>Nenhuma guarnição disponível.</p>';
   }
 
   // Verificando se o JSON está vazio (sem equipes)
