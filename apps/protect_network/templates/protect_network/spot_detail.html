@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load static leaflet_tags crispy_forms_tags widget_tweaks %}
+{% load static leaflet_tags crispy_forms_tags widget_tweaks custom_tags %}
 
 
 <!-- browser title -->
@@ -322,7 +322,9 @@
     <br><br>
     <div class="row mt-auto ml-3">
         <div>
+            {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
             <a class="btn btn-outline-primary" href="{% url 'protect_network:spot_update' spot.pk %}">Editar</a>
+            {% endif %}
         </div>
     </div>
     
@@ -375,18 +377,20 @@
                                         {% endfor %}
                                     {% else %}
                                     <tr>
-                                        <td colspan="6" align="center">Não existem contatos cadastrados.</td>
+                                        <td colspan="6" align="center">Não existem funcionários cadastrados.</td>
                                     </tr>
                                     {% endif %}
                                 </tbody>
                             </table>
                         </div>
+                        {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
                         <a href="{% url 'protect_network:contact_add' spot.id %}">
                             <button type="button" class="btn btn-outline-primary">
                                 <i class="fa fa-plus"></i>
                                 Inserir
                             </button>
                         </a>
+                        {% endif %}
             
                     </div>
                 </div>
@@ -425,19 +429,24 @@
                             </table>
                         </div>
                     </div>
+                    {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
                     <a href="{% url 'protect_network:survey_update' spot.id %}">
                         <button type="button" class="btn btn-outline-primary">
                             <i class=""></i>
                             Editar
                         </button>
                     </a>
+                    {% endif %}
+                    
                 {% else %}
                     <p>Não é possível avaliar o nível de segurança do estabelecimento pois o questionário ainda não foi respondido</p><br>
+                    {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
                     <a href="{% url 'protect_network:survey_add' spot.id %}">
                         <button type="button" class="btn btn-outline-primary">
                             Responder questionário
                         </button>
                     </a>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -456,20 +465,24 @@
                         <div class="badge bg-warning">{{ tag.name }}</div>
                     {% endfor %}
                     <br><br>
+                    {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
                     <a href="{% url 'protect_network:spot_tags_update' spot.id %}">
                         <button type="button" class="btn btn-outline-primary">
                             <i class="fa fa-plus"></i>
                             Inserir
                         </button>
                     </a>
+                    {% endif %}
                 {% else %}
                     <p>Não existem tags cadastradas.</p><br>
+                    {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
                     <a href="{% url 'protect_network:spot_tags_update' spot.id %}">
                         <button type="button" class="btn btn-outline-primary">
                             <i class="fa fa-plus"></i>
                             Inserir
                         </button>
                     </a>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -500,12 +513,14 @@
                 </div>
                     
                 <br>
+                {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
                 <a href="{% url 'protect_network:spot_image_add' spot.id %}">
                     <button type="button" class="btn btn-outline-primary">
                         <i class="fa fa-plus"></i>
                         Inserir
                     </button>
                 </a>
+                {% endif %}
                 <a href="{% url 'protect_network:spot_image_list' spot.id %}">
                     <button type="button" class="btn btn-outline-info">
                         <i class=""></i>
@@ -690,23 +705,27 @@
                                     </tbody>
                                 </table>
                             </div>
-                            {% if spot_opening_hours %}
-                                {% for opening_hour in spot_opening_hours %}
-                                    <a href="{% url 'protect_network:opening_hours_update' opening_hour.id  %}">
+                            {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+
+                                {% if spot_opening_hours %}
+                                    {% for opening_hour in spot_opening_hours %}
+                                        <a href="{% url 'protect_network:opening_hours_update' opening_hour.id  %}">
+                                            <button type="button" class="btn btn-outline-primary">
+                                                <i class=""></i>
+                                                Editar
+                                            </button>
+                                        </a>
+                                    {% endfor %}
+                                {% else %}
+                                    <a href="{% url 'protect_network:opening_hours_add' spot.id %}">
                                         <button type="button" class="btn btn-outline-primary">
-                                            <i class=""></i>
-                                            Editar
+                                            <i class="fa fa-plus"></i>
+                                            Inserir
                                         </button>
                                     </a>
-                                {% endfor %}
-                            {% else %}
-                                <a href="{% url 'protect_network:opening_hours_add' spot.id %}">
-                                    <button type="button" class="btn btn-outline-primary">
-                                        <i class="fa fa-plus"></i>
-                                        Inserir
-                                    </button>
-                                </a>
-                            {% endif %}         
+                                {% endif %}
+                            
+                            {% endif %}
                         </div>
                 </div>
             </div>

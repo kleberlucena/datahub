@@ -1,18 +1,22 @@
 from django.views.generic import CreateView, TemplateView, UpdateView, ListView, DetailView, DeleteView
-from base.decorations.toast_decorator import include_toast
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import  get_object_or_404
 from django.utils import timezone
 from django.contrib.gis.geos import GEOSGeometry
-from . import models, forms
 from django.db.models import Avg
-from apps.portal.models import Promotion
 from django.http import JsonResponse
+from base.mixins import GroupRequiredMixin
+
+from base.decorations.toast_decorator import include_toast
+from apps.portal import models as portal_models
+
+from . import models, forms
 
 
 
-class IndexView(TemplateView):
+class IndexView(GroupRequiredMixin, TemplateView):
     template_name = 'protect_network/index.html'
+    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
     model = models.Network
     form_class = forms.NetworkForm
 
@@ -23,9 +27,10 @@ class IndexView(TemplateView):
         return context
 
 
-class DetailSpotView(DetailView):
+class DetailSpotView(GroupRequiredMixin, DetailView):
     model = models.Spot
     template_name = 'protect_network/spot_detail.html'
+    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
     context_object_name = 'spot'
 
     def get_context_data(self, **kwargs):
@@ -49,9 +54,10 @@ class DetailSpotView(DetailView):
         return context    
 
 
-class DetailCardSpotView(DetailView):
+class DetailCardSpotView(GroupRequiredMixin, DetailView):
     model = models.Spot
     template_name = 'protect_network/spot_detail_card.html'
+    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
     context_object_name = 'spot'
 
     def get_context_data(self, **kwargs):
@@ -63,10 +69,11 @@ class DetailCardSpotView(DetailView):
 
 
 @include_toast
-class CreateSpotView(CreateView):
+class CreateSpotView(GroupRequiredMixin, CreateView):
     model = models.Spot
     form_class = forms.SpotForm
     template_name = 'protect_network/spot_add.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     success_url = reverse_lazy('protect_network:spot_list')
 
     def form_valid(self, form):
@@ -78,8 +85,8 @@ class CreateSpotView(CreateView):
         self.object.updated_by = self.request.user
         self.object.updated_at = timezone.now()
         self.object.update_score = 100
-        promotion = get_object_or_404(Promotion, military__user=self.request.user)
-        self.object.user_unit = promotion
+        military = get_object_or_404(portal_models.Military, military__user=self.request.user)
+        self.object.user_unit = military
         spot_type = self.object.spot_type
         spot_next_update = spot_type.update_time
         is_headquarters = form.cleaned_data['is_headquarters']
@@ -103,9 +110,10 @@ class CreateSpotView(CreateView):
 
 
 @include_toast
-class UpdateSpotView(UpdateView):
+class UpdateSpotView(GroupRequiredMixin, UpdateView):
     model = models.Spot
     template_name = 'protect_network/spot_update.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     form_class = forms.SpotForm
 
     def form_valid(self, form):
@@ -151,9 +159,10 @@ class UpdateSpotView(UpdateView):
         return reverse('protect_network:spot_detail', kwargs={'pk': spot_pk})
     
 
-class SpotListView(ListView):
+class SpotListView(GroupRequiredMixin, ListView):
     model = models.Spot
     template_name = 'protect_network/spot_list.html'
+    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(SpotListView, self).get_context_data(**kwargs)
@@ -162,9 +171,10 @@ class SpotListView(ListView):
         return context
 
 
-class SpotListCreatedView(ListView):
+class SpotListCreatedView(GroupRequiredMixin, ListView):
     model = models.Spot
     template_name = 'protect_network/spot_list_created.html'
+    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(SpotListCreatedView, self).get_context_data(**kwargs)
@@ -174,24 +184,27 @@ class SpotListCreatedView(ListView):
     
 
 @include_toast
-class CreateSpotTypeView(CreateView):
+class CreateSpotTypeView(GroupRequiredMixin, CreateView):
     model = models.SpotType
     form_class = forms.SpotTypeForm
     template_name = 'protect_network/spot_type_add.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     success_url = reverse_lazy('protect_network:type_list')
 
 
 @include_toast
-class UpdateSpotTypeView(UpdateView):
+class UpdateSpotTypeView(GroupRequiredMixin, UpdateView):
     model = models.SpotType
     template_name = 'protect_network/spot_type_add.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     form_class = forms.SpotTypeForm
     success_url = reverse_lazy('protect_network:type_list')
 
 
-class SpotTypeListView(ListView):
+class SpotTypeListView(GroupRequiredMixin, ListView):
     model = models.SpotType
     template_name = 'protect_network/spot_type_list.html'
+    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(SpotTypeListView, self).get_context_data(**kwargs)
@@ -201,17 +214,19 @@ class SpotTypeListView(ListView):
     
 
 @include_toast
-class CreateTagView(CreateView):
+class CreateTagView(GroupRequiredMixin, CreateView):
     model = models.Tag
     form_class = forms.TagForm
     template_name = 'protect_network/tag_add.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     success_url = reverse_lazy('protect_network:tag_list')
 
 
 @include_toast
-class UpdateSpotTagsView(UpdateView):
+class UpdateSpotTagsView(GroupRequiredMixin, UpdateView):
     model = models.Spot
     template_name = 'protect_network/spot_tags_form.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     form_class = forms.SpotTagsForm
 
     def form_valid(self, form):
@@ -225,17 +240,19 @@ class UpdateSpotTagsView(UpdateView):
 
 
 @include_toast
-class UpdateTagView(UpdateView):
+class UpdateTagView(GroupRequiredMixin, UpdateView):
     model = models.Tag
     template_name = 'protect_network/tag_add.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     form_class = forms.TagForm
     success_url = reverse_lazy('protect_network:tag_list')
 
 
 
-class TagListView(ListView):
+class TagListView(GroupRequiredMixin, ListView):
     model = models.Tag
     template_name = 'protect_network/tag_list.html'
+    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(TagListView, self).get_context_data(**kwargs)
@@ -246,9 +263,10 @@ class TagListView(ListView):
 
 
 @include_toast
-class CreateImageSpotView(CreateView):
+class CreateImageSpotView(GroupRequiredMixin, CreateView):
     model = models.Image
     template_name = 'protect_network/spot_image_add.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     form_class = forms.SpotImageForm
 
     def get_success_url(self):
@@ -268,9 +286,10 @@ class CreateImageSpotView(CreateView):
 
 
 @include_toast
-class ImageDeleteView(DeleteView):
+class ImageDeleteView(GroupRequiredMixin, DeleteView):
     model = models.Image
     template_name = 'protect_network/spot_image_delete.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -283,9 +302,10 @@ class ImageDeleteView(DeleteView):
         return reverse_lazy('protect_network:spot_image_list', kwargs={'spot_id': spot_id})
     
 
-class ImageListView(ListView):
+class ImageListView(GroupRequiredMixin, ListView):
     model = models.Image
     template_name = 'protect_network/spot_image_list.html'
+    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
     context_object_name = 'spot_images'
     
     def get_queryset(self):
@@ -302,9 +322,10 @@ class ImageListView(ListView):
     
 
 @include_toast
-class CreateContactInfoView(CreateView):
+class CreateContactInfoView(GroupRequiredMixin, CreateView):
     model = models.ContactInfo
     template_name = 'protect_network/spot_contact_form.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     form_class = forms.ContactInfoForm
 
     def get_success_url(self):
@@ -325,9 +346,10 @@ class CreateContactInfoView(CreateView):
     
 
 @include_toast
-class UpdateContactInfoView(UpdateView):
+class UpdateContactInfoView(GroupRequiredMixin, UpdateView):
     model = models.ContactInfo
     template_name = 'protect_network/spot_contact_form.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     form_class = forms.ContactInfoForm
 
     def get_context_data(self, **kwargs):
@@ -341,9 +363,10 @@ class UpdateContactInfoView(UpdateView):
     
     
 @include_toast
-class DeleteContactInfoView(DeleteView):
+class DeleteContactInfoView(GroupRequiredMixin, DeleteView):
     model = models.ContactInfo
     template_name = 'protect_network/spot_contact_delete.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -356,9 +379,10 @@ class DeleteContactInfoView(DeleteView):
     
 
 @include_toast
-class CreateOpeningHoursView(CreateView):
+class CreateOpeningHoursView(GroupRequiredMixin, CreateView):
     model = models.OpeningHours
     template_name = 'protect_network/spot_opening_hours_form.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     form_class = forms.OpeningHoursForm
     
     def get_success_url(self):
@@ -395,9 +419,10 @@ class CreateOpeningHoursView(CreateView):
     
 
 @include_toast
-class UpdateOpeningHoursView(UpdateView):
+class UpdateOpeningHoursView(GroupRequiredMixin, UpdateView):
     model = models.OpeningHours
     template_name = 'protect_network/spot_opening_hours_form.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     form_class = forms.OpeningHoursForm
 
     def get_context_data(self, **kwargs):
@@ -444,17 +469,19 @@ class UpdateOpeningHoursView(UpdateView):
 
 
 @include_toast
-class CreateNetworkView(CreateView):
+class CreateNetworkView(GroupRequiredMixin, CreateView):
     model = models.Network
     form_class = forms.NetworkForm
     template_name = 'protect_network/network_form.html'
+    group_required = ['profile:protect_network_manager']
     success_url = reverse_lazy('protect_network:network_list')
 
 
 @include_toast
-class UpdateNetworkView(UpdateView):
+class UpdateNetworkView(GroupRequiredMixin, UpdateView):
     model = models.Network
     template_name = 'protect_network/network_form.html'
+    group_required = ['profile:protect_network_manager']
     form_class = forms.NetworkForm
     context_object_name = 'network'
 
@@ -463,9 +490,10 @@ class UpdateNetworkView(UpdateView):
 
 
 
-class NetworkListView(ListView):
+class NetworkListView(GroupRequiredMixin, ListView):
     model = models.Network
     template_name = 'protect_network/network_list.html'
+    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(NetworkListView, self).get_context_data(**kwargs)
@@ -475,9 +503,10 @@ class NetworkListView(ListView):
 
 
 
-class NetworkDetailView(DetailView):
+class NetworkDetailView(GroupRequiredMixin, DetailView):
     model = models.Network
     template_name = 'protect_network/network_detail.html'
+    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
     context_object_name = 'network'
 
     def get_context_data(self, **kwargs):
@@ -491,10 +520,11 @@ class NetworkDetailView(DetailView):
 
 
 @include_toast
-class CreateResponsibleView(CreateView):
+class CreateResponsibleView(GroupRequiredMixin, CreateView):
     model = models.NetworkResponsible
     form_class = forms.ResponsibleForm
     template_name = 'protect_network/responsible_form.html'
+    group_required = ['profile:protect_network_manager']
     success_url = reverse_lazy('protect_network:network_list')
 
     def get_form_kwargs(self):
@@ -504,9 +534,10 @@ class CreateResponsibleView(CreateView):
         return kwargs
 
   
-class UpdateResponsibleView(UpdateView):
+class UpdateResponsibleView(GroupRequiredMixin, UpdateView):
     model = models.NetworkResponsible
     template_name = 'protect_network/responsible_form.html'
+    group_required = ['profile:protect_network_manager']
     form_class = forms.ResponsibleForm
 
     def get_success_url(self):
@@ -515,9 +546,10 @@ class UpdateResponsibleView(UpdateView):
         return reverse_lazy('protect_network:network_detail', kwargs={'pk': network_pk})
 
 
-class DeleteResponsibleView(DeleteView):
+class DeleteResponsibleView(GroupRequiredMixin, DeleteView):
     model = models.NetworkResponsible
     template_name = 'protect_network/responsible_delete.html'
+    group_required = ['profile:protect_network_manager']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -531,24 +563,27 @@ class DeleteResponsibleView(DeleteView):
 
 
 @include_toast
-class CreateQppView(CreateView):
+class CreateQppView(GroupRequiredMixin, CreateView):
     model = models.Qpp
     form_class = forms.QppForm
     template_name = 'protect_network/qpp_add.html'
+    group_required = ['profile:protect_network_manager']
     success_url = reverse_lazy('protect_network:qpp_list')
 
 
 @include_toast
-class UpdateQppView(UpdateView):
+class UpdateQppView(GroupRequiredMixin, UpdateView):
     model = models.Qpp
     template_name = 'protect_network/qpp_add.html'
+    group_required = ['profile:protect_network_manager']
     form_class = forms.QppForm
     success_url = reverse_lazy('protect_network:qpp_list')
 
 
-class QppListView(ListView):
+class QppListView(GroupRequiredMixin, ListView):
     model = models.Qpp
     template_name = 'protect_network/qpp_list.html'
+    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(QppListView, self).get_context_data(**kwargs)
@@ -558,10 +593,11 @@ class QppListView(ListView):
     
 
 @include_toast
-class CreateSurveyView(CreateView):
+class CreateSurveyView(GroupRequiredMixin, CreateView):
     model = models.SecuritySurvey
     form_class = forms.SecuritySurveyForm
     template_name = 'protect_network/survey_form.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_success_url(self):
         spot_id = self.kwargs['spot_id']
@@ -602,9 +638,10 @@ class CreateSurveyView(CreateView):
 
 
 @include_toast
-class UpdateSurveyView(UpdateView):
+class UpdateSurveyView(GroupRequiredMixin, UpdateView):
     model = models.SecuritySurvey
     template_name = 'protect_network/survey_form.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     form_class = forms.SecuritySurveyForm
 
     def get_context_data(self, **kwargs):
@@ -637,6 +674,6 @@ class UpdateSurveyView(UpdateView):
     
 
 def get_responsibles(request):
-    responsibles = models.Promotion.objects.all()
+    responsibles = portal_models.Military.objects.all()
     data = [{'id': responsible.id, 'text': f"{responsible.rank} {responsible.military}"} for responsible in responsibles]
     return JsonResponse(data, safe=False)

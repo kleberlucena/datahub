@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load static %}
+{% load static custom_tags %}
 
 {% block title %}Rede de Proteção - Tags cadastradas{% endblock %}
 
@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
 {% endblock %}
 
-{% block title-header %} Pontos de Interesse {% endblock %}
+{% block title-header %} Redes de Proteção {% endblock %}
 
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
@@ -21,7 +21,7 @@
 <div class="callout callout-info">
   <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre lista de categorias</h3>
   <p class="text-muted text-justify px-3 pt-2">
-      <b>Tags são palavras-chave usadas para categorizar e identificar os pontos.
+      <b>Tags são palavras-chave usadas para categorizar e identificar os estabelecimentos.
           Devem ser concisas e relevantes, de maneira a facilitar buscas específicas.</b>
       <br> - Essa tela exibe todas as tags existentes e possibilita a criação de novas tags
         como também a edição de tags existentes.
@@ -46,7 +46,9 @@
                 <tr>
                   <th>Tag</th>
                   <th>Descrição</th>
-                  <th>Ação</th>
+                  {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+                    <th>Ação</th>
+                  {% endif %}
                </tr>
               </thead>
 
@@ -59,9 +61,11 @@
                   {% else %}
                     <td>{{ tag.details }}</td>
                   {% endif %}
-                  <td class="project-actions text-center">
-                    <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:tag_update' tag.pk %}">Editar</a>
-                  </td>
+                  {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+                    <td class="project-actions text-center">
+                      <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:tag_update' tag.pk %}">Editar</a>
+                    </td>
+                  {% endif %}
                 </tr>
                 {% endfor %}
               </tboby>
@@ -69,9 +73,11 @@
           </div>
         </div>
         <div class="row mt-auto ml-0">
-          <a href="{% url 'protect_network:tag_add' %}" alt="type_add">
-            <button type="button" class="btn btn-block btn-primary"> Nova tag</button>
-          </a>
+          {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+            <a href="{% url 'protect_network:tag_add' %}" alt="type_add">
+              <button type="button" class="btn btn-block btn-primary"> Nova tag</button>
+            </a>
+          {% endif %}
         </div>
       </div>
     </div>

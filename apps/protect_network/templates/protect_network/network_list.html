@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load static %}
+{% load static custom_tags %}
 
 {% block title %}Rede de Proteção - Redes cadastradas{% endblock %}
 
@@ -66,8 +66,12 @@
                     <td> {{ network.spot_set.count }} </td>
                   {% endif %}
                   <td colspan="2" class="project-actions text-center">
-                    <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:network_detail' pk=network.pk %}">Detalhes</a>
-                    <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:network_update' pk=network.pk %}">Editar</a>
+                    {% if request.user|has_group:'profile:protect_network_basic,profile:protect_network_advanced,profile:protect_network_manager' %}
+                      <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:network_detail' pk=network.pk %}">Detalhes</a>
+                    {% endif %}
+                    {% if request.user|has_group:'profile:protect_network_manager' %}
+                      <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:network_update' pk=network.pk %}">Editar</a>
+                    {% endif %}
                   </td>
                 </tr>
                 {% endfor %}
@@ -76,7 +80,9 @@
           </div>
         </div>
         <div class="row mt-auto ml-0">
-          <a href="{% url 'protect_network:network_add' %}" alt="network_add"><button type="button" class="btn btn-primary"> + Adicionar rede</button></a>
+          {% if request.user|has_group:'profile:protect_network_manager' %}
+            <a href="{% url 'protect_network:network_add' %}" alt="network_add"><button type="button" class="btn btn-primary"> + Adicionar rede</button></a>
+          {% endif %}
         </div>
       </div>
     </div>

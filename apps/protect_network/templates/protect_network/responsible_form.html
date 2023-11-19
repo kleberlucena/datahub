@@ -1,6 +1,5 @@
 {% extends "base/base.html" %}
-{% load static crispy_forms_tags widget_tweaks %}
-
+{% load static crispy_forms_tags widget_tweaks custom_tags %}
 {% block title %}Rede de Proteção - Adicionar responsável{% endblock %}
 
 {% block style_sheet %}
@@ -23,12 +22,10 @@
 <div class="callout callout-info">
   <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar responsável</h3>
   <p class="text-muted text-justify px-3 pt-2">
-      <b>Os responsáveis pela rede são os militares que terão acesso para poder adicionar e editar os estabelecimentos de uma rede.</b>
-      <br><br> - Selecione a rede a qual o militar vai ser inserido e depois secione o militar.
-      
+      <b>Os responsáveis pela rede são os militares que terão acesso para poder adicionar e editar os estabelecimentos de uma rede.</b>    
   </p>
 </div>
-
+{% if request.user|has_group:'profile:protect_network_manager' %}
 <div class="row">
     <div class="col-md-12">
         <div class="card card-primary card-outline">
@@ -60,6 +57,7 @@
         </form>
     </div>
 </div>
+{% endif %}
 
     {% endblock %}
     {% block js %}

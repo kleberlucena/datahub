@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load static crispy_forms_tags widget_tweaks %}
+{% load static crispy_forms_tags widget_tweaks custom_tags %}
 
 {% block title %}Rede de Proteção - Adicionar rede{% endblock %}
 
@@ -26,6 +26,8 @@
       <br><br> - Essa tela permite a criação de novas redes, digite o nome da rede e se houver, uma descrição sobre ela.      
   </p>
 </div>
+
+{% if request.user|has_group:'profile:protect_network_manager' %}
 
 <div class="row">
     <div class="col-md-12">
@@ -54,6 +56,8 @@
         </form>
     </div>
 </div>
+
+{% endif %}
 
     {% endblock %}
     {% block js %}

@@ -1,13 +1,15 @@
 import uuid
+from stdimage.models import StdImageField
+from django_minio_backend import MinioBackend
+
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.auth.models import User
-from stdimage.models import StdImageField
-from django_minio_backend import MinioBackend
 from django.contrib.gis.db import models
+
 from apps.address.models import Address
 from apps.portal import models as portal_models
-from apps.portal.models import Promotion
+# from apps.portal.models import Promotion # TODO: Remover
 
 
 
@@ -40,7 +42,7 @@ class Network(models.Model):
     name = models.CharField("Nome da rede", max_length=200)
     details = models.CharField("Informações adicionais", max_length=300, null=True, blank=True)
     responsibles = models.ManyToManyField(
-        Promotion,
+        portal_models.Military,
         through='NetworkResponsible',
         through_fields=('network', 'responsible'),
     )
@@ -51,7 +53,7 @@ class Network(models.Model):
 
 class NetworkResponsible(models.Model):
     network = models.ForeignKey(Network, on_delete=models.CASCADE)
-    responsible = models.ForeignKey(Promotion, on_delete=models.CASCADE)
+    responsible = models.ForeignKey(portal_models.Military, on_delete=models.CASCADE)
     created_at = models.DateTimeField('Criado', auto_now_add=True)
     active = models.BooleanField(null=True, blank=True, default=True)
 
@@ -124,7 +126,7 @@ class Spot(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='spots_updated')
     tags = models.ManyToManyField(Tag, blank=True)
     update_score = models.IntegerField(null=True, blank=True)
-    user_unit = models.ForeignKey(portal_models.Promotion, on_delete=models.PROTECT,verbose_name="Militar", related_name='spots')
+    user_unit = models.ForeignKey(portal_models.Military, on_delete=models.PROTECT,verbose_name="Militar", related_name='spots')
     next_update = models.IntegerField(null=True, blank=True)
     is_temporary = models.BooleanField(null=True, blank=True, default=False)
     date_initial = models.DateTimeField(null=True, blank=True)

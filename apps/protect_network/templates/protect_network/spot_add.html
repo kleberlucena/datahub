@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load static leaflet_tags crispy_forms_tags widget_tweaks %}
+{% load static leaflet_tags crispy_forms_tags widget_tweaks custom_tags %}
 
 
 <!-- browser title -->
@@ -33,6 +33,8 @@
         <b>Essa tela permite o cadastro de novos estabelecimentos em uma rede</b>
     </p>
 </div>
+
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
 
 <div class="row">
     <div class="col-md-12">
@@ -153,6 +155,8 @@
         </div>
     </div>
 </div>
+
+{% endif %}
 
 
 

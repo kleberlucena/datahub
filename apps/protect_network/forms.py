@@ -1,6 +1,8 @@
 from django import forms
 from . import models
 
+from apps.portal import models as portal_models
+
 
 
 class SpotTypeForm(forms.ModelForm):
@@ -195,7 +197,7 @@ class NetworkForm(forms.ModelForm):
 
 class ResponsibleForm(forms.ModelForm):
     responsible = forms.ModelChoiceField(
-        queryset=models.Promotion.objects.all(),
+        queryset=portal_models.Military.objects.all(),
         label='Responsável',
         widget=forms.Select(attrs={'class': 'custom-select'}),
     )

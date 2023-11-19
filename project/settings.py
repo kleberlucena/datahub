@@ -162,6 +162,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'base.context_processors.portal_url',
             ],
         },
     },
@@ -267,7 +268,7 @@ KEYCLOAK_SERVER_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n{}\n-----END PUBLIC KE
 # Python Social Auth https://github.com/coriolinus/oauth2-article
 SOCIAL_AUTH_KEYCLOAK_KEY = env('SOCIAL_AUTH_KEYCLOAK_KEY')
 SOCIAL_AUTH_KEYCLOAK_SECRET = env('SOCIAL_AUTH_KEYCLOAK_SECRET')
-# SOCIAL_AUTH_KEYCLOAK_PUBLIC_KEY = sso_public_key
+SOCIAL_AUTH_KEYCLOAK_PUBLIC_KEY = sso_public_key
 SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL = env(
     'SOCIAL_AUTH_KEYCLOAK_AUTHORIZATION_URL')
 SOCIAL_AUTH_KEYCLOAK_ACCESS_TOKEN_URL = env(

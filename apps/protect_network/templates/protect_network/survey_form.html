@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load static crispy_forms_tags widget_tweaks %}
+{% load static crispy_forms_tags widget_tweaks custom_tags %}
 
 
 <!-- browser title -->
@@ -35,6 +35,7 @@
         <b>O questionário de segurança tem como objetivo quantificar o nível de segurança de um estabelecimento</b>
     </p>
 </div>
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
 
 <div class="row">
     <div class="col-md-12">
@@ -90,6 +91,9 @@
         </form>
     </div>
 </div>
+
+{% endif %}
+
 
 
 

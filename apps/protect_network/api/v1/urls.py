@@ -1,6 +1,8 @@
 from django.urls import path
 from apps.protect_network.api.v1 import viewsets
 
+
+
 app_name = 'protect_network_api'
 
 urlpatterns = [

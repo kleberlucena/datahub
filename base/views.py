@@ -21,6 +21,10 @@ class IndexView(TemplateView):
 class AboutView(TemplateView):
     template_name = 'base/about.html'
 
+class IndexView(TemplateView):
+    def get(self, request):
+        return render(request, 'base/index.html',)
+
 
 class AboutView(TemplateView):
     template_name = 'base/about.html'

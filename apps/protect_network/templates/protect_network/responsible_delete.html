@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load static crispy_forms_tags widget_tweaks %}
+{% load static crispy_forms_tags widget_tweaks custom_tags %}
 
 {% block title %}Rede de Proteção - Excluir responsável{% endblock %}
 
@@ -18,34 +18,35 @@
 
 {% block content %}
 
+{% if request.user|has_group:'profile:protect_network_manager' %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Excluir responsável</h3>
+                </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="card card-primary card-outline">
-            <div class="card-header">
-                <h3 class="card-title">Excluir responsável</h3>
-            </div>
-
-            <div class="p-4">
-                <div class="row">
-                    <div>
-                        <p>Tem certeza que deseja remover o acesso de resposável <b>{{ object_to_delete.responsible.rank }} {{ object_to_delete.responsible.military }}</b> da rede <b>{{ object_to_delete.network.name }}</b> ?</p>
+                <div class="p-4">
+                    <div class="row">
+                        <div>
+                            <p>Tem certeza que deseja remover o acesso de resposável <b>{{ object_to_delete.responsible.rank }} {{ object_to_delete.responsible.military }}</b> da rede <b>{{ object_to_delete.network.name }}</b> ?</p>
+                        </div>
                     </div>
                 </div>
+
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row mt-auto ml-3 mb-3">
+                        <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                        <a href="{{ request.META.HTTP_REFERER  }}" alt="type_add"><button type="button" class="btn btn-warning ml-1"> Cancelar </button></a>
+                    </div>
+
+                </form>
             </div>
-
-
-            <form method="post">
-                {% csrf_token %}
-                <div class="row mt-auto ml-3 mb-3">
-                    <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-                    <a href="{{ request.META.HTTP_REFERER  }}" alt="type_add"><button type="button" class="btn btn-warning ml-1"> Cancelar </button></a>
-                </div>
-
-            </form>
         </div>
     </div>
-</div>
+{% endif %}
 
 
     {% endblock %}

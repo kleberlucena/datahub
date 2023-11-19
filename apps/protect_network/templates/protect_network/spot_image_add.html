@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load static crispy_forms_tags widget_tweaks %}
+{% load static crispy_forms_tags widget_tweaks custom_tags %}
 
 
 <!-- browser title -->
@@ -26,6 +26,7 @@
         <b>Essa tela permite o envio de imagens sobre o estabelecimento</b>
     </p>
 </div>
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
 
 <div class="row">
     <div class="col-md-12">
@@ -40,7 +41,7 @@
                 <div class="col-sm-12">
                     {{form.name|add_class:"form-control"|as_crispy_field}}
                 </div>
-                <div class="col-sm-12">
+                <div class="col-sm-12 mt-3">
                     {{form.imageSpot|as_crispy_field}}
                 </div>
             </div>
@@ -53,6 +54,8 @@
         </form>
     </div>
 </div>
+{% endif %}
+
 
 
 
