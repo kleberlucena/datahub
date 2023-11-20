@@ -12,7 +12,6 @@ from drf_yasg import openapi
 from guardian.shortcuts import assign_perm
 import logging
 
-from base import helpers as base_helpers
 from apps.vehicle.api.v1.serializers import VehicleCortexSerializer, IntermediateVehicleCortexSerializer, BasicVehicleCortexSerializer, VehicleSerializer, BasicVehicleSerializer, IntermediateVehicleSerializer, VehicleUpdateSerializer, VehicleImageSerializer
 from apps.vehicle.models import PersonRenavamCortex, VehicleCortex, Vehicle, VehicleImage
 from apps.vehicle import helpers
@@ -271,7 +270,7 @@ class VehicleByPlacaViewSet(generics.GenericAPIView):
         username = request.user.username
         vehicle_cortex = None
 
-        placa = base_helpers.validate_signal(placa)
+        placa = helpers.validate_signal(placa)
         helpers.process_cortex_consult(username=username, placa=placa.upper())
 
         vehicle_cortex = get_object_or_404(VehicleCortex, placa=placa.upper())
