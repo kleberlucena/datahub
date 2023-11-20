@@ -8,6 +8,11 @@ from django.shortcuts import render, redirect
 from base.views import *
 
 
+class SuperuserRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
 class GroupRequiredMixin(UserPassesTestMixin):
     group_required = None
     login_url = 'base:authorization_error_view'

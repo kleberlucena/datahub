@@ -9,9 +9,10 @@ from apps.portal.models import Entity
 from .models import Person, Tattoo
 from .forms import PersonForm
 from .tasks import task_set_entity_person, task_set_entity_tattoo, task_set_entity_face, task_set_entity_physical, task_set_entity_nickname
+from base.mixins import SuperuserRequiredMixin
 
 
-class PersonListView(ListView):
+class PersonListView(SuperuserRequiredMixin, ListView):
     model = Person
     template_name = 'person_list.html'
     context_object_name = 'persons'
@@ -57,7 +58,7 @@ class PersonListJson(BaseDatatableView):
             return super(PersonListJson, self).render_column(row, column)
 
 
-class PersonListView(TemplateView):
+class PersonListView(SuperuserRequiredMixin, TemplateView):
     template_name = 'person_list.html'
     # teste.delay()
     permission_required = 'person.view_person'
