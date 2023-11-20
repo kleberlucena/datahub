@@ -9,6 +9,7 @@ from apps.portal.models import Entity
 from .models import Person, Tattoo
 from .forms import PersonForm
 from .tasks import task_set_entity_person, task_set_entity_tattoo, task_set_entity_face, task_set_entity_physical, task_set_entity_nickname
+from base.mixins import SuperuserRequiredMixin
 
 
 class PersonListView(SuperuserRequiredMixin, ListView):
