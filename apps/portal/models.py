@@ -57,7 +57,7 @@ class Entity(Base):
     Entidades em geral. Ex: PMPB|QCG|EME|EM2|STI|
     """
     name = models.CharField("Nome da entidade", max_length=100)
-    father = models.CharField('Código da Entidade pai no EM8', max_length=7, default=0)
+    code = models.CharField('Código da Entidade pai no EM8', max_length=7, default=0)
     dad = models.ForeignKey('self', default=None, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Entidade superior")
     child_exists = models.BooleanField("A entidade tem filhos?", default=False)
     uuid_portal = models.UUIDField('UUID no Portal', editable=True, blank=True, null=True)

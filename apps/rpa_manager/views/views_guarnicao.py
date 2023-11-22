@@ -1,7 +1,5 @@
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from apps.rpa_manager.models import *
-from apps.rpa_manager.forms import *
 from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -9,8 +7,11 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from base.mixins import GroupRequiredMixin
 from django.contrib import messages
 from django.utils.decorators import method_decorator
-from apps.rpa_manager.handlers import require_permission
 from django.db.models import Q 
+
+from apps.rpa_manager.handlers import require_permission
+from apps.rpa_manager.models import *
+from apps.rpa_manager.forms import *
 
 
 MESSAGE_MODEL_NAME = 'Guarnição'
@@ -29,7 +30,7 @@ class GuarnicaoCreateView(GroupRequiredMixin, CreateView):
     
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        user = self.request.user.military
+        user = self.request.user
         kwargs['initial'] = {'remote_pilot': user}
         return kwargs
         

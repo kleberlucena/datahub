@@ -1,17 +1,20 @@
 import uuid
 import string
 import random
+from stdimage.models import StdImageField
+
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.gis.db import models
-from stdimage.models import StdImageField
 from django_minio_backend import MinioBackend
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+
 from apps.portal.models import Military
+
 
 class Base(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
