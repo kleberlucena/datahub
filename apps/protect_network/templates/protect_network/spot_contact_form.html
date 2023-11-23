@@ -1,0 +1,86 @@
+{% extends "base/base.html" %}
+{% load static crispy_forms_tags widget_tweaks custom_tags %}
+
+
+<!-- browser title -->
+{% block title %} Adicionar funcionário {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+
+{% endblock %}
+
+
+{% block title-header %} Rede de Proteção {% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a>Adicionar funcionário</a></li>
+{% endblock %}
+
+{% block content %}
+
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre funcionários</h3>
+    <p class="text-muted text-justify px-3 pt-2">
+        <b>Essa tela permite a adição de informações de funcionários para o estabelecimento </b>
+    </p>
+</div>
+
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Adicionar funcionário</h3>
+            </div>
+        <form class="p-3" method='post' enctype="multipart/form-data">
+            {% csrf_token %}
+        
+            <div class="row">
+                <div class="col-sm-12">
+                    {{form.name|add_class:"form-control"|as_crispy_field}}
+                    <br>
+                    {{form.role|add_class:"form-control"|as_crispy_field}}
+                    <br>
+                    {{form.phone|add_class:"form-control"|as_crispy_field}}
+                    <br>
+                    {{form.email|add_class:"form-control"|as_crispy_field}}
+                    <br>
+                    {{form.rg|add_class:"form-control"|as_crispy_field}}
+                    <br>
+                    {{form.cpf|add_class:"form-control"|as_crispy_field}}
+                </div>
+            </div>
+               
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a href="{% url 'protect_network:spot_detail' spot_pk %}">
+                    <button type="button" class="btn btn-warning">
+                        <i class=""></i>
+                        Voltar
+                    </button>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endif %}
+
+
+{% endblock %}
+<!-- javascripts -->
+{% block js %}
+<script src="{% static 'adminlte-3.1.0/plugins/inputmask/jquery.inputmask.min.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $("#id_phone").inputmask("(99) 99999-9999");
+        $("#id_email").inputmask({alias: "email"});
+        $("#id_rg").inputmask("99.999.999-9");
+        $("#id_cpf").inputmask("999.999.999-99");
+    });
+</script>
+{% endblock %}

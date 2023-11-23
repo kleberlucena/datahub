@@ -1,0 +1,107 @@
+{% load custom_tags %}
+
+<!-- Módulo Operações aéreas -->
+<li class="nav-item module-item">
+  <a href="#" class="nav-link">
+    <i class="fas fa-rocket nav-icon"></i>
+    <p>
+      Operações Aéreas
+      <i class="fas fa-angle-left right"></i>
+    </p>
+  </a>
+  <ul class="nav nav-treeview" style="display: none;">
+
+    <li class="nav-item">
+      <a href="{% url 'rpa_manager:painel' %}" class="nav-link">
+        <i class="fas fa-circle nav-icon"></i>
+        <p>Painel</p>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a href="{% url 'rpa_manager:dashboard_rpa' %}" class="nav-link">
+        <i class="far fa-circle nav-icon"></i>
+        <p>Dashboard</p>
+      </a>
+    </li>
+    
+    {% if request.user|has_group:'profile:rpa_basic' or request.user|has_group:'profile:rpa_advanced'  %}
+      <li class="nav-item">
+        <a href="{% url 'rpa_manager:guarnicao_form' %}" class="nav-link">
+          <i class="far fa-circle nav-icon"></i>
+          <p>Início de serviço</p>
+        </a>
+      </li>
+      <li class="nav-item ">
+        <a href="{% url 'rpa_manager:checklists' %}" class="nav-link">
+          <i class="far fa-circle nav-icon"></i>
+          <p>Checklists</p>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'rpa_manager:incidentes' %}" class="nav-link">
+          <i class="far fa-circle nav-icon"></i>
+          <p>Incidentes</p>
+        </a>
+      </li>
+    {% endif %}
+    
+    <li class="nav-item ">
+      <a href="{% url 'rpa_manager:risk_assessment_list' %}" class="nav-link">
+        <i class="far fa-circle nav-icon"></i>
+        <p>Avalição de risco</p>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'rpa_manager:principal' %}" class="nav-link">
+        <i class="far fa-circle nav-icon"></i>
+        <p>Operações</p>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'rpa_manager:relatorios' %}" class="nav-link">
+        <i class="far fa-circle nav-icon"></i>
+        <p>Cadernetas</p>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'rpa_manager:legislations' %}" class="nav-link">
+        <i class="far fa-circle nav-icon"></i>
+        <p>Legislação</p>
+      </a>
+    </li>
+
+    {% if request.user|has_group:'profile:rpa_advanced' %}
+      <li class="nav-item menu-item">
+        <a href="#" class="nav-link">
+          <i class="fa fa-cog nav-icon" aria-hidden="true"></i>
+          <p>
+            Configurações
+            <i class="fas fa-angle-left right"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview" style="display: none;">
+          <li class="nav-item ">
+            <a href="{% url 'rpa_manager:aeronaves' %}" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Aeronaves</p>
+            </a>
+          </li>
+          <li class="nav-item ">
+            <a href="{% url 'rpa_manager:historico' %}" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Histórico Aeronaves</p>
+            </a>
+          </li>
+          <li class="nav-item ">
+            <a href="{% url 'rpa_manager:baterias' %}" class="nav-link">
+              <i class="far fa-circle nav-icon"></i>
+              <p>Baterias</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+    {% endif %}
+  </ul>
+</li>
+

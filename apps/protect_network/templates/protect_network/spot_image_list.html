@@ -1,0 +1,140 @@
+{% extends "base/base.html" %}
+{% load static custom_tags %}
+
+{% block title %}Rede de Proteção - Imagens cadastradas{% endblock %}
+
+{% block style_sheet %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+{% endblock %}
+
+{% block title-header %} Rede de Proteção {% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a>Lista de imagens</a></li>
+{% endblock %}
+
+{% block content %}
+<!-- INFO BOX-->
+<div class="callout callout-info">
+  <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre lista de imagens</h3>
+  <p class="text-muted text-justify px-3 pt-2">
+    <b>Essa tela permite a visualização e exclusão de todas as imagens carregadas para um estabelecimento</b>
+  </p>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card card-primary card-outline">
+      <div class="card-header">
+        <h3 class="card-title">Lista de imagens cadastradas</h3>
+      </div>
+      <div class="card-body">
+        <div class="row">
+        </div>
+        <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+          <div class="table-responsive">
+            <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
+              role="grid" aria-describedby="objects_list_info" width="100%">
+              <thead>
+                <tr>
+                  <th>Descrição</th>
+                  <th>Imagem</th>
+                  <th>Enviada por</th>
+                  <th>Data de criação</th>
+                  {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+                    <th>Ação</th>
+                  {% endif %}
+               </tr>
+              </thead>
+
+              <tboby>
+                {% for spot_image in spot_images %}
+                <tr>
+                  <td>{{ spot_image.name|default_if_none:"Sem descrição" }}</td>
+                  <td>
+                    <div class="image-wrapper">
+                      <div>
+                          <a href="javascript:void(0);" onclick="openPopup('{{ spot_image.imageSpot.url }}', '{{ spot_image.name }}')">
+                              <img src="{{ spot_image.imageSpot.thumbnail.url }}" alt="{{ spot_image.name }}">
+                          </a>
+                      </div>
+                  </td>
+                  <td>{{ spot_image.created_by }}</td>
+                  <td>{{ spot_image.created_at }}</td>
+                  {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+                    <td class="project-actions text-center">
+                      <a  class="btn btn-outline-danger btn-sm" href="{% url 'protect_network:spot_image_delete' spot_image.id %}">Excluir</a>
+                    </td>
+                  {% endif %}
+                </tr>
+                {% endfor %}
+              </tboby>
+            </table>
+          </div>
+        </div>
+        
+      {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+        <a href="{% url 'protect_network:spot_image_add' spot_pk %}">
+          <button type="button" class="btn btn-primary">
+              <i class="fa fa-plus"></i>
+              Inserir
+          </button>
+        </a>
+      {% endif %}
+    <a href="{% url 'protect_network:spot_detail' spot_pk %}">
+        <button type="button" class="btn btn-warning">
+            <i class=""></i>
+            Cancelar
+        </button>
+    </a>
+
+        
+
+      </div>
+    </div>
+    {% endblock %}
+    {% block js %}
+<script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+<script>
+  $(function () {
+    var dt_table = $('#objects_list').dataTable({
+      buttons: ["pageLength"],
+      dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+      language: {"url": "{% static 'sti/datatable/pt_br.json' %}"},
+      responsive: true,
+      searching: true,
+      processing: true,
+      stateSave: true,
+      order: [[ 0, "desc" ]],
+    });
+  });
+</script>
+<script>
+  function openPopup(imageUrl, imageName) {
+    const popupWidth = 800;
+    const popupHeight = 600;
+    const left = (window.innerWidth - popupWidth) / 2;
+    const top = (window.innerHeight - popupHeight) / 2;
+
+    const popupOptions = `width=${popupWidth}, height=${popupHeight}, top=${top}, left=${left}, resizable=yes, scrollbars=yes`;
+    const popup = window.open(imageUrl, imageName, popupOptions);
+    if (window.focus) {
+      popup.focus();
+    }
+  }
+</script>
+{% endblock %}

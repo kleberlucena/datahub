@@ -1,0 +1,751 @@
+{% extends "base/base.html" %}
+{% load static crispy_forms_tags widget_tweaks custom_tags %}
+
+
+<!-- browser title -->
+{% block title %} Horário de funcionamento{% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css" />
+<style>
+    .center {
+        text-align: center;
+    }
+    .div_hide {
+        display:"flex";
+    }
+    .td-size_2 {
+        width:20%;
+    }
+    .td-size_8 {
+        width:80%;
+    }
+</style>
+{% endblock %}
+
+
+{% block title-header %} Rede de Proteção {% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a>Horário de funcionamento</a></li>
+{% endblock %}
+
+{% block content %}
+
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre horário de funcionamento</h3>
+    <p class="text-muted text-justify px-3 pt-2">
+        <b>Essa tela permite a configuração do horário de abertura e encerramento da ativadade de um estabelecimento, da seguinte maneira:</b>
+        <br>- Selecione primeiramente se no dia da semana o estabelecimento é aberto;
+        <br>- Selecione os horários de abertura e encerramento das atividades para o cada dia.
+        <br><br> Através dos atalhos de autopreenchimento é possível preencher automaticamente os dias da semana com o horário desejado, da seguinte maneira:
+        <br>- Selecione os horários de abertura e encerramento das atividades;
+        <br>- Na coluna de autopreenchimento clique na opção desejada.
+    </p>
+</div>
+
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Adicionar horário de funcionamento</h3>
+            </div>
+        <form class="p-3" method='post' enctype="multipart/form-data" id="hours_form">
+            {% csrf_token %}
+            
+
+            <div class="card-body">
+                <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                    <div class="table-responsive">
+                        <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
+                            role="grid" aria-describedby="objects_list_info" width="100%">
+                            <thead>
+                                <tr>
+                                    <th class="center td-size_2">Dia da semana</th>
+                                    <th class="center td-size_2">Aberto</th>
+                                    <th colspan="2" class="center td-size_8">Horário de funcionamento</th>
+                                </tr>
+                            </thead>
+                        
+                            <tboby>
+                                <tr>
+                                    <td class="center"> <div class="mt-3">Segunda-feira</div></td>
+                                    <td><div id="opened_monday">{{form.opened_mon|add_class:"form-control"|as_crispy_field}}</div></td>
+                                    <td colspan="2"><div id="div_slider_mon"><input type="text" id="slider_mon" /></td></div>
+                                </tr>
+                                <tr>
+                                    <td class="center"> <div class="mt-3">Terça-feira</div></td>
+                                    <td><div id="opened_tuesday">{{form.opened_tue|add_class:"form-control"|as_crispy_field}}</div></td>
+                                    <td colspan="2"><div id="div_slider_tue"><input type="text" id="slider_tue" /></td></div>
+                                </tr>
+                                <tr>
+                                    <td class="center"> <div class="mt-3">Quarta-feira</div></td>
+                                    <td class="center"><div id="opened_wednesday">{{form.opened_wed|add_class:"form-control"|as_crispy_field}}</div></td>
+                                    <td colspan="2"><div id="div_slider_wed"><input type="text" id="slider_wed" /></td></div>
+                                </tr>
+                                <tr>
+                                    <td class="center"> <div class="mt-3">Quinta-feira</div></td>
+                                    <td><div id="opened_thursday">{{form.opened_thu|add_class:"form-control"|as_crispy_field}}</div></td>
+                                    <td colspan="2"><div id="div_slider_thu"><input type="text" id="slider_thu" /></td></div>
+                                </tr>
+                                <tr>
+                                    <td class="center"> <div class="mt-3">Sexta-feira</div></td>
+                                    <td><div id="opened_friday">{{form.opened_fri|add_class:"form-control"|as_crispy_field}}</div></td>
+                                    <td colspan="2"><div id="div_slider_fri"><input type="text" id="slider_fri" /></td></div>
+                                </tr>
+                                <tr>
+                                    <td class="center"> <div class="mt-3">Sábado</div></td>
+                                    <td><div id="opened_saturday">{{form.opened_sat|add_class:"form-control"|as_crispy_field}}</div></td>
+                                    <td colspan="2"><div id="div_slider_sat"><input type="text" id="slider_sat" /></td></div>
+                                </tr>
+                                <tr>
+                                    <td class="center"> <div class="mt-3">Domingo </div></td>
+                                    <td><div id="opened_sunday">{{form.opened_sun|add_class:"form-control"|as_crispy_field}}</div></td>
+                                    <td colspan="2"><div id="div_slider_sun"><input type="text" id="slider_sun" /></td></div>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+
+        
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                    <div class="table-responsive">
+                        <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
+                            role="grid" aria-describedby="objects_list_info" width="100%">
+                            <thead>
+                                <tr>
+                                    <th colspan="3" class="center">Autopreenchimento</th>
+                                </tr>
+                            </thead>
+                            
+                            <tboby>
+                                <tr>
+                                    <td colspan="3">
+                                        <div id="div_slider_auto"><input type="text" id="slider_auto" /></td></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="center">
+                                        <div id="button2">
+                                            <button type="button" class="btn btn-outline-primary" id="Button1">
+                                                <i class=""></i>
+                                                Segunda a Sexta
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td class="center">
+                                        <div id="button2">
+                                            <button type="button" class="btn btn-outline-primary" id="Button2">
+                                                <i class=""></i>
+                                                Segunda a Sábado
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td class="center">
+                                        <div id="button3">
+                                            <button type="button" class="btn btn-outline-primary" id="Button3">
+                                                <i class=""></i>
+                                                Segunda a Domingo
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col">
+                    <input type="hidden" name="monday_open_name" id="monday_open"/>
+                    <input type="hidden" name="monday_close_name" id="monday_close"/>
+                </div>
+                <div class="col">
+                    <input type="hidden" name="tuesday_open_name" id="tuesday_open"/>
+                    <input type="hidden" name="tuesday_close_name" id="tuesday_close"/>
+                </div>
+                <div class="col">
+                    <input type="hidden" name="wednesday_open_name" id="wednesday_open"/>
+                    <input type="hidden" name="wednesday_close_name" id="wednesday_close"/>
+                </div>
+                <div class="col">
+                    <input type="hidden" name="thursday_open_name" id="thursday_open"/>
+                    <input type="hidden" name="thursday_close_name" id="thursday_close"/>
+                </div>
+                <div class="col">
+                    <input type="hidden" name="friday_open_name" id="friday_open"/>
+                    <input type="hidden" name="friday_close_name" id="friday_close"/>
+                </div>
+                <div class="col">
+                    <input type="hidden" name="saturday_open_name" id="saturday_open"/>
+                    <input type="hidden" name="saturday_close_name" id="saturday_close"/>
+                </div>
+                <div class="col">
+                    <input type="hidden" name="sunday_open_name" id="sunday_open"/>
+                    <input type="hidden" name="sunday_close_name" id="sunday_close"/>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-primary" id="submit_button">Salvar</button>
+                <a href="{% url 'protect_network:spot_detail' spot_pk %}">
+                    <button type="button" class="btn btn-warning">
+                        <i class=""></i>
+                        Voltar
+                    </button>
+                </a>
+            </div>
+        </form>
+            </div>
+</div>
+
+{% endif %}
+
+
+{% endblock %}
+<!-- javascripts -->
+{% block js %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/js/ion.rangeSlider.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var saveButton = document.getElementById("submit_button");
+        var def_opentime_mon_min=DatefieldToMin("{{ load_open_time_mon }}")
+        var def_closetime_mon_min=DatefieldToMin("{{ load_close_time_mon }}")
+        var def_opentime_tue_min=DatefieldToMin("{{ load_open_time_tue }}")
+        var def_closetime_tue_min=DatefieldToMin("{{ load_close_time_tue }}")
+        var def_opentime_wed_min=DatefieldToMin("{{ load_open_time_wed }}")
+        var def_closetime_wed_min=DatefieldToMin("{{ load_close_time_wed }}")
+        var def_opentime_thu_min=DatefieldToMin("{{ load_open_time_thu }}")
+        var def_closetime_thu_min=DatefieldToMin("{{ load_close_time_thu }}")
+        var def_opentime_fri_min=DatefieldToMin("{{ load_open_time_fri }}")
+        var def_closetime_fri_min=DatefieldToMin("{{ load_close_time_fri }}")
+        var def_opentime_sat_min=DatefieldToMin("{{ load_open_time_sat }}")
+        var def_closetime_sat_min=DatefieldToMin("{{ load_close_time_sat }}")
+        var def_opentime_sun_min=DatefieldToMin("{{ load_open_time_sun }}")
+        var def_closetime_sun_min=DatefieldToMin("{{ load_close_time_sun }}")
+
+        $("#slider_mon").ionRangeSlider({
+            type: "double",
+            skin: "round",
+            min: 0,
+            max: 1439,
+            step: 30, 
+            grid: true,
+            from: openTimeMondayField,
+            to: closeTimeMondayField,
+            prettify: function (num) {
+                var hours = Math.floor(num / 60);
+                var minutes = num % 60;
+                return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+            }
+        });
+        $("#slider_tue").ionRangeSlider({
+            type: "double",
+            skin: "round",
+            min: 0,
+            max: 1439,
+            step: 30, 
+            grid: true,
+            from: openTimeTuesdayField,
+            to: closeTimeTuesdayField,
+            prettify: function (num) {
+                var hours = Math.floor(num / 60);
+                var minutes = num % 60;
+                return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+            }
+        });
+        $("#slider_wed").ionRangeSlider({
+            type: "double",
+            skin: "round",
+            min: 0,
+            max: 1439,
+            step: 30, 
+            grid: true,
+            from: openTimeWednesdayField,
+            to: closeTimeWednesdayField,
+            prettify: function (num) {
+                var hours = Math.floor(num / 60);
+                var minutes = num % 60;
+                return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+            }
+        });
+        $("#slider_thu").ionRangeSlider({
+            type: "double",
+            skin: "round",
+            min: 0,
+            max: 1439,
+            step: 30, 
+            grid: true,
+            from: openTimeThursdayField,
+            to: closeTimeThursdayField,
+            prettify: function (num) {
+                var hours = Math.floor(num / 60);
+                var minutes = num % 60;
+                return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+            }
+        });
+        $("#slider_fri").ionRangeSlider({
+            type: "double",
+            skin: "round",
+            min: 0,
+            max: 1439,
+            step: 30, 
+            grid: true,
+            from: openTimeFridayField,
+            to: closeTimeFridayField,
+            prettify: function (num) {
+                var hours = Math.floor(num / 60);
+                var minutes = num % 60;
+                return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+            }
+        });
+        $("#slider_sat").ionRangeSlider({
+            type: "double",
+            skin: "round",
+            min: 0,
+            max: 1439,
+            step: 30, 
+            grid: true,
+            from: openTimeSaturdayField,
+            to: closeTimeSaturdayField,
+            prettify: function (num) {
+                var hours = Math.floor(num / 60);
+                var minutes = num % 60;
+                return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+            }
+        });
+        $("#slider_sun").ionRangeSlider({
+            type: "double",
+            skin: "round",
+            min: 0,
+            max: 1439,
+            step: 30, 
+            grid: true,
+            from: openTimeSundayField,
+            to: closeTimeSundayField,
+            prettify: function (num) {
+                var hours = Math.floor(num / 60);
+                var minutes = num % 60;
+                return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+            }
+        });
+        $("#slider_auto").ionRangeSlider({
+            type: "double",
+            skin: "round",
+            min: 0,
+            max: 1439,
+            step: 30, 
+            grid: true,
+            grid_snap: true,
+            from: 480,
+            to: 1080,
+            prettify: function (num) {
+                var hours = Math.floor(num / 60);
+                var minutes = num % 60;
+                return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+            }
+        });
+        const openTimeMondayFormField = document.getElementById('monday_open');
+        const closeTimeMondayFormField = document.getElementById('monday_close');
+        const openTimeTuesdayFormField = document.getElementById('tuesday_open');
+        const closeTimeTuesdayFormField = document.getElementById('tuesday_close');
+        const openTimeWednesdayFormField = document.getElementById('wednesday_open');
+        const closeTimeWednesdayFormField = document.getElementById('wednesday_close');
+        const openTimeThursdayFormField = document.getElementById('thursday_open');
+        const closeTimeThursdayFormField = document.getElementById('thursday_close');
+        const openTimeFridayFormField = document.getElementById('friday_open');
+        const closeTimeFridayFormField = document.getElementById('friday_close');
+        const openTimeSaturdayFormField = document.getElementById('saturday_open');
+        const closeTimeSaturdayFormField = document.getElementById('saturday_close');
+        const openTimeSundayFormField = document.getElementById('sunday_open');
+        const closeTimeSundayFormField = document.getElementById('sunday_close');
+        const button1 = document.querySelector('#Button1');
+        const button2 = document.querySelector('#Button2');
+        const button3 = document.querySelector('#Button3');
+        const open_time = document.getElementById('start_time');
+        const close_time = document.getElementById('end_time');
+        const openedMondayField = document.getElementById('id_opened_mon');
+        const openedTuesdayField = document.getElementById('id_opened_tue');
+        const openedWednesdayField = document.getElementById('id_opened_wed');
+        const openedThursdayField = document.getElementById('id_opened_thu');
+        const openedFridayField = document.getElementById('id_opened_fri');
+        const openedSaturdayField = document.getElementById('id_opened_sat');
+        const openedSundayField = document.getElementById('id_opened_sun');
+        const sliderMonDiv = document.getElementById('div_slider_mon');
+        const sliderTueDiv = document.getElementById('div_slider_tue');
+        const sliderWedDiv = document.getElementById('div_slider_wed');
+        const sliderThuDiv = document.getElementById('div_slider_thu');
+        const sliderFriDiv = document.getElementById('div_slider_fri');
+        const sliderSatDiv = document.getElementById('div_slider_sat');
+        const sliderSunDiv = document.getElementById('div_slider_sun');
+        var sliderMon = $("#slider_mon").data("ionRangeSlider");
+        var sliderTue = $("#slider_tue").data("ionRangeSlider");
+        var sliderWed = $("#slider_wed").data("ionRangeSlider");
+        var sliderThu = $("#slider_thu").data("ionRangeSlider");
+        var sliderFri = $("#slider_fri").data("ionRangeSlider");
+        var sliderSat = $("#slider_sat").data("ionRangeSlider");
+        var sliderSun = $("#slider_sun").data("ionRangeSlider");
+        var sliderAuto = $("#slider_auto").data("ionRangeSlider");
+        if (def_opentime_mon_min) {
+            var openTimeMondayField = def_opentime_mon_min
+            openTimeMondayFormField.value = minToDatefield(openTimeMondayField)
+            update_sliders()
+        } else {
+            openTimeMondayFormField.value = minToDatefield(0)
+        }
+        if (def_closetime_mon_min) {
+            var closeTimeMondayField = def_closetime_mon_min
+            closeTimeMondayFormField.value = minToDatefield(closeTimeMondayField) 
+            update_sliders()
+        } else {
+            closeTimeMondayFormField.value = minToDatefield(0)
+        }
+        if (def_opentime_tue_min) {
+            var openTimeTuesdayField = def_opentime_tue_min
+            openTimeTuesdayFormField.value = minToDatefield(openTimeTuesdayField)
+            update_sliders()
+        } else {
+            openTimeTuesdayFormField.value = minToDatefield(0)
+        }
+        if (def_closetime_tue_min) {
+            var closeTimeTuesdayField = def_closetime_tue_min
+            closeTimeTuesdayFormField.value = minToDatefield(closeTimeTuesdayField)
+            update_sliders()
+        } else {
+            closeTimeTuesdayFormField.value = minToDatefield(0)
+        }
+        if (def_opentime_wed_min) {
+            var openTimeWednesdayField = def_opentime_wed_min
+            openTimeWednesdayFormField.value = minToDatefield(openTimeWednesdayField)
+            update_sliders()
+        } else {
+            openTimeWednesdayFormField.value = minToDatefield(0)
+        }
+        if (def_closetime_wed_min) {
+            var closeTimeWednesdayField = def_closetime_wed_min
+            closeTimeWednesdayFormField.value = minToDatefield(closeTimeWednesdayField)
+            update_sliders()
+        } else {
+            closeTimeWednesdayFormField.value = minToDatefield(0)
+        }
+        if (def_opentime_thu_min) {
+            var openTimeThursdayField = def_opentime_thu_min
+            openTimeThursdayFormField.value = minToDatefield(openTimeThursdayField)
+            update_sliders()
+        } else {
+            openTimeThursdayFormField.value = minToDatefield(0);
+        }
+        if (def_closetime_thu_min) {
+            var closeTimeThursdayField = def_closetime_thu_min
+            closeTimeThursdayFormField.value = minToDatefield(closeTimeThursdayField)
+            update_sliders()
+        } else {
+            closeTimeThursdayFormField.value = minToDatefield(0)
+        }
+        if (def_opentime_fri_min) {
+            var openTimeFridayField = def_opentime_fri_min
+            openTimeFridayFormField.value = minToDatefield(openTimeFridayField)
+            update_sliders()
+        } else {
+            openTimeFridayFormField.value = minToDatefield(0)
+        }
+        if (def_closetime_fri_min) {
+            var closeTimeFridayField = def_closetime_fri_min
+            closeTimeFridayFormField.value = minToDatefield(closeTimeFridayField)
+            update_sliders()
+        } else {
+            closeTimeFridayFormField.value = minToDatefield(0)
+        }
+        if (def_opentime_sat_min) {
+            var openTimeSaturdayField = def_opentime_sat_min
+            openTimeSaturdayFormField.value = minToDatefield(openTimeSaturdayField)
+            update_sliders()
+        } else {
+            openTimeSaturdayFormField.value = minToDatefield(0)
+        }
+        if (def_closetime_sat_min) {
+            var closeTimeSaturdayField = def_closetime_sat_min
+            closeTimeSaturdayFormField.value = minToDatefield(closeTimeSaturdayField)
+            update_sliders()
+        } else {
+            closeTimeSaturdayFormField.value = minToDatefield(0)
+        }
+        if (def_opentime_sun_min) {
+            var openTimeSundayField = def_opentime_sun_min
+            openTimeSundayFormField.value = minToDatefield(openTimeSundayField)
+            update_sliders()
+        } else {
+            openTimeSundayFormField.value = minToDatefield(0)
+        }
+        if (def_closetime_sun_min) {
+            var closeTimeSundayField = def_closetime_sun_min
+            closeTimeSundayFormField.value = minToDatefield(closeTimeSundayField)
+            update_sliders()
+        } else {
+            closeTimeSundayFormField.value = minToDatefield(0)
+        }
+
+
+
+        if (openedMondayField.value === 'True') {
+            sliderMonDiv.hidden = false;
+        } else {
+            sliderMonDiv.hidden = true;
+        }
+        if (openedTuesdayField.value === 'True') {
+            sliderTueDiv.hidden = false;
+        } else {
+            sliderTueDiv.hidden = true;
+        }
+        if (openedWednesdayField.value === 'True') {
+            sliderWedDiv.hidden = false;
+        } else {
+            sliderWedDiv.hidden = true;
+        }
+        if (openedThursdayField.value === 'True') {
+            sliderThuDiv.hidden = false;
+        } else {
+            sliderThuDiv.hidden = true;
+        }
+        if (openedFridayField.value === 'True') {
+            sliderFriDiv.hidden = false;
+        } else {
+            sliderFriDiv.hidden = true;
+        }
+        if (openedSaturdayField.value === 'True') {
+            sliderSatDiv.hidden = false;
+        } else {
+            sliderSatDiv.hidden = true;
+        }
+        if (openedSundayField.value === 'True') {
+            sliderSunDiv.hidden = false;
+        } else {
+            sliderSunDiv.hidden = true;
+        }
+
+        openedMondayField.addEventListener('change', function() {
+            if (openedMondayField.value === 'True') {
+                sliderMonDiv.hidden = false;
+            } else {
+                sliderMonDiv.hidden = true;
+            }
+        });
+        openedTuesdayField.addEventListener('change', function() {
+            if (openedTuesdayField.value === 'True') {
+                sliderTueDiv.hidden = false;
+            } else {
+                sliderTueDiv.hidden = true;
+            }
+        });
+        openedWednesdayField.addEventListener('change', function() {
+            if (openedWednesdayField.value === 'True') {
+                sliderWedDiv.hidden = false;
+            } else {
+                sliderWedDiv.hidden = true;
+            }
+        });
+        openedThursdayField.addEventListener('change', function() {
+            if (openedThursdayField.value === 'True') {
+                sliderThuDiv.hidden = false;
+            } else {
+                sliderThuDiv.hidden = true;
+            }
+        });
+        openedFridayField.addEventListener('change', function() {
+            if (openedFridayField.value === 'True') {
+                sliderFriDiv.hidden = false;
+            } else {
+                sliderFriDiv.hidden = true;
+            }
+        });
+        openedSaturdayField.addEventListener('change', function() {
+            if (openedSaturdayField.value === 'True') {
+                sliderSatDiv.hidden = false;
+            } else {
+                sliderSatDiv.hidden = true;
+            }
+        });
+        openedSundayField.addEventListener('change', function() {
+            if (openedSundayField.value === 'True') {
+                sliderSunDiv.hidden = false;
+            } else {
+                sliderSunDiv.hidden = true;
+            }
+        });
+
+        $("#slider_mon").on("change", function (data) {
+            openTimeMondayFormField.value = minToDatefield(sliderMon.result.from)
+            closeTimeMondayFormField.value = minToDatefield(sliderMon.result.to)
+        });
+        $("#slider_tue").on("change", function (data) {
+            openTimeTuesdayFormField.value = minToDatefield(sliderTue.result.from)
+            closeTimeTuesdayFormField.value = minToDatefield(sliderTue.result.to)
+        });
+        $("#slider_wed").on("change", function (data) {
+            openTimeWednesdayFormField.value = minToDatefield(sliderWed.result.from)
+            closeTimeWednesdayFormField.value = minToDatefield(sliderWed.result.to)
+        });
+        $("#slider_thu").on("change", function (data) {
+            openTimeThursdayFormField.value = minToDatefield(sliderThu.result.from)
+            closeTimeThursdayFormField.value = minToDatefield(sliderThu.result.to)
+        });
+        $("#slider_fri").on("change", function (data) {
+            openTimeFridayFormField.value = minToDatefield(sliderFri.result.from)
+            closeTimeFridayFormField.value = minToDatefield(sliderFri.result.to)
+        });
+        $("#slider_sat").on("change", function (data) {
+            openTimeSaturdayFormField.value = minToDatefield(sliderSat.result.from)
+            closeTimeSaturdayFormField.value = minToDatefield(sliderSat.result.to)
+        });
+        $("#slider_sun").on("change", function (data) {
+            openTimeSundayFormField.value = minToDatefield(sliderSun.result.from)
+            closeTimeSundayFormField.value = minToDatefield(sliderSun.result.to)
+        });
+
+        function update_seg_sex() {
+            openedMondayField.value = 'True';
+            sliderMonDiv.hidden = false;
+            openTimeMondayField = sliderAuto.result.from;
+            closeTimeMondayField = sliderAuto.result.to;
+            openTimeMondayFormField.value = minToDatefield(openTimeMondayField)
+            closeTimeMondayFormField.value = minToDatefield(closeTimeMondayField)
+            openedTuesdayField.value = 'True';
+            sliderTueDiv.hidden = false;
+            openTimeTuesdayField = sliderAuto.result.from;
+            closeTimeTuesdayField = sliderAuto.result.to;
+            openTimeTuesdayFormField.value = minToDatefield(openTimeTuesdayField)
+            closeTimeTuesdayFormField.value = minToDatefield(closeTimeTuesdayField)
+            openedWednesdayField.value = 'True';
+            sliderWedDiv.hidden = false;
+            openTimeWednesdayField = sliderAuto.result.from;
+            closeTimeWednesdayField = sliderAuto.result.to;
+            openTimeWednesdayFormField.value = minToDatefield(openTimeWednesdayField)
+            closeTimeWednesdayFormField.value = minToDatefield(closeTimeWednesdayField)
+            openedThursdayField.value = 'True';
+            sliderThuDiv.hidden = false;
+            openTimeThursdayField = sliderAuto.result.from;
+            closeTimeThursdayField = sliderAuto.result.to;
+            openTimeThursdayFormField.value = minToDatefield(openTimeThursdayField)
+            closeTimeThursdayFormField.value = minToDatefield(closeTimeThursdayField)
+            openedFridayField.value = 'True';
+            sliderFriDiv.hidden = false;
+            openTimeFridayField = sliderAuto.result.from;
+            closeTimeFridayField = sliderAuto.result.to;
+            openTimeFridayFormField.value = minToDatefield(openTimeFridayField)
+            closeTimeFridayFormField.value = minToDatefield(closeTimeFridayField)
+            openedSaturdayField.value = 'False';
+            sliderSatDiv.hidden = true;
+            openTimeSaturdayField = 0;
+            closeTimeSaturdayField = 1439;
+            openTimeSaturdayFormField.value = minToDatefield(0)
+            closeTimeSaturdayFormField.value = minToDatefield(0)
+            openedSundayField.value = 'False';
+            sliderSunDiv.hidden = true;
+            openTimeSundayField = 0;
+            closeTimeSundayField = 1439;
+            openTimeSundayFormField.value = minToDatefield(0)
+            closeTimeSundayFormField.value = minToDatefield(0)
+            update_sliders()
+        }
+        function update_sat() {
+            openedSaturdayField.value = 'True';
+            sliderSatDiv.hidden = false;
+            openTimeSaturdayField = sliderAuto.result.from;
+            closeTimeSaturdayField = sliderAuto.result.to;
+            openTimeSaturdayFormField.value = minToDatefield(openTimeSaturdayField)
+            closeTimeSaturdayFormField.value = minToDatefield(closeTimeSaturdayField)
+            openedSundayField.value = 'False';
+            sliderSunDiv.hidden = true;
+            openTimeSundayField = 0;
+            closeTimeSundayField = 1439;
+            openTimeSundayFormField.value = minToDatefield(0)
+            closeTimeSundayFormField.value = minToDatefield(0)
+            update_sliders()
+        }
+        function update_sun() {
+            openedSundayField.value = 'True';
+            sliderSunDiv.hidden = false;
+            openTimeSundayField = sliderAuto.result.from;
+            closeTimeSundayField = sliderAuto.result.to;
+            openTimeSundayFormField.value = minToDatefield(openTimeSundayField)
+            closeTimeSundayFormField.value = minToDatefield(closeTimeSundayField)
+            update_sliders()
+        }
+        function update_sliders() {
+            $("#slider_mon").data("ionRangeSlider").update({
+                from: openTimeMondayField,
+                to: closeTimeMondayField
+            });
+            $("#slider_tue").data("ionRangeSlider").update({
+                from: openTimeTuesdayField,
+                to: closeTimeTuesdayField
+            });
+            $("#slider_wed").data("ionRangeSlider").update({
+                from: openTimeWednesdayField,
+                to: closeTimeWednesdayField
+            });
+            $("#slider_thu").data("ionRangeSlider").update({
+                from: openTimeThursdayField,
+                to: closeTimeThursdayField
+            });
+            $("#slider_fri").data("ionRangeSlider").update({
+                from: openTimeFridayField,
+                to: closeTimeFridayField
+            });
+            $("#slider_sat").data("ionRangeSlider").update({
+                from: openTimeSaturdayField,
+                to: closeTimeSaturdayField
+            });
+            $("#slider_sun").data("ionRangeSlider").update({
+                from: openTimeSundayField,
+                to: closeTimeSundayField
+            })
+        }
+        function minToDatefield(minutos) {
+            const horas = Math.floor(minutos / 60);
+            const minutosRestantes = minutos % 60;
+            const horaFormatada = horas.toString().padStart(2, '0');
+            const minutosFormatados = minutosRestantes.toString().padStart(2, '0');
+            return `${horaFormatada}:${minutosFormatados}`;
+        }
+        function DatefieldToMin(timeString) {
+            var timeParts = timeString.split(':');
+            var hours = parseInt(timeParts[0]);
+            var minutes = parseInt(timeParts[1]);
+            var totalMinutes = hours * 60 + minutes;
+            return totalMinutes;
+        }
+
+        button1.addEventListener('click', function() {
+            update_seg_sex();
+        });
+        button2.addEventListener('click', function() {
+            update_seg_sex();
+            update_sat();
+        });
+        button3.addEventListener('click', function() {
+            update_seg_sex();
+            update_sat();
+            update_sun();
+        });
+    });
+</script>
+
+
+{% endblock %}

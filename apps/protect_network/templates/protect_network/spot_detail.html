@@ -1,0 +1,856 @@
+{% extends "base/base.html" %}
+{% load static leaflet_tags crispy_forms_tags widget_tweaks custom_tags %}
+
+
+<!-- browser title -->
+{% block title %} Detalhes do estabelecimento {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css" />
+{% leaflet_css plugins="ALL" %}
+<style>
+    #map-container {
+        height: 100%;
+    }
+    #map {
+        height: 100%;
+    }
+</style>
+
+<style>
+    .badge {
+        display: inline-block;
+        padding: 0.5em 0.5em;
+        font-size: 0.8em;
+        border-radius: 10px;
+    }
+</style>
+<style>
+    .image-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .image-wrapper {
+        display: inline-block;
+    }
+    .image-wrapper img {
+        width: auto;
+        height: auto;
+    }
+    .progress_bar {
+        width: 200px;
+        font-size: 1.4em;
+    }
+    .irs .irs-bar {
+        background-color: gray;
+    }
+    .irs2 .irs-bar {
+        background-color: gray;
+    }
+    .outdated {
+        color: red;
+    }
+
+</style>
+
+  
+{% endblock %}
+
+
+{% block title-header %} Rede de Proteção {% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a>Detalhes do estabelecimento</a></li>
+{% endblock %}
+
+{% block content %}
+
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Detalhes do estabelecimento</h3>
+        <p class="text-muted text-justify px-3 pt-2">
+            <b>Essa tela permite a visualização de todas as cadastradas sobre um estabelecimento, como:</b>
+            <br>
+            - Detalhes sobre o estabelecimento;
+            <br>
+            - Coordenadas geográficas e localização do estabelecimento no mapa;
+            <br>
+            - Lista de tags cadastradas para o estabelecimento;
+            <br>
+            - Visualização e inserção de imagens referentes ao estabelecimento;
+            <br>
+            - Visualização e cadastro de informações referentes a segurança orgânica do estabelecimento;
+            <br>
+            - Visualização e cadastro de informações de funcionários e horário de funcionamento de estabelecimentos, caso exista.
+        </p>
+</div>
+
+<div class="card card-primary card-outline">
+    <div class="row">
+        <div class="col-md-6">
+        <div class="card-header">
+            <h3 class="card-title"><b> Informações do estabelecimento</b></h3>
+        </div>
+        <div class="p-4">
+            <div class="row mb-1">
+                <div>
+                    <b>Rede:</b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.spot_network }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>QPP:</b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.QPP }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Nome:</b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.name }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>CNPJ:</b>
+                </div>
+                <div class="ml-1 replace-none">
+                    {{ spot.cnpj }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Matriz:</b>
+                </div>
+                <div class="ml-1">
+                    {% if spot.is_headquarters %}
+                        Sim
+                    {% else %}
+                        Não
+                    {% endif %}
+                </div>
+            </div>
+            {% if spot.is_headquarters %}
+            {% else %}
+                <div class="row mb-1">
+                    <div>
+                        <b>CNPJ da matriz:</b>
+                    </div>
+                    <div class="ml-1 replace-none">
+                        {{ spot.cnpj }}
+                    </div>
+                </div>
+            {% endif %}
+            <div class="row mb-1">
+                <div>
+                    <b>Nome:</b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.name }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Categoria:</b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.spot_type }}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Informações adicionais:</b>
+                </div>
+                <div class="ml-1 replace-none">
+                    {{ spot.details }}
+                </div>
+            </div>
+
+
+            <br>
+            <div class="row mb-1">
+                <div>
+                    <h3 class="card-title"><b> Informações de endereço</b></h3>
+                </div>
+            </div>
+            <hr>
+            <div class="row mb-1">
+                <div>
+                    <b>Coordenadas no mapa:</b>
+                </div>
+                <div class="ml-1" id="id_location">
+                    {{ spot.latitude|stringformat:"f" }} , {{ spot.longitude|stringformat:"f" }}
+                </div>
+            </div>
+            {% for address in spot.addresses.all %}
+                <div class="row mb-1">
+                    <div>
+                        <b>Endereço:</b>
+                    </div>
+                    <div class="ml-1">
+                        {% if address.street %}
+                            {{ address.street }}
+                            {% if address.number %}
+                                , {{ address.number }}
+                            {% else %}
+                                , número não informado
+                            {% endif %}
+                            {% if address.complement %}
+                                - {{ address.complement }}
+                            {% endif %}
+                            {% if address.reference %}
+                                , {{ address.reference }}
+                            {% endif %}
+                        {% else %}
+                            Incompleto ou não informado
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <div>
+                        <b>Localidade:</b>
+                    </div>
+                    <div class="ml-1">
+                        {% if not address.zipcode and not address.city and not address.neighborhood  %}
+                            Não informado
+                        {% else %}
+                            {% if address.zipcode %}
+                                CEP: {{ address.zipcode }}
+                            {% endif %}
+                            {% if address.city %}
+                                - {{ address.city }}
+                            {% endif %}
+                            {% if address.neighborhood %}
+                                - {{ address.neighborhood }}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                Nenhum endereço encontrado.
+            {% endfor %}
+
+            <br>
+            <div class="row mb-1">
+                <div>
+                    <h3 class="card-title"><b> Informações de registro</b></h3>
+                </div>
+            </div>
+            <hr>
+            <div class="row mb-1">
+                <div style="width: 50%">
+                        <b>Dias para atualizar:</b>
+                        {% if spot_progress_bar_math > 0 %}
+                            {% if spot.next_update  == 1 %}
+                                <span>{{ spot.next_update }} dia</span>
+                                {% else %}
+                                <span>{{ spot.next_update }} dias</span>
+                            {% endif %}
+                        {% else %}
+                            Desatualizado
+                        {% endif %}
+                        <div class="irs">
+                            <input type="text" id="slider" name="slider" />
+                        </div>
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Criado por:</b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.created_by }} em {{ spot.created_at }}</h6>
+                </div>
+            </div>
+                <div class="row mb-1">
+                <div>
+                    <b>Unidade do criador:</b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.user_unit.military.unit.last|default_if_none:"Sem unidade cadastrada"}}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Nome de guerra: </b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.user_unit.rank|default_if_none:""}} {{ spot.user_unit.military|default_if_none:"Sem nome de guerra cadastrado"}}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Usuário: </b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.user_unit.military.user}}
+                </div>
+            </div>
+            <div class="row mb-1">
+                <div>
+                    <b>Matrícula: </b>
+                </div>
+                <div class="ml-1">
+                    {{ spot.user_unit.military.register|default_if_none:"Sem matrícula cadastrada"}}
+                </div>
+            </div>
+            <div class="row mb-1">
+                {% if spot.updated_by %}
+                    <div>
+                        <b>Atualizado por:</b>
+                    </div>
+                    <div class="ml-1">
+                        {{ spot.updated_by }} em {{ spot.updated_at }}</p></h6>
+                    </div>
+                {% else %}
+                    <div class="ml-1">
+                        Sem atualização recente
+                    </div>
+                {% endif %}
+            </div>
+            
+    </div>
+    <br><br>
+    <div class="row mt-auto ml-3">
+        <div>
+            {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+            <a class="btn btn-outline-primary" href="{% url 'protect_network:spot_update' spot.pk %}">Editar</a>
+            {% endif %}
+        </div>
+    </div>
+    
+        </div>
+        <div class="col-md-6">
+            <div class="card-header">
+        <h3 class="card-title"><b>Localização no mapa</b></h3>
+            </div>
+            <div class="card-body" style="height: 100vh;">
+                {% leaflet_map "map" callback="window.map_init" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title"><b>Funcionários</b></h3>
+            </div>
+                <div class="card-body">
+                    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                        <div class="table-responsive">
+                            <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
+                                role="grid" aria-describedby="objects_list_info" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Contato</th>
+                                        <th>Função</th>
+                                        <th>Telefone</th>
+                                        <th>E-mail</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tboby>
+                                    {% if spot_contacts %}
+                                        {% for spot_contact in spot_contacts %} 
+                                        <tr>
+                                            <td class="replace-none">{{ spot_contact.name }}</td>
+                                            <td class="replace-none">{{ spot_contact.role }}</td>
+                                            <td class="replace-none">{{ spot_contact.phone }}</td>
+                                            <td class="replace-none">{{ spot_contact.email }}</td>
+                                            <td class="project-actions text-center">
+                                                <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:contact_update' spot_contact.id %}">Detalhes</a>
+                                                <a  class="btn btn-outline-primary btn-sm" href="{% url 'protect_network:contact_update' spot_contact.id %}">Editar</a>
+                                                <a  class="btn btn-outline-danger btn-sm" href="{% url 'protect_network:contact_delete' spot_contact.id %}">Excluir</a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="6" align="center">Não existem funcionários cadastrados.</td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+                        <a href="{% url 'protect_network:contact_add' spot.id %}">
+                            <button type="button" class="btn btn-outline-primary">
+                                <i class="fa fa-plus"></i>
+                                Inserir
+                            </button>
+                        </a>
+                        {% endif %}
+            
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title"><b>Questionário de segurança</b></h3>
+            </div>
+            <div class="card-body">
+
+
+                {% if spot_survey %}
+                    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                        <div class="table-responsive">
+                            <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
+                                role="grid" aria-describedby="objects_list_info" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Itens de segurança</th>
+                                    </tr>
+                                </thead>
+                                <tboby>
+                                        <tr>
+                                            <td>
+                                                <div class="irs2">
+                                                    <input type="text" id="slider-survey" name="slider-survey" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+                    <a href="{% url 'protect_network:survey_update' spot.id %}">
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class=""></i>
+                            Editar
+                        </button>
+                    </a>
+                    {% endif %}
+                    
+                {% else %}
+                    <p>Não é possível avaliar o nível de segurança do estabelecimento pois o questionário ainda não foi respondido</p><br>
+                    {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+                    <a href="{% url 'protect_network:survey_add' spot.id %}">
+                        <button type="button" class="btn btn-outline-primary">
+                            Responder questionário
+                        </button>
+                    </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title"><b>Tags</b></h3>
+            </div>
+            <div class="card-body">
+                {% if spot.tags.all %}
+                    {% for tag in spot.tags.all %}
+                        <div class="badge bg-warning">{{ tag.name }}</div>
+                    {% endfor %}
+                    <br><br>
+                    {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+                    <a href="{% url 'protect_network:spot_tags_update' spot.id %}">
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class="fa fa-plus"></i>
+                            Inserir
+                        </button>
+                    </a>
+                    {% endif %}
+                {% else %}
+                    <p>Não existem tags cadastradas.</p><br>
+                    {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+                    <a href="{% url 'protect_network:spot_tags_update' spot.id %}">
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class="fa fa-plus"></i>
+                            Inserir
+                        </button>
+                    </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title"><b>Imagens do estabelecimento</b></h3>
+            </div>
+            <div class="card-body">
+                <div class="image-container">
+                    {% if spot_images %}
+                        {% for spot_image in spot_images %} 
+                            <div class="image-wrapper">
+                                <div>
+                                    <a href="javascript:void(0);" onclick="openPopup('{{ spot_image.imageSpot.url }}', '{{ spot_image.name }}')">
+                                        <img src="{{ spot_image.imageSpot.thumbnail.url }}" alt="{{ spot_image.name }}">
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>Não existem imagens cadastradas.</p>
+                    {% endif %}
+                </div>
+                    
+                <br>
+                {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+                <a href="{% url 'protect_network:spot_image_add' spot.id %}">
+                    <button type="button" class="btn btn-outline-primary">
+                        <i class="fa fa-plus"></i>
+                        Inserir
+                    </button>
+                </a>
+                {% endif %}
+                <a href="{% url 'protect_network:spot_image_list' spot.id %}">
+                    <button type="button" class="btn btn-outline-info">
+                        <i class=""></i>
+                        Listar
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+    
+
+       
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <b>Horário de funcionamento</b></h3>
+            </div>
+                <div class="card-body">
+                        <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                            <div class="table-responsive">
+                                <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
+                                    role="grid" aria-describedby="objects_list_info" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Dia da semana</th>
+                                            <th>Abertura</th>
+                                            <th>Encerramento</th>
+                                        </tr>
+                                    </thead>
+                                    <tboby>
+                                        {% if spot_opening_hours %}
+                                            {% for opening_hour in spot_opening_hours %}
+                                                    <tr>
+                                                    <td> Segunda-feira </td>
+                                                        {% if opening_hour.opened_mon == True %}
+
+                                                            {% if opening_hour.open_time_mon == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.open_time_mon }}</td>
+                                                            {% endif %}
+
+                                                            {% if opening_hour.close_time_mon == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.close_time_mon }}</td>
+                                                            {% endif %}
+                                                            
+                                                        {% else %}
+                                                            <td colspan="2">Fechado nesse dia</td>
+                                                        {% endif %}
+                                                </tr>
+                                                <tr>
+                                                    <td> Terça-feira </td>
+                                                        {% if opening_hour.opened_tue == True %}
+
+                                                            {% if opening_hour.open_time_tue == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.open_time_tue }}</td>
+                                                            {% endif %}
+
+                                                            {% if opening_hour.close_time_tue == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.close_time_tue }}</td>
+                                                            {% endif %}
+                                                            
+                                                        {% else %}
+                                                        <td colspan="2">Fechado nesse dia</td>
+                                                    {% endif %}
+                                                </tr>
+                                                <tr>
+                                                    <td> Quarta-feira </td>
+                                                        {% if opening_hour.opened_wed == True %}
+
+                                                            {% if opening_hour.open_time_wed == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.open_time_wed }}</td>
+                                                            {% endif %}
+
+                                                            {% if opening_hour.close_time_wed == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.close_time_wed }}</td>
+                                                            {% endif %}
+                                                            
+                                                        {% else %}
+                                                            <td colspan="2">Fechado nesse dia</td>
+                                                        {% endif %}
+                                                </tr>
+                                                <tr>
+                                                    <td> Quinta-feira </td>
+                                                        {% if opening_hour.opened_thu == True %}
+
+                                                            {% if opening_hour.open_time_thu == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.open_time_thu }}</td>
+                                                            {% endif %}
+
+                                                            {% if opening_hour.close_time_thu == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.close_time_thu }}</td>
+                                                            {% endif %}
+                                                            
+                                                        {% else %}
+                                                            <td colspan="2">Fechado nesse dia</td>
+                                                        {% endif %}
+                                                </tr>
+                                                <tr>
+                                                    <td> Sexta-feira </td>
+                                                        {% if opening_hour.opened_fri == True %}
+
+                                                            {% if opening_hour.open_time_fri == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.open_time_fri }}</td>
+                                                            {% endif %}
+
+                                                            {% if opening_hour.close_time_fri == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.close_time_fri }}</td>
+                                                            {% endif %}
+                                                            
+                                                        {% else %}
+                                                            <td colspan="2">Fechado nesse dia</td>
+                                                        {% endif %}
+                                                </tr>
+                                                <tr>
+                                                    <td> Sábado </td>
+                                                        {% if opening_hour.opened_sat == True %}
+
+                                                            {% if opening_hour.open_time_sat == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.open_time_sat }}</td>
+                                                            {% endif %}
+
+                                                            {% if opening_hour.close_time_sat == None %}
+                                                                <td> Sem horário cadastrado </td>
+                                                            {% else %}
+                                                                <td>{{ opening_hour.close_time_sat }}</td>
+                                                            {% endif %}
+                                                            
+                                                        {% else %}
+                                                            <td colspan="2">Fechado nesse dia</td>
+                                                        {% endif %}
+                                                </tr>
+                                                <tr>
+                                                    <td> Domingo </td>
+                                                    {% if opening_hour.opened_sun == True %}
+
+                                                        {% if opening_hour.open_time_sun == None %}
+                                                            <td> Sem horário cadastrado </td>
+                                                        {% else %}
+                                                            <td>{{ opening_hour.open_time_sun }}</td>
+                                                        {% endif %}
+
+                                                        {% if opening_hour.close_time_sun == None %}
+                                                            <td> Sem horário cadastrado </td>
+                                                        {% else %}
+                                                            <td>{{ opening_hour.close_time_sun }}</td>
+                                                        {% endif %}
+
+                                                    {% else %}
+                                                        <td colspan="2">Fechado nesse dia</td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="3" align="center">Não existem horários de funcionamenton cadastrados.</td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+
+                                {% if spot_opening_hours %}
+                                    {% for opening_hour in spot_opening_hours %}
+                                        <a href="{% url 'protect_network:opening_hours_update' opening_hour.id  %}">
+                                            <button type="button" class="btn btn-outline-primary">
+                                                <i class=""></i>
+                                                Editar
+                                            </button>
+                                        </a>
+                                    {% endfor %}
+                                {% else %}
+                                    <a href="{% url 'protect_network:opening_hours_add' spot.id %}">
+                                        <button type="button" class="btn btn-outline-primary">
+                                            <i class="fa fa-plus"></i>
+                                            Inserir
+                                        </button>
+                                    </a>
+                                {% endif %}
+                            
+                            {% endif %}
+                        </div>
+                </div>
+            </div>
+        </div>
+
+</div>
+
+</div>
+
+
+    
+
+        
+
+
+
+
+
+{% endblock %}
+<!-- javascripts -->
+{% block js %}
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+{% leaflet_js plugins="ALL" %}
+<script type="text/javascript">
+    function map_init(map, options) {
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+    
+
+        var locationDiv = document.getElementById('id_location');
+        if (locationDiv) {
+            var locationText = locationDiv.textContent.trim();
+            var coordinates = locationText.split(',');
+            if (coordinates.length === 2) {
+                var lat = parseFloat(coordinates[0]);
+                var lon = parseFloat(coordinates[1]);
+    
+                var initialZoom = 18;
+                var initialPosition = L.latLng(lat, lon);
+                map.setView(initialPosition, initialZoom);
+                var marker = L.marker([lat, lon]).addTo(map);
+            }
+        }
+    }
+</script>
+<script>
+    function openPopup(imageUrl, imageName) {
+      const popupWidth = 800;
+      const popupHeight = 600;
+      const left = (window.innerWidth - popupWidth) / 2;
+      const top = (window.innerHeight - popupHeight) / 2;
+      const popupOptions = `width=${popupWidth}, height=${popupHeight}, top=${top}, left=${left}, resizable=yes, scrollbars=yes`;
+      const popup = window.open(imageUrl, imageName, popupOptions);
+      if (window.focus) {
+        popup.focus();
+      }
+    }
+  </script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/js/ion.rangeSlider.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var maxValue = {{ spot.spot_type.update_time }};
+        var centerValue = 0;
+        var initialValue = {{ spot.next_update }};
+        var backgroundColor = initialValue <= centerValue ? "red" : "green";
+
+        $("#slider").ionRangeSlider({
+            min: -maxValue,
+            max: maxValue,
+            from: initialValue,
+            step: 1,
+            from_fixed: true,
+            onStart: function (data) {
+                $(".irs .irs-bar").css("background-color", backgroundColor);
+            },
+            onChange: function (data) {
+                var currentValue = data.from;
+                backgroundColor = currentValue <= centerValue ? "red" : "green";
+                $(".irs .irs-bar").css("background-color", backgroundColor);
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        var centerValueSurvey = 50;
+        var initialValueSurvey = {{ spot_survey_score|floatformat:0 }};
+        var backgroundColorSurvey = initialValueSurvey >= centerValueSurvey ? "green" : "red";
+
+        $("#slider-survey").ionRangeSlider({
+            min: 0,
+            max: 100,
+            from: initialValueSurvey,
+            step: 1,
+            from_fixed: true,
+            onStart: function (data) {
+                $(".irs2 .irs-bar").css("background-color", backgroundColorSurvey);
+            },
+            onChange: function (data) {
+                var currentValueSurvey = data.from;
+                backgroundColorSurvey = currentValueSurvey >= centerValueSurvey ? "green" : "red";
+                $(".irs2 .irs-bar").css("background-color", backgroundColorSurvey);
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+    var elementsToCheck = document.querySelectorAll('.replace-none');
+
+
+    for (var i = 0; i < elementsToCheck.length; i++) {
+        var element = elementsToCheck[i];
+        if (element.textContent.trim() === 'None') {
+            element.textContent = 'Não informado';
+        }
+    }
+</script>
+
+{% endblock %}

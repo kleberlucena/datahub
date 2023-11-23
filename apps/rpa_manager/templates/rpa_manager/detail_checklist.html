@@ -1,0 +1,105 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% comment %} bacinf style_sheet {% endcomment %}
+<style>
+  .callout-text {
+    text-align: justify
+  }
+  
+  .detail_aircraft {
+    display: flex;
+    gap: 10px;
+  }
+  .report_details_card {
+    width: 400px;
+  }
+  .detail_img_container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+  }
+  
+  .detail_img_container img {
+    width: 200px;
+    margin: 5px;
+  }
+
+  .aircraft_img {
+    width: 1000px;
+    height: 783px;
+    border-radius: 5px;
+  }
+  @media (max-width: 768px) {
+    .detail_aircraft {
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      width: 100%;
+    }
+
+    .aircraft_img {
+      width: 345px;
+      height: 400px;
+      border-radius: 5px;
+    }
+  }
+</style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Operações aéreas {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:checklists' %}">Checklists</a></li>
+  <li class="breadcrumb-item active">Dados checklist</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+<div class="card card-primary card-outline">
+  <div class="card-header">
+    <h3 class="card-title">Dados checklist</h3>
+  </div> 
+
+  <div class="detail_aircraft">
+    <div class="card card-primary col-md-4 mt-3">
+      <div class="card-body">
+        <strong>Piloto remoto: </strong> {{ checklist.remote_pilot.military }} 
+        <hr>
+        <strong>Aeronave: </strong> {{ checklist.aircraft }} 
+        <hr>
+        <strong>Data: </strong> {{ checklist.date }}
+        <hr>
+        <strong>Horário: </strong> {{ checklist.time }}
+        <hr>
+        <strong>Alterações: </strong> {{ checklist.changes }}
+        <hr>
+      </div>
+    </div>
+
+    <div class="col-md-8">  
+      {% if image_urls %}
+        <div class="detail_img_container mt-3 mr-3">
+          {% for image_url in image_urls %}
+            <img src="{{ image_url }}" alt="Image">
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>Não há imagens cadastradas.</p>
+      {% endif %}
+        
+    </div>
+</div>
+
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+{% endblock %}

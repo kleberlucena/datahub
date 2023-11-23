@@ -1,6 +1,8 @@
+import re
 import logging
 from django.db.models import Q
 from datetime import date
+from django.core.exceptions import ValidationError
 
 from apps.vehicle.models import VehicleCortex, PersonRenavamCortex, RegistryVehicleCortex
 from . import tasks
@@ -64,3 +66,17 @@ def process_cortex_consult(username, placa=None, chassi=None, renavam=None, moto
         retorno = None
     finally:
         return retorno
+
+def validate_signal(placa):
+    # Remover qualquer formatação adicional da placa
+    placa = placa.replace('-', '').replace(' ', '').upper()
+
+    # Expressão regular para verificar a validade da placa
+    # Aceita tanto as placas antigas como as do Mercosul
+    padrao = r'^([A-Z]{3}\d{4}|[A-Z]{3}\d[A-Z]\d{2})$'
+
+    # Verificar se a placa corresponde ao padrão
+    if re.match(padrao, placa):
+        return placa
+    else:
+        raise ValidationError('PLACA inválida', 'invalid')

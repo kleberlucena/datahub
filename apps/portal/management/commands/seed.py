@@ -74,12 +74,12 @@ class Command(BaseCommand):
             cpf="123.123.123-12",
             url_image="não tem")
 
-        HistoryTransfer.objects.create(
-            military=military1, entity=entidade1, date_start=date.now(), obs="cadastro pela seed")
+        # HistoryTransfer.objects.create(
+        #     military=military1, entity=entidade1, date_start=date.now(), obs="cadastro pela seed")
 
-        HistoryTransfer.objects.create(
-            military=military2, entity=entidade2, date_start=date.now(), obs="cadastro pela seed")
+        # HistoryTransfer.objects.create(
+        #     military=military2, entity=entidade2, date_start=date.now(), obs="cadastro pela seed")
 
-        Promotion.objects.create(military=military1, rank="SD")
-        Promotion.objects.create(military=military2, rank="SD")
-        Promotion.objects.create(military=military1, rank="CB")
+        # Promotion.objects.create(military=military1, rank="SD")
+        # Promotion.objects.create(military=military2, rank="SD")
+        # Promotion.objects.create(military=military1, rank="CB")

@@ -1,0 +1,59 @@
+{% load custom_tags %}
+{% if request.user|has_group:'profile:protect_network_basic,profile:protect_network_advanced,profile:protect_network_manager'  %}
+<!--Módulo Rede de Proteção-->
+<li class="nav-item module-item">
+    <a href="" class="nav-link">
+        <i class="fas fa-map-marked-alt nav-icon"></i>
+        <p>Rede de Proteção<i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview" style="display: none;">
+        <li class="nav-item ">
+            <a href="{% url 'protect_network:index' %}" class="nav-link">
+                <i class="fa fa-circle nav-icon"></i><p>Mapeamento das redes</p>
+            </a>
+        </li>
+                <li class="nav-item">
+            <a href="{% url 'protect_network:spot_list_created' %}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i><p>Meus cadastros</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'protect_network:spot_list' %}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i><p>Estabelecimentos</p>
+            </a>
+        </li>
+        {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager'  %}
+        <li class="nav-item menu-item">
+            <a href="#" class="nav-link">
+                <i class="fas fa-wrench nav-icon"></i> 
+                <p>Configurações<i class="fas fa-angle-left right"></i></p>
+            </a>
+            <ul class="nav nav-treeview" style="display: none;">
+                <li class="nav-item">
+                    <a href="{% url 'protect_network:qpp_list' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i><p>QPPs</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'protect_network:type_list' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i><p>Categorias</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'protect_network:tag_list' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i><p>Tags</p>
+                    </a>
+                </li>
+                {% if request.user|has_group:'profile:protect_network_manager'  %}
+                <li class="nav-item">
+                    <a href="{% url 'protect_network:network_list' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i><p>Redes de proteção</p>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </li>
+        {% endif %}
+    </ul>
+</li>
+{% endif %}

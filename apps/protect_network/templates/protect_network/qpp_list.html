@@ -1,0 +1,107 @@
+{% extends "base/base.html" %}
+{% load static custom_tags %}
+
+{% block title %}Rede de Proteção - Lista de QPPs{% endblock %}
+
+{% block style_sheet %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+{% endblock %}
+
+{% block title-header %} Rede de Proteção {% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a>Lista de QPPs</a></li>
+{% endblock %}
+
+{% block content %}
+<!-- INFO BOX-->
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre lista de QPPs</h3>
+    <p class="text-muted text-justify px-3 pt-2">
+        <b>Essa tela exibe em lista todos os QPPs existentes e possibilita tamém sua edição</b>
+       
+    </p>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card card-primary card-outline">
+      <div class="card-header">
+        <h3 class="card-title">Lista de QPPs cadastradas</h3>
+      </div>
+      <div class="card-body">
+        <div class="row">
+        </div>
+        <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+          <div class="table-responsive">
+            <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
+              role="grid" aria-describedby="objects_list_info" width="100%">
+              <thead>
+                <tr>
+                  <th>QPP</th>
+                  <th>Descrição</th>
+                  {% if request.user|has_group:'profile:protect_network_manager' %}
+                    <th>Ação</th>
+                  {% endif %}
+
+               </tr>
+              </thead>
+
+              <tboby>
+                {% for qpp in qpps %}
+                <tr>
+                  <td>{{ qpp.name }}</td>
+                  <td>{{ qpp.details|default_if_none:"Sem descrição" }} </td>
+                  {% if request.user|has_group:'profile:protect_network_manager' %}
+                    <td class="project-actions text-center">
+                      <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:qpp_update' qpp.pk %}">Editar</a>
+                    </td>
+                  {% endif %}
+
+                </tr>
+                {% endfor %}
+              </tboby>
+            </table>
+          </div>
+        </div>
+        <div class="row mt-auto ml-0">
+        {% if request.user|has_group:'profile:protect_network_manager' %}
+          <a href="{% url 'protect_network:qpp_add' %}" alt="qppadd">
+            <button type="button" class="btn btn-block btn-primary"><i class="fa fa-plus"></i> Inserir</button>
+          </a>
+        {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endblock %}
+    {% block js %}
+<script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+<script>
+  $(function () {
+    var dt_table = $('#objects_list').dataTable({
+      buttons: ["pageLength", "colvis"],
+      dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+      language: {"url": "{% static 'sti/datatable/pt_br.json' %}"},
+      responsive: true,
+      searching: true,
+      processing: true,
+      stateSave: true,
+      order: [[ 0, "desc" ]],
+    });
+  });
+</script>
+{% endblock %}

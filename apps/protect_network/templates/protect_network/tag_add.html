@@ -1,0 +1,78 @@
+{% extends "base/base.html" %}
+{% load static crispy_forms_tags widget_tweaks custom_tags %}
+
+
+<!-- browser title -->
+{% block title %} Adicionar tag {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+
+{% endblock %}
+
+
+{% block title-header %} Rede de Proteção {% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a>Adicionar tag</a></li>
+{% endblock %}
+
+{% block content %}
+
+<!-- INFO BOX-->
+<div class="callout callout-info">
+    {% if "/add" in request.path %}
+        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar tag</h3>
+        <p class="text-muted text-justify px-3 pt-2">
+            <b>Essa tela permite a criação de tags para cadastro dos estabelecimentos.</b>
+        </p>
+    {% elif "/update" in request.path %}
+        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre editar tag</h3>
+        <p class="text-muted text-justify px-3 pt-2">
+            <b>Essa tela permite a alteração de tags para cadastro dos estabelecimentos.</b>
+        </p>
+    {% endif %}
+
+</div>
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    {% if "/add" in request.path %}
+                        <h3 class="card-title">Adicionar tag</h3>
+                    {% elif "/update" in request.path %}
+                    <h3 class="card-title">Editar tag</h3>
+                    {% endif %}
+                </div>
+            <form class="p-3" method='post' enctype="multipart/form-data">
+                {% csrf_token %}
+            
+                <div class="row mb-1">
+                    <div class="col-sm-12">
+                        {{form.name|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                </div>
+                <div class="row mb-1 mt-3">
+                    <div class="col-sm-12">
+                        {{form.details|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                </div>
+
+                
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <a href="{% url 'protect_network:tag_list' %}"><button type="button" class="btn btn-warning">Cancelar</button></a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endif %}
+
+
+
+{% endblock %}
+<!-- javascripts -->
+{% block js %}
+{% endblock %}

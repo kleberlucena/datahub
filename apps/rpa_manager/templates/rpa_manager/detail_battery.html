@@ -1,0 +1,90 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+  {% comment %} bacinf style_sheet {% endcomment %}
+  <style>
+    .detail_battery {
+      display: flex;
+      gap: 10px;
+    }
+    .report_details_card {
+      width: 400px;
+    }
+    .detail_battery_img {
+      height: 800px;
+      margin: 0 auto;
+    }
+    .battery_img {
+      width: 1000px;
+      height: 783px;
+      border-radius: 5px;
+    }
+    @media (max-width: 768px) {
+      .detail_battery {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        width: 100%;
+      }
+
+      .battery_img {
+        width: 345px;
+        height: 400px;
+        border-radius: 5px;
+      }
+    }
+  </style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Operações aéreas {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+{% comment %} <li class="breadcrumb-item active">Início</li> {% endcomment %}
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+<div class="card card-primary card-outline">
+  <div class="card-header">
+    <h3 class="card-title">Dados bateria</h3>
+  </div> 
+
+  <div class="detail_battery">
+    <div class="card card-primary col-md-4 mt-3">
+      <div class="card-body">
+        <strong>Numeração: </strong> {{ bateria.number }} 
+        <hr>
+        <strong>Ciclos: </strong> {{ bateria.num_cicles }}
+        <hr>
+        <strong>Tipo: </strong> {{ bateria.maximum_cicles }}
+        <hr>
+        <strong>Ciclos recomendado </strong> {{ bateria.maximum_cicles.recommended_cicles }}
+        <hr>
+        <strong>Ciclos alerta: </strong> {{ bateria.maximum_cicles.alert_cicles }}
+        <hr>
+        <strong>Ciclos crítico: </strong> {{ bateria.maximum_cicles.critical_cicles }}
+        <hr>
+        <strong>Associada a aeronave: </strong> {{ bateria.aircraft }}
+        <hr>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      {% if bateria.battery_image %}
+        <div class="detail_battery_img mt-3 mr-3"><img class="battery_img" src="{{ bateria.battery_image.url }}" alt="bateria enterprise">`</div>
+      {% endif %}
+    </div>
+</div>
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+  <!-- DataTables  & Plugins -->
+{% endblock %}

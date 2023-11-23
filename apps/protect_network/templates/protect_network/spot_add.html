@@ -1,0 +1,320 @@
+{% extends "base/base.html" %}
+{% load static leaflet_tags crispy_forms_tags widget_tweaks custom_tags %}
+
+
+<!-- browser title -->
+{% block title %} Adicionar estabelecimento {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% leaflet_css plugins="ALL" %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css' %}">
+<style>
+        #map {
+            height: 600px;
+        }
+</style>
+{% endblock %}
+
+
+{% block title-header %} Rede de Proteção {% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a>Adicionar estabelecimento</a></li>
+{% endblock %}
+
+{% block content %}
+
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar estabelecimento</h3>
+    <p class="text-muted text-justify px-3 pt-2">
+        <b>Essa tela permite o cadastro de novos estabelecimentos em uma rede</b>
+    </p>
+</div>
+
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Adicionar estabelecimento</h3>
+            </div>
+            <form class="p-3" method='post' enctype="multipart/form-data">
+                {% csrf_token %}
+            <div class="row">
+                <div class="col-sm-6 mt-3">
+                    {{form.spot_network|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
+                </div>
+                <div class="col-sm-6 mt-3">
+                    {{ form.QPP|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6 mt-3">
+                    {{form.name|add_class:"form-control"|as_crispy_field}}
+                </div>
+                <div class="col-sm-6 mt-3">
+                    {{form.spot_type|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    <label for="{{ form.is_headquarters.id_for_label }}">É Matriz?</label>
+                    {{ form.is_headquarters }}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    {{form.cnpj|add_class:"form-control"|as_crispy_field}}
+                </div>
+            </div>
+            <div class="row mt-3" id="parent-company-field">
+                <div class="col-sm-12">
+                    {{form.parent_company|add_class:"form-control"|as_crispy_field}}
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-sm-12">
+                    {{form.details|add_class:"form-control"|as_crispy_field}}
+                </div>
+            </div>
+
+            <br>
+            <h3 class="card-title">Endereço</h3>
+            <br>
+            <hr>
+
+            <div class="row mt-3">
+                <div class="col-sm-4">
+                    <b>CEP</b>
+                    <input type="text" id="id_zipcode" name="zipcode" class="form-control", placeholder="Digite o CEP">
+                </div>
+                <div class="col-sm-4">
+                    <b>Cidade</b>
+                    <input type="text" id="id_city" name="city" class="form-control", placeholder="Digite nome da cidade">
+                </div>
+                <div class="col-sm-4">
+                    <b>Bairro</b>
+                    <input type="text" id="id_neighborhood" name="neighborhood" class="form-control", placeholder="Digite o nome do bairro">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-8">
+                    <b>Logradouro</b>
+                    <input type="text" id="id_street" name="street" class="form-control", placeholder="Digite o nome da rua">
+                </div>
+                <div class="col-sm-4">
+                    <b>Número</b>
+                    <input type="text" id="id_number" name="number" class="form-control", placeholder="Digite o número">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm-6">
+                    <b>Complemento</b>
+                    <input type="text" id="id_complement" name="complement" class="form-control", placeholder="Se houver, digite o complento">
+                </div>
+                <div class="col-sm-6">
+                    <b>Referência</b>
+                    <input type="text" id="id_reference" name="reference" class="form-control", placeholder="Se houver, forneça um ponto de referência">
+                </div>
+            </div>
+
+            <br>
+            <h3 class="card-title">Localização</h3>
+            <br>
+            <hr>
+
+            <div class="row mt-3">
+                <div class="col-sm-6">
+                    {{form.latitude|add_class:"form-control"|as_crispy_field}}
+                </div>
+                <div class="col-sm-6">
+                    {{form.longitude|add_class:"form-control"|as_crispy_field}}
+                </div>
+            </div>
+
+            <br>
+            <div class="row">
+                <div class="col-sm-12">
+                    {% leaflet_map "map" callback="window.map_init" %}
+                </div>
+            </div>
+    
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a href="{{ request.META.HTTP_REFERER  }}" alt="type_add"><button type="button" class="btn btn-warning ml-1"> Cancelar</button></a>
+
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+
+
+
+{% endblock %}
+<!-- javascripts -->
+{% block js %}
+{% leaflet_js plugins="ALL" %}
+<script src="{% static 'adminlte-3.1.0/plugins/inputmask/jquery.inputmask.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.full.min.js' %}"></script>
+<script>
+  $(function () {
+    $('.select2bs4').select2({
+      placeholder: 'Selecione um item',
+      theme: 'bootstrap4',
+      width: '100%'
+    })
+  });
+</script>
+<script type="text/javascript">
+    var markers = [];
+    function map_init(map, options) {
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var initialZoom = 12;
+        var initialPosition = L.latLng(-7.121651, -34.88033);
+        var marker = [];
+        var spotTypeName  = [];
+        map.setView(initialPosition, initialZoom);
+
+        var grayIcon = new L.Icon({
+            iconUrl: '{% static "sti/img/icons/marker-icon-2x-grey.png" %}',
+            iconSize: [26, 40], 
+            iconAnchor: [13, 40 ] 
+        });;
+
+
+        function getSpots(spotTypeName) {  
+            $.ajax({
+                url: '{% url "protect_network_api:list_filter_spots_type" %}?spot_type_name=' + spotTypeName,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    data = data.results;
+                    for (var i = 0; i < data.length; i++) {
+                        (function() {
+                            var spot = data[i];
+                            var lat = spot.latitude;
+                            var lon = spot.longitude;
+                            var name = spot.name;
+                            var detailUrl = spot.detail_url;
+
+                            
+                            var marker = L.marker([lat, lon],{ icon: grayIcon }).addTo(map);
+                            markers.push(marker); 
+
+                            
+                            var xhr = new XMLHttpRequest();
+                            xhr.open("GET", detailUrl, true);
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState === 4 && xhr.status === 200) {
+                                    var popupContent = xhr.responseText;
+                                    marker.bindPopup(popupContent, { autoClose: false });
+                                } else {
+                                    marker.bindPopup('<a href="' + name + '</a>', { autoClose: false });
+                                }
+                            };
+                            xhr.send();
+                        })();
+                    }
+                },
+            });
+        }
+
+
+        function removeMarkers() {
+            for (var i = 0; i < markers.length; i++) {
+                map.removeLayer(markers[i]);
+            }
+            markers = []; 
+        }
+
+
+        function getType() { 
+            removeMarkers()       
+            var spotTypeName = $('#id_spot_type').select2('data')[0].text;
+            getSpots(spotTypeName);
+        }
+
+        $('#id_spot_type').on('change', getType);
+
+        
+        var marker_new = null;
+
+        map.on('click', function(e) {
+            var lat = e.latlng.lat;
+            var lon = e.latlng.lng;
+
+            
+            document.getElementById('id_latitude').value = lat;
+            document.getElementById('id_longitude').value = lon;
+            var coord = lat + ', ' + lon;
+
+            
+            if (marker_new) {
+                map.removeLayer(marker_new);
+            }
+
+            
+            marker_new = L.marker([lat, lon], { draggable: true }).addTo(map);
+            marker_new.on('dragend', function(event) {
+                var updatedMarker = event.target;
+                var position = updatedMarker.getLatLng();
+                var lat = position.lat;
+                var lon = position.lng;
+
+                
+                document.getElementById('id_latitude').value = lat;
+                document.getElementById('id_longitude').value = lon;
+            });
+        })
+    }
+</script>
+<script>
+    $(document).ready(function() {
+        var zipcodeInput = $("#id_zipcode");
+        zipcodeInput.inputmask("99999-999", { clearMaskOnLostFocus: true });
+    });
+    </script>
+<script>
+    $(document).ready(function () {
+        $('#id_cnpj').inputmask('99.999.999/9999-99');
+        $('#id_parent_company').inputmask('99.999.999/9999-99');
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        var headquarters = document.getElementById("id_is_headquarters");
+        var cnpj = document.getElementById("id_cnpj");
+        var parent_company = document.getElementById("id_parent_company");
+        
+        $(parent_company).prop("hidden", true);
+        $("#parent-company-field").prop("hidden", true);
+
+        
+        $(headquarters).change(function() {
+            if (headquarters.value === "True"){
+                parent_company.value = ""
+                $(parent_company).prop("hidden", true);
+                $("#parent-company-field").prop("hidden", true);
+            } else {
+                $(parent_company).prop("hidden", false);
+                $("#parent-company-field").prop("hidden", false);
+            }
+        });
+    });
+</script>
+{% endblock %}

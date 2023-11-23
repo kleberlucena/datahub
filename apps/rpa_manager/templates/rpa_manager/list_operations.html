@@ -1,0 +1,225 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load custom_tags %}
+
+<!-- styles -->
+{% block style_sheet %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <style>
+    @media (max-width: 768px) {
+      .dtr-control::before {
+        content: "\f107" !important; 
+        font-family: "Font Awesome 5 Free" !important; 
+        font-weight: 700 !important;
+      }
+
+      .border-for-in-course{
+        border-left: 5px solid #FFC107 !important;
+      }
+
+      .border-for-done {
+        border-left: 5px solid lightblue !important;
+      }
+
+      #new_operation_btn {
+        margin-left: 0px !important;
+      }
+    }
+  </style>
+{% endblock style_sheet %}
+
+  <!-- browser title -->
+{% block title %} Operações {% endblock %}
+
+  <!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+  <!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa_manager:painel' %}">Painel</a></li>
+  <li class="breadcrumb-item active">Operações</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+  <div class="card card-primary card-outline">
+    <div class="card-header">
+      <h3 class="card-title">Operações</h3>
+    </div>
+
+    <div class="card-body">
+      <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+        <table id="objects_list" class="table table-bordered table-striped dataTable dtr-inline" role="grid"
+          aria-describedby="objects_list_info" width="100%">
+          <thead>
+            <tr>
+              <th scope="col">Operador</th>
+              <th scope="col">Operação</th>
+              <th scope="col">Data</th>
+              <th scope="col">Aeronave</th>
+              <th scope="col">Status</th>
+              <th class="removerDoPdf" scope="col">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for missao in missoes %}
+            <tr>
+              {% if missao.completed is False %}
+                <td class="border-for-in-course">{{ missao.user.military }}</td>
+              {% else %}
+                <td class="border-for-done">{{ missao.user.military }}</td>
+              {% endif %}
+                <td >{{ missao.title }}</td>
+              <td data-sort='YYYYMMDD'>{{ missao.date | date:"d/m/Y" }}</td>
+              <td>{{ missao.aircraft.prefix}} - {{ missao.aircraft.model}}</td>
+
+              <td>
+                {% if missao.completed is True %}
+                  <span class="badge badge-success">Encerrada</span>
+                {% else %}
+                  <span class="badge badge-warning">Em andamento</span>
+                {% endif %}
+              </td>
+
+              {% if missao.completed is False %}
+              
+                {% if request.user|has_group:'profile:rpa_view' %}
+                  <td>
+                    <a href="{% url 'rpa_manager:ver_missao' missao.id %}">
+                      <button type="button" class="btn btn-outline-info btn-block">Ver dados</button>
+                    </a>
+                  </td>
+                {% else %}
+                  <td>
+                    <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
+                      <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                      <span class="sr-only">Toggle Dropdown</span>
+                      Filtros
+                      </button>
+                      <div class="dropdown-menu" role="menu" style="">
+                        {% if missao.completed is not True %}
+                          <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver operação</a>
+                          <a class="dropdown-item" href="{% url 'rpa_manager:criar_novo_relatorio' missao.id %}">Encerrar operação</a>
+                          <a class="dropdown-item" href="{% url 'rpa_manager:editar_missao' missao.id %}">Editar operação</a>
+                          {% if request.user|has_group:'profile:advanced' %}
+                            <a class="dropdown-item" href="{% url 'rpa_manager:deletar_missao' missao.id %}">Excluir operação</a>
+                          {% endif %}
+                        {% else %}
+                          <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver operação</a>
+                          <a class="dropdown-item" href="{% url 'rpa_manager:editar_missao' missao.id %}">Editar operação</a>
+                          {% if request.user|has_group:'profile:advanced' %}
+                            <a class="dropdown-item" href="{% url 'rpa_manager:deletar_missao' missao.id %}">Excluir operação</a>
+                          {% endif %}
+                        {% endif %}
+                      </div>
+                    </div>
+                  </td>
+                {% endif %}
+              {% else %}
+                  {% if request.user|has_group:'profile:rpa_view' or request.user|has_group:'profile:rpa_basic' %}
+                  <td>
+                    <a href="{% url 'rpa_manager:ver_missao' missao.id %}">
+                      <button type="button" class="btn btn-outline-info btn-block">Ver dados</button>
+                    </a>
+                  </td>
+                {% else %}
+                  <td>
+                    <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
+                      <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                      <span class="sr-only">Toggle Dropdown</span>
+                      Filtros
+                      </button>
+                      <div class="dropdown-menu" role="menu" style="">
+                        {% if missao.completed is not True %}
+                          <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver operação</a>
+                          <a class="dropdown-item" href="{% url 'rpa_manager:criar_novo_relatorio' missao.id %}">Encerrar operação</a>
+                          <a class="dropdown-item" href="{% url 'rpa_manager:editar_missao' missao.id %}">Editar operação</a>
+                          {% if request.user|has_group:'profile:advanced' %}
+                            <a class="dropdown-item" href="{% url 'rpa_manager:deletar_missao' missao.id %}">Excluir operação</a>
+                          {% endif %}
+                        {% else %}
+                          <a class="dropdown-item" href="{% url 'rpa_manager:ver_missao' missao.id %}">Ver operação</a>
+                          <a class="dropdown-item" href="{% url 'rpa_manager:editar_missao' missao.id %}">Editar operação</a>
+                          {% if request.user|has_group:'profile:advanced' %}
+                            <a class="dropdown-item" href="{% url 'rpa_manager:deletar_missao' missao.id %}">Excluir operação</a>
+                          {% endif %}
+                        {% endif %}
+                      </div>
+                    </div>
+                  </td>
+                {% endif %}
+              {% endif %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      
+      {% if request.user|has_group:'profile:rpa_basic' or request.user|has_group:'profile:rpa_advanced' %}
+        <div class="row">
+            <a href="{% url 'rpa_manager:criar_nova_missao' %}" style="margin-right: 10px;">
+              <button type="button" id="new_operation_btn" style="display: inline; width: 160px; height: 38px; margin-left: 10px" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i> Nova operação </button>
+            </a>
+            <a href="{% url 'rpa_manager:points_of_interest' %}">
+              <button type="button" style="display: inline" class="btn btn-outline-info mt-3"><i class="fa fa-cog nav-icon" aria-hidden="true"></i>
+                Gerenciar Pontos </button>
+            </a>
+      {% endif %}
+    </div>
+  </div>
+{% endblock content %}
+
+  <!-- javascripts -->
+{% block js %}
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+  <script>
+    var table = $('#objects_list').DataTable( {
+        lengthChange: false,
+        buttons: [ 'pageLength',
+        {
+          extend: 'excel',
+          text: 'Excel',
+          exportOptions: {
+            columns: ':not(.removerDoPdf)'
+          }
+        },
+        {
+          extend: 'print',
+          text: 'Imprimir',
+          exportOptions: {
+            columns: ':not(.removerDoPdf)'
+          }
+        },
+        'colvis'
+      ],
+        dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        language: { "url": "//cdn.datatables.net/plug-ins/1.11.1/i18n/pt_br.json" },
+        responsive: true,
+        searching: true,
+        processing: true,
+        columnDefs: [{ "width": "150px", targets: [-1]}],
+        order: [2, 'desc']
+    } );
+  </script>
+
+  <script>
+    let tableBorderIsDone = document.querySelector('#tableBorderIsDone');
+    let tableBorderInCourse = document.querySelector('#tableBorderInCourse');
+    tableBorderIsDone.classList.add('border-for-done');
+    tableBorderInCourse.classList.add('border-for-in-course');
+  </script>
+
+{% endblock %}

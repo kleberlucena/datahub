@@ -44,7 +44,7 @@ services:
 
     command: bash -c "python manage.py migrate
       && python manage.py collectstatic --noinput
-      && gunicorn --bind 0.0.0.0:8000 --workers 9 project.wsgi:application"
+      && gunicorn --bind 0.0.0.0:8000 --workers 25 project.wsgi:application"
     volumes:
       - ./logs:/code/logs
     ports:

@@ -1,0 +1,85 @@
+{% extends "base/base.html" %}
+{% load static crispy_forms_tags widget_tweaks custom_tags %}
+
+
+<!-- browser title -->
+{% block title %} Adicionar tag {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css' %}">
+<style>
+    .badge {
+      display: inline-block;
+      padding: 0.5em 0.5em;
+      font-size: 0.8em;
+      border-radius: 10px;
+    }
+  </style>
+{% endblock %}
+
+
+{% block title-header %} Redes de Proteção {% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a>Adicionar tag</a></li>
+{% endblock %}
+
+{% block content %}
+
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar tags</h3>
+    <p class="text-muted text-justify px-3 pt-2">
+        <b>Essa tela permite a inserção de tags em um estabelecimento</b>
+        <br>Tags são palavras-chave usadas para categorizar e identificar os estabelecimentos. Devem ser concisas e relevantes, de maneira a facilitar buscas específicas.
+    </p>
+</div>
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Adicionar tags</h3>
+                </div>
+            <form class="p-3" method='post' enctype="multipart/form-data">
+                {% csrf_token %}
+            
+                <div class="row">
+                    <div class="col-sm-12">
+                        {{form.tags|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <a href="{{ request.META.HTTP_REFERER  }}"><button type="button" class="btn btn-warning ml-1"> Cancelar </button></a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endif %}
+
+
+
+{% endblock %}
+<!-- javascripts -->
+{% block js %}
+<script src="{% static 'adminlte-3.1.0/plugins/inputmask/jquery.inputmask.min.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $("#id_phone").inputmask("(99) 99999-9999");
+    });
+</script>
+<script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.full.min.js' %}"></script>
+<script>
+  $(function () {
+    $('.select2bs4').select2({
+      placeholder: 'Selecione um item',
+      theme: 'bootstrap4',
+      width: '100%'
+    })
+  });
+</script>
+{% endblock %}

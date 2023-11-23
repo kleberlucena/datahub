@@ -3,11 +3,14 @@ from django.contrib.auth.models import Group
 import logging
 from allauth.socialaccount.models import SocialAccount
 
+from apps.portal import tasks as portal_tasks
+
 
 logger = logging.getLogger(__name__)
 
 
 def synchronize_groups_permissions(user, mapa_of_permissions):
+    portal_tasks.link_military.delay(user.username)
     clients = list(mapa_of_permissions.keys())
     if "bacinf" in clients:
         roles_oidc = mapa_of_permissions["bacinf"]["roles"]

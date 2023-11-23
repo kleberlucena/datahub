@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     'django_minio_backend.apps.DjangoMinioBackendConfig',
     'stdimage',
     'crispy_forms',
+    'crispy_bootstrap5',
     'widget_tweaks',
     'localflavor',
     'django_filters',
@@ -104,8 +105,8 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'celery_progress',
     'guardian',
+    'leaflet',
     'corsheaders',
-    'easyaudit',
 
     # Apps
     'base',
@@ -122,10 +123,13 @@ INSTALLED_APPS = [
     'apps.watermark',
     'apps.fact',
     'apps.police_report',
+    'apps.rpa_manager',
     'apps.radio',
     'apps.termsofuse',
+    'apps.protect_network',
 
 ]
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -137,7 +141,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'global_login_required.GlobalLoginRequiredMiddleware',
-    'easyaudit.middleware.easyaudit.EasyAuditMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -159,6 +162,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'base.context_processors.portal_url',
             ],
         },
     },
@@ -210,7 +214,6 @@ DEFAULT_FILE_STORAGE = 'django_minio_backend.models.MinioBackend'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 # Expiration Cookie
 SESSION_COOKIE_AGE = 1800
@@ -334,7 +337,7 @@ PUBLIC_PATHS = [
     r'^/api/token/refresh/',
     r'^/watermark/.*',
     # Descomentar para expor rota adminitrativa (só para ajustes de configurações do keycloak)
-    r'^/admin/.*',
+    # r'^/admin/.*',
 ]
 
 # Celery Configuration Options
@@ -364,3 +367,16 @@ if DEBUG:
     # MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
     REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append(
         'rest_framework.authentication.SessionAuthentication')
+
+
+# REDIS CACHE LOCAL CONFIG
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         # Replace for cloud server IP
+#         'LOCATION': 'redis://127.0.0.1:6379/1',  
+#         'OPTIONS': {
+#             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+#         }
+#     }
+# }

@@ -56,7 +56,6 @@ schema_view = get_schema_view(
     public=True,
 )
 
-
 urlpatterns = [
     path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -72,8 +71,7 @@ urlpatterns = [
     path('api/v1/cortex/', include('apps.cortex.api.v1.urls'), name='cortex'),
     path('api/v1/document/', include('apps.document.api.urls'), name='document_api'),
     path('api/v1/fact/', include('apps.fact.api.v1.urls'), name='fact'),
-    path('api/v1/police-report/',
-         include('apps.police_report.api.v1.urls'), name='police_report'),
+    path('api/v1/police-report/', include('apps.police_report.api.v1.urls'), name='police_report'),
     path('api/v1/person/', include('apps.person.api.v1.urls'), name='person_api'),
     path('api/v1/vehicle/', include('apps.vehicle.api.v1.urls'), name='vehicle_api'),
     path('api/v1/image/', include('apps.image.api.urls'), name='image_api'),
@@ -82,11 +80,16 @@ urlpatterns = [
     path('api/v1/legacy/', include('apps.person.api.legacy.urls'), name='legacy_api'),
     path('api/v1/watermark/', include('apps.watermark.urls'), name='watermark'),
     path('api/v1/radio/', include('apps.radio.api.v1.urls'), name='radio_api'),
+    path('api/v1/synchub/', include('apps.aido_sync_hub.api.v1.urls'), name='aido_sync_hub'),
     path('address/', include('apps.address.urls'), name='address'),
     path('document/', include('apps.document.urls'), name='document'),
     path('image/', include('apps.image.urls'), name='image'),
     path('person/', include('apps.person.urls'), name='person'),
     path('portal/', include('apps.portal.urls'), name='portal'),
+    path('rpa_manager/', include('apps.rpa_manager.urls'), name="rpa_manager"),
+    path('protect_network/', include('apps.protect_network.urls'), name='protect_network'),
+    path('api/v1/protect_network/', include('apps.protect_network.api.v1.urls'), name='protect_network_api'),
+    path('fact/', include('apps.fact.urls'), name='fact'),
     path('termos-de-uso/', include('apps.termsofuse.urls')),
     path('celery-progress/', include('celery_progress.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
