@@ -1,0 +1,207 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+  {% comment %} bacinf style_sheet {% endcomment %}
+  <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+<style>
+  .detail_report {
+    display: flex;
+    gap: 10px;
+  }
+  .report_details_card {
+    width: 400px;
+  }
+  .detail_report_map {
+    height: 800px;
+  }
+  .mapBehaviorWhenError {
+    border: 1px solid black;
+  }
+  .copy_btn:hover {
+    color: blue;
+  }
+  .search_btn:hover {
+    color: blue;
+
+  }
+
+  @media (max-width: 768px) {
+    .detail_report {
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: start;
+      width: 100%;
+    }
+    .detail_report_map {
+      height: 300px;
+    }
+  }
+</style>
+
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Detalhes Caderneta {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa:relatorios' %}">Cadernetas</a></li>
+  <li class="breadcrumb-item active">Dados Caderneta</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+<div class="card card-primary card-outline">
+  <div class="card-header">
+    <h3 class="card-title">Dados do Caderneta</h3>
+  </div> 
+
+  <div class="detail_report">
+    <div class="card card-primary col-md-4 mt-3">  
+      <div class="card-body">
+        <strong>Título: </strong> {{ relatorio.title }}
+        <hr>
+        <strong>Piloto remoto: </strong> {{ relatorio.remote_pilot.military.nickname }}
+        <hr>
+        <strong>Piloto observador: </strong>
+        {% if relatorio.observer_pilot == None %}
+          sem registro
+        {% else %}
+          {{ relatorio.observer_pilot.military.nickname }} 
+        {% endif %}
+        <hr>
+        <strong>Data inicial: </strong> {{ relatorio.date | date:"d/m/Y"}}
+        <hr>
+        <strong>Quem solicitou: </strong> {{ relatorio.who_requested }}
+        <hr>
+        <strong>Quem autorizou: </strong> {{ relatorio.who_authorized }}
+        <hr>
+        <strong>Data final: </strong> 
+        {% if relatorio.final_date == None %}
+          sem registro
+        {% else %}
+          {{ relatorio.final_date | date:"d/m/Y"}}
+        {% endif %}
+        <hr>
+        <strong>Horário inicial: </strong> {{ relatorio.initial_time }}
+        <hr>
+        <strong>Horário final: </strong> {{ relatorio.final_time }}
+        <hr>
+        <strong>Localidade: </strong> {{ relatorio.location }}
+        <hr>
+        <strong>Coordenadas: </strong> 
+        
+        {% if relatorio.latitude != None or relatorio.longitude != None %}
+          {{ relatorio.latitude|stringformat:"s" }},{{ relatorio.longitude|stringformat:"s" }}
+        {% else %}
+          sem registro
+        {% endif %}
+        <hr>
+        <strong>Número Protocolo/Sarpas DECEA: </strong> 
+        
+        {% if relatorio.num_sarpas %}
+          <p class="protocol_number" style="display: inline; margin-right: 10px;">{{ relatorio.num_sarpas }}</p> 
+          <a type="button" onclick="copyProtocolNumber();" style="margin-right: 5px;">
+            <i class="copy_btn fa fa-copy fa-lg"></i>
+          <a href="https://sarpas.decea.mil.br/consulta-protocolo" target="_blank" style="text-decoration: none; color:black;">
+            <i class="search_btn fa fa-search fa-lg"></i>
+          </a>
+        {% else %}
+          <p class="protocol_number" style="display: inline; margin-right: 10px;">Sem registro</p> 
+        {% endif %}
+          
+        <hr>
+        <strong>Arquivo de solicitação: </strong> 
+        {% if relatorio.decea_request_file %}
+          <a href="{{ relatorio.decea_request_file.url }}" download target="_blank">Baixar solicitação 
+            <i class="fas fa-file-pdf"></i> </a>
+          {% else %}
+           sem registro
+        {% endif %}
+        <hr>
+        <strong>Entidade apoiada: </strong> {{ relatorio.entity_support }}
+        <hr>
+        <strong>Natureza de voo: </strong> {{ relatorio.flight_nature }}
+        <hr>
+        <strong>Tipo de operação: </strong> {{ relatorio.type_of_operation }}
+        <hr>
+        <strong>Aeronave utilizada: </strong> {{ relatorio.aircraft }}
+        <hr>
+        <strong>Número ficha ocorrência CIOP: </strong> 
+        {% if relatorio.police_incident_number %}
+          {{ relatorio.police_incident_number }}
+        {% else %}
+          sem registro
+        {% endif %}
+        <hr>
+        <strong>Relato da operação: </strong> {{ relatorio.operation_report }}
+        <hr>
+      </div>
+    </div>
+  
+    <div class="col-md-8">
+      <div id="map" class="detail_report_map mt-3 mr-3"><h3 id="errorMessage"></h3></div>
+    </div>
+  </div>
+
+</div>
+
+
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+  <!-- DataTables  & Plugins -->
+  <script src="{% static 'leaflet/leaflet.js' %}"></script>
+  <script type="text/javascript">
+		// Função que será executada quando o documento estiver pronto
+		document.addEventListener('DOMContentLoaded', function () {
+				var coordinatesJson = {{ coordinates_json|safe }}
+				// Coordenadas do centro do mapa (latitude, longitude)
+				let centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude];
+        
+        if(coordinatesJson.latitude !== null && coordinatesJson.longitude !== null) {
+          // Criação do mapa no elemento div com o ID 'map'
+          let map = L.map('map').setView(centerCoordinates, 16);
+
+          // Adicionando uma camada de mapa (neste caso, o OpenStreetMap)
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }).addTo(map);
+          
+          // Adicionando um marcador no mapa
+          let marker = L.marker(centerCoordinates).addTo(map);
+
+          // Adicionando um popup ao marcador
+          marker.bindPopup(coordinatesJson.titulo + '<br>' +  coordinatesJson.latitude + ',' + coordinatesJson.longitude).openPopup();
+        } else {
+          let errorMessage = document.querySelector('#errorMessage');
+          let mapa = document.querySelector('.detail_report_map');
+
+          mapa.classList.add('mapBehaviorWhenError')
+          errorMessage.textContent = "Sem coordenadas para gerar o mapa"
+        }
+    });
+	</script>
+
+  <script>
+    const protocolNumber = document.querySelector(".protocol_number").textContent;
+    function copyProtocolNumber() {
+      const textarea = document.createElement('textarea');
+      textarea.value = protocolNumber;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+
+      alert(`Protocolo ${protocolNumber} copiado.`);
+    }
+
+  </script>
+{% endblock %}

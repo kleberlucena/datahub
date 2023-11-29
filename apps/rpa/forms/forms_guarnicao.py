@@ -99,8 +99,8 @@
 from django import forms
 from django.contrib.auth.models import User
 from apps.portal.models import Military
-from apps.rpa_manager.models import PoliceGroup
-from apps.rpa_manager.utils.addAttributes import addAttributes
+from apps.rpa.models import PoliceGroup
+from apps.rpa.utils.addAttributes import addAttributes
 
 
 class PoliceGroupForm(forms.ModelForm):

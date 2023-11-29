@@ -9,9 +9,9 @@ from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.db.models import Q 
 
-from apps.rpa_manager.handlers import require_permission
-from apps.rpa_manager.models import *
-from apps.rpa_manager.forms import *
+from apps.rpa.handlers import require_permission
+from apps.rpa.models import *
+from apps.rpa.forms import *
 
 
 MESSAGE_MODEL_NAME = 'Guarnição'
@@ -20,8 +20,8 @@ MESSAGE_MODEL_NAME = 'Guarnição'
 class GuarnicaoCreateView(GroupRequiredMixin, CreateView):
     model = PoliceGroup
     form_class = PoliceGroupForm
-    template_name = 'rpa_manager/create_guarnicao.html'
-    success_url = reverse_lazy('rpa_manager:checklist_form')
+    template_name = 'rpa/create_guarnicao.html'
+    success_url = reverse_lazy('rpa:checklist_form')
     group_required = ['profile:rpa_basic', "profile:rpa_advanced"]
     
     def form_valid(self, form):
@@ -43,8 +43,8 @@ class GuarnicaoCreateView(GroupRequiredMixin, CreateView):
 class GuarnicaoUpdateView(GroupRequiredMixin, UpdateView):
     model = PoliceGroup
     form_class = PoliceGroupForm
-    template_name = 'rpa_manager/update_guarnicao.html'
-    success_url = reverse_lazy('rpa_manager:checklist_form')
+    template_name = 'rpa/update_guarnicao.html'
+    success_url = reverse_lazy('rpa:checklist_form')
     group_required = ['profile:rpa_basic', "profile:rpa_advanced"]
     
     def get_object(self, queryset=None):
@@ -59,9 +59,9 @@ class GuarnicaoUpdateView(GroupRequiredMixin, UpdateView):
 class GuarnicaoDeleteView(PermissionRequiredMixin, DeleteView):
     model = PoliceGroup
     # template_name = 'controle/pages/delete_guarnicao.html'
-    success_url = reverse_lazy('rpa_manager:painel')
+    success_url = reverse_lazy('rpa:painel')
     context_object_name = 'obj'
-    permission_required = 'rpa_manager.delete_guarnicao'
+    permission_required = 'rpa.delete_guarnicao'
     
     @method_decorator(require_permission(permission_required))
     def dispatch(self, *args, **kwargs):
@@ -69,8 +69,8 @@ class GuarnicaoDeleteView(PermissionRequiredMixin, DeleteView):
     
     
 class DescadastrarGuarnicao(GroupRequiredMixin, View):
-    template_name = 'rpa_manager/unregister_guarnicao.html'
-    success_url = reverse_lazy('rpa_manager:painel')
+    template_name = 'rpa/unregister_guarnicao.html'
+    success_url = reverse_lazy('rpa:painel')
     group_required = ['profile:rpa_basic', "profile:rpa_advanced"]
     
     def get(self, request, *args, **kwargs):

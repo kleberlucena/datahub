@@ -1,5 +1,5 @@
-from apps.rpa_manager.forms import *
-from apps.rpa_manager.models import *
+from apps.rpa.forms import *
+from apps.rpa.models import *
 from django.urls import reverse_lazy
 
 from django_datatables_view.base_datatable_view import BaseDatatableView

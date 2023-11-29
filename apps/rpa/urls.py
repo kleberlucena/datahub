@@ -1,7 +1,7 @@
-from apps.rpa_manager.views import *
+from apps.rpa.views import *
 from django.urls import path
 
-app_name = "rpa_manager"
+app_name = "rpa"
 
 urlpatterns = [
     path('painel/', PainelView.as_view(), name="painel"),

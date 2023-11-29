@@ -1,0 +1,313 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% comment %} bacinf style_sheet {% endcomment %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+<style>
+    .select_date_form {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: end;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+    
+      .select_date_btn {
+        height: 40px;
+        width: 120px;
+        margin-top: 32px;
+      }
+    
+      #equipes-container {
+        width: 100rem;
+        max-width: 100%;
+      }
+    
+      .card_content {
+        display: flex;
+        flex-direction: row;
+        gap: 30px;
+      }
+    
+      .card_gu_info {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        min-height: 200px;
+        min-width: 200px;
+      }
+    
+      .card-img {
+        width: 60%;
+      }
+    
+      .card-container_for-images {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+    
+      .img-circle {
+        border-radius: 20%;
+      }
+    
+      .card-body h3,
+      .card-body p {
+          font-size: 18px; 
+          margin-bottom: 10px; 
+      }
+    
+    
+    
+      @media (max-width: 768px) {
+        .card-body h3,
+        .card-body p {
+            font-size: 16px; 
+            margin-bottom: 8px; 
+        }
+    
+        .card_content {
+          display: flex;
+          flex-direction: column;
+          gap: 30px;
+        }
+    
+        .card-img {
+          max-width: 300px;
+        }
+    
+        .card-container_for-images {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          margin: 0 auto;
+          gap: 10px;
+        }
+    
+        .select_date_form {
+          display: flex;
+          flex-direction: row;
+          justify-content: start;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 10px;
+        }
+    
+        .select_year {
+          width: 100px;
+        }
+      }
+</style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Painel {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+{% endblock %}
+
+{% block content %}
+<div class="card card-primary card-outline" style="margin-bottom: 30px;">
+  <div class="card-header">
+    <h3 class="card-title">Dashboard</h3>
+  </div>
+
+  <div class="card-body">
+    <div class="row">
+        <div class="col-md-3 col-sm-6 col-12">
+            <div class="small-box bg-green">
+              <div class="inner">
+                <h3>{{ amount_of_operations}}</h3>
+                <p>Total de operacões realizadas</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-lg fa-rocket"></i>
+              </div>
+              <a href="#" class="small-box-footer">
+                Mais informações <i class="fa fa-arrow-circle-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-sm-6 col-12">
+            <div class="small-box bg-secondary">
+              <div class="inner">
+                <h3>{{ pilot_with_max_operations }} - {{ number_of_pilot_max_oper }}</h3>
+                <p>Operador com mais operações</p>
+              </div>
+              <div class="icon">
+                <i class="fa fa-users"></i>
+              </div>
+              <a href="#" class="small-box-footer">
+                Mais informações <i class="fa fa-arrow-circle-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-sm-6 col-12">
+            <div class="small-box bg-red">
+              <div class="inner">
+                <h3>{{ most_supported_location }}</h3>
+                <p>Localização com maior apoio</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-lg fa-map"></i>
+              </div>
+              <a href="#" class="small-box-footer">
+                Mais informações <i class="fa fa-arrow-circle-right"></i>
+              </a>
+            </div>
+          </div>
+        
+          <div class="col-md-3 col-sm-6 col-12">
+            <div class="small-box bg-blue">
+              <div class="inner">
+                <h3>{{ most_used_aircraft }}</h3>
+                <p>Aeronave mais utilizada</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-lg fa-paper-plane"></i>
+              </div>
+              <a href="#" class="small-box-footer">
+                Mais informações <i class="fa fa-arrow-circle-right"></i>
+              </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="card card-warning col-md-12">
+        <div class="card-header">
+          <h3 class="card-title"><strong>Localizações mais apoiadas</strong></h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="chartjs-size-monitor">
+            <div class="chartjs-size-monitor-expand">
+              <div class=""></div>
+            </div>
+            <div class="chartjs-size-monitor-shrink">
+              <div class=""></div>
+            </div>
+          </div>
+          <canvas id="donutChart"
+            style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 418px;"
+            width="418" height="250" class="chartjs-render-monitor"></canvas>
+        </div>
+      </div>
+
+      <div class="card card-info col-md-12">
+        <div class="card-header">
+          <h3 class="card-title"><strong>Ciclos das baterias</strong></h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+          
+        <div class="card-body">
+          <div class="chart"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+          <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 325px;" width="650" height="500" class="chartjs-render-monitor"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+<!-- DataTables  & Plugins -->
+<script src="{% static 'leaflet/leaflet.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Dashboard chart
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var ctx = document.getElementById('donutChart').getContext('2d');
+    
+    var chartData = JSON.parse('{{ chart_data|safe }}');  
+    console.log(chartData)
+    var donutChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: chartData.labels,
+        datasets: [{
+          data: chartData.data,
+          backgroundColor: [
+          'rgba(255, 99, 132, 0.7)',
+          'rgba(54, 162, 235, 0.7)',
+          'rgba(255, 206, 86, 0.7)',
+          'rgba(75, 192, 192, 0.7)',
+          'rgba(153, 102, 255, 0.7)'
+          ],
+        }],
+      },
+    });
+  });
+</script>
+
+<script>  
+  var batteries = JSON.parse('{{ battery_info|safe }}');  
+  var labels = batteries.map(function(battery) {
+      return battery.number;
+  });
+  var numCiclesData = batteries.map(function(battery) {
+      return battery.num_cicles;
+  });
+  var maxCiclesData = batteries.map(function(battery) {
+      return battery.maximum_cicles;
+  });
+
+  var ctx = document.getElementById('barChart').getContext('2d');
+  var barChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: labels,
+          datasets: [{
+              label: 'Número de Ciclos',
+              data: numCiclesData,
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+          }, {
+              label: 'Máximo de Ciclos',
+              data: maxCiclesData,
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          }
+      }
+  });
+</script>
+{% endblock %}
