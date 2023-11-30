@@ -30,15 +30,6 @@ class Command(BaseCommand):
     create_groups()
 
     def handle(self, *args, **options):
-        
-        entities = [
-            'PMPB', 'PCPB', 'CBMPB', 'CPRM', 'CPR-I', 'CPR-II', 'CPR-III', 'SUPLAN', 
-            'TJPB', 'MPPB', 'PC', 'IPC', 'SUDEMA', 'AESA', 'PF', 'DAL', 'CE', 'DSAS', 
-            'CMG', 'QCG', '1º BPM', '2º BPM', '3º BPM', '4º BPM', '5º BPM', '6º BPM', 
-            '7º BPM', '8º BPM', '9º BPM', '10º BPM', '11º BPM', '12º BPM', '13º BPM', 
-            '14º BPM', '15º BPM', '1ª CIPM', '2ª CIPM', '3ª CIPM', '4ª CIPM', '5ª CIPM', 
-            '6ª CIPM', '7ª CIPM', 'BEPTUR', 'COA', 'BOPE', 'BPAmb', 'BPTran', 'RPMont', 'Outra'
-        ]
 
         natures_of_flights = [
             'Treinamento',
@@ -295,10 +286,8 @@ class Command(BaseCommand):
 
         def populateModelsFieldsByList():
             generateCitiesByList(cities_pb)
-            generateEntitiesOfFlighs(entities)
             generateNatureOfFlighs(natures_of_flights)
             generateRiskAssessementData()
-            # generateMilitaries()
             generateAircrafts()
             generateTypesOfOperation()
             
