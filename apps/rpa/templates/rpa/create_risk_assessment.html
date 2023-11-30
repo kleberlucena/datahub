@@ -1,0 +1,194 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
+<style>
+  .callout-text {
+    text-align: justify
+  }
+  input[type=checkbox]  {
+      border: 0px;
+      width: 20px;
+      height: 35px;
+      vertical-align: middle;
+  }
+
+  #id_responsible_sign {
+    display: none;
+  }
+  .errorlist {
+    list-style-type: none;
+    color: red;
+    /* Adicione outros estilos desejados */
+  }
+
+  .error-border {
+    border: 1px solid red;
+  }
+
+  /* fix select2 field height */
+  .select2-selection,
+  .select2-selection--single {
+    height: 38px !important;
+  }
+
+  #select2-id_aeronave-container {
+    height: 38px !important;
+  }
+</style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Criar nova avaliação de risco operacional {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'rpa:painel' %}">Painel</a></li>
+<li class="breadcrumb-item active">Nova avaliação de risco operacional</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+<div class="col-md-12">
+  <div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+    <p class="callout-text">Este formulário está dividido entre avaliação de risco e análises de risco.</p>
+    <p class="callout-text">A primeira parte será preencida apenas uma vez e vários campos já estão com valores padrão.</p>
+    <p class="callout-text">No último campo o usuário poderá inserir uma imagem com a assinatura do documento.</p>
+    <p class="callout-text">Ao finalizar, o usuário será redirecionado para o formulário de análises de risco.</p>
+  </div>
+
+  <div class="card card-primary card-outline">
+    <div class="card-header">
+      <h3 class="card-title">Nova avaliação de risco operacional</h3>
+    </div>
+    <form class="p-3" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="form-group col-md-12 mb-0 forms_inputs">
+          <div class="row">
+            <div class="col-md-6">
+              <label for="id_operational_scenario">Cenário operacional</label>
+              {{ form.operational_scenario }}
+              {{ form.operational_scenario.errors }}
+            </div>
+            <div class="col-md-6">
+              <label for="id_operator">Operador</label>
+              {{ form.operator }}
+              {{ form.operator.errors }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="id_data" class="mt-1">Data que foi realizada</label>
+              <div class="input-group date" id="datetimepickerInitial" data-target-input="nearest">
+                {{ form.date }}
+                <div class="input-group-append" data-target="#datetimepickerInitial" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="id_data" class="mt-1">Data de expiração</label>
+              <div class="input-group date" id="datetimepickerFinal" data-target-input="nearest">
+                {{ form.expiration_date }}
+                <div class="input-group-append" data-target="#datetimepickerFinal" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="id_cpf" class="mt-1">CNPJ</label>
+              {{ form.cnpj }}
+              {{ form.cnpj.errors }}
+            </div>
+            <div class="col-md-6">
+              <label for="id_aircrafts" class="mt-1">Aeronaves</label>
+              {{ form.aircrafts }}
+              {{ form.aircrafts.errors }}
+            </div>
+            <div class="col-md-6">
+              <label for="id_keep_distance_from_3rd" class="mt-3">Manter distância de terceiro?</label><br>
+              {{ form.keep_distance_from_3rd }} <small> Sim </small>
+              {{ form.keep_distance_from_3rd.errors }} <br>
+              <label for="id_pilots_capabilities">Piloto remoto ou Piloto observador precisa de capacitação?</label><br>
+              {{ form.pilots_capabilities }} <small> SIM – Curso de Operador de RPAs – CORPA </small>
+              {{ form.pilots_capabilities.errors }}
+            </div>
+          </div>
+          <label for="id_apllied_legislation" class="mt-3">Legislação aplicada</label>
+          {{ form.apllied_legislation }}
+          {{ form.apllied_legislation.errors }}
+
+          <label for="id_accident_procedure">Procedimento em caso de acidente</label>
+          {{ form.accident_procedure }}
+          {{ form.accident_procedure.errors }}
+          <label for="id_info_responsible">Responsável pelas informações:</label>  {{ user.military }}
+          {{ form.info_responsible }} <br>
+          <label for="id_responsible_sign">Assinatura do responsável: </label> 
+          {{ form.responsible_sign }}
+          <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
+          <p id="fileName"></p>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Próximo</button>
+        <a href="{% url 'rpa:painel' %}">
+          <button type="button" class="btn btn-warning">Cancelar</button>
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+<script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/moment/moment.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+
+<script>
+  $(document).ready(function () {
+    $('.local_escolha').select2();
+    $('.aircrafts_escolha').select2();
+  })
+</script>
+
+<script>
+  $(function () {
+    $('#datetimepickerInitial').datetimepicker({
+      format: 'YYYY-MM-DD  HH:mm:ss',
+      icons: {
+        time: 'fa fa-clock',
+      }
+    });
+
+    $('#datetimepickerFinal').datetimepicker({
+      format: 'YYYY-MM-DD  HH:mm:ss',
+      icons: {
+        time: 'fa fa-clock',
+      }
+    });
+  });
+</script>
+
+<script>
+  document.getElementById("fileButton").addEventListener("click", function() {
+    document.getElementById("id_responsible_sign").click();
+  });
+  document.getElementById("id_responsible_sign").addEventListener("change", function() {
+    var fileName = document.getElementById("id_responsible_sign").files[0].name;
+    document.getElementById("fileName").innerHTML = "Arquivo selecionado: " + fileName;
+  });
+</script>
+{% endblock %}

@@ -4,7 +4,7 @@
 <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
       {% if request.user|has_group:'profile:rpa_manager' %}
-        {% include 'base/apps-nav-content/rpa_manager.html' %}
+        {% include 'base/apps-nav-content/rpa.html' %}
       {% endif %}
       
       {% if request.user|has_group:'profile:protect_network_basic,profile:protect_network_advanced,profile:protect_network_manager'  %}

@@ -123,7 +123,7 @@ INSTALLED_APPS = [
     'apps.watermark',
     'apps.fact',
     'apps.police_report',
-    'apps.rpa_manager',
+    'apps.rpa',
     'apps.radio',
     'apps.termsofuse',
     'apps.protect_network',

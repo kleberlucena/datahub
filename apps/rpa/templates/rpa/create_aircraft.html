@@ -1,0 +1,128 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    .callout-text {
+      text-align: justify
+    }
+    
+    #id_aircraft_image {
+      display: none;
+    }
+
+    /* fix select2 field height */
+    .select2-selection,
+    .select2-selection--single {
+      height: 38px !important;
+    }
+
+    #select2-id_aeronave-container {
+      height: 38px !important;
+    }
+  </style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Criar nova aeronave {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa:aeronaves' %}">Aeronaves</a></li>
+  <li class="breadcrumb-item active">Nova aeronave</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+  <div class="col-md-12">
+    <div class="callout callout-info">
+      <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+      <p class="callout-text">Neste formulário insira os dados referentes a aeronave a ser cadastrada.</p>
+    </div>
+
+    <div class="card card-primary card-outline">
+      <div class="card-header">
+        <h3 class="card-title">Criar aeronave</h3>
+      </div>
+      <form class="p-3" method='post' enctype='multipart/form-data'>
+        {% csrf_token %}
+        <div class="form-row">
+          <div class="form-group col-md-12 mb-0 forms_inputs">
+            <label for="id_prefix">Prefixo</label>
+            {{ form.prefix }}
+            {{ form.prefix.errors }}
+            <label for="id_model">Modelo</label>
+            {{ form.model }}
+            {{ form.model.errors }}
+            <label for="id_brand">Marca</label>
+            {{ form.brand }}
+            {{ form.brand.errors }}
+            <label for="id_location">Local</label>
+            {{ form.location }} 
+            {{ form.location.errors }}
+            <label for="id_aircraft_image" class="mt-3">Imagem da aeronave</label>
+            {{ form.aircraft_image }}
+            <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
+            <p id="fileName"></p>
+          </div>
+        </div>
+        <div class="mt-3">
+          <button type="submit" class="btn btn-primary">Salvar</button>
+          <a href="{% url 'rpa:aeronaves' %}">
+            <button type="button" class="btn btn-warning">Cancelar</button>
+          </a>
+        </div>
+        
+      </form>
+    </div>
+  </div>
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputs = document.querySelectorAll(".form-control");
+
+        inputs.forEach(input => {
+            input.addEventListener("input", function() {
+                const nextElement = input.nextElementSibling;
+                if (nextElement && nextElement.classList.contains("errorlist")) {
+                    input.classList.add("error-border");
+                } else {
+                    input.classList.remove("error-border");
+                }
+            });
+        });
+
+        inputs.forEach(input => {
+            const nextElement = input.nextElementSibling;
+            if (nextElement && nextElement.classList.contains("errorlist")) {
+                input.classList.add("error-border");
+            }
+        });
+      });
+  </script>
+
+  <script>   
+    document.getElementById("fileButton").addEventListener("click", function() {
+      document.getElementById("id_aircraft_image").click();
+    });
+    document.getElementById("id_aircraft_image").addEventListener("change", function() {
+      var fileName = document.getElementById("id_aircraft_image").files[0].name;
+      document.getElementById("fileName").innerHTML = "Arquivo selecionado: " + fileName;
+    });
+  </script>
+
+  <script>
+    $(document).ready(function(){
+      $('.location_escolha').select2();
+    })
+  </script>
+{% endblock %}
