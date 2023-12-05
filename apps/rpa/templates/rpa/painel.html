@@ -1,0 +1,464 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% comment %} bacinf style_sheet {% endcomment %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+<style>
+  .select_date_form {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: end;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .select_date_btn {
+    height: 40px;
+    width: 120px;
+    margin-top: 32px;
+  }
+
+  #equipes-container {
+    width: 100rem;
+    max-width: 100%;
+  }
+
+  .card_content {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+  }
+
+  .card_gu_info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    min-height: 200px;
+    min-width: 200px;
+  }
+
+  .card-img {
+    width: 60%;
+  }
+
+  .card-container_for-images {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .img-circle {
+    border-radius: 20%;
+  }
+
+  .card-body h3,
+  .card-body p {
+      font-size: 18px; 
+      margin-bottom: 10px; 
+  }
+
+
+
+  @media (max-width: 768px) {
+    .card-body h3,
+    .card-body p {
+        font-size: 16px; 
+        margin-bottom: 8px; 
+    }
+
+    .card_content {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .card-img {
+      max-width: 300px;
+    }
+
+    .card-container_for-images {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+      gap: 10px;
+    }
+
+    .select_date_form {
+      display: flex;
+      flex-direction: row;
+      justify-content: start;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .select_year {
+      width: 100px;
+    }
+  }
+</style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Painel {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+{% endblock %}
+
+{% block content %}
+
+<div class="card card-primary card-outline" style="margin-bottom: 30px;">
+  <div class="card-header">
+    <h3 class="card-title">Voos realizados</h3>
+  </div>
+
+  <div class="card-body">
+    <form id="coordinatesForm" method='GET'>
+      {% csrf_token %}
+      <div>
+        <p><strong>Operações em andamento: {{ operations_in_course }}</strong></p>
+      </div>
+      <div class="select_date_form">
+        <div class="select_year">
+          <label for="year">Ano:</label>
+          <select id="year" class="form-control row-md-3" name="year">
+            {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="select_month">
+          <label for="month">Mês:</label>
+          <select id="month" class="form-control row-md-4" name="month">
+            <option value="1">Janeiro</option>
+            <option value="2">Fevereiro</option>
+            <option value="3">Março</option>
+            <option value="4">Abril</option>
+            <option value="5">Maio</option>
+            <option value="6">Junho</option>
+            <option value="7">Julho</option>
+            <option value="8">Agosto</option>
+            <option value="9">Setembro</option>
+            <option value="10">Outubro</option>
+            <option value="11">Novembro</option>
+            <option value="12">Dezemrbo</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-outline-primary ml-3 select_date_btn">Filtrar</button>
+      </div>
+    </form>
+
+    <div id="map" style="height: 500px;"></div>
+  </div>
+</div>
+
+<div class="card card-primary card-outline">
+  <div class="card-header">
+    <h3 class="card-title">Guarnições cadastradas</h3>
+  </div>
+  <div class="card-body">
+    <div class="container-fluid">
+      <div class="row d-flex flex-wrap" id="equipes-container">
+        <!-- Os cards serão adicionados aqui via script js -->
+      </div>
+      <div class="row" id="mensagem-container">
+        <!-- A mensagem será exibida aqui caso o JSON esteja vazio -->
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+<!-- DataTables  & Plugins -->
+<script src="{% static 'leaflet/leaflet.js' %}"></script>
+
+<script type="text/javascript">
+  // Função que será executada quando o documento estiver pronto
+  document.addEventListener('DOMContentLoaded', function () {
+    const coordinatesJson = {{ coordinates_json| safe }}
+      const coordinatesByDate = {{ coordinates_by_date_json| safe }}
+  const operationsInCourse = {{ operationsInCourse| safe }}
+  const popUpFontSizeValueinPx = 10;
+
+  let centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude];
+  let zoomLevel = 11;
+  let map = L.map('map').setView(centerCoordinates, zoomLevel);
+  let staticUrl = "{% static 'leaflet/images/marker-icon.png' %}"
+
+  const urlLocalImg = "{% static '/sti/img/drone.png' %}"
+  var droneMarkerIcon = L.icon({
+    iconUrl: urlLocalImg,
+    iconSize: [13, 13],
+    iconAnchor: [6.5, 6.5],
+    popupAnchor: [0, -32]
+  });
+
+  if (operationsInCourse.length > 0) {
+    showCoordinatesInCourseOperations(droneMarkerIcon)
+  }
+
+  showTodaysCoordinates(droneMarkerIcon);
+
+  showCoordinatesByFilter();
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  function showCoordinatesInCourseOperations(makerIcon = null) {
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    operationsInCourse.forEach(function (coordinate) {
+      L.marker([coordinate.latitude, coordinate.longitude], { icon: makerIcon }).addTo(map)
+        .bindPopup(`<strong style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.usuario}</span>` +
+          '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.latitude}</span>` + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.longitude}</span>` + '<br>'
+          + `<span class="badge badge-warning">${coordinate.status}</span>`);
+
+      let circle = L.circle([coordinate.latitude, coordinate.longitude], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.1,
+        radius: 500
+      }).addTo(map);
+    });
+  };
+
+  function showCoordinatesByFilter() {
+    for (let i = 0; i < coordinatesByDate.length; i++) {
+      usuario = coordinatesByDate[i].usuario
+      titulo = coordinatesByDate[i].titulo
+      latitude = coordinatesByDate[i].latitude !== null ? coordinatesByDate[i].latitude : 0.0
+      longitude = coordinatesByDate[i].longitude !== null ? coordinatesByDate[i].longitude : 0.0
+
+      if (latitude !== 0.0 && longitude !== 0.0) {
+        let marker = new L.marker([latitude, longitude], { icon: droneMarkerIcon })
+          .addTo(map)
+          .bindPopup(`<span style="font-size: ${popUpFontSizeValueinPx}px;">${usuario}</span>` + '<br>' + `<strong style="font-size: ${popUpFontSizeValueinPx}px;">${titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${latitude}</span>` + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${longitude}</span>`)
+
+        let circle = L.circle([latitude, longitude], {
+          color: 'gray',
+          fillColor: '#f030303',
+          fillOpacity: 0.1,
+          radius: 500
+        })
+          .addTo(map);
+      }
+    }
+  }
+
+  function showTodaysCoordinates(makerIcon = null) {
+    var todayCoordinatesOfOperations = {{ today_coordinates_operations| safe }};
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  todayCoordinatesOfOperations.forEach(function (coordinate) {
+    let operationStatus = coordinate.status === 'Em andamento' ? `<span class="badge badge-warning">${coordinate.status}</span>` : `<span class="badge badge-success">${coordinate.status}</span>`;
+
+    L.marker([coordinate.latitude, coordinate.longitude], { icon: makerIcon }).addTo(map)
+      .bindPopup(`<strong style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.usuario}</span>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.latitude}</span>` + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.longitude}</span>` + '<br>'
+        + operationStatus);
+
+    let circle = L.circle([coordinate.latitude, coordinate.longitude], {
+      color: 'red',
+      fillColor: '#f03',
+      fillOpacity: 0.1,
+      radius: 500
+    }).addTo(map);
+  });
+      }
+
+    }); // end DOM load
+</script>
+
+<script>
+  const jsonEquipes = {{ guarnicoes_json| safe }};
+  const user = "{{ user.military | stringformat:"s"|safe }}";
+  console.log(user)
+  function criarEquipeCard(equipe) {
+    console.log(equipe.piloto_remoto)
+    const isCurrentUserCreator = equipe.piloto_remoto === user;
+    let descadastroButton = ``
+    if (isCurrentUserCreator) {
+      descadastroButton = `
+        <a href="{% url 'rpa:descadastrar_guarnicao' %}">
+          <button type="button" class="btn btn-outline-danger ml-3">Descadastrar</button>
+        </a>`
+    } else {
+      descadastroButton =
+        `<button type="button" style="cursor: not-allowed;"class="btn btn-outline-secondary ml-3 disabled">Descadastrar</button>`
+    }
+
+    let motorista = equipe.motorista !== 'sem registro' ?
+      `<small class=""><i class="fa fa-car"></i> <b>Motorista:</b> ${equipe.motorista} </small>` : ''
+    let piloto_remoto = equipe.piloto_remoto !== 'sem registro' ?
+      `<small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> ${equipe.piloto_remoto} </small>` : ''
+    let piloto_observador = equipe.piloto_observador !== 'sem registro' ?
+      `<small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b> ${equipe.piloto_observador} </small>` : ''
+    let telefone = equipe.telefone !== 'sem registro' ?
+      `<small class=""><i class="fa fa-phone"></i> <b>Contato:</b> ${equipe.telefone} </small>` : ''
+
+    let motorista_img = equipe.motorista_img !== 'sem registro' ?
+      `<img src="${equipe.piloto_remoto_img}" alt="user-avatar" class="card-img img-circle">` : ''
+    let piloto_remoto_img = equipe.motorista_img !== 'sem registro' ?
+      `<img src="${equipe.motorista_img}" alt="user-avatar" class="card-img img-circle">` : ''
+    let piloto_observador_img = equipe.piloto_observador_img !== 'sem registro' ?
+      `<img src="${equipe.piloto_observador_img}" alt="user-avatar" class="card-img img-circle">` : ''
+
+    if (equipe.motorista === equipe.piloto_observador) {
+      return `
+        <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
+            <div class="card bg-light d-flex flex-fill">
+              <div class="card-header text-muted border-bottom-0">
+                <i class="fas fa-lg fa-building"></i> ${equipe.local}
+              </div> 
+              <div class="card-body pt-0">
+                <div class="card_content">
+                  <div class="card_gu_info">
+                      ${motorista}
+                      ${piloto_remoto} 
+                      ${piloto_observador}
+                      ${telefone}
+                  </div>
+                  <div class="card-container_for-images">
+                    <div class="grid-item">
+                      ${motorista_img}
+                    </div>
+                    <div class="grid-item">
+                      ${piloto_remoto_img}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <div class="text-right">
+                  ${descadastroButton}
+                </div>
+              </div>
+            </div>
+          </div>
+          `;
+    } else if (equipe.motorista === equipe.piloto_remoto) {
+      return `
+        <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
+            <div class="card bg-light d-flex flex-fill">
+              <div class="card-header text-muted border-bottom-0">
+                <i class="fas fa-lg fa-building"></i> ${equipe.local}
+              </div> 
+              <div class="card-body pt-0">
+                <div class="card_content">
+                  <div class="card_gu_info">
+                      ${motorista}
+                      ${piloto_remoto} 
+                      ${piloto_observador}
+                      ${telefone}
+                  </div>
+                  <div class="card-container_for-images">
+                    <div class="grid-item">
+                      ${motorista_img}
+                    </div>
+                    <div class="grid-item">
+                      ${piloto_observador_img}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <div class="text-right">
+                  ${descadastroButton}
+                </div>
+              </div>
+            </div>
+          </div>
+          `;
+    } else {
+      return `
+        <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
+            <div class="card bg-light d-flex flex-fill">
+              <div class="card-header text-muted border-bottom-0">
+                <i class="fas fa-lg fa-building"></i> ${equipe.local}
+              </div> 
+              <div class="card-body pt-0">
+                <div class="card_content">
+                  <div class="card_gu_info">
+                      ${motorista}
+                      ${piloto_remoto} 
+                      ${piloto_observador}
+                      ${telefone}
+                  </div>
+                  <div class="card-container_for-images">
+                    <div class="grid-item">
+                      ${motorista_img}
+                    </div>
+                    <div class="grid-item">
+                      ${piloto_remoto_img}
+                    </div>
+                    <div class="grid-item">
+                      ${piloto_observador_img}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <div class="text-right">
+                  ${descadastroButton}
+                </div>
+              </div>
+            </div>
+          </div>
+          `;
+    }
+  }
+
+  function exibirMensagem() {
+    document.getElementById('mensagem-container').innerHTML = '<p>Nenhuma guarnição disponível.</p>';
+  }
+
+  // Verificando se o JSON está vazio (sem equipes)
+  if (jsonEquipes.length === 0) {
+    exibirMensagem();
+  } else {
+    const localidades = [...new Set(jsonEquipes.map(equipe => equipe.local))];
+
+    const localidadesHTML = localidades.map(localidade => {
+      const equipesLocalidade = jsonEquipes.filter(equipe => equipe.local === localidade);
+
+      const equipesCardsHTML = equipesLocalidade.map(equipe => criarEquipeCard(equipe)).join('');
+
+      return `
+            <div class="col-md-12">
+              <blockquote class="quote-info">
+                <h6>${localidade}</h6>
+                <p>Quantidade: ${equipesLocalidade.length}</p>
+              </blockquote>
+              <div class="row">
+                ${equipesCardsHTML}
+              </div>
+            </div>
+          `;
+    }).join('');
+
+    // Adicionando o HTML criado ao elemento com o id 'equipes-container'
+    document.getElementById('equipes-container').innerHTML = localidadesHTML;
+  }
+</script>
+{% endblock %}

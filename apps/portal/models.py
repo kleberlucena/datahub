@@ -57,7 +57,7 @@ class Entity(Base):
     Entidades em geral. Ex: PMPB|QCG|EME|EM2|STI|
     """
     name = models.CharField("Nome da entidade", max_length=100)
-    father = models.CharField('Código da Entidade pai no EM8', max_length=7, default=0)
+    code = models.CharField('Código da Entidade pai no EM8', max_length=7, default=0)
     dad = models.ForeignKey('self', default=None, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Entidade superior")
     child_exists = models.BooleanField("A entidade tem filhos?", default=False)
     uuid_portal = models.UUIDField('UUID no Portal', editable=True, blank=True, null=True)
@@ -163,30 +163,3 @@ class Military(Base):
     def __str__(self):
         return "{} {} {}".format(self.rank, self.nickname, self.register)
 
-
-# class HistoryTransfer(Base):
-#     entity = models.ForeignKey(Entity, verbose_name="Unidade",
-#                                default=0, to_field='code', on_delete=models.CASCADE)
-#     military = models.ForeignKey(Military, on_delete=models.CASCADE)
-#     obs = models.CharField(max_length=255, blank=True, null=True)
-#     date_start = models.DateField('Data início', default=timezone.now)
-#     date_finish = models.DateField('Data fim', blank=True, null=True)
-
-#     class Meta:
-#         verbose_name = 'Transferência'
-#         verbose_name_plural = 'Transferências'
-
-#     def __str__(self):
-#         return "{} {}".format(self.entity, self.military)
-
-
-# class Promotion(Base):
-#     rank = models.CharField("Patente", max_length=36, blank=False)
-#     military = models.ForeignKey(Military, on_delete=models.CASCADE)
-
-#     class Meta:
-#         verbose_name = 'Promoção'
-#         verbose_name_plural = 'Promoções'
-
-#     def __str__(self):
-#         return "{}".format(self.rank)

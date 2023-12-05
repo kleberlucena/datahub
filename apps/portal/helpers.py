@@ -97,3 +97,20 @@ def set_father_entity(entity, father_uuid):
         logger.error(f'[Entity - helpers] set_father_entity - {e}')
     finally:
         entity.save()
+        
+
+def update_enjoyer_entity(enjoyer, entity_uuid):
+    status = False
+    try:
+        if entity_uuid:
+            entity = models.Entity.objects.get(uuid_portal=entity_uuid)
+            enjoyer.entity = entity
+        else:
+            enjoyer.entity = None
+        status = True
+    except Exception as e:
+        enjoyer.entity = None
+        logger.error(f'[Enjoyer - helpers] update_enjoyer_entity - {e}')
+    finally:
+        enjoyer.save()
+        return status

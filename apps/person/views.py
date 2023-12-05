@@ -58,10 +58,10 @@ class PersonListJson(BaseDatatableView):
             return super(PersonListJson, self).render_column(row, column)
 
 
-class PersonListView(SuperuserRequiredMixin, TemplateView):
-    template_name = 'person_list.html'
-    # teste.delay()
-    permission_required = 'person.view_person'
+# class PersonListView(SuperuserRequiredMixin, TemplateView):
+#     template_name = 'person_list.html'
+#     # teste.delay()
+#     permission_required = 'person.view_person'
 
 
 class TaskSetEntityFromPersonView(TemplateView):

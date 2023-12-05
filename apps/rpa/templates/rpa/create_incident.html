@@ -1,0 +1,286 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block style_sheet %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
+  <style>
+    .callout-text {
+      text-align: justify
+    }
+    
+    .hidden {
+      display: none;
+    }
+    #id_imageIncidente {
+      display: none;
+    }
+    #fileList {
+      display: none;
+    }
+    .temp_images_view {
+      display: flex;
+      flex-wrap: nowrap;
+      max-height: 200px; /* Adjust the max height to control overflow */
+      overflow-x: auto;
+    }
+    
+    .temp_images_view img {
+      margin: 5px;
+      max-width: 150px; /* Adjust the max width of each image as needed */
+      max-height: 150px; /* Adjust the max height of each image as needed */
+    }
+    
+    .temp_images_view_edit {
+      display: flex;
+      flex-wrap: nowrap;
+      max-height: 200px; /* Adjust the max height to control overflow */
+      overflow-x: auto;
+    }
+    .temp_images_view_edit img {
+      margin: 5px;
+      max-width: 150px; /* Adjust the max width of each image as needed */
+      max-height: 150px; /* Adjust the max height of each image as needed */
+    }
+      /* fix select2 field height */
+    .select2-selection,
+    .select2-selection--single {
+      height: 38px !important;
+    }
+
+    #select2-id_aeronave-container {
+      height: 38px !important;
+    }
+  </style>
+  {% endblock style_sheet %}
+
+  <!-- browser title -->
+{% block title %} Criar Incidente {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa:incidentes' %}">Incidentes</a></li>
+  <li class="breadcrumb-item active">
+    {% if request.resolver_match.url_name == 'create_incidente' %}Novo incidente{% else %}Editar incidente{% endif %}
+  </li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="callout callout-info">
+      <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+      <p class="callout-text">Neste formulário deve ser registrada a operação a qual ocorreu o incidente com a aeronave.</p>
+      <p class="callout-text">Insira os dados de local, data e hora.</p>
+      <p class="callout-text">Descreva a localidade, insira o ponto de referência onde ocorreu o incidente.</p>
+      <p class="callout-text">Faça um relato detalhado do incidente.</p>
+      <p class="callout-text">Caso o incidente tenha ocorrida durante uma ocorrência, informe o número da ficha do CIOP.</p>
+      <p class="callout-text">Insira imagens do incidente.</p>
+    </div>
+
+    <div class="card card-primary card-outline">
+      <div class="card-header">
+        <h3 class="card-title">{% if request.resolver_match.url_name == 'create_incidente' %}Novo Incidente{% else %}Editar Incidente{% endif %}</h3>
+      </div>
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.remote_pilot }}
+        
+        <div class="row ml-3 mr-3 mt-1">
+          <div class="col-md-6">
+              <label for="id_operation">Operação</label>
+              {{ form.operation}}
+          </div>
+          <div class="col-md-6">
+              <label for="id_aircraft">Aeronave</label>
+              {{ form.aircraft}}
+          </div>
+        </div>
+
+        <div class="row ml-3 mr-3 mt-1">
+          <div class="col-md-6">
+          <label for="id_location">Local</label>
+          {{ form.location}}
+          </div>
+          <div class="col-md-6">
+              <label for="id_data">Data e Hora</label>
+              <div class="input-group date" id="datetimepicker" data-target-input="nearest">
+                {{ form.date }}
+                <div class="input-group-append" data-target="#datetimepicker" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <div class="row ml-3 mr-3 mt-1">
+          <div class="col-md-6">
+            <label for="id_reference_point">Ponto de referência</label>
+            {{ form.reference_point}}
+          </div>
+          <div class="col-md-6">
+            <label for="id_report">Relato do incidente</label>
+            {{ form.report}}
+          </div>
+        </div>
+
+        <div class="row ml-3 mr-3 mt-1">
+          <div class="col-md-12">
+            <label for="id_police_incident_number" class="field_label">Número da ficha de ocorrência policial</label>
+            {{ form.police_incident_number }}
+            {{ form.police_incident_number.errors }}
+          </div>
+        </div>
+
+        <div class="row ml-3 mr-3 mt-3">
+          <label class="ml-1" for="id_operacao">Imagens do incidente</label>
+          <input type="file" id="id_imageIncidente", name="imagens" multiple>
+          <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
+          <p id="fileName"></p>
+          <p id="fileList"></p>
+        </div>
+
+        <div class="row ml-3 mr-3 mt-3">
+          <div class="temp_images_view"></div>
+        </div>
+
+        <div class="row ml-3 mr-3 mt-3">
+          {% if request.resolver_match.url_name == 'update_incidente' %}
+              {% if images %}
+                <label for="">Imagens carregadas</label>
+              {% else %}
+                <label for="">Não há Imagens carregadas</label>
+            {% endif %}
+            
+            <div class="temp_images_view_edit">
+              {% if images %}
+                {% for img in images %}
+                <a href="{% url 'rpa:delete_image' img.pk %} ">
+                  <img src="{{ img.imageIncident.url }}" alt="Image" class="imagem-incidente" data-id="{{ img.pk }}">
+                </a>
+                {% endfor %}
+              {% else %}
+              {% endif %}                
+            </div>         
+          {% endif %}
+        </div>
+
+        <div class="ml-3 mr-3 mt-3 mb-3">
+          <button type="submit" class="btn btn-primary">Salvar</button>
+          <a href="{% url 'rpa:painel' %}">
+            <button type="button" class="btn btn-warning">Cancelar</button>
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endblock content %}
+
+  <!-- javascripts -->
+  {% block js %}
+  <!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/moment/moment.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+  <script>
+    $(document).ready(function () {
+      $('.location_escolha').select2();
+      $('.aircraft_escolha').select2();
+    });
+  </script>
+  <script>
+    $(function () {
+      $('#datetimepicker').datetimepicker({
+        format: 'YYYY-MM-DD  HH:mm:ss',
+        icons: {
+          time: 'fa fa-clock',
+        }
+      });
+    });
+  </script>
+
+  <script>
+    const fileInput = document.getElementById("id_imageIncidente");
+    const fileList = document.getElementById('fileList');
+    const tempImagesView = document.querySelector('.temp_images_view');
+  
+    document.getElementById("fileButton").addEventListener("click", function() {
+      fileInput.click();
+    });
+  
+    fileInput.addEventListener("change", function() {
+
+      const files = fileInput.files;
+      let fileListText = '';
+  
+      for (let i = 0; i < files.length; i++) {
+        fileListText += files[i].name + '<br>';
+      }
+  
+      fileList.innerHTML = fileListText;
+      tempImagesView.innerHTML = '';
+  
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+  
+        reader.onload = function(e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.alt = file.name;
+          tempImagesView.appendChild(img);
+        };
+  
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+
+  <script>
+    const imagensIncidente = document.querySelectorAll('.imagem-incidente');
+
+    imagensIncidente.forEach(imagem => {
+        imagem.addEventListener('click', (event) => {
+            event.preventDefault(); 
+
+            const imagemId = imagem.dataset.id;
+
+            const confirmarExclusao = window.confirm("Tem certeza que deseja excluir esta imagem?");
+
+            if (confirmarExclusao) {
+              const protocol = window.location.protocol;
+              const host = window.location.host;
+
+              console.log(`${protocol}//${host}/rpa/delete_image/${imagemId}/`);
+
+              fetch(`${protocol}//${host}/rpa/delete_image/${imagemId}/`, {
+                  method: 'DELETE',
+                  headers: {
+                      'X-CSRFToken': getCookie('csrftoken'), 
+                  }
+              }).then(response => {
+                  if (response.ok) {
+                    window.location.reload();
+                  } else {
+                      alert('A requisição falhou.');
+                  }
+              }).catch(error => {
+                  console.error('Erro ao deletar a imagem:', error);
+              });
+            }
+        });
+    });
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+</script>
+
+{% endblock %}  

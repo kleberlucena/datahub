@@ -1,0 +1,144 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load custom_tags %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% comment %} bacinf style_sheet {% endcomment %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <style>
+    @media (max-width: 768px) {
+      .dtr-control::before {
+        content: "\f107" !important; 
+        font-family: "Font Awesome 5 Free" !important; 
+        font-weight: 700 !important;
+      }
+    }
+  </style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Avaliação de risco operacional {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa:painel' %}">Painel</a></li>
+  <li class="breadcrumb-item active">Avaliação de risco operacional</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+<div class="card card-primary card-outline">
+  <div class="card-header">
+    <h3 class="card-title">Avaliação de risco operacional</h3>
+  </div>
+
+  <div class="card-body">
+    <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+      <table id="objects_list" class="table table-bordered table-striped dataTable dtr-inline" role="grid"
+        aria-describedby="objects_list_info" width="100%">
+        <thead class="tabela_cabecalho">
+          <tr>
+            <th scope="col">Cenário operacional</th>
+            <th scope="col">Data realizada</th>
+            <th scope="col">Data de expiração</th>
+            <th scope="col">Aeronaves</th>
+            <th class="removerDoPdf" scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          {% for risk_assessment in risk_assessments %}
+          
+          <tr>
+            <td>{{ risk_assessment.operational_scenario }}</td>
+            <td data-sort='YYYYMMDD'>{{ risk_assessment.date|date:"d/m/Y"  }}</td>
+            <td data-sort='YYYYMMDD'>{{ risk_assessment.expiration_date|date:"d/m/Y"  }}</td>
+            <td>{{ risk_assessment.aircrafts.all|join:", " }}</td>
+            <td>
+              <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
+                <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown"
+                  aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                  Filtros
+                </button>
+                <div class="dropdown-menu" role="menu" style="">
+                  <a class="dropdown-item" href="{% url 'rpa:read_risk_assessment' risk_assessment.id %}">Ver avaliação</a>
+                  <a class="dropdown-item" href="{% url 'rpa:generate_pdf' risk_assessment.id %}" target="_blank">Emitir avaliação</a>
+                  
+                  {% if request.user.is_superuser or request.user|has_group:'profile:advanced' %}
+                    <a class="dropdown-item" href="{% url 'rpa:update_risk_assessment' risk_assessment.id %}">Editar avaliação</a>
+                    <a class="dropdown-item" href="{% url 'rpa:delete_risk_assessment' risk_assessment.id %}">Excluir avaliação</a>
+                  {% endif %}
+                </div>
+              </div>
+            </td> 
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div style="width: 10rem">
+      <a href="{% url 'rpa:create_risk_assessment' %}">
+        <button type="button" style="display: inline" class="btn btn-block btn-primary mt-3"><i class="fa fa-plus"></i>
+          Nova Avaliação </button>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+  <!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+  <script>
+    var table = $('#objects_list').DataTable( {
+        lengthChange: false,
+        buttons: [ 'pageLength',
+        {
+          extend: 'excel',
+          text: 'Excel',
+          exportOptions: {
+            columns: ':not(.removerDoPdf)'
+          }
+        },
+        {
+          extend: 'print',
+          text: 'Imprimir',
+          exportOptions: {
+            columns: ':not(.removerDoPdf)'
+          }
+        },
+        'colvis'
+      ],
+        dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        language: { "url": "//cdn.datatables.net/plug-ins/1.11.1/i18n/pt_br.json" },
+        responsive: true,
+        searching: true,
+        processing: true,
+        columnDefs: [{ "width": "150px", targets: [-1]}],
+        order: [
+          [1, 'desc'],
+        ]
+    } );
+  </script>
+{% endblock %}

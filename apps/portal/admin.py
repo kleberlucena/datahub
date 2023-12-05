@@ -7,7 +7,6 @@ from apps.portal import models
 
 admin.site.register(models.Gender)
 admin.site.register(models.OrganizationalHierarchy)
-admin.site.register(models.Entity)
 admin.site.register(models.Enjoyer)
 
 @admin.register(models.Military)
@@ -22,3 +21,7 @@ class MilitaryAdmin(admin.ModelAdmin):
         except:
             return format_html(
             f"<div width='120' height='120' ></div>")
+
+@admin.register(models.Entity)
+class EntityAdmin(admin.ModelAdmin):
+    search_fields = ('name', 'active', 'id')

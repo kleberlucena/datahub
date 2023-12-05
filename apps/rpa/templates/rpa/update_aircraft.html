@@ -1,0 +1,98 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% comment %} bacinf style_sheet {% endcomment %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/css/adminlte.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/fontawesome-free/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    #id_aircraft_image {
+      display: none;
+    }
+    /* fix select2 field height */
+    .select2-selection,
+    .select2-selection--single {
+      height: 38px !important;
+    }
+
+    #select2-id_aeronave-container {
+      height: 38px !important;
+    }
+  </style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Editar aeronave {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa:aeronaves' %}">Aeronaves</a></li>
+  <li class="breadcrumb-item active">Editar aeronave</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+<div class="col-md-12">
+  <div class="card card-primary card-outline">
+    <div class="card-header">
+      <h3 class="card-title">Editar aeronave</h3>
+    </div>
+    <form class="p-3" method='post' enctype='multipart/form-data'>
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="form-group col-md-12 mb-0">
+          <label for="id_prefix">Prefixo</label>
+          {{ form.prefix }}
+          <label for="id_model">Modelo</label>
+          {{ form.model }}
+          <label for="id_brand">Marca</label>
+          {{ form.brand }}
+          <label for="id_location">Local</label>
+          {{ form.location }} 
+          <label for="id_em_uso">Esta em operação?</label>
+          {{ form.in_use }} 
+          <label for="id_aircraft_image" class="mt-3">Imagem da aeronave</label>
+          {{ form.aircraft_image }}
+          <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
+          <p id="fileName"></p>
+        </div>
+      </div>
+      <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <a href="{% url 'rpa:aeronaves' %}">
+          <button type="button" class="btn btn-warning">Cancelar</button>
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+<!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script>
+    document.getElementById("fileButton").addEventListener("click", function() {
+      document.getElementById("id_aircraft_image").click();
+    });
+    document.getElementById("id_aircraft_image").addEventListener("change", function() {
+      var fileName = document.getElementById("id_aircraft_image").files[0].name;
+      document.getElementById("fileName").innerHTML = "Arquivo selecionado: " + fileName;
+    });
+  </script>
+
+  <script>
+    $(document).ready(function(){
+      $('.location_escolha').select2();
+    })
+  </script>
+{% endblock %}

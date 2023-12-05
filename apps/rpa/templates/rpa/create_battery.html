@@ -1,0 +1,99 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+  {% comment %} bacinf style_sheet {% endcomment %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    .callout-text {
+      text-align: justify
+    }
+    
+    #id_battery_image {
+      display: none;
+    }
+  </style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Criar nova bateria {% endblock %}
+
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa:baterias' %}">Baterias</a></li>
+  <li class="breadcrumb-item active">Nova bateria</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="callout callout-info">
+        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+        <p class="callout-text">Neste formulário insira os dados referentes a bateria a ser cadastrada.</p>
+      </div>
+
+      <div class="card card-primary card-outline">
+        <div class="card-header">
+          <h3 class="card-title">Criar bateria</h3>
+        </div>
+        <form class="p-3" method='post' enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group col-md-12 mb-0">
+                <label for="id_number">Numeração</label>
+                {{ form.number }}
+                {{ form.number.errors }}
+                <label for="id_num_cicles">Número de ciclos</label>
+                {{ form.num_cicles }}
+                {{ form.num_cicles.errors }}
+                <label for="id_maximum_cicles">Tipo</label>
+                {{ form.maximum_cicles }}
+                {{ form.maximum_cicles.errors }}
+                <label for="id_aircraft">Aeronave</label>
+                {{ form.aircraft }}
+                {{ form.aircraft.errors }}
+                <label for="#" class="mt-3">Imagem da bateria</label>
+                {{ form.battery_image }}
+                <button type="button" class="btn btn-outline-primary ml-3" id="fileButton">Selecionar Arquivo</button>
+                <p id="fileName"></p>
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'rpa:baterias' %}">
+              <button type="button" class="btn btn-warning">Cancelar</button>
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+  <!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script>
+    document.getElementById("fileButton").addEventListener("click", function() {
+      document.getElementById("id_battery_image").click();
+    });
+    document.getElementById("id_battery_image").addEventListener("change", function() {
+      var fileName = document.getElementById("id_battery_image").files[0].name;
+      document.getElementById("fileName").innerHTML = "Arquivo selecionado: " + fileName;
+    });
+  </script>
+
+  <script>
+    const error = document.querySelector('.errorlist li');
+    if(error.textContent.includes('Bateria com este Numeracao já existe.')) {
+      error.textContent = error.textContent.replace('Bateria com este Numeracao já existe.', 'Bateria com esta numeração já existe.')
+    } 
+  </script>
+{% endblock %}
