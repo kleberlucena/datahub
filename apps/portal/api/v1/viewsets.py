@@ -1,84 +1,21 @@
-
+from django.http import HttpResponse, Http404
+from django.db import transaction
 from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView, UpdateView, RedirectView, DetailView
-from django_datatables_view.base_datatable_view import BaseDatatableView
-from rest_framework import generics, filters
+from rest_framework import generics, filters, mixins, status
 from rest_framework.permissions import DjangoModelPermissions
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied, NotFound, ValidationError
 from rest_framework.decorators import action
+from guardian.shortcuts import assign_perm
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-import logging
 
-from . import models, tasks, services
+from apps.portal.models import Military
 from apps.portal.api.v1 import serializers
-
-
-class EntityListJson(BaseDatatableView):
-    max_display_length = 100
-    model = models.Entity
-    columns = ['id', 'name', 'child_exists', 'category', 'hierarchy', 'created_at',
-               'updated_at']
-    # permission_required = 'entity.view_entity'
-
-
-class EntityListView(TemplateView):
-    template_name = 'entity_list.html'
-    # teste.delay()
-    # permission_required = 'entity.view_entity'
-
-
-class ComandosAPIPortalView(TemplateView):
-    template_name = 'command_portal.html'
-
-
-class MilitaryListJson(BaseDatatableView):
-    max_display_length = 100
-    model = models.Military
-    columns = ['id', 'rank', 'register', 'nickname', 'name',
-               'cpf', 'activity_status', 'unidade']
-
-    def render_column(self, row, column):
-        # We want to render user as a custom column
-        if column == 'rank':
-            rank = models.Promotion.objects.filter(military=row.id).last()
-            row.rank = rank.rank
-            return row.rank
-
-        if column == 'unidade':
-            unit = models.HistoryTransfer.objects.filter(military=row.id).last()
-            row.unidade = unit.entity.name
-            return row.unidade
-
-        return super(MilitaryListJson, self).render_column(row, column)
-
-
-class MilitaryListView(TemplateView):
-    template_name = 'military_list.html'
-
-
-class MilitaryProfileView(DetailView):
-    template_name = 'profile.html'
-
-    def get_object(self):
-        id_ = self.kwargs.get("id")
-        object = get_object_or_404(models.Military, id=id_)
-        promotions = models.Promotion.objects.filter(military=id_)
-        object.rankActual = promotions.latest('created_at')
-        object.promotions = promotions
-
-        histories = models.HistoryTransfer.objects.filter(
-            military=id_)
-        object.histories = histories
-        object.unitActual = histories.latest('created_at').entity.name
-
-        return object
-
-
-class SearchMilitaryView(TemplateView):
-    template_name = 'search_military.html'
-
+from base import helpers as base_helpers
+import logging
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -99,7 +36,7 @@ class MilitaryListView(generics.ListCreateAPIView):
     permission_classes = [DjangoModelPermissions]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at', 'updated_at']
-    queryset = models.Military.objects.all()
+    queryset = Military.objects.all()
 
     def get_serializer_class(self):            
         if self.request.user.groups.filter(name__in=['portal:military']).exists():
@@ -127,6 +64,9 @@ class MilitaryListView(generics.ListCreateAPIView):
             queryset = self.get_queryset().filter(
                 self.build_filter_conditions(term)
             )
+            queryset = self.get_queryset().filter(
+                self.build_filter_conditions()
+            )
             page = self.paginate_queryset(queryset)
             serializer = self.get_serializer(page, many=True) if page is not None else self.get_serializer(queryset, many=True)
         
@@ -151,7 +91,7 @@ class MilitaryListView(generics.ListCreateAPIView):
                 elif term:
                     q = Q(**{f"{flag}__icontains":term}) if field in ['cpf', 'register'] else Q(
                         **{f"{flag}__unaccent__icontains":term})
-                    filters |= q
+                    filters &= q
             logger.info('Query_filter - {}'.format(filters))
             return filters
         except Exception as e:

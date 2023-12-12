@@ -127,9 +127,14 @@ class PoliceGroupForm(forms.ModelForm):
         self.fields['driver'].widget.attrs.update({
             'placeholder': 'Insira um motorista'
         })
+        self.fields['driver'].queryset = Military.objects.none()
+        
         self.fields['observer_pilot'].widget.attrs.update({
             'placeholder': 'Insira um piloto observador'
         })
+
+        self.fields['observer_pilot'].queryset = Military.objects.none()
+
         self.fields['phone'].widget.attrs.update({
             'placeholder': "Somente números, exemplo: '83988776655'"
         })
