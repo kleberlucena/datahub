@@ -367,6 +367,28 @@ class PortalCortexService(object):
         finally:
             return data
         
+    def get_vehicle_by_cambio(self, cambio, username):
+        """
+        Get vehicle register from API on CORTEX
+        :return: json with vehicle data
+        """
+        headers = {
+            'Content-Type': content_type,
+            'Authorization': f'Token {authorization}',
+            'username': username
+        }
+        data = None
+        try:
+            response = requests.get(f"{portal_url_base}/api/v1/cortex/veiculos/cambio/{cambio}/", headers=headers, timeout=(50))
+            data = json.loads(response.content)
+        except requests.exceptions.ReadTimeout:
+            logger.warning('Timeout while request vehicle from get_vehicle_by_cambio')
+        except Exception as e:
+            data = None
+            logger.error('Error while request vehicle from get_vehicle_by_cambio - {}'.format(e))
+        finally:
+            return data
+        
     def get_vehicle_by_chassi(self, chassi, username):
         """
         Get vehicle register from API on CORTEX

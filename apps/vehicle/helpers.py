@@ -19,7 +19,7 @@ def process_cortex_consult_by_cpf(username, cpf=None):
         return None
 
 
-def process_cortex_consult(username, placa=None, chassi=None, renavam=None, motor=None):
+def process_cortex_consult(username, placa=None, chassi=None, renavam=None, motor=None, cambio=None):
     retorno = None
     try:
         vehicle_cortex = None
@@ -31,6 +31,8 @@ def process_cortex_consult(username, placa=None, chassi=None, renavam=None, moto
             vehicle_cortex = VehicleCortex.objects.get(renavam=renavam)
         elif motor:
             vehicle_cortex = VehicleCortex.objects.get(numeroMotor=motor)
+        elif cambio:
+            vehicle_cortex = VehicleCortex.objects.get(numeroCaixaCambio=cambio)
 
         if isinstance(vehicle_cortex, VehicleCortex):
             if vehicle_cortex.updated_at.date() < date.today():
@@ -51,9 +53,9 @@ def process_cortex_consult(username, placa=None, chassi=None, renavam=None, moto
 
     except VehicleCortex.DoesNotExist:
         try:
-            print('CHEGOU no NotFoundException')
+            logger.warning('CHEGOU no NotFoundException')
             vehicle_cortex = tasks.cortex_consult(
-                username=username, placa=placa, chassi=chassi, renavam=renavam, motor=motor)
+                username=username, placa=placa, chassi=chassi, renavam=renavam, motor=motor, cambio=cambio)
             if vehicle_cortex:
                 retorno = vehicle_cortex
         except Exception as e:

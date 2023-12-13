@@ -53,7 +53,7 @@ def cortex_consult_vehicle_by_cpf(self, username, cpf):
 
 
 @shared_task(bind=True)
-def cortex_consult(self, username, placa=False, chassi=False, renavam=False, motor=False):
+def cortex_consult(self, username, placa=False, chassi=False, renavam=False, motor=False, cambio=False):
     """
     Get service and consult person on cortex by params
     """
@@ -73,6 +73,9 @@ def cortex_consult(self, username, placa=False, chassi=False, renavam=False, mot
         elif motor:
             vehicle_json = portalCortexService.get_vehicle_by_motor(
                 motor=motor, username=username)
+        elif cambio:
+            vehicle_json = portalCortexService.get_vehicle_by_cambio(
+                cambio=cambio, username=username)
     except Exception as e:
         logger.error(
             'Error while getting vehicle_cortex by portal service in cortex_consult - {}'.format(e))

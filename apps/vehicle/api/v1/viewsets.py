@@ -135,6 +135,62 @@ class VehicleByMotorViewSet(generics.GenericAPIView):
         if isinstance(exc, NotFound):
             return Response({"detail": "Recurso não encontrado."}, status=status.HTTP_404_NOT_FOUND)
         return super().handle_exception(exc)
+    
+
+class VehicleByCambioViewSet(generics.GenericAPIView):
+    serializer_class = VehicleCortexSerializer
+    permission_classes = [DjangoModelPermissions]
+
+    def get_serializer_class(self):
+        if self.request.user.groups.filter(name='profile:vehicle_advanced').exists():
+            return VehicleCortexSerializer
+        elif self.request.user.groups.filter(name='profile:vehicle_intermediate').exists():
+            return VehicleCortexSerializer
+        elif self.request.user.groups.filter(name='profile:vehicle_basic').exists():
+            return BasicVehicleCortexSerializer
+        else:
+            raise PermissionDenied
+
+    def get_queryset(self):
+        queryset = VehicleCortex.objects.all()
+        return queryset
+
+    @swagger_auto_schema()
+    @action(detail=True, methods=['GET'], permission_classes=DjangoObjectPermissions)
+    def get(self, request, cambio):
+        username = request.user.username
+        vehicle_cortex = None
+
+        try:
+            helpers.process_cortex_consult(
+                username=username, cambio=cambio.upper())
+
+        except Exception as e:
+            logger.error(
+                'Error while process_cortex_consult vehicle_cortex - {}'.format(e))
+        try:
+            logger.info(cambio)
+            logger.info(cambio.upper())
+            vehicle_cortex = get_object_or_404(
+                VehicleCortex, numeroCaixaCambio=cambio.upper())
+            logger.info(vehicle_cortex)
+        except Exception as e:
+            logger.error('Error while get vehicle_cortex - {}'.format(e))
+        try:
+            serializer = self.get_serializer(vehicle_cortex)
+            return Response(serializer.data)
+        except Exception as e:
+            logger.error('Error while serialize vehicle_cortex - {}'.format(e))
+            return Response(status=403)
+
+    def handle_exception(self, exc):
+        if isinstance(exc, ValidationError):
+            return Response({"detail": "Erro na validação do CPF."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        if isinstance(exc, PermissionDenied):
+            return Response({"detail": "Você não tem permissão para acessar este recurso."}, status=status.HTTP_403_FORBIDDEN)
+        if isinstance(exc, NotFound):
+            return Response({"detail": "Recurso não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        return super().handle_exception(exc)
 
 
 class VehicleByRenavamViewSet(generics.GenericAPIView):

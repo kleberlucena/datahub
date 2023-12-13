@@ -15,5 +15,6 @@ urlpatterns = [
     path('chassi/<str:chassi>/', viewsets.VehicleByChassiViewSet.as_view(), name='vehicle_by_chassi_json'),
     path('renavam/<str:renavam>/', viewsets.VehicleByRenavamViewSet.as_view(), name='vehicle_by_renavam_json'),
     path('motor/<str:motor>/', viewsets.VehicleByMotorViewSet.as_view(), name='vehicle_by_motor_json'),
+    path('cambio/<str:cambio>/', viewsets.VehicleByCambioViewSet.as_view(), name='vehicle_by_cambio_json'),
     path('cpf/<str:cpf>/', viewsets.VehicleByCPFViewSet.as_view(), name='vehicle_by_cpf_json'),
 ]
