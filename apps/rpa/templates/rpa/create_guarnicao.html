@@ -131,7 +131,7 @@
             delay: 250,
             processResults: function (data) {
               console.log(data)
-              updateObserverPilotSelect(data)
+              //updateObserverPilotSelect(data)
               return {
                 results: data
               };
@@ -175,7 +175,6 @@
             dataType: 'json',
             delay: 250,
             processResults: function (data) {
-              updateDriverSelect(data)
               return {
                 results: data
               };
@@ -198,44 +197,7 @@
     });
   </script>
 
-  <script>
-    {% comment %} $(document).ready(function () {
-      function updateObserverPilotSelect(data) {
-        var $observerPilotSelect = $('select[id="id_observer_pilot"]');
-        $observerPilotSelect.empty();
   
-        data.forEach(function(item) {
-          console.log(item)
-          var option = new Option(item.nickname, item.register, false, false);
-          $observerPilotSelect.append(option);
-        });
-  
-        $observerPilotSelect.trigger('change');
-      }
-  
-  
-      // Quando o valor do campo id_observer_pilot for alterado
-      $('#id_observer_pilot_input').change(function () {
-        console.log('Aqui...')
-          var selectionId = $('select[id="id_observer_pilot"].spam[class="select2-search__field"]').val();
-          var selectionIdOld = $(this).val();
-          $.ajax({
-              url: '{% url "portal:list_militaries" %}',
-              method: 'GET',
-              data: { 'selectionId': selectionId },
-              dataType: 'json',
-              success: function (data) {
-                updateObserverPilotSelect(data);
-                  
-              },
-              error: function (xhr, status, error) {
-                  console.error('Erro ao buscar militares:', error);
-              }
-          });
-      });
-    }); {% endcomment %}
-  
-  </script>
 
   <script>
     const errorList = document.querySelectorAll('ul.errorlist');

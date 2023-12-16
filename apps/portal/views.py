@@ -1,5 +1,6 @@
-
 from django.db.models import Q
+from django.http import JsonResponse
+from django.views import View
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, UpdateView, RedirectView, DetailView
 from django_datatables_view.base_datatable_view import BaseDatatableView
@@ -95,60 +96,46 @@ cpf = openapi.Parameter('cpf', openapi.IN_QUERY,
                         description="param número do CPF do militar", type=openapi.TYPE_STRING)
 
 
-class MilitaryListView(generics.ListCreateAPIView):
-    permission_classes = [DjangoModelPermissions]
-    filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['created_at', 'updated_at']
-    queryset = models.Military.objects.all()
-
-    def get_serializer_class(self):            
-        if self.request.user.groups.filter(name__in=['portal:military']).exists():
-            return serializers.MilitarySerializer
-        else:
-            raise PermissionDenied
-
-    @swagger_auto_schema(method='get',
-                         manual_parameters=[
-                                            name,
-                                            cpf,
-                                            register,
-                                            email,
-                                            nickname])
+class AutocompleteMilitaryView(View):
+    
     @action(detail=True, methods=['GET'])
     def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    @action(detail=True, methods=['GET'], permission_classes=DjangoModelPermissions)
-    def list(self, request, *args, **kwargs):
-        try:
-            # Retrieve the parameter from the request
-            term = request.query_params.get('term')
-
-            queryset = self.get_queryset().filter(
-                self.build_filter_conditions(term)
-            )
-            page = self.paginate_queryset(queryset)
-            serializer = self.get_serializer(page, many=True) if page is not None else self.get_serializer(queryset, many=True)
         
-            return self.get_paginated_response(serializer.data)
+        try:
+            if self.request.user.groups.filter(name__in=['portal:military', 'portal:military_basic']).exists():
+                # Retrieve the parameter from the request
+                term = request.GET.get('term')
+
+                militaries = models.Military.objects.filter(
+                    self.build_filter_conditions(term)
+                )
+                # page = self.paginate_queryset(queryset)
+                # serializer = self.get_serializer(page, many=True) if page is not None else self.get_serializer(queryset, many=True)
+                data = []
+                for military in militaries:
+                    if military.rank and military.nickname:
+                        text = f"{military.register} ({military.rank} {military.nickname})"
+                    else:
+                        text = f"{military.register} ({military.name})"
+
+                    data.append({
+                        'id': military.pk,
+                        'text': text
+                    })
+                return JsonResponse(data, safe=False)
+                # return self.get_paginated_response(serializer.data)
         except Exception as e:
             logger.error('Error while getting military - {}'.format(e))
-            raise ValidationError(e)
         
     def build_filter_conditions(self,term):
         logger.info('No filtro personalizado - {}'.format(self.request.user))
         filters = Q()
-        query_params = self.request.query_params
         try:
             # TODO atualizar parâmetros
             query_dict = {'name':  'name', 'cpf': 'cpf', 'nickname': 'nickname', 'register': 'register', 'email': 'email'}
 
             for field, flag in query_dict.items():
-                if value := query_params.get(field):
-                    q = Q(**{f"{flag}__icontains": value}) if field in ['cpf', 'register'] else Q(
-                        **{f"{flag}__unaccent__icontains": value})
-                    filters &= q
-                elif term:
+                if term:
                     q = Q(**{f"{flag}__icontains":term}) if field in ['cpf', 'register'] else Q(
                         **{f"{flag}__unaccent__icontains":term})
                     filters |= q

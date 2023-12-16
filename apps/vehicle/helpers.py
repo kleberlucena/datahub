@@ -17,6 +17,21 @@ def process_cortex_consult_by_cpf(username, cpf=None):
     except Exception as e:
         logger.error('Error while consult vehicle by CPF - {}'.format(e))
         return None
+    
+
+def process_cortex_movimento_consult(username, placa):
+    movimento = None
+    try:
+        placa = validate_signal(placa)
+        if placa:
+            movimento = tasks.cortex_consult_movimento(username=username, placa=placa)
+        
+    except Exception as e:
+        logger.error(
+            'Error while processing helper movimento in app vehicle - {}'.format(e))
+        movimento = None
+    finally:
+        return movimento
 
 
 def process_cortex_consult(username, placa=None, chassi=None, renavam=None, motor=None, cambio=None):
