@@ -206,7 +206,7 @@
 
       {% if guarnicao %}
         <div class="card-body">
-          <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
+          <div class="col-lg-4 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
             <div class="card bg-light d-flex flex-fill">
                 <div class="card-header text-muted border-bottom-0">
                   <i class="fas fa-lg fa-building"></i> {{ guarnicao.location.cities_pb }}
@@ -214,11 +214,27 @@
                 <div class="card-body pt-0">
                   <div class="card_content">
                     <div class="card_gu_info">
-                      <small class=""><i class="fa fa-car"></i> <b>Motorista:</b>{{ guarnicao.driver.rank }} {{ guarnicao.driver.nickname }}</small>
-                      <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b>{{ guarnicao.remote_pilot.rank }} {{ guarnicao.remote_pilot.nickname }} </small>
+                      <small class=""><i class="fa fa-car"></i> <b>Motorista:</b>
+                        {% if guarnicao.driver.rank %} 
+                          {{ guarnicao.driver.rank }} {{ guarnicao.driver.nickname }} - {{ guarnicao.driver.register }} 
+                        {% else %} 
+                          {{ guarnicao.driver.register }} - {{ guarnicao.driver.name }}
+                        {% endif %}
+                      </small>
+                      <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b>
+                        {% if guarnicao.remote_pilot.rank %} 
+                          {{ guarnicao.remote_pilot.rank }} {{ guarnicao.remote_pilot.nickname }} - {{ guarnicao.remote_pilot.register }} 
+                        {% else %} 
+                          {{ guarnicao.remote_pilot.register }} - {{ guarnicao.remote_pilot.name }}
+                        {% endif %}
+                      </small>
                       <small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b>  
                         {% if guarnicao.observer_pilot != None %}
-                        {{ guarnicao.observer_pilot.rank }} {{ guarnicao.observer_pilot.nickname }}
+                          {% if guarnicao.observer_pilot.rank %} 
+                            {{ guarnicao.observer_pilot.rank }} {{ guarnicao.observer_pilot.nickname }} - {{ guarnicao.observer_pilot.register }} 
+                          {% else %} 
+                            {{ guarnicao.observer_pilot.register }} - {{ guarnicao.observer_pilot.name }}
+                          {% endif %}
                         {% else %}
                           sem registro
                         {% endif %}

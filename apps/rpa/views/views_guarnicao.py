@@ -1,3 +1,5 @@
+from typing import Any
+from django.http import HttpRequest, HttpResponse
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.views import View
@@ -30,14 +32,23 @@ class GuarnicaoCreateView(GroupRequiredMixin, CreateView):
     
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        user = self.request.user
-        military = user.military
-        kwargs['initial'] = {
-            'remote_pilot': military,
-            'observer_pilot': None,
-            'driver': None,
-            }
+        kwargs['initial'] = {'remote_pilot': self.request.user.military}
         return kwargs
+    
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        print(" lero leor", request.POST)
+        return super().post(request, *args, **kwargs)
+    
+    def get(self, request, *args, **kwargs):
+        existing_guarnicao = PoliceGroup.objects.filter(
+            Q(remote_pilot=request.user.military) | Q(observer_pilot=request.user.military) | Q(driver=request.user.military)
+        ).first()
+
+        if existing_guarnicao:
+            messages.info(self.request, 'O usuário logado já participa de uma guarnição')
+            return redirect('rpa:painel')
+        
+        return super().get(request, *args, **kwargs)
         
     
 class GuarnicaoUpdateView(GroupRequiredMixin, UpdateView):

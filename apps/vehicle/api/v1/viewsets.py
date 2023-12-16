@@ -12,8 +12,8 @@ from drf_yasg import openapi
 from guardian.shortcuts import assign_perm
 import logging
 
-from apps.vehicle.api.v1.serializers import VehicleCortexSerializer, IntermediateVehicleCortexSerializer, BasicVehicleCortexSerializer, VehicleSerializer, BasicVehicleSerializer, IntermediateVehicleSerializer, VehicleUpdateSerializer, VehicleImageSerializer
-from apps.vehicle.models import PersonRenavamCortex, VehicleCortex, Vehicle, VehicleImage
+from apps.vehicle.api.v1.serializers import MovimentoSerializer, VehicleCortexSerializer, IntermediateVehicleCortexSerializer, BasicVehicleCortexSerializer, VehicleSerializer, BasicVehicleSerializer, IntermediateVehicleSerializer, VehicleUpdateSerializer, VehicleImageSerializer
+from apps.vehicle.models import Movimento, PersonRenavamCortex, VehicleCortex, Vehicle, VehicleImage
 from apps.vehicle import helpers
 from apps.person.api.v1.serializers import PersonSerializer
 from apps.person.models import Person
@@ -130,6 +130,127 @@ class VehicleByMotorViewSet(generics.GenericAPIView):
     def handle_exception(self, exc):
         if isinstance(exc, ValidationError):
             return Response({"detail": "Erro na validação do CPF."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        if isinstance(exc, PermissionDenied):
+            return Response({"detail": "Você não tem permissão para acessar este recurso."}, status=status.HTTP_403_FORBIDDEN)
+        if isinstance(exc, NotFound):
+            return Response({"detail": "Recurso não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        return super().handle_exception(exc)
+    
+
+class VehicleByCambioViewSet(generics.GenericAPIView):
+    serializer_class = VehicleCortexSerializer
+    permission_classes = [DjangoModelPermissions]
+
+    def get_serializer_class(self):
+        if self.request.user.groups.filter(name='profile:vehicle_advanced').exists():
+            return VehicleCortexSerializer
+        elif self.request.user.groups.filter(name='profile:vehicle_intermediate').exists():
+            return VehicleCortexSerializer
+        elif self.request.user.groups.filter(name='profile:vehicle_basic').exists():
+            return BasicVehicleCortexSerializer
+        else:
+            raise PermissionDenied
+
+    def get_queryset(self):
+        queryset = VehicleCortex.objects.all()
+        return queryset
+
+    @swagger_auto_schema()
+    @action(detail=True, methods=['GET'], permission_classes=DjangoObjectPermissions)
+    def get(self, request, cambio):
+        username = request.user.username
+        vehicle_cortex = None
+
+        try:
+            helpers.process_cortex_consult(
+                username=username, cambio=cambio.upper())
+
+        except Exception as e:
+            logger.error(
+                'Error while process_cortex_consult vehicle_cortex - {}'.format(e))
+        try:
+            logger.info(cambio)
+            logger.info(cambio.upper())
+            vehicle_cortex = get_object_or_404(
+                VehicleCortex, numeroCaixaCambio=cambio.upper())
+            logger.info(vehicle_cortex)
+        except Exception as e:
+            logger.error('Error while get vehicle_cortex - {}'.format(e))
+        try:
+            serializer = self.get_serializer(vehicle_cortex)
+            return Response(serializer.data)
+        except Exception as e:
+            logger.error('Error while serialize vehicle_cortex - {}'.format(e))
+            return Response(status=403)
+
+    def handle_exception(self, exc):
+        if isinstance(exc, ValidationError):
+            return Response({"detail": "Erro na validação do CPF."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        if isinstance(exc, PermissionDenied):
+            return Response({"detail": "Você não tem permissão para acessar este recurso."}, status=status.HTTP_403_FORBIDDEN)
+        if isinstance(exc, NotFound):
+            return Response({"detail": "Recurso não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        return super().handle_exception(exc)
+    
+
+class MovimentoByPlacaViewSet(generics.GenericAPIView):
+    serializer_class = MovimentoSerializer
+    permission_classes = [DjangoModelPermissions]
+
+    def get_serializer_class(self):
+        if self.request.user.groups.filter(name='profile:vehicle_advanced').exists():
+            return MovimentoSerializer
+        else:
+            raise PermissionDenied
+
+    def get_queryset(self):
+        queryset = Movimento.objects.all()
+        return queryset
+
+    @swagger_auto_schema()
+    @action(detail=True, methods=['GET'], permission_classes=DjangoModelPermissions)
+    def get(self, request, placa):
+        username = request.user.username
+        vehicle_cortex = None
+
+        placa = helpers.validate_signal(placa)
+        if placa:
+            try:
+                vehicle_cortex = get_object_or_404(VehicleCortex, placa=placa.upper())
+            except Exception as e:
+                logger.error('Error not_found placa in database - {}'.format(e))
+                helpers.process_cortex_consult(username=username, placa=placa.upper())
+                vehicle_cortex = get_object_or_404(VehicleCortex, placa=placa.upper())
+        else:
+            raise ValidationError
+
+        if vehicle_cortex:
+            try:
+                movimentos_json = helpers.process_cortex_movimento_consult(
+                    username=username, placa=placa.upper())
+                for movimento in movimentos_json:
+                    Movimento.objects.update_or_create(vehicle_cortex=vehicle_cortex, idMovimento= movimento['idMovimento'], defaults={**movimento})
+
+            except Exception as e:
+                logger.error(
+                    'Error while process_cortex_consult movimento - {}'.format(e))
+            try:
+                logger.info(vehicle_cortex)
+                movimentos = Movimento.objects.filter(vehicle_cortex=vehicle_cortex.id)
+                # Log information about each item in the queryset
+                for movimento in movimentos:
+                    logger.info(f'Movimento: {movimento.id}')
+                serializer = self.get_serializer(movimentos, many=True)
+                return Response(serializer.data)
+            except Exception as e:
+                logger.error('Error while serialize movimento - {}'.format(e))
+                return Response(status=403)
+        else:
+            return None
+
+    def handle_exception(self, exc):
+        if isinstance(exc, ValidationError):
+            return Response({"detail": "Erro na validação da Placa."}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         if isinstance(exc, PermissionDenied):
             return Response({"detail": "Você não tem permissão para acessar este recurso."}, status=status.HTTP_403_FORBIDDEN)
         if isinstance(exc, NotFound):
