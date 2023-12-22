@@ -1,3 +1,6 @@
-from django.shortcuts import render
+from django.views.generic import CreateView, TemplateView, UpdateView, ListView, DetailView, DeleteView
 
-# Create your views here.
+
+
+class IndexView(TemplateView):
+    template_name = 'area/index.html'
