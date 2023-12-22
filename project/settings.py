@@ -127,6 +127,7 @@ INSTALLED_APPS = [
     'apps.radio',
     'apps.termsofuse',
     'apps.protect_network',
+    'apps.area',
 
 ]
 

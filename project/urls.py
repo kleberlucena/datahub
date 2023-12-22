@@ -89,6 +89,7 @@ urlpatterns = [
     path('portal/', include('apps.portal.urls'), name='portal'),
     path('rpa/', include('apps.rpa.urls'), name="rpa"),
     path('protect_network/', include('apps.protect_network.urls'), name='protect_network'),
+    path('area/', include('apps.area.urls'), name='area'),
     path('api/v1/protect_network/', include('apps.protect_network.api.v1.urls'), name='protect_network_api'),
     path('fact/', include('apps.fact.urls'), name='fact'),
     path('termos-de-uso/', include('apps.termsofuse.urls')),
