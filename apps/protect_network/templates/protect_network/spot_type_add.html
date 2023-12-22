@@ -55,19 +55,13 @@
             </div>
             <div class="row mb-1 mt-3">
                 <div class="col-sm-12">
-                    {{form.spot_type_father|add_class:"form-control"|as_crispy_field}}
+                    {{form.details|add_class:"form-control"|as_crispy_field}}
                 </div>
             </div>
-            <div class="row mb-1 mt-3">
-                <div class="col-sm-12">
-                    {{form.update_time|add_class:"form-control"|as_crispy_field}}
-                </div>
-            </div>
-
                
             <div class="mt-3">
                 <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="{% url 'protect_network:type_list' %}"><button type="button" class="btn btn-warning">Cancelar</button></a>
+                <a href="{{ request.META.HTTP_REFERER  }}"><button type="button" class="btn btn-warning ml-1"> Cancelar </button></a>
             </div>
         </form>
     </div>

@@ -1,0 +1,16 @@
+{% load custom_tags %}
+<!--Módulo Rede de Serviços-->
+<li class="nav-item module-item">
+    <a href="" class="nav-link">
+        <i class="fas fa-map nav-icon"></i>
+        <p>Area<i class="fas fa-angle-left right"></i></p>
+    </a>
+
+    <ul class="nav nav-treeview" style="display: none;">
+        <li class="nav-item">
+            <a href="{% url 'area:area_list' %}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i><p>Areas</p>
+            </a>
+        </li>
+    </ul>
+</li>

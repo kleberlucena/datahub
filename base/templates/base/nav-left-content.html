@@ -3,6 +3,7 @@
 
 <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+      {% include 'base/apps-nav-left-content/area.html' %}
       {% if request.user|has_group:'profile:rpa_manager' %}
         {% include 'base/apps-nav-content/rpa.html' %}
       {% endif %}
