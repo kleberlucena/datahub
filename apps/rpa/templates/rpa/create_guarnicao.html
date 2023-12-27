@@ -66,7 +66,7 @@
           <div class="form-group col-md-12 col-lg-12 col-xl-12 mb-0">
             <label for="#">Piloto remoto</label>
             <br>{{ user.first_name }} {{ user.last_name }}<br><hr>
-            <label for="id_remote_pilot">Piloto observador</label>
+            <label for="id_observer_pilot">Piloto observador</label>
             {{ form.observer_pilot }}
             {{ form.observer_pilot.errors }}
             
@@ -107,8 +107,97 @@
       $('.location_escolha').select2();
       $('.observer_pilot_escolha').select2();
       $('.driver_escolha').select2();
+    });    
+  </script>
+  <script>
+    function updateObserverPilotSelect(data) {
+      var $observerPilotSelect = $('select[id="id_observer_pilot"]');
+      $observerPilotSelect.empty();
+
+      data.results.forEach(function(item) {
+        var displayText = item.nickname + ' - ' + item.register;
+        var option = new Option(displayText, item.id, false, false);
+        $observerPilotSelect.append(option);
+      });
+
+      $observerPilotSelect.trigger('change');
+    }
+    $(document).ready(function() {
+      // Inicialize o Select2
+      $('#id_observer_pilot').select2({
+        ajax: {
+            url: '{% url "portal:list_militaries" %}',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+              console.log(data)
+              //updateObserverPilotSelect(data)
+              return {
+                results: data
+              };
+            },
+            cache: true
+        },
+        minimumInputLength: 3, // Defina o comprimento mínimo de caracteres para acionar a pesquisa AJAX
+      });
+  
+      // Adicione um ID ao input do Select2 para o campo "Piloto observador"
+      $('#id_observer_pilot').on('select2:open', function (e) {
+        $('.select2-search__field').attr('id', 'id_observer_pilot_input');
+      });
+      // Acesse o valor do input quando ele for modificado
+      $('#id_observer_pilot_input').on('input', function() {
+        var valorDoInput = $(this).val();
+        console.log("Valor do input: " + valorDoInput);
+        // Faça o que quiser com o valor do input aqui
+      });
     });
   </script>
+
+  <script>
+    function updateDriverSelect(data) {
+      var $driverSelect = $('select[id="id_driver"]');
+      $driverSelect.empty();
+
+      data.results.forEach(function(item) {
+        var displayText = item.nickname + ' - ' + item.register;
+        var option = new Option(displayText, item.id, false, false);
+        $driverSelect.append(option);
+      });
+
+      $driverSelect.trigger('change');
+    }
+    $(document).ready(function() {
+      // Inicialize o Select2
+      $('#id_driver').select2({
+        ajax: {
+            url: '{% url "portal:list_militaries" %}',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+              return {
+                results: data
+              };
+            },
+            cache: true
+        },
+        minimumInputLength: 3, // Defina o comprimento mínimo de caracteres para acionar a pesquisa AJAX
+      });
+  
+      // Adicione um ID ao input do Select2 para o campo "Piloto observador"
+      $('#id_observer_pilot').on('select2:open', function (e) {
+        $('.select2-search__field').attr('id', 'id_observer_pilot_input');
+      });
+      // Acesse o valor do input quando ele for modificado
+      $('#id_observer_pilot_input').on('input', function() {
+        var valorDoInput = $(this).val();
+        console.log("Valor do input: " + valorDoInput);
+        // Faça o que quiser com o valor do input aqui
+      });
+    });
+  </script>
+
+  
 
   <script>
     const errorList = document.querySelectorAll('ul.errorlist');

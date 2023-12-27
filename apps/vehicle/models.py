@@ -299,3 +299,20 @@ class VehicleImage(Base, SoftDelete):
     class Meta:
         verbose_name = "Imagem de Veículo"
         verbose_name_plural = "Imagens de Veículo"
+
+
+class Movimento(models.Model):
+    idMovimento = models.BigIntegerField(null=True, blank=True)
+    dataPassagem = models.DateTimeField(null=True, blank=True)
+    local = models.CharField(max_length=1024, null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    vehicle_cortex = models.ForeignKey(VehicleCortex, related_name='moviments_vehicle_cortex', null=True,
+                              blank=True, on_delete=models.RESTRICT)
+
+    class Meta:
+        verbose_name = "movimento"
+        verbose_name_plural = "movimentos"
+
+    def __str__(self):
+        return self.idMovimento

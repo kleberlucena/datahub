@@ -3,7 +3,7 @@ from guardian.shortcuts import get_perms
 from drf_extra_fields.fields import Base64ImageField
 from drf_writable_nested import WritableNestedModelSerializer
 
-from apps.vehicle.models import PersonRenavamCortex, VehicleCortex, Vehicle, VehicleImage
+from apps.vehicle.models import Movimento, PersonRenavamCortex, VehicleCortex, Vehicle, VehicleImage
 from base.models import Registry
 from apps.person.models import Person
 from apps.person.api.v1.serializers import NicknameSerializer, FaceSerializer, AddressSerializer, ImageSerializer, TattooSerializer, PhysicalSerializer, DocumentSerializer
@@ -361,3 +361,10 @@ class IntermediateVehicleSerializer(serializers.ModelSerializer):
         model = Vehicle
         fields = ("uuid", "chassi", "signal", "brand", "model", "color", "category", "model_year",
                   "manufactured_year", "owner", "cpf_owner", "custodian", "cpf_custodian", "renter", "cpf_renter", "images", "created_at", "updated_at", "permissions")
+
+
+class MovimentoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Movimento
+        fields = ("idMovimento", "dataPassagem", "local", "latitude", "longitude")

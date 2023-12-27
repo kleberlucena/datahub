@@ -17,9 +17,24 @@ def process_cortex_consult_by_cpf(username, cpf=None):
     except Exception as e:
         logger.error('Error while consult vehicle by CPF - {}'.format(e))
         return None
+    
+
+def process_cortex_movimento_consult(username, placa):
+    movimento = None
+    try:
+        placa = validate_signal(placa)
+        if placa:
+            movimento = tasks.cortex_consult_movimento(username=username, placa=placa)
+        
+    except Exception as e:
+        logger.error(
+            'Error while processing helper movimento in app vehicle - {}'.format(e))
+        movimento = None
+    finally:
+        return movimento
 
 
-def process_cortex_consult(username, placa=None, chassi=None, renavam=None, motor=None):
+def process_cortex_consult(username, placa=None, chassi=None, renavam=None, motor=None, cambio=None):
     retorno = None
     try:
         vehicle_cortex = None
@@ -31,6 +46,8 @@ def process_cortex_consult(username, placa=None, chassi=None, renavam=None, moto
             vehicle_cortex = VehicleCortex.objects.get(renavam=renavam)
         elif motor:
             vehicle_cortex = VehicleCortex.objects.get(numeroMotor=motor)
+        elif cambio:
+            vehicle_cortex = VehicleCortex.objects.get(numeroCaixaCambio=cambio)
 
         if isinstance(vehicle_cortex, VehicleCortex):
             if vehicle_cortex.updated_at.date() < date.today():
@@ -51,9 +68,9 @@ def process_cortex_consult(username, placa=None, chassi=None, renavam=None, moto
 
     except VehicleCortex.DoesNotExist:
         try:
-            print('CHEGOU no NotFoundException')
+            logger.warning('CHEGOU no NotFoundException')
             vehicle_cortex = tasks.cortex_consult(
-                username=username, placa=placa, chassi=chassi, renavam=renavam, motor=motor)
+                username=username, placa=placa, chassi=chassi, renavam=renavam, motor=motor, cambio=cambio)
             if vehicle_cortex:
                 retorno = vehicle_cortex
         except Exception as e:
