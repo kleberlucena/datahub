@@ -51,7 +51,7 @@
                 {% for area in areas %}
                 <tr>
                   <td>{{ area.name }}</td>
-                    <td>{{ area.details|default_if_none:"Sem descrição" }}</td>
+                    <td>{{ area.description|default_if_none:"Sem descrição" }}</td>
                     <td colspan="2" class="project-actions text-center">
                       <a  class="btn btn-outline-info btn-sm" href="{% url 'area:area_update' area.pk %}">Editar</a>
                       <a  class="btn btn-outline-danger btn-sm" href="{% url 'area:area_delete' area.pk %}">Excluir</a>
