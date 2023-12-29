@@ -12,9 +12,10 @@ from apps.portal import models as portal_models
 from . import models, forms
 
 
-class AreaListView(ListView):
+class AreaListView(GroupRequiredMixin, ListView):
     model = models.Area
     template_name = 'area/areas.html'
+    group_required = ['profile:area_basic', 'profile:area_advanced', 'profile:area_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(AreaListView, self).get_context_data(**kwargs)
@@ -24,10 +25,11 @@ class AreaListView(ListView):
     
 
 @include_toast
-class CreateAreaView(CreateView):
+class CreateAreaView(GroupRequiredMixin, CreateView):
     model = models.Area
     form_class = forms.AreaForm
     template_name = 'area/area_form.html'
+    group_required = ['profile:area_advanced', 'profile:area_manager']
     success_url = reverse_lazy('area:area_list')
 
     def get_context_data(self, **kwargs):
@@ -37,9 +39,10 @@ class CreateAreaView(CreateView):
 
 
 @include_toast
-class UpdateAreaView(UpdateView):
+class UpdateAreaView(GroupRequiredMixin, UpdateView):
     model = models.Area
     template_name = 'area/area_form.html'
+    group_required = ['profile:area_advanced', 'profile:area_manager']
     form_class = forms.AreaForm
     success_url = reverse_lazy('area:area_list')
 
@@ -50,9 +53,10 @@ class UpdateAreaView(UpdateView):
 
 
 @include_toast
-class DeleteAreaView(DeleteView):
+class DeleteAreaView(GroupRequiredMixin, DeleteView):
     model = models.Area
     template_name = 'area/area_delete.html'
+    group_required = ['profile:area_manager']
     success_url = reverse_lazy('area:area_list')
 
     def get_context_data(self, **kwargs):

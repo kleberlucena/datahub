@@ -27,6 +27,8 @@
     </p>
   </div>
 
+{% if request.user|has_group:'profile:area_manager' %}
+
 <div class="row">
   <div class="col-md-12">
       <div class="card card-primary card-outline">
@@ -54,6 +56,8 @@
 
   </div>
 </div>
+
+{% endif %}
 
 {% endblock %}
 

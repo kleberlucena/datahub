@@ -27,6 +27,8 @@
   </p>
 </div>
 
+{% if request.user|has_group:'profile:area_basic,profile:area_advanced,profile:area_manager' %}
+
 <div class="row">
   <div class="col-md-12">
     <div class="card card-primary card-outline">
@@ -44,7 +46,9 @@
                 <tr>
                   <th>Area</th>
                   <th>Descrição</th>
-                  <th>Ação</th>
+                  {% if request.user|has_group:'profile:area_advanced,profile:area_manager' %}
+                    <th>Ação</th>
+                  {% endif %}
                </tr>
               </thead>
 
@@ -53,23 +57,32 @@
                 <tr>
                   <td>{{ area.name }}</td>
                     <td>{{ area.description|default_if_none:"Sem descrição" }}</td>
-                    <td colspan="2" class="project-actions text-center">
-                      <a  class="btn btn-outline-info btn-sm" href="{% url 'area:area_update' area.pk %}">Editar</a>
-                      <a  class="btn btn-outline-danger btn-sm" href="{% url 'area:area_delete' area.pk %}">Excluir</a>
-                    </td>
+                    {% if request.user|has_group:'profile:area_advanced,profile:area_manager' %}
+                      <td colspan="2" class="project-actions text-center">
+                        <a  class="btn btn-outline-info btn-sm" href="{% url 'area:area_update' area.pk %}">Editar</a>
+                        {% if request.user|has_group:'profile:area_manager' %}
+                        <a  class="btn btn-outline-danger btn-sm" href="{% url 'area:area_delete' area.pk %}">Excluir</a>
+                        {% endif %}
+                      </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
               </tboby>
             </table>
           </div>
         </div>
-        <div class="row mt-auto ml-0">
-            <a href="{% url 'area:area_add' %}" alt="area_add">
-              <button type="button" class="btn btn-block btn-primary"> Nova area</button>
-            </a>
-        </div>
+        {% if request.user|has_group:'profile:area_advanced,profile:area_manager' %}
+          <div class="row mt-auto ml-0">
+              <a href="{% url 'area:area_add' %}" alt="area_add">
+                <button type="button" class="btn btn-block btn-primary"> Nova area</button>
+              </a>
+          </div>
+        {% endif %}
       </div>
     </div>
+  
+{% endif %}
+
     {% endblock %}
     {% block js %}
 <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
