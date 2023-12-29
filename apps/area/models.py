@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.contrib.gis.geos import GEOSGeometry
 
 class Area(models.Model):
     name = models.CharField("Nome", max_length=50)
@@ -7,3 +8,12 @@ class Area(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def get_centroid(self):
+        # Verifica se o campo area_polygon está definido
+        if self.area_polygon:
+            # Calcula o centroide usando a biblioteca GEOSGeometry
+            centroid = self.area_polygon.centroid
+            return centroid
+        else:
+            return None  # Retorna None se não houver polígono definido

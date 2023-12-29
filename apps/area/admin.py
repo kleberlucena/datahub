@@ -1,7 +1,9 @@
 from django.contrib import admin
-from .models import *
-from apps.area import models
+from django.contrib.gis import admin as geo_admin
+
+from apps.area.models import *
 
 
-
-admin.site.register(models.Area)
+@admin.register(Area)
+class AreaAdmin(geo_admin.OSMGeoAdmin):
+    list_display = ('name', "description", "area_polygon")

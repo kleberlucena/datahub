@@ -42,13 +42,32 @@ class CreateAreaView(GroupRequiredMixin, CreateView):
 class UpdateAreaView(GroupRequiredMixin, UpdateView):
     model = models.Area
     template_name = 'area/area_form.html'
-    group_required = ['profile:area_advanced', 'profile:area_manager']
+    group_required = ['profile:area_basic','profile:area_advanced', 'profile:area_manager']
     form_class = forms.AreaForm
     success_url = reverse_lazy('area:area_list')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['function_type'] = 'update'
+        area = self.get_object()
+        context['centroid'] = area.get_centroid()
+
+        return context
+    
+@include_toast
+class DetailAreaView(GroupRequiredMixin, DetailView):
+    model = models.Area
+    template_name = 'area/area_detail.html'
+    group_required = ['profile:area_advanced', 'profile:area_manager']
+    form_class = forms.AreaForm
+    success_url = reverse_lazy('area:area_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['function_type'] = 'detail'
+        area = self.get_object()
+        context['centroid'] = area.get_centroid()
+
         return context
 
 
