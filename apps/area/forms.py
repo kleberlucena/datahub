@@ -12,7 +12,7 @@ class AreaForm(forms.ModelForm):
             'area_polygon' : 'Área delimitada'
         }
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex. 1BPM ou QPP1 ou CPRM'}), #ESTÁ DE MANEIRA GENÉRICA
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex. 1BPM ou QPP1 ou CPRM'}),
             'description': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex. Área do 1BPM'}),
             'area_polygon': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
         }

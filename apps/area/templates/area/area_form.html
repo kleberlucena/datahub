@@ -112,6 +112,46 @@
 
 {% if function_type == 'update' %}
 <script>
+    var polygonData = '{{ polygon_data|escapejs }}';
+    if (polygonData) {
+        var geoJsonData = JSON.parse(polygonData);
+
+        var mymap = L.map('mapid').setView([-7.121651, -34.88033], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mymap);
+
+        var drawnItems = new L.FeatureGroup();
+        mymap.addLayer(drawnItems);
+
+        var editablePolygon = L.geoJSON(geoJsonData, {
+            onEachFeature: function (feature, layer) {
+                drawnItems.addLayer(layer);
+            }
+        });
+
+        mymap.addLayer(editablePolygon);
+
+        // Adiciona o controle de edição
+        var editControl = new L.Control.Draw({
+            edit: {
+                featureGroup: drawnItems,
+                edit: true,
+                remove: true
+            }
+        });
+        mymap.addControl(editControl);
+
+        mymap.on('draw:edited', function (e) {
+            var layers = e.layers;
+            layers.eachLayer(function (layer) {
+                document.getElementById('id_area_polygon').value = JSON.stringify(layer.toGeoJSON().geometry);
+            });
+        });
+    } else {
+        // Lógica para criar um novo polígono se não houver um existente
+        // ...
+    }
+</script>
+<!-- <script>
     var areaPolygonData = '{{ object.area_polygon.geojson|escapejs }}';
     var geoJsonData = JSON.parse(areaPolygonData);
     var centroidLat = '{{ centroid.y }}';
@@ -121,7 +161,7 @@
     var mymap = L.map('mapid').setView([centroidLat, centroidLng], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mymap);
     L.geoJSON(geoJsonData).addTo(mymap);
-</script>
+</script> -->
 {% elif function_type == 'create' %}
 <script>
     var mymap = L.map('mapid').setView([-7.121651, -34.88033], 12);

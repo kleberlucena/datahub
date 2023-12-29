@@ -51,6 +51,7 @@ class UpdateAreaView(GroupRequiredMixin, UpdateView):
         context['function_type'] = 'update'
         area = self.get_object()
         context['centroid'] = area.get_centroid()
+        context['polygon_data'] = area.area_polygon.geojson if area.area_polygon else None
 
         return context
     
