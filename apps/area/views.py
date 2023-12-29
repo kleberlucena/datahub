@@ -30,6 +30,11 @@ class CreateAreaView(CreateView):
     template_name = 'area/area_form.html'
     success_url = reverse_lazy('area:area_list')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['function_type'] = 'create'
+        return context
+
 
 @include_toast
 class UpdateAreaView(UpdateView):
@@ -37,6 +42,11 @@ class UpdateAreaView(UpdateView):
     template_name = 'area/area_form.html'
     form_class = forms.AreaForm
     success_url = reverse_lazy('area:area_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['function_type'] = 'update'
+        return context
 
 
 @include_toast

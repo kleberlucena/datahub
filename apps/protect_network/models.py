@@ -5,7 +5,6 @@ from django_minio_backend import MinioBackend
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.auth.models import User
-from django.contrib.gis.db import models
 
 from apps.address.models import Address
 from apps.portal import models as portal_models
