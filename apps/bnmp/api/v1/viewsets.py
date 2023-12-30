@@ -14,7 +14,6 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 import logging
 
-from base.helpers import helpers_cortex
 from apps.person.models import *
 from apps.bnmp import helpers
 from apps.cortex.services import PortalCortexService
@@ -60,7 +59,7 @@ class PessoaByCpfViewSet(generics.GenericAPIView):
         cpf = self.request.query_params.get('cpf')
         username = self.request.user.username
 
-        cpf = helpers_cortex.validate_cpf(value=cpf)
+        cpf = helpers.validate_cpf(value=cpf)
         instance = helpers.process_bnmp_consult(username=username, cpf=cpf)
         print(instance)
         if instance:
