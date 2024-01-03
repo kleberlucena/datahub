@@ -1,7 +1,7 @@
 {% extends "base/base.html" %}
 {% load static custom_tags %}
 
-{% block title %} Areas {% endblock %}
+{% block title %} Categorias {% endblock %}
 
 {% block style_sheet %}
 <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
@@ -9,17 +9,17 @@
 <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
 {% endblock %}
 
-{% block title-header %} Areas {% endblock %}
+{% block title-header %} Categorias {% endblock %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="">Areas</a></li>
+<li class="breadcrumb-item"><a href="">Categorias</a></li>
 <li class="breadcrumb-item"><a>Lista</a></li>
 {% endblock %}
 
 {% block content %}
 <!-- INFO BOX-->
 <div class="callout callout-info">
-  <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre areas</h3>
+  <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre categorias </h3>
   <p class="text-muted text-justify px-3 pt-2">
       <b>Esse app permite a criação e edição de áreas para que possam ser utilizadas por demais apps.</b>
       <br>- Através dessa tela podem ser litadas todas as áreas criadas e também é possível a criação de novas áreas.
@@ -33,7 +33,7 @@
   <div class="col-md-12">
     <div class="card card-primary card-outline">
       <div class="card-header">
-        <h3 class="card-title">Areas cadastradas</h3>
+        <h3 class="card-title">Categorias cadastradas</h3>
       </div>
       <div class="card-body">
         <div class="row">
@@ -44,9 +44,8 @@
               role="grid" aria-describedby="objects_list_info" width="100%">
               <thead>
                 <tr>
-                  <th>Area</th>
+                  <th>Categoria</th>
                   <th>Descrição</th>
-                  <th>Categoria</th> 
                   {% if request.user|has_group:'profile:area_advanced,profile:area_manager' %}
                     <th>Ação</th>
                   {% endif %}
@@ -54,17 +53,15 @@
               </thead>
 
               <tboby>
-                {% for area in areas %}
+                {% for category in categories %}
                 <tr>
-                  <td>{{ area.name }}</td>
-                  <td>{{ area.description|default_if_none:"Sem descrição" }}</td>
-                  <td>{{ area.category|default_if_none:"Sem descrição" }}</td>
+                  <td>{{ category.name }}</td>
+                    <td>{{ category.description|default_if_none:"Sem descrição" }}</td>
                     {% if request.user|has_group:'profile:area_advanced,profile:area_manager' %}
                       <td colspan="2" class="project-actions text-center">
-                        <a  class="btn btn-outline-primary btn-sm" href="{% url 'area:area_detail' area.pk %}">Detalhes</a>
-                        <a  class="btn btn-outline-info btn-sm" href="{% url 'area:area_update' area.pk %}">Editar</a>
+                        <a  class="btn btn-outline-info btn-sm" href="{% url 'area:category_update' category.pk %}">Editar</a>
                         {% if request.user|has_group:'profile:area_manager' %}
-                        <a  class="btn btn-outline-danger btn-sm" href="{% url 'area:area_delete' area.pk %}">Excluir</a>
+                        <a  class="btn btn-outline-danger btn-sm" href="{% url 'area:category_delete' category.pk %}">Excluir</a>
                         {% endif %}
                       </td>
                     {% endif %}
@@ -76,8 +73,8 @@
         </div>
         {% if request.user|has_group:'profile:area_advanced,profile:area_manager' %}
           <div class="row mt-auto ml-0">
-              <a href="{% url 'area:area_add' %}" alt="area_add">
-                <button type="button" class="btn btn-block btn-primary"> Nova area</button>
+              <a href="{% url 'area:category_add' %}" alt="category_add">
+                <button type="button" class="btn btn-block btn-primary"> Nova categoria</button>
               </a>
           </div>
         {% endif %}

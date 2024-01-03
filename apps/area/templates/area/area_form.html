@@ -4,12 +4,15 @@
 {% block title %} Areas {% endblock %}
 
 {% block style_sheet %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css' %}">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
 <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
 <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
 <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
 {% leaflet_css plugins="ALL" %}
+
 <style>
     #map {
         height: 600px;
@@ -81,6 +84,11 @@
           </div>
           <div class="row mb-1 mt-3">
             <div class="col-sm-12">
+                {{form.category|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
+            </div>
+        </div>
+          <div class="row mb-1 mt-3">
+            <div class="col-sm-12">
                 {{form.area_polygon|add_class:"form-control"|as_crispy_field}}
             </div>
         </div>
@@ -106,10 +114,19 @@
 
 {% block js %}
 
+<script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.full.min.js' %}"></script>
+<script>
+  $(function () {
+    $('.select2bs4').select2({
+      placeholder: 'Selecione um item',
+      theme: 'bootstrap4',
+      width: '100%'
+    })
+  });
+</script>
+
 <script src="{% static 'leaflet/leaflet.js' %}"></script>
 <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
-
-
 {% if function_type == 'update' %}
 <script>
     var polygonData = '{{ polygon_data|escapejs }}';
