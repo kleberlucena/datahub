@@ -7,6 +7,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        verbose_name = "Categoria"
+        verbose_name_plural = "Categorias"
 
 
 class Area(models.Model):
@@ -26,6 +30,10 @@ class Area(models.Model):
             return centroid
         else:
             return None  # Retorna None se não houver polígono definido
+        
+    class Meta:
+        verbose_name = "Área"
+        verbose_name_plural = "Áreas"
         
 
 
