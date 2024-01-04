@@ -1,5 +1,4 @@
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import GEOSGeometry
 
 
 class Category(models.Model):
@@ -11,7 +10,7 @@ class Category(models.Model):
 
 
 class Area(models.Model):
-    name = models.CharField("Nome", max_length=50)
+    name = models.CharField("Nome", max_length=50, unique=True)
     description = models.CharField("Descrição", max_length=300, null=True, blank=True)
     area_polygon = models.PolygonField("Área delimitada", null=True, blank=True)
     category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.PROTECT)

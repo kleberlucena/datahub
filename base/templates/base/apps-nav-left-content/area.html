@@ -15,7 +15,7 @@
             </a>
         </li>
     
-        {% if request.user|has_group:'profile:area_advanced,profile:area_manager' %}
+        {% if request.user|has_group:'profile:area_manager' %}
         <li class="nav-item menu-item">
             <a href="#" class="nav-link">
                 <i class="fas fa-wrench nav-icon"></i> 

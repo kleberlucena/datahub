@@ -30,21 +30,17 @@
     {% if function_type == 'create' %}
         <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar categoria</h3>
         <p class="text-muted text-justify px-3 pt-2">
-            <b>Esse app permite a criação de categorias para que possam ser cadastradas em áreas.</b>
-            <br>- ***************
-            <br>- ***************
+            <b>Essa tela permite a criação de categorias para que possam ser cadastradas em áreas.</b>
         </p>
     {% elif function_type == 'update' %}
         <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre editar categoria</h3>
         <p class="text-muted text-justify px-3 pt-2">
-            <b>Esse app permite a edição de categorias para que possam ser cadastradas em áreas.</b>
-            <br>- **************
-            <br>- ***************
+            <b>Essa tela permite a edição de categorias para que possam ser cadastradas em áreas.</b>
         </p>
     {% endif %}
 </div>
 
-{% if request.user|has_group:'profile:area_advanced,profile:area_manager' %}
+{% if request.user|has_group:'profile:area_manager' %}
 
 <div class="row">
   <div class="col-md-12">

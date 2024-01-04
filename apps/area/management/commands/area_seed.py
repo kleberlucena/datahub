@@ -12,19 +12,23 @@ class Command(BaseCommand):
 
     def create_groups(self):
         groups_to_create = [
-            "profile:area_basic", #user can list areas
-            "profile:area_advanced", #user can list/create/update areas
-            "profile:area_manager", #user can list/create//delete areas
+            "profile:area_basic", #user can list areas and categories
+            "profile:area_advanced", #user can list/create/update areas and categories
+            "profile:area_manager", #user can list/create//delete areas and categories
         ]
 
         permissions_to_assign_basic = [
             "view_area",
+            "view_category"
         ]
 
         permissions_to_assign_advanced = [
             "view_area",
             "add_area",
             "change_area",
+            "view_category",
+            "add_category",
+            "change_category",
         ]
 
         permissions_to_assign_manager = [
@@ -32,10 +36,14 @@ class Command(BaseCommand):
             "add_area",
             "change_area",
             "delete_area",
+            "view_category",
+            "add_category",
+            "change_category",
+            "delete_category",
         ]
 
 
-        models_to_get = [Area]
+        models_to_get = [Area, Category]
 
         with transaction.atomic():
             for group_name in groups_to_create:

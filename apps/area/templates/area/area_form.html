@@ -20,6 +20,9 @@
     .div-pai {
     position: relative;
     }
+    #id_area_polygon {
+        display: none;
+    }
 </style>
 {% endblock %}
 
@@ -87,13 +90,11 @@
                 {{form.category|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
             </div>
         </div>
-          <div class="row mb-1 mt-3">
+          <div class="row mb-1 mt-3" id="area_polygon">
             <div class="col-sm-12">
                 {{form.area_polygon|add_class:"form-control"|as_crispy_field}}
             </div>
         </div>
-
-
             <div class="row mb-1 mt-3">
                 <div class="col-sm-12">
                     <div id="mapid" style="height: 400px;"></div>
@@ -102,7 +103,7 @@
              
           <div class="mt-3">
               <button type="submit" class="btn btn-primary">Salvar</button>
-              <a href="{{ request.META.HTTP_REFERER  }}"><button type="button" class="btn btn-warning ml-1"> Cancelar </button></a>
+              <a href="{% url 'area:area_list' %}"><button type="button" class="btn btn-warning ml-1"> Cancelar </button></a>
           </div>
       </form>
   </div>
@@ -127,46 +128,86 @@
 
 <script src="{% static 'leaflet/leaflet.js' %}"></script>
 <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+
+
 {% if function_type == 'update' %}
+
 <script>
 var areaPolygonData = '{{ object.area_polygon.geojson|escapejs }}';
-var geoJsonData = JSON.parse(areaPolygonData);
+var geoJsonData = areaPolygonData ? JSON.parse(areaPolygonData) : null;
 var centroidLat = '{{ centroid.y }}'.replace(',', '.');
 var centroidLng = '{{ centroid.x }}'.replace(',', '.');
 
-var mymap = L.map('mapid').setView([centroidLat, centroidLng], 12);
+// Define a posição inicial padrão do mapa
+var defaultPosition = [-7.121651, -34.88033];
+
+// Se houver dados de polígono existente, use o centro do polígono como posição inicial
+var initialPosition = geoJsonData ? [centroidLat, centroidLng] : defaultPosition;
+
+var mymap = L.map('mapid').setView(initialPosition, 12);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mymap);
 
 var drawnItems = L.featureGroup().addTo(mymap);
-var editablePolygon = L.geoJSON(geoJsonData, {
-    onEachFeature: function (feature, layer) {
-        drawnItems.addLayer(layer);
-    }
-});
-drawnItems.addLayer(editablePolygon);
 
-var editControl = new L.Control.Draw({
+var editControlOptions = {
     edit: {
         featureGroup: drawnItems,
         edit: true,
         remove: true
     },
-    draw: false // Desativa a capacidade de desenhar novos polígonos
-});
+    draw: false // Desativa a capacidade de desenhar novos polígonos inicialmente
+};
+
+// Verifica se há um polígono existente
+if (geoJsonData) {
+    var editablePolygon = L.geoJSON(geoJsonData, {
+        onEachFeature: function (feature, layer) {
+            drawnItems.addLayer(layer);
+        }
+    });
+    drawnItems.addLayer(editablePolygon);
+
+    // Se houver um polígono existente, habilita a edição
+    editControlOptions.draw = false;
+} else {
+    // Se não houver um polígono existente, habilita a criação de um novo
+    editControlOptions.draw = {
+        polygon: true,
+        polyline: false,
+        circle: false,
+        rectangle: false,
+        marker: false,
+        circlemarker: false,
+    };
+}
+
+var editControl = new L.Control.Draw(editControlOptions);
 mymap.addControl(editControl);
 
 mymap.on('draw:edited', function (e) {
     var layers = e.layers;
     layers.eachLayer(function (layer) {
-        // Atualize os dados do polígono quando ele for editado
         var updatedGeoJSON = layer.toGeoJSON();
-        // Atualize o campo 'area_polygon' do formulário com as novas coordenadas do polígono
         document.getElementById('id_area_polygon').value = JSON.stringify(updatedGeoJSON.geometry);
     });
 });
 
+mymap.on('draw:created', function (e) {
+    var layer = e.layer;
+    drawnItems.addLayer(layer);
+    
+    // Converte o polígono desenhado para o formato GeoJSON
+    var geoJsonData = layer.toGeoJSON();
+    
+    // Atualiza o campo 'area_polygon' do formulário com as coordenadas do polígono
+    document.getElementById('id_area_polygon').value = JSON.stringify(geoJsonData.geometry);
+});
+
 </script>
+
+
 {% elif function_type == 'create' %}
+
 <script>
     var mymap = L.map('mapid').setView([-7.121651, -34.88033], 12);
 
@@ -178,8 +219,12 @@ mymap.on('draw:edited', function (e) {
 
     var drawControl = new L.Control.Draw({
         draw: {
-            polygon: true,
-            // Outras opções de desenho, se necessário
+        polygon: true,
+        polyline: false,
+        circle: false,
+        rectangle: false,
+        marker: false,
+        circlemarker: false,
         },
         edit: {
             featureGroup: drawnItems

@@ -1,14 +1,7 @@
-from django.views.generic import CreateView, TemplateView, UpdateView, ListView, DetailView, DeleteView
-from django.urls import reverse_lazy, reverse
-from django.shortcuts import  get_object_or_404
-from django.utils import timezone
-from django.contrib.gis.geos import GEOSGeometry
-from django.db.models import Avg
-from django.http import JsonResponse
+from django.views.generic import CreateView, UpdateView, ListView, DetailView, DeleteView
+from django.urls import reverse_lazy
 from base.mixins import GroupRequiredMixin
-
 from base.decorations.toast_decorator import include_toast
-from apps.portal import models as portal_models
 from . import models, forms
 
 
@@ -84,13 +77,11 @@ class DeleteAreaView(GroupRequiredMixin, DeleteView):
         context['object_to_delete'] = self.get_object()
         return context
     
-
-####CATEGORY####
     
 class CategoryListView(GroupRequiredMixin, ListView):
     model = models.Category
     template_name = 'area/categories.html'
-    group_required = ['profile:area_basic', 'profile:area_advanced', 'profile:area_manager']
+    group_required = ['profile:area_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(CategoryListView, self).get_context_data(**kwargs)
@@ -104,7 +95,7 @@ class CreateCategoryView(GroupRequiredMixin, CreateView):
     model = models.Category
     form_class = forms.CategoryForm
     template_name = 'area/category_form.html'
-    group_required = ['profile:area_advanced', 'profile:area_manager']
+    group_required = ['profile:area_manager']
     success_url = reverse_lazy('area:category_list')
 
     def get_context_data(self, **kwargs):
@@ -117,7 +108,7 @@ class CreateCategoryView(GroupRequiredMixin, CreateView):
 class UpdateCategoryView(GroupRequiredMixin, UpdateView):
     model = models.Category
     template_name = 'area/category_form.html'
-    group_required = ['profile:area_basic','profile:area_advanced', 'profile:area_manager']
+    group_required = ['profile:area_manager']
     form_class = forms.CategoryForm
     success_url = reverse_lazy('area:category_list')
 

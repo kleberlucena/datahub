@@ -75,11 +75,21 @@
         
 
 
-            <div class="row mb-1 mt-3">
-                <div class="col-sm-12">
-                    <div id="mapid" style="height: 400px;"></div>
+            {% if area.area_polygon %}
+                <div class="row mb-1 mt-3">
+                    <div class="col-sm-12">
+                        <div id="mapid" style="height: 400px;"></div>
+                    </div>
+                </div>
+            {% else %}
+            <div class="row mt-2">
+                <div>
+                    Sem área em mapa cadastrada.
                 </div>
             </div>
+            {% endif %}
+
+
 
 
              
