@@ -53,20 +53,26 @@
               </thead>
 
               <tboby>
-                {% for category in categories %}
-                <tr>
-                  <td>{{ category.name }}</td>
-                    <td>{{ category.description|default_if_none:"Sem descrição" }}</td>
-                    {% if request.user|has_group:'profile:area_advanced,profile:area_manager' %}
-                      <td colspan="2" class="project-actions text-center">
-                        <a  class="btn btn-outline-info btn-sm" href="{% url 'area:category_update' category.pk %}">Editar</a>
-                        {% if request.user|has_group:'profile:area_manager' %}
-                        <a  class="btn btn-outline-danger btn-sm" href="{% url 'area:category_delete' category.pk %}">Excluir</a>
-                        {% endif %}
-                      </td>
-                    {% endif %}
-                </tr>
-                {% endfor %}
+                {% if categories %}
+                  {% for category in categories %}
+                  <tr>
+                    <td>{{ category.name }}</td>
+                      <td>{{ category.description|default_if_none:"Sem descrição" }}</td>
+                      {% if request.user|has_group:'profile:area_advanced,profile:area_manager' %}
+                        <td colspan="2" class="project-actions text-center">
+                          <a  class="btn btn-outline-info btn-sm" href="{% url 'area:category_update' category.pk %}">Editar</a>
+                          {% if request.user|has_group:'profile:area_manager' %}
+                          <a  class="btn btn-outline-danger btn-sm" href="{% url 'area:category_delete' category.pk %}">Excluir</a>
+                          {% endif %}
+                        </td>
+                      {% endif %}
+                  </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td colspan="3" class="project-actions text-center">Não existem categorias cadastradas</td>
+                  </tr>
+                {% endif %}
               </tboby>
             </table>
           </div>

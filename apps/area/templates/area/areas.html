@@ -54,22 +54,28 @@
               </thead>
 
               <tboby>
-                {% for area in areas %}
-                <tr>
-                  <td>{{ area.name }}</td>
-                  <td>{{ area.description|default_if_none:"Sem descrição" }}</td>
-                  <td>{{ area.category|default_if_none:"Sem descrição" }}</td>
-                    {% if request.user|has_group:'profile:area_advanced,profile:area_manager' %}
-                      <td colspan="2" class="project-actions text-center">
-                        <a  class="btn btn-outline-primary btn-sm" href="{% url 'area:area_detail' area.pk %}">Detalhes</a>
-                        <a  class="btn btn-outline-info btn-sm" href="{% url 'area:area_update' area.pk %}">Editar</a>
-                        {% if request.user|has_group:'profile:area_manager' %}
-                        <a  class="btn btn-outline-danger btn-sm" href="{% url 'area:area_delete' area.pk %}">Excluir</a>
-                        {% endif %}
-                      </td>
-                    {% endif %}
-                </tr>
-                {% endfor %}
+                {% if areas %}
+                  {% for area in areas %}
+                  <tr>
+                    <td>{{ area.name }}</td>
+                    <td>{{ area.description|default_if_none:"Sem descrição" }}</td>
+                    <td>{{ area.category|default_if_none:"Sem descrição" }}</td>
+                      {% if request.user|has_group:'profile:area_advanced,profile:area_manager' %}
+                        <td colspan="2" class="project-actions text-center">
+                          <a  class="btn btn-outline-primary btn-sm" href="{% url 'area:area_detail' area.pk %}">Detalhes</a>
+                          <a  class="btn btn-outline-info btn-sm" href="{% url 'area:area_update' area.pk %}">Editar</a>
+                          {% if request.user|has_group:'profile:area_manager' %}
+                          <a  class="btn btn-outline-danger btn-sm" href="{% url 'area:area_delete' area.pk %}">Excluir</a>
+                          {% endif %}
+                        </td>
+                      {% endif %}
+                  </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td colspan="4" class="project-actions text-center">Não existem áreas cadastradas</td>
+                  </tr>
+                {% endif %}
               </tboby>
             </table>
           </div>
