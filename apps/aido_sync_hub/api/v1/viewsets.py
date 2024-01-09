@@ -24,6 +24,9 @@ class SyncAPIView(APIView):
             if model_name == 'Military':
                 message_response = helpers.sync_military(model_data)
                 
+            elif model_name == 'Enjoyer':
+                message_response = helpers.sync_enjoyer(model_data)
+                
             elif model_name == 'Entity':
                 message_response = helpers.sync_entity(model_data)
                 

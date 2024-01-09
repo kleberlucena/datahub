@@ -91,7 +91,7 @@ class Enjoyer(Base):
             'thumbnail': {'width': 128, 'height': 128, 'crop': True},
         }, blank=True, null=True, delete_orphans=True
     )
-    uuid_portal = models.UUIDField('UUID no Portal', editable=False, unique=True)
+    uuid_portal = models.UUIDField('UUID no Portal', editable=True, blank=True, null=True)
     
     entity = models.ForeignKey(Entity, related_name='entity_enjoyer', null=True, blank=True, on_delete=models.PROTECT)    
     user = models.OneToOneField(User, related_name='enjoyer', null=True, blank=True, on_delete=models.SET_NULL)
