@@ -89,11 +89,11 @@ def set_father_entity(entity, father_uuid):
     try:
         if father_uuid:
             father_entity = models.Entity.objects.get(uuid_portal=father_uuid)
-            entity.father = father_entity
+            entity.dad = father_entity
         else:
-            entity.father = None
+            entity.dad = None
     except Exception as e:
-        entity.father = None
+        entity.dad = None
         logger.error(f'[Entity - helpers] set_father_entity - {e}')
     finally:
         entity.save()
