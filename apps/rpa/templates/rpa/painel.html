@@ -43,7 +43,7 @@
     justify-content: space-around;
     min-height: 200px;
     min-width: 200px;
-    max-width: 80%;
+    max-width: 70%;
   }
 
   .card-img {
@@ -61,6 +61,11 @@
 
   .img-circle {
     border-radius: 20%;
+  }
+
+  .card-body {
+    display: flex;
+    
   }
 
   .card-body h3,
@@ -315,20 +320,24 @@
     }
 
     let motorista = equipe.motorista !== 'sem registro' ?
-      `<small class=""><i class="fa fa-car"></i> <b>Motorista:</b> ${equipe.motorista} </small>` : ''
-    let piloto_remoto = equipe.piloto_remoto !== 'sem registro' ?
-      `<small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> ${equipe.piloto_remoto} </small>` : ''
-    let piloto_observador = equipe.piloto_observador !== 'sem registro' ?
-      `<small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b> ${equipe.piloto_observador} </small>` : ''
-    let telefone = equipe.telefone !== 'sem registro' ?
-      `<small class=""><i class="fa fa-phone"></i> <b>Contato:</b> ${equipe.telefone} </small>` : ''
+    `<small class=""><i class="fa fa-car"></i> <b>Motorista:</b> ${equipe.motorista} </small>` : ''
+  let piloto_remoto = equipe.piloto_remoto !== 'sem registro' ?
+    `<small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> ${equipe.piloto_remoto} </small>` : ''
+  let piloto_observador = equipe.piloto_observador !== 'sem registro' ?
+    `<small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b> ${equipe.piloto_observador} </small>` : ''
+  let telefone = equipe.telefone !== 'sem registro' ?
+    `<small class=""><i class="fa fa-phone"></i> <b>Contato:</b> ${equipe.telefone} </small>` : ''
 
-    let motorista_img = equipe.motorista_img !== 'sem registro' ?
-      `<img src="${equipe.piloto_remoto_img}" alt="user-avatar" class="card-img img-circle">` : ''
-    let piloto_remoto_img = equipe.motorista_img !== 'sem registro' ?
-      `<img src="${equipe.motorista_img}" alt="user-avatar" class="card-img img-circle">` : ''
-    let piloto_observador_img = equipe.piloto_observador_img !== 'sem registro' ?
-      `<img src="${equipe.piloto_observador_img}" alt="user-avatar" class="card-img img-circle">` : ''
+  let motorista_img = equipe.motorista_img !== 'sem registro' ?
+    `<img src="${equipe.motorista_img}" alt="user-avatar" class="card-img img-circle">` : ''
+  let piloto_remoto_img = equipe.piloto_remoto_img !== 'sem registro' ?
+    `<img src="${equipe.piloto_remoto_img}" alt="user-avatar" class="card-img img-circle">` : ''
+  let piloto_observador_img = equipe.piloto_observador_img !== 'sem registro' ?
+    `<img src="${equipe.piloto_observador_img}" alt="user-avatar" class="card-img img-circle">` : ''
+
+
+
+
 
     if (equipe.motorista === equipe.piloto_observador) {
       return `
@@ -397,31 +406,54 @@
           </div>
           `;
     } else {
-      return `
-        <div class="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
+      
+           return `
+        <div class="col-lg-4 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
             <div class="card bg-light d-flex flex-fill">
               <div class="card-header text-muted border-bottom-0">
                 <i class="fas fa-lg fa-building"></i> ${equipe.local}
               </div> 
               <div class="card-body pt-0">
                 <div class="card_content">
-                  <div class="card_gu_info">                      
-                    ${motorista}
-                    ${piloto_observador}
-                    ${piloto_remoto} 
-                      ${telefone}
-                  </div>
-                  <div class="card-container_for-images">                    
-                    <div class="grid-item">
-                      ${piloto_remoto_img}
-                    </div>
-                    <div class="grid-item">
-                      ${piloto_observador_img}
-                    </div>
-                    <div class="grid-item">
+                  <div class="card_gu_info">
+
+                    <div class="user-block">
                       ${motorista_img}
+                      <span class="username">
+                        <a href="#">${motorista}</a>
+                        <a href="#" class="float-right btn-tool"></a>
+                      </span>
                     </div>
+
+                    <div class="user-block">
+                      ${piloto_observador_img}
+                      <span class="username">
+                        <a href="#">${piloto_observador}</a>
+                        <a href="#" class="float-right btn-tool"></a>
+                      </span>
+                    </div>
+                    
+
+                    <div class="user-block">
+                      ${piloto_remoto_img}
+                      <span class="username">
+                        <a href="#">${piloto_remoto}</a>
+                        <a href="#" class="float-right btn-tool"></a>
+                      </span>
+                    </div>
+
+                    <div class="user-block">
+                      
+                      <span class="username">
+                        <a href="#">${telefone}</a>
+                        <a href="#" class="float-right btn-tool"></a>
+                      </span>
+                    </div>
+                    
+                    
+                    
                   </div>
+                  
                 </div>
               </div>
               <div class="card-footer">

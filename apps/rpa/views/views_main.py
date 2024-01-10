@@ -78,6 +78,9 @@ class PainelView(TemplateView):
             guarnicoes = PoliceGroup.objects.filter(location=local)
 
             for guarnicao in guarnicoes:
+
+      
+
                 lista_de_guarnicoes.append({
                     'id':  
                         guarnicao.id if(guarnicao.id != None) else 'sem registro',
