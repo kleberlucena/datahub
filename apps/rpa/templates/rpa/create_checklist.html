@@ -75,10 +75,12 @@
       width: 100rem;
       max-width: 100%;
     }
+
+    
   
     .card_content {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       gap: 30px;
     }
   
@@ -207,78 +209,96 @@
       {% if guarnicao %}
         <div class="card-body">
           <div class="col-lg-4 col-md-6 col-sm-12 d-flex align-items-stretch flex-column">
-            <div class="card bg-light d-flex flex-fill">
+            <div class="card card_gu bg-light d-flex flex-fill">
                 <div class="card-header text-muted border-bottom-0">
                   <i class="fas fa-lg fa-building"></i> {{ guarnicao.location.cities_pb }}
                 </div> 
                 <div class="card-body pt-0">
                   <div class="card_content">
-                    <div class="card_gu_info">
-                      <small class=""><i class="fa fa-car"></i> <b>Motorista:</b>
-                        {% if guarnicao.driver.rank %} 
-                          {{ guarnicao.driver.rank }} {{ guarnicao.driver.nickname }} - {{ guarnicao.driver.register }} 
-                        {% else %} 
-                          {{ guarnicao.driver.register }} - {{ guarnicao.driver.name }}
-                        {% endif %}
-                      </small>
-                      <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b>
-                        {% if guarnicao.remote_pilot.rank %} 
-                          {{ guarnicao.remote_pilot.rank }} {{ guarnicao.remote_pilot.nickname }} - {{ guarnicao.remote_pilot.register }} 
-                        {% else %} 
-                          {{ guarnicao.remote_pilot.register }} - {{ guarnicao.remote_pilot.name }}
-                        {% endif %}
-                      </small>
-                      <small class=""><i class="fa fa-binoculars"></i> <b>Piloto observador:</b>  
-                        {% if guarnicao.observer_pilot != None %}
-                          {% if guarnicao.observer_pilot.rank %} 
-                            {{ guarnicao.observer_pilot.rank }} {{ guarnicao.observer_pilot.nickname }} - {{ guarnicao.observer_pilot.register }} 
-                          {% else %} 
-                            {{ guarnicao.observer_pilot.register }} - {{ guarnicao.observer_pilot.name }}
-                          {% endif %}
+                    <div class="user-block">
+                      {% if guarnicao.driver != None %}
+                        {% if guarnicao.driver.image %}
+                        <img src="{{ guarnicao.driver.image.url }}" alt="user-avatar" class="card-img img-circle">
                         {% else %}
-                          sem registro
-                        {% endif %}
-                      </small>
-                      <small class=""><i class="fa fa-phone"></i> <b>Contato:</b> {{ guarnicao.phone }}</small>
+                          <img src="{% static 'sti/img/coint_64.png' %}" alt="COINT Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                        {% endif %}                     
+                        <span class="username">
+                          <small class=""><i class="fa fa-car"></i> 
+                            <b>Motorista:</b>
+                            <a href="#">{% if guarnicao.driver.rank %} 
+                              {{ guarnicao.driver.rank }} {{ guarnicao.driver.nickname }}
+                            {% else %} 
+                              {{ guarnicao.driver.name }}
+                            {% endif %}</a>
+                            <a href="#" class="float-right btn-tool">{{ guarnicao.driver.register }}</a>
+                          </small>
+                        </span>
+                      {% else %}
+                        <p> Sem motorista </p>
+                      {% endif %}
                     </div>
-                    <div class="card-container_for-images">
-                      <div class="grid-item">
-                        {% if guarnicao.driver %}
-                          {% if guarnicao.driver.image %}
-                            <img src="{{ guarnicao.driver.image.url }}" alt="user-avatar" class="card-img img-circle">
-                          {% else %}
-                            <p>Imagem não disponível</p>
-                          {% endif %}
+
+                    <div class="user-block">
+                      {% if guarnicao.remote_pilot != None %}
+                        {% if guarnicao.remote_pilot.image %}
+                        <img src="{{ guarnicao.remote_pilot.image.url }}" alt="user-avatar" class="card-img img-circle">
+                      
                         {% else %}
-                          <p> Sem motorista </p>
+                          <img src="{% static 'sti/img/coint_64.png' %}" alt="COINT Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
                         {% endif %}
-                      </div>
-                      <div class="grid-item">
-                        {% if guarnicao.remote_pilot %}
-                          {% if guarnicao.remote_pilot.image %}
-                            <img src="{{ guarnicao.remote_pilot.image.url }}" alt="user-avatar" class="card-img img-circle">
-                          {% else %}
-                            <p>Imagem não disponível</p>
-                          {% endif %}
-                        {% else %}
-                          <p> Sem piloto remoto </p>
-                        {% endif %}
-                      </div>
-                      <div class="grid-item">
-                        {% if guarnicao.observer_pilot %}
-                          {% if guarnicao.observer_pilot.image %}
-                            <img src="{{ guarnicao.observer_pilot.image.url }}" alt="user-avatar" class="card-img img-circle">
-                          {% else %}
-                            <p>Imagem não disponível</p>
-                          {% endif %}
-                        {% else %}
-                          <p> Sem piloto observador </p>
-                        {% endif %}
-                      </div>
+                        <span class="username">
+                          <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> 
+                            <a href="#">
+                              {% if guarnicao.remote_pilot.rank %} 
+                                {{ guarnicao.remote_pilot.rank }} {{ guarnicao.remote_pilot.nickname }}
+                              {% else %} 
+                                {{ guarnicao.remote_pilot.name }}  
+                              {% endif %}</a>
+                              <a href="#" class="float-right btn-tool">{{ guarnicao.remote_pilot.register }}</a>                          
+                          </small>
+                        </span>
+                      {% else %}
+                        <p> Sem piloto remoto </p>
+                      {% endif %}
                     </div>
+                    
+
+                    <div class="user-block">
+                      {% if guarnicao.observer_pilot != None %}
+                        {% if guarnicao.remote_pilot.image %}
+                        <img src="{{ guarnicao.observer_pilot.image.url }}" alt="user-avatar" class="card-img img-circle">
+                        {% else %}
+                          <img src="{% static 'sti/img/coint_64.png' %}" alt="COINT Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                        {% endif %}
+                        <span class="username">
+                          <small class=""><i class="fa fa-paper-plane"></i> <b>Piloto remoto:</b> 
+                            <a href="#">
+                              {% if guarnicao.observer_pilot.rank %} 
+                                {{ guarnicao.observer_pilot.rank }} {{ guarnicao.observer_pilot.nickname }}
+                              {% else %} 
+                                {{ guarnicao.observer_pilot.name }}  
+                              {% endif %}</a>
+                              <a href="#" class="float-right btn-tool">{{ guarnicao.observer_pilot.register }}</a>                          
+                          </small>                          
+                        </span>
+                      {% else %}
+                        <p> Sem piloto observador </p>
+                      {% endif %}
+                        
+                    </div>
+                    
                   </div>
                 </div>
                 <div class="card-footer">
+                  <div class="user-block">
+                      
+                    <span class="username">
+                      <small class=""><i class="fa fa-phone"></i> 
+                        <b>Telefone:</b>
+                      <a href="#">{{guarnicao.phone}}</a>
+                      <a href="#" class="float-right btn-tool"></a>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
