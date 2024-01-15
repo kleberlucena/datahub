@@ -36,7 +36,6 @@ class GuarnicaoCreateView(GroupRequiredMixin, CreateView):
         return kwargs
     
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        print(" lero leor", request.POST)
         return super().post(request, *args, **kwargs)
     
     def get(self, request, *args, **kwargs):

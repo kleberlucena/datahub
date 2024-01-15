@@ -1,10 +1,40 @@
 {% extends "base/base.html" %}
+{% load custom_tags %}
 {% load static %}
 
 <!-- styles -->
 {% block style_sheet %}
 {% comment %} bacinf style_sheet {% endcomment %}
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    .callout-text {
+      text-align: justify
+    }
+    
+    /* insert error elemets to fields */
+    .errorlist {
+      list-style: none; 
+      color: red; 
+    }
+
+    .card {
+      min-width: 300px;
+    }
+
+    .display-error {
+      border: 1px solid red; 
+    }
+
+    /* fix select2 field height */
+    .select2-selection,
+    .select2-selection--single {
+      height: 38px !important;
+    }
+
+    #select2-id_aeronave-container {
+      height: 38px !important;
+    }
+  </style>
 {% endblock style_sheet %}
 
 <!-- browser title -->
@@ -23,44 +53,69 @@
 {% block content %}
   
 <div class="row">
-  <div class="col-md-12">
-    <div class="card card-primary card-outline">
-      <div class="card-header">
-        <h3 class="card-title">Editar guarnição</h3>
-      </div>
-      <form class="p-3" method='post' enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-row">
-          <div class="form-group col-md-12 mb-0">
-            {{ form.errors }}
-            <label for="#" class="observer_pilot">Piloto remoto</label>
-            <br>{{ user.username }}<br><hr>
-            <label for="id_observer_pilot">Piloto observador</label>
-            {{ form.observer_pilot}}
-            {{ form.observer_pilot.errors }}
-            <label for="id_driver">Motorista</label>
-            {{ form.driver }}
-            {{ form.driver.errors }}
-            <label for="id_phone">Telefone</label>
-            {{ form.phone }}
-            {{ form.phone.errors }}
-            <label for="id_location">Local</label>
-            {{ form.location }}
-            {{ form.location.errors }}
-
-            {{ form.remote_pilot }}
-          </div>
+  <div class="col-md-12">    
+    <form class="p-3" method='post' enctype="multipart/form-data">
+      <div class="card card-primary card-outline">
+        <div class="card-header">
+          <h3 class="card-title">Editar guarnição</h3>
         </div>
-        
-        <div class="mt-3">
+        <div class=card-body>
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group col-12">
+              {{ form.errors }}
+              <label for="#" class="observer_pilot">Piloto remoto</label>
+              <br>{{ user.first_name }} {{ user.last_name }}<br><hr>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-12">
+              <div class="form-group">
+                <label for="id_observer_pilot">Piloto observador</label>
+                {{ form.observer_pilot}}
+                {{ form.observer_pilot.errors }}
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-12">
+              <div class="form-group">
+                <label for="id_driver">Motorista</label>
+                {{ form.driver }}
+                {{ form.driver.errors }}
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-12">
+              <div class="form-group">
+                <label for="id_phone">Telefone</label>
+                {{ form.phone }}
+                {{ form.phone.errors }}
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-12">
+              <div class="form-group">
+                <label for="id_location">Local</label> 
+                {{ form.location }}
+                {{ form.location.errors }}
+              </div>
+              {{ form.remote_pilot }}
+            </div>
+          </div>
+        </div>  
+        <div class="mt-3 card-footer">
           <button type="submit" class="btn btn-primary">Salvar</button>
           <a href="{% url 'rpa:checklist_form' %}">
             <button type="button" class="btn btn-warning">Cancelar</button>
           </a>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   </div>
+</div>
 
 {% endblock content %}
 
@@ -68,5 +123,82 @@
 {% block js %}
 <!-- DataTables  & Plugins -->
   <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+
+  <script>
+    $(document).ready(function () {
+      $('.location_escolha').select2();
+      $('.observer_pilot_escolha').select2();
+      $('.driver_escolha').select2();
+    });    
+  </script>
+
+  <script>
+    
+    $(document).ready(function() {
+      // Inicialize o Select2
+      $('#id_observer_pilot').select2({
+        ajax: {
+            url: '{% url "portal:list_militaries" %}',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+              return {
+                results: data
+              };
+            },
+            cache: true
+        },
+        minimumInputLength: 3, // Defina o comprimento mínimo de caracteres para acionar a pesquisa AJAX
+      });
+  
+      // Adicione um ID ao input do Select2 para o campo "Piloto observador"
+      $('#id_observer_pilot').on('select2:open', function (e) {
+        $('.select2-search__field').attr('id', 'id_observer_pilot_input');
+      });
+      // Acesse o valor do input quando ele for modificado
+      $('#id_observer_pilot_input').on('input', function() {
+        var valorDoInput = $(this).val();
+      });
+    });
+  </script>
+
+  <script>
+    $(document).ready(function() {
+      // Inicialize o Select2
+      $('#id_driver').select2({
+        ajax: {
+            url: '{% url "portal:list_militaries" %}',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+              return {
+                results: data
+              };
+            },
+            cache: true
+        },
+        minimumInputLength: 3, // Defina o comprimento mínimo de caracteres para acionar a pesquisa AJAX
+      });
+  
+      // Adicione um ID ao input do Select2 para o campo "Piloto observador"
+      $('#id_observer_pilot').on('select2:open', function (e) {
+        $('.select2-search__field').attr('id', 'id_observer_pilot_input');
+      });
+      // Acesse o valor do input quando ele for modificado
+      $('#id_observer_pilot_input').on('input', function() {
+        var valorDoInput = $(this).val();
+      });
+    });
+  </script>
+
+  
+
+  <script>
+    const errorList = document.querySelectorAll('ul.errorlist');
+
+    if (errorList) {
+      errorList.forEach((element) => element.previousElementSibling.classList.toggle('display-error'));
+    }
+  </script>
 
 {% endblock %}

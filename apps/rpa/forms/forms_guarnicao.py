@@ -18,8 +18,8 @@ class PoliceGroupForm(forms.ModelForm):
             'remote_pilot': forms.HiddenInput(),    
         }
         
-    def _init_(self, *args, **kwargs):
-        super()._init_(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
       
         self.fields['driver'].widget.attrs.update({
             'placeholder': 'Insira um motorista'

@@ -10,14 +10,15 @@ logger = logging.getLogger(__name__)
 
 def sync_entity(model_data):
     message_response = {}
-
+    
     entity = portal_models.Entity.objects.filter(name=model_data['name']).first()
-        
+    
     if not entity:
-        entity, created = portal_models.Entity.objects.get_or_create(uuid_portal=model_data['uuid_portal'])
-
+        entity, created = portal_models.Entity.objects.get_or_create(uuid_portal=model_data['uuid_portal'])        
+    else: 
+        entity.uuid_portal = model_data['uuid_portal']
+    
     entity.name = model_data['name']
-    entity.code = model_data['code']
     entity.active = model_data['active']
     entity.child_exists = model_data['child_exists']
     entity.save()
@@ -80,8 +81,15 @@ def sync_organizational_hierarchy(model_data):
 def sync_military(model_data):
     message_response = {}
     
-    military, created = portal_models.Military.objects.get_or_create(uuid_portal=model_data['uuid_portal'])
+    military = portal_models.Military.objects.filter(
+        cpf=model_data['cpf'], register=model_data['register']
+    ).first()
     
+    if not military:
+        military, created = portal_models.Military.objects.get_or_create(uuid_portal=model_data['uuid_portal'])
+    else: 
+        military.uuid_portal = model_data['uuid_portal']
+        
     military.active = model_data['active']                
     military.rank = model_data['rank']
     military.name = model_data['name']
@@ -131,11 +139,23 @@ def sync_military(model_data):
     
     return message_response
 
-            
+
 def sync_enjoyer(model_data):
     message_response = {}
     
-    enjoyer, created = portal_models.Enjoyer.objects.get_or_create(uuid_portal=model_data['uuid_portal'])
+    enjoyer = portal_models.Enjoyer.objects.filter(username=model_data['username']).first()
+        
+    if not enjoyer:
+        enjoyer, created = portal_models.Enjoyer.objects.get_or_create(
+            uuid_portal=model_data['uuid_portal'],
+            username=model_data['username'],
+            first_name=model_data['first_name'],
+            last_name=model_data['last_name'],
+            email=model_data['email']
+        )
+
+    else: 
+        enjoyer.uuid_portal = model_data['uuid_portal']
     
     enjoyer.active = model_data['active']
     enjoyer.username = model_data['username']
@@ -147,12 +167,14 @@ def sync_enjoyer(model_data):
     enjoyer.birthdate = model_data['birthdate']
     enjoyer.phone = model_data['phone']
     
-    entity_response = portal_helpers.update_enjoyer_entity(enjoyer, model_data['enjoyer'])
+    enjoyer.save()
+    
+    entity_response = portal_helpers.update_enjoyer_entity(enjoyer, model_data['uuid_entity'])
+    
     # TODO: Fazer os ajustes abaixo
     # enjoyer.function_ids 
     # enjoyer.situation_ids
     
-    enjoyer.save()
     
     message_response["status"] = "success"
     message_response["completed"] = True

@@ -60,7 +60,7 @@ class PainelView(TemplateView):
         years = years[::-1]
         
         default_month: int = 1
-        default_year: int = 2023
+        default_year: int = year
         month: int = int(self.request.GET.get('month', default_month))  
         year: int = int(self.request.GET.get('year', default_year))  
         
@@ -78,6 +78,9 @@ class PainelView(TemplateView):
             guarnicoes = PoliceGroup.objects.filter(location=local)
 
             for guarnicao in guarnicoes:
+
+      
+
                 lista_de_guarnicoes.append({
                     'id':  
                         guarnicao.id if(guarnicao.id != None) else 'sem registro',
