@@ -44,5 +44,6 @@ services:
 
     command: bash -c -o pipefail "python manage.py migrate 
       && python manage.py collectstatic --noinput
+      && python manage.py all_seed
       && python manage.py test"
 
