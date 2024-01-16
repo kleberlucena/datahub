@@ -3,8 +3,10 @@
 
 <nav class="mt-2">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-      {% include 'base/apps-nav-left-content/area.html' %}
-      {% if request.user|has_group:'profile:rpa_manager' %}
+      {% if request.user|has_group:'profile:area_basic,profile:area_advanced,profile:area_manager'  %}
+        {% include 'base/apps-nav-left-content/area.html' %}
+      {% endif %}
+      {% if request.user|has_group:'profile:rpa_manager,profile:rpa_advanced,profile:rpa_basic,profile:rpa_view' %}
         {% include 'base/apps-nav-content/rpa.html' %}
       {% endif %}
       
