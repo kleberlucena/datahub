@@ -14,9 +14,6 @@
 {% leaflet_css plugins="ALL" %}
 
 <style>
-    #map {
-        height: 600px;
-    }
     .div-pai {
     position: relative;
     }
@@ -74,30 +71,36 @@
           </div>
       <form class="p-3" method='post' enctype="multipart/form-data">
           {% csrf_token %}
-      
-          <div class="row mb-1">
-              <div class="col-sm-12">
-                  {{form.name|add_class:"form-control"|as_crispy_field}}
-              </div>
-          </div>
-          <div class="row mb-1 mt-3">
-              <div class="col-sm-12">
-                  {{form.description|add_class:"form-control"|as_crispy_field}}
-              </div>
-          </div>
-          <div class="row mb-1 mt-3">
-            <div class="col-sm-12">
-                {{form.category|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
+
+
+            <div id="AreaFormCardBody" style="display: block;">     
+                <div class="row mb-1">
+                    <div class="col-sm-12">
+                        {{form.name|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                </div>
+                <div class="row mb-1 mt-3">
+                    <div class="col-sm-12">
+                        {{form.description|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                </div>
+                <div class="row mb-1 mt-3">
+                    <div class="col-sm-12">
+                        {{form.category|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
+                    </div>
+                </div>            
             </div>
-        </div>
-          <div class="row mb-1 mt-3" id="area_polygon">
+
+
+        <div class="row mb-1 mt-3" id="area_polygon">
             <div class="col-sm-12">
                 {{form.area_polygon|add_class:"form-control"|as_crispy_field}}
             </div>
         </div>
+        <button id="toggleAreaFormButton" type="button" class="btn btn-info" >Expandir Mapa</button>
             <div class="row mb-1 mt-3">
                 <div class="col-sm-12">
-                    <div id="mapid" style="height: 400px;"></div>
+                    <div id="mapid" style="height:800px;"></div>
                 </div>
             </div>
              
@@ -205,6 +208,30 @@ mymap.on('draw:created', function (e) {
 
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var AreaFormCardBody = document.getElementById('AreaFormCardBody');
+        var toggleAreaFormButton = document.getElementById('toggleAreaFormButton');
+        var mapDiv = document.getElementById('mapid');
+        var currentHeight = parseInt(mapDiv.style.height) || 0;
+
+        mapDiv.style.height = '400px';
+
+        toggleAreaFormButton.addEventListener('click', function() {
+            
+            if (AreaFormCardBody.style.display === 'none') {
+                AreaFormCardBody.style.display = 'block';
+                toggleAreaFormButton.textContent = 'Expandir mapa';
+                mapDiv.style.height = '400px';
+            } else {
+                AreaFormCardBody.style.display = 'none';
+                toggleAreaFormButton.textContent = 'Exibir formulário';
+                mapDiv.style.height = '800px';
+            }
+        });
+    });
+</script>
+
 
 {% elif function_type == 'create' %}
 
@@ -243,6 +270,31 @@ mymap.on('draw:created', function (e) {
     document.getElementById('id_area_polygon').value = JSON.stringify(geoJsonData.geometry);
 });
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var AreaFormCardBody = document.getElementById('AreaFormCardBody');
+        var toggleAreaFormButton = document.getElementById('toggleAreaFormButton');
+        var mapDiv = document.getElementById('mapid');
+        var currentHeight = parseInt(mapDiv.style.height) || 0;
+
+        mapDiv.style.height = '400px';
+
+        toggleAreaFormButton.addEventListener('click', function() {
+            
+            if (AreaFormCardBody.style.display === 'none') {
+                AreaFormCardBody.style.display = 'block';
+                toggleAreaFormButton.textContent = 'Expandir mapa';
+                mapDiv.style.height = '400px';
+            } else {
+                AreaFormCardBody.style.display = 'none';
+                toggleAreaFormButton.textContent = 'Exibir formulário';
+                mapDiv.style.height = '800px';
+            }
+        });
+    });
+</script>
+
 {% endif %}
 
 {% endblock %}

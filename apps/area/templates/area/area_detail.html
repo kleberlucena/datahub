@@ -11,9 +11,6 @@
 <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
 {% leaflet_css plugins="ALL" %}
 <style>
-    #map {
-        height: 600px;
-    }
     .div-pai {
     position: relative;
     }
@@ -41,44 +38,42 @@
 {% if request.user|has_group:'profile:area_advanced,profile:area_manager' %}
 
 <div class="row">
-  <div class="col-md-12">
-      <div class="card card-primary card-outline">
-          <div class="card-header">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
                 <h3 class="card-title">Detalhes</h3>
-          </div>
+            </div>
 
-          <div class="p-4">
-            <div class="row mb-1">
-                <div>
+        <div id="AreaFormCardBody" style="display: block;">     
+            <div class="p-4">
+                <div class="row mb-1">
                     <b>Nome:</b>
+                    <div class="ml-1">
+                        {{ area.name }}
+                    </div>
                 </div>
-                <div class="ml-1">
-                    {{ area.name }}
-                </div>
-            </div>
-            <div class="row mb-1">
-                <div>
+                <div class="row mb-1">
                     <b>Descrição:</b>
+                    <div class="ml-1">
+                        {{ area.description|default_if_none:"Sem descrição" }}
+                    </div>
                 </div>
-                <div class="ml-1">
-                    {{ area.description }}
-                </div>
-            </div>
-            <div class="row mb-1">
-                <div>
+                <div class="row mb-1">
                     <b>Categoria:</b>
-                </div>
-                <div class="ml-1">
-                    {{ area.category }}
+                    <div class="ml-1">
+                        {{ area.category|default_if_none:"Sem descrição" }}
+                    </div>
                 </div>
             </div>
-        
-
-
+        </div>
+            
+        <div class="p-3">
             {% if area.area_polygon %}
-                <div class="row mb-1 mt-3">
+            <label>Área delimitada</label>
+                <div class="row mb-1 mt-1">
+                    <button id="toggleAreaFormButton" type="button" class="btn btn-info ml-2 mb-3" >Expandir Mapa</button>
                     <div class="col-sm-12">
-                        <div id="mapid" style="height: 400px;"></div>
+                        <div id="mapid" style="height:800px;"></div>
                     </div>
                 </div>
             {% else %}
@@ -89,14 +84,12 @@
             </div>
             {% endif %}
 
+            <div class="mt-3">
+                <a href="{{ request.META.HTTP_REFERER  }}"><button type="button" class="btn btn-warning ml-1"> Voltar</button></a>
+            </div>
+        </div>
 
-
-
-             
-          <div class="mt-3">
-              <a href="{{ request.META.HTTP_REFERER  }}"><button type="button" class="btn btn-warning ml-1"> Voltar</button></a>
-          </div>
-  </div>
+    </div>
 </div>
 
 {% endif %}
@@ -120,6 +113,30 @@
     var mymap = L.map('mapid').setView([centroidLat, centroidLng], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mymap);
     L.geoJSON(geoJsonData).addTo(mymap);
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var AreaFormCardBody = document.getElementById('AreaFormCardBody');
+        var toggleAreaFormButton = document.getElementById('toggleAreaFormButton');
+        var mapDiv = document.getElementById('mapid');
+        var currentHeight = parseInt(mapDiv.style.height) || 0;
+
+        mapDiv.style.height = '400px';
+
+        toggleAreaFormButton.addEventListener('click', function() {
+            
+            if (AreaFormCardBody.style.display === 'none') {
+                AreaFormCardBody.style.display = 'block';
+                toggleAreaFormButton.textContent = 'Expandir mapa';
+                mapDiv.style.height = '400px';
+            } else {
+                AreaFormCardBody.style.display = 'none';
+                toggleAreaFormButton.textContent = 'Exibir formulário';
+                mapDiv.style.height = '800px';
+            }
+        });
+    });
 </script>
 
 
