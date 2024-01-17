@@ -1,0 +1,38 @@
+{% load custom_tags %}
+{% if request.user|has_group:'profile:area_basic,profile:area_advanced,profile:area_manager' %}
+
+<!--Módulo Rede de Serviços-->
+<li class="nav-item module-item">
+    <a href="" class="nav-link">
+        <i class="fas fa-map nav-icon"></i>
+        <p>Area<i class="fas fa-angle-left right"></i></p>
+    </a>
+
+    <ul class="nav nav-treeview" style="display: none;">
+        <li class="nav-item">
+            <a href="{% url 'area:area_list' %}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i><p>Areas</p>
+            </a>
+        </li>
+    
+        {% if request.user|has_group:'profile:area_manager' %}
+        <li class="nav-item menu-item">
+            <a href="#" class="nav-link">
+                <i class="fas fa-wrench nav-icon"></i> 
+                <p>Configurações<i class="fas fa-angle-left right"></i></p>
+            </a>
+            <ul class="nav nav-treeview" style="display: none;">
+                <li class="nav-item">
+                    <a href="{% url 'area:category_list' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i><p>Categorias</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        {% endif %}
+
+    </ul>
+    
+</li>
+
+{% endif %}
