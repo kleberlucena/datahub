@@ -202,103 +202,103 @@
 <script type="text/javascript">
   // Função que será executada quando o documento estiver pronto
   document.addEventListener('DOMContentLoaded', function () {
-    const coordinatesJson = {{ coordinates_json| safe }}
-      const coordinatesByDate = {{ coordinates_by_date_json| safe }}
-  const operationsInCourse = {{ operationsInCourse| safe }}
-  const popUpFontSizeValueinPx = 10;
+    const coordinatesJson = {{ coordinates_json| safe }};
+    const coordinatesByDate = {{ coordinates_by_date_json| safe }};
+    const operationsInCourse = {{ operationsInCourse| safe }};
+    const popUpFontSizeValueinPx = 10;
 
-  let centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude];
-  let zoomLevel = 11;
-  let map = L.map('map').setView(centerCoordinates, zoomLevel);
-  let staticUrl = "{% static 'leaflet/images/marker-icon.png' %}"
+    let centerCoordinates = [coordinatesJson.latitude, coordinatesJson.longitude];
+    let zoomLevel = 11;
+    let map = L.map('map').setView(centerCoordinates, zoomLevel);
+    let staticUrl = "{% static 'leaflet/images/marker-icon.png' %}"
 
-  const urlLocalImg = "{% static '/sti/img/drone.png' %}"
-  var droneMarkerIcon = L.icon({
-    iconUrl: urlLocalImg,
-    iconSize: [13, 13],
-    iconAnchor: [6.5, 6.5],
-    popupAnchor: [0, -32]
-  });
+    const urlLocalImg = "{% static '/sti/img/drone.png' %}"
+    var droneMarkerIcon = L.icon({
+      iconUrl: urlLocalImg,
+      iconSize: [13, 13],
+      iconAnchor: [6.5, 6.5],
+      popupAnchor: [0, -32]
+    });
 
-  if (operationsInCourse.length > 0) {
-    showCoordinatesInCourseOperations(droneMarkerIcon)
-  }
+    if (operationsInCourse.length > 0) {
+      showCoordinatesInCourseOperations(droneMarkerIcon)
+    }
 
-  showTodaysCoordinates(droneMarkerIcon);
+    showTodaysCoordinates(droneMarkerIcon);
 
-  showCoordinatesByFilter();
+    showCoordinatesByFilter();
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
-
-  function showCoordinatesInCourseOperations(makerIcon = null) {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    operationsInCourse.forEach(function (coordinate) {
-      L.marker([coordinate.latitude, coordinate.longitude], { icon: makerIcon }).addTo(map)
-        .bindPopup(`<strong style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.usuario}</span>` +
-          '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.latitude}</span>` + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.longitude}</span>` + '<br>'
-          + `<span class="badge badge-warning">${coordinate.status}</span>`);
-
-      let circle = L.circle([coordinate.latitude, coordinate.longitude], {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.1,
-        radius: 500
+    function showCoordinatesInCourseOperations(makerIcon = null) {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
-    });
-  };
 
-  function showCoordinatesByFilter() {
-    for (let i = 0; i < coordinatesByDate.length; i++) {
-      usuario = coordinatesByDate[i].usuario
-      titulo = coordinatesByDate[i].titulo
-      latitude = coordinatesByDate[i].latitude !== null ? coordinatesByDate[i].latitude : 0.0
-      longitude = coordinatesByDate[i].longitude !== null ? coordinatesByDate[i].longitude : 0.0
+      operationsInCourse.forEach(function (coordinate) {
+        L.marker([coordinate.latitude, coordinate.longitude], { icon: makerIcon }).addTo(map)
+          .bindPopup(`<strong style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.usuario}</span>` +
+            '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.latitude}</span>` + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.longitude}</span>` + '<br>'
+            + `<span class="badge badge-warning">${coordinate.status}</span>`);
 
-      if (latitude !== 0.0 && longitude !== 0.0) {
-        let marker = new L.marker([latitude, longitude], { icon: droneMarkerIcon })
-          .addTo(map)
-          .bindPopup(`<span style="font-size: ${popUpFontSizeValueinPx}px;">${usuario}</span>` + '<br>' + `<strong style="font-size: ${popUpFontSizeValueinPx}px;">${titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${latitude}</span>` + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${longitude}</span>`)
-
-        let circle = L.circle([latitude, longitude], {
-          color: 'gray',
-          fillColor: '#f030303',
+        let circle = L.circle([coordinate.latitude, coordinate.longitude], {
+          color: 'red',
+          fillColor: '#f03',
           fillOpacity: 0.1,
           radius: 500
-        })
-          .addTo(map);
+        }).addTo(map);
+      });
+    };
+
+    function showCoordinatesByFilter() {
+      for (let i = 0; i < coordinatesByDate.length; i++) {
+        usuario = coordinatesByDate[i].usuario
+        titulo = coordinatesByDate[i].titulo
+        latitude = coordinatesByDate[i].latitude !== null ? coordinatesByDate[i].latitude : 0.0
+        longitude = coordinatesByDate[i].longitude !== null ? coordinatesByDate[i].longitude : 0.0
+
+        if (latitude !== 0.0 && longitude !== 0.0) {
+          let marker = new L.marker([latitude, longitude], { icon: droneMarkerIcon })
+            .addTo(map)
+            .bindPopup(`<span style="font-size: ${popUpFontSizeValueinPx}px;">${usuario}</span>` + '<br>' + `<strong style="font-size: ${popUpFontSizeValueinPx}px;">${titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${latitude}</span>` + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${longitude}</span>`)
+
+          let circle = L.circle([latitude, longitude], {
+            color: 'gray',
+            fillColor: '#f030303',
+            fillOpacity: 0.1,
+            radius: 500
+          })
+            .addTo(map);
+        }
       }
     }
-  }
 
-  function showTodaysCoordinates(makerIcon = null) {
-    var todayCoordinatesOfOperations = {{ today_coordinates_operations| safe }};
+    function showTodaysCoordinates(makerIcon = null) {
+      var todayCoordinatesOfOperations = {{ today_coordinates_operations| safe }};
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
 
-  todayCoordinatesOfOperations.forEach(function (coordinate) {
-    let operationStatus = coordinate.status === 'Em andamento' ? `<span class="badge badge-warning">${coordinate.status}</span>` : `<span class="badge badge-success">${coordinate.status}</span>`;
+      todayCoordinatesOfOperations.forEach(function (coordinate) {
+        let operationStatus = coordinate.status === 'Em andamento' ? `<span class="badge badge-warning">${coordinate.status}</span>` : `<span class="badge badge-success">${coordinate.status}</span>`;
 
-    L.marker([coordinate.latitude, coordinate.longitude], { icon: makerIcon }).addTo(map)
-      .bindPopup(`<strong style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.usuario}</span>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.latitude}</span>` + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.longitude}</span>` + '<br>'
-        + operationStatus);
+        L.marker([coordinate.latitude, coordinate.longitude], { icon: makerIcon }).addTo(map)
+          .bindPopup(`<strong style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.titulo}</strong>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.usuario}</span>` + '<br>' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.latitude}</span>` + ',' + `<span style="font-size: ${popUpFontSizeValueinPx}px;">${coordinate.longitude}</span>` + '<br>'
+            + operationStatus);
 
-    let circle = L.circle([coordinate.latitude, coordinate.longitude], {
-      color: 'red',
-      fillColor: '#f03',
-      fillOpacity: 0.1,
-      radius: 500
-    }).addTo(map);
-  });
-      }
+        let circle = L.circle([coordinate.latitude, coordinate.longitude], {
+          color: 'red',
+          fillColor: '#f03',
+          fillOpacity: 0.1,
+          radius: 500
+        }).addTo(map);
+      });
+    }
 
-    }); // end DOM load
+  }); // end DOM load
 </script>
 
 <script>

@@ -25,10 +25,10 @@ class CategoryForm(forms.ModelForm):
         model = models.Category
         fields = ['name','description']
         labels = {
-            'name': 'Nome da area',
+            'name': 'Nome da categoria',
             'description': 'Descrição',
         }
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex. 1BPM ou QPP1 ou CPRM'}),
-            'description': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex. Área do 1BPM'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex. Batalhão, Comunidade ou Evento'}),
+            'description': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex. Batalhão de Polícia Militar ou Bloco Carnavalesco ou Escola de Ensino Fundamental'}),
         }

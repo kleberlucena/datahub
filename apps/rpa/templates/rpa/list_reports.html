@@ -28,14 +28,14 @@
 <!-- breadcrumb -->
 {% block breadcrumb %}
   <li class="breadcrumb-item"><a href="{% url 'rpa:painel' %}">Painel</a></li>
-  <li class="breadcrumb-item active">Cadernetas</li>
+  <li class="breadcrumb-item active">Relatórios</li>
 {% endblock %}
 
 <!-- main container -->
 {% block content %}
   <div class="card card-primary card-outline">
     <div class="card-header">
-      <h3 class="card-title">Cadernetas</h3>
+      <h3 class="card-title">Relatórios</h3>
     </div>
     <div class="card-body">
       <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
@@ -79,10 +79,10 @@
                     Filtros
                     </button>
                     <div class="dropdown-menu" role="menu" style="">
-                        <a class="dropdown-item" href="{% url 'rpa:ver_relatorio' relatorio.id %}">Ver Caderneta</a>
-                        <a class="dropdown-item" href="{% url 'rpa:editar_relatorio' relatorio.id %}">Editar Caderneta</a>
+                        <a class="dropdown-item" href="{% url 'rpa:ver_relatorio' relatorio.id %}">Ver Relatório</a>
+                        <a class="dropdown-item" href="{% url 'rpa:editar_relatorio' relatorio.id %}">Editar Relatório</a>
                         {% if request.user.is_superuser %}
-                          <a class="dropdown-item" href="{% url 'rpa:deletar_relatorio' relatorio.id %}">Excluir Caderneta</a>
+                          <a class="dropdown-item" href="{% url 'rpa:deletar_relatorio' relatorio.id %}">Excluir Relatório</a>
                         {% endif %}  
                     </div>
                   </div>

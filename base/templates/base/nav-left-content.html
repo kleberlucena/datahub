@@ -7,7 +7,7 @@
         {% include 'base/apps-nav-left-content/area.html' %}
       {% endif %}
       {% if request.user|has_group:'profile:rpa_manager,profile:rpa_advanced,profile:rpa_basic,profile:rpa_view' %}
-        {% include 'base/apps-nav-content/rpa.html' %}
+        {% include 'base/apps-nav-left-content/rpa.html' %}
       {% endif %}
       
       {% if request.user|has_group:'profile:protect_network_basic,profile:protect_network_advanced,profile:protect_network_manager'  %}
