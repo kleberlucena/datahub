@@ -41,15 +41,15 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Nova Caderneta {% endblock %}
+{% block title %} Novo Relatório {% endblock %}
 
 <!-- context title -->
 {% block title-header %} Operações aéreas {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
-  <li class="breadcrumb-item"><a href="{% url 'rpa:relatorios' %}">Cadernetas</a></li>
-  <li class="breadcrumb-item active">Nova Caderneta</li>
+  <li class="breadcrumb-item"><a href="{% url 'rpa:relatorios' %}">Relatórios</a></li>
+  <li class="breadcrumb-item active">Novo Relatório</li>
 {% endblock %}
 
 <!-- main container -->
@@ -66,7 +66,7 @@
 
     <div class="card card-primary card-outline">
       <div class="card-header">
-        <h3 class="card-title">Criar nova Caderneta</h3>
+        <h3 class="card-title">Criar novo Relatório</h3>
         {{ form.errors }}
       </div>
       <form class="p-3" method='post' enctype="multipart/form-data">

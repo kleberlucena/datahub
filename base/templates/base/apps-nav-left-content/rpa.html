@@ -18,12 +18,12 @@
       </a>
     </li>
 
-    <li class="nav-item">
+    {% comment %} <li class="nav-item">
       <a href="{% url 'rpa:dashboard_rpa' %}" class="nav-link">
         <i class="far fa-circle nav-icon"></i>
         <p>Dashboard</p>
       </a>
-    </li>
+    </li> {% endcomment %}
     
     {% if request.user|has_group:'profile:rpa_basic' or request.user|has_group:'profile:rpa_advanced'  %}
       <li class="nav-item">
@@ -61,7 +61,7 @@
     <li class="nav-item">
       <a href="{% url 'rpa:relatorios' %}" class="nav-link">
         <i class="far fa-circle nav-icon"></i>
-        <p>Cadernetas</p>
+        <p>Relatórios</p>
       </a>
     </li>
     <li class="nav-item">
