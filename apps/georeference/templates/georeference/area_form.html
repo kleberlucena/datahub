@@ -1,0 +1,339 @@
+{% extends "base/base.html" %}
+{% load static crispy_forms_tags widget_tweaks custom_tags leaflet_tags %}
+
+{% block title %} Areas {% endblock %}
+
+{% block style_sheet %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css' %}">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+{% leaflet_css plugins="ALL" %}
+
+<style>
+    .div-pai {
+    position: relative;
+    }
+    #id_area_polygon {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block title-header %} Areas {% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'georeference:area_list' %}">Areas</a></li>
+
+{% if function_type == 'create' %}
+    <li class="breadcrumb-item"><a>Adicionar</a></li>
+{% elif function_type == 'update' %}
+    <li class="breadcrumb-item"><a>Editar</a></li>
+{% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+<!-- INFO BOX-->
+<div class="callout callout-info">
+    {% if function_type == 'create' %}
+        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar area</h3>
+        <p class="text-muted text-justify px-3 pt-2">
+            <b>Esse app permite a criação e edição de áreas para que possam ser utilizadas por demais apps.</b>
+            <br>- Através dessa tela pode ser realizada a criação de uma nova área.
+            <br>- As áreas podem ser área de batalhão ou companhia, QPP's ou CPRs.
+        </p>
+    {% elif function_type == 'update' %}
+        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre editar area</h3>
+        <p class="text-muted text-justify px-3 pt-2">
+            <b>Esse app permite a criação e edição de áreas para que possam ser utilizadas por demais apps.</b>
+            <br>- Através dessa tela pode ser realizada a alteração das informações de uma área existente.
+            <br>- As áreas podem ser área de batalhão ou companhia, QPP's ou CPRs.
+        </p>
+    {% endif %}
+</div>
+
+{% if request.user|has_group:'profile:georeference_advanced,profile:georeference_manager' %}
+
+<div class="row">
+  <div class="col-md-12">
+      <div class="card card-primary card-outline">
+          <div class="card-header">
+            {% if function_type == 'create' %}
+                <h3 class="card-title">Adicionar area</h3>
+            {% elif function_type == 'update' %}
+                <h3 class="card-title">Editar area</h3>
+            {% endif %}
+          </div>
+      <form class="p-3" method='post' enctype="multipart/form-data">
+          {% csrf_token %}
+
+
+            <div id="AreaFormCardBody" style="display: block;">     
+                <div class="row mb-1">
+                    <div class="col-sm-12">
+                        {{form.name|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                </div>
+                <div class="row mb-1 mt-3">
+                    <div class="col-sm-12">
+                        {{form.description|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                </div>
+                <div class="row mb-1 mt-3">
+                    <div class="col-sm-12">
+                        {{form.category|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
+                    </div>
+                </div>            
+            </div>
+
+        <div class="row mb-1 mt-3" id="area_polygon">
+            <div class="col-sm-12">
+                {{form.area_polygon|add_class:"form-control"|as_crispy_field}}
+            </div>
+        </div>
+        <button id="toggleAreaFormButton" type="button" class="btn btn-info" >Expandir Mapa</button>
+            <div class="row mb-1 mt-3">
+                <div class="col-sm-12">
+                    <div id="mapid" style="height:800px;"></div>
+                </div>
+            </div>
+      <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'georeference:area_list' %}"><button type="button" class="btn btn-warning"> Cancelar </button></a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endif %}
+
+{% endblock %}
+
+{% block js %}
+
+<script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.full.min.js' %}"></script>
+<script>
+  $(function () {
+    $('.select2bs4').select2({
+      placeholder: 'Selecione um item',
+      theme: 'bootstrap4',
+      width: '100%'
+    })
+  });
+</script>
+
+<script src="{% static 'leaflet/leaflet.js' %}"></script>
+<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+
+
+{% if function_type == 'update' %}
+    {% if polygon_data %}
+        <script>
+            var mymap = null;
+            var drawnItems = null;
+
+            function saveEdit() {
+                var layers = drawnItems.getLayers();
+                layers.eachLayer(function (layer) {
+                    var updatedGeoJSON = layer.toGeoJSON();
+                    document.getElementById('id_area_polygon').value = JSON.stringify(updatedGeoJSON.geometry);
+                });
+                mymap.fitBounds(drawnItems.getBounds());
+            }
+
+            function initializeMap() {
+                mymap = L.map('mapid');
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mymap);
+                drawnItems = L.featureGroup().addTo(mymap);
+
+                var areaPolygonData = '{{ object.area_polygon.geojson|escapejs }}';
+                var geoJsonData = areaPolygonData ? JSON.parse(areaPolygonData) : null;
+
+                var editControlOptions = {
+                    edit: {
+                        featureGroup: drawnItems,
+                        edit: false,
+                        remove: false
+                    },
+                    draw: false
+                };
+
+                if (geoJsonData) {
+                    var editablePolygon = L.geoJSON(geoJsonData, {
+                        onEachFeature: function (feature, layer) {
+                            drawnItems.addLayer(layer);
+                        }
+                    });
+                    drawnItems.addLayer(editablePolygon);
+                    editControlOptions.draw = false;
+                    mymap.fitBounds(drawnItems.getBounds());
+                } else {
+                    editControlOptions.draw = {
+                        polygon: true,
+                        polyline: false,
+                        circle: false,
+                        rectangle: false,
+                        marker: false,
+                        circlemarker: false,
+                    };
+                }
+
+                var editControl = new L.Control.Draw(editControlOptions);
+                mymap.addLayer(drawnItems);
+                editControl.addTo(mymap);
+
+                if (drawnItems.getLayers().length > 0) {
+                    var firstLayer = drawnItems.getLayers()[0];
+                    editControl.options.edit.featureGroup = drawnItems;
+                    mymap.addLayer(firstLayer);
+                    firstLayer.editing.enable();
+
+                    firstLayer.on('edit', function (e) {
+                        var updatedGeoJSON = this.toGeoJSON();
+                        document.getElementById('id_area_polygon').value = JSON.stringify(updatedGeoJSON.geometry);
+                    });
+                }
+
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var AreaFormCardBody = document.getElementById('AreaFormCardBody');
+                var toggleAreaFormButton = document.getElementById('toggleAreaFormButton');
+                var mapDiv = document.getElementById('mapid');
+                var currentHeight = parseInt(mapDiv.style.height) || 0;
+                mapDiv.style.height = '400px';
+                initializeMap();
+
+                toggleAreaFormButton.addEventListener('click', function() {
+                    if (AreaFormCardBody.style.display === 'none') {
+                        AreaFormCardBody.style.display = 'block';
+                        toggleAreaFormButton.textContent = 'Expandir mapa';
+                        mapDiv.style.height = '400px';
+                        mymap.invalidateSize();
+                    } else {
+                        AreaFormCardBody.style.display = 'none';
+                        toggleAreaFormButton.textContent = 'Exibir formulário';
+                        mapDiv.style.height = '800px';
+                        mymap.invalidateSize();
+                    }
+                });
+            });
+        </script>
+    {% else %}
+        <script>
+            var mymap = L.map('mapid').setView([-7.121651, -34.88033], 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mymap);
+            var drawnItems = new L.FeatureGroup();
+            mymap.addLayer(drawnItems);
+        
+            var drawControl = new L.Control.Draw({
+                draw: {
+                polygon: true,
+                polyline: false,
+                circle: false,
+                rectangle: false,
+                marker: false,
+                circlemarker: false,
+                },
+                edit: {
+                    featureGroup: drawnItems
+                }
+            });
+            mymap.addControl(drawControl);
+            mymap.on('draw:created', function (e) {
+            var layer = e.layer;
+            drawnItems.addLayer(layer);
+            var geoJsonData = layer.toGeoJSON();
+            document.getElementById('id_area_polygon').value = JSON.stringify(geoJsonData.geometry);
+        });
+        </script>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var AreaFormCardBody = document.getElementById('AreaFormCardBody');
+                var toggleAreaFormButton = document.getElementById('toggleAreaFormButton');
+                var mapDiv = document.getElementById('mapid');
+                var currentHeight = parseInt(mapDiv.style.height) || 0;
+        
+                mapDiv.style.height = '400px';
+        
+                toggleAreaFormButton.addEventListener('click', function() {
+                    
+                    if (AreaFormCardBody.style.display === 'none') {
+                        AreaFormCardBody.style.display = 'block';
+                        toggleAreaFormButton.textContent = 'Expandir mapa';
+                        mapDiv.style.height = '400px';
+                        mymap.invalidateSize();
+                    } else {
+                        AreaFormCardBody.style.display = 'none';
+                        toggleAreaFormButton.textContent = 'Exibir formulário';
+                        mapDiv.style.height = '800px';
+                        mymap.invalidateSize();
+                    }
+                });
+            });
+        </script>
+    {% endif %}
+
+{% elif function_type == 'create' %}
+    <script>
+        var mymap = L.map('mapid').setView([-7.121651, -34.88033], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mymap);
+        var drawnItems = new L.FeatureGroup();
+        mymap.addLayer(drawnItems);
+
+        var drawControl = new L.Control.Draw({
+            draw: {
+            polygon: true,
+            polyline: false,
+            circle: false,
+            rectangle: false,
+            marker: false,
+            circlemarker: false,
+            },
+            edit: {
+                featureGroup: drawnItems
+            }
+        });
+        mymap.addControl(drawControl);
+        mymap.on('draw:created', function (e) {
+        var layer = e.layer;
+        drawnItems.addLayer(layer);
+        var geoJsonData = layer.toGeoJSON();
+        document.getElementById('id_area_polygon').value = JSON.stringify(geoJsonData.geometry);
+    });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var AreaFormCardBody = document.getElementById('AreaFormCardBody');
+            var toggleAreaFormButton = document.getElementById('toggleAreaFormButton');
+            var mapDiv = document.getElementById('mapid');
+            var currentHeight = parseInt(mapDiv.style.height) || 0;
+
+            mapDiv.style.height = '400px';
+
+            toggleAreaFormButton.addEventListener('click', function() {
+                
+                if (AreaFormCardBody.style.display === 'none') {
+                    AreaFormCardBody.style.display = 'block';
+                    toggleAreaFormButton.textContent = 'Expandir mapa';
+                    mapDiv.style.height = '400px';
+                    mymap.invalidateSize();
+                } else {
+                    AreaFormCardBody.style.display = 'none';
+                    toggleAreaFormButton.textContent = 'Exibir formulário';
+                    mapDiv.style.height = '800px';
+                    mymap.invalidateSize();
+                }
+            });
+        });
+    </script>
+{% endif %}
+
+{% endblock %}

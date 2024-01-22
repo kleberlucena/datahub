@@ -1,0 +1,152 @@
+{% extends "base/base.html" %}
+{% load static crispy_forms_tags widget_tweaks custom_tags leaflet_tags %}
+
+{% block title %} Areas {% endblock %}
+
+{% block style_sheet %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+{% leaflet_css plugins="ALL" %}
+<style>
+    .div-pai {
+    position: relative;
+    }
+</style>
+{% endblock %}
+
+{% block title-header %} Areas {% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'georeference:area_list' %}">Areas</a></li>
+<li class="breadcrumb-item"><a>Detalhes</a></li>
+{% endblock %}
+
+{% block content %}
+{% if request.user|has_group:'profile:georeference_basic,profile:georeference_advanced,profile:georeference_manager' %}
+
+<!-- INFO BOX-->
+<div class="callout callout-info">
+        <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre detalhes da área</h3>
+        <p class="text-muted text-justify px-3 pt-2">
+            <b>Esse app permite a criação e edição de áreas para que possam ser utilizadas por demais apps.</b>
+            <br>- Essa tela exibe os detalhes da área.
+        </p>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Detalhes</h3>
+                <div class="card-tools">
+                    <a href="{{ request.META.HTTP_REFERER  }}" class="btn btn-tool"><i class="fas fa-arrow-left"></i></a>
+                    {% if request.user|has_group:'profile:georeference_advanced,profile:georeference_manager' %}
+                        <a  class="btn btn-tool btn-sm" href="{% url 'georeference:area_update' area.pk %}"><i class="fas fa-edit"></i></a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class=card-body>
+                <div id="AreaFormCardBody" style="display: block;">     
+                    <div class="p-4">
+                        <div class="row mb-1">
+                            <b>Nome:</b>
+                            <div class="ml-1">
+                                {{ area.name }}
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <b>Descrição:</b>
+                            <div class="ml-1">
+                                {{ area.description|default_if_none:"Sem descrição" }}
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <b>Categoria:</b>
+                            <div class="ml-1">
+                                {{ area.category|default_if_none:"Sem descrição" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    
+                <div class="p-3">
+                    {% if area.area_polygon %}
+                    <label>Área delimitada</label>
+                        <div class="row mb-1 mt-1">
+                            <button id="toggleAreaFormButton" type="button" class="btn btn-info ml-2 mb-3" >Expandir Mapa</button>
+                            <div class="col-sm-12">
+                                <div id="mapid" style="height:800px;"></div>
+                            </div>
+                        </div>
+                    {% else %}
+                    <div class="row">
+                        <div>
+                            Sem área em mapa cadastrada. 
+                        </div>
+                    </div>
+                    {% endif %}
+
+
+                </div>
+            </div>
+            <div class="card-footer">
+                <a  class="btn btn-warning" href="{% url 'georeference:area_list'%}">Voltar</a>
+                {% if request.user|has_group:'profile:georeference_advanced,profile:georeference_manager' %}
+                    <a  class="btn btn-info" href="{% url 'georeference:area_update' area.pk %}">Editar</a>
+                {% endif %}
+                {% if request.user|has_group:'profile:georeference_manager' %}
+                    <a  class="btn btn-danger" href="{% url 'georeference:area_delete' area.pk %}">Excluir</a>
+                {% endif %}    
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}
+
+{% block js %}
+
+<script src="{% static 'leaflet/leaflet.js' %}"></script>
+<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+
+<script>
+    var mymap = null;
+
+    function initializeMap() {
+        var areaPolygonData = '{{ object.area_polygon.geojson|escapejs }}';
+        var geoJsonData = JSON.parse(areaPolygonData);
+        mymap = L.map('mapid');
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mymap);
+        var geoJsonLayer = L.geoJSON(geoJsonData).addTo(mymap);
+        mymap.fitBounds(geoJsonLayer.getBounds());
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var AreaFormCardBody = document.getElementById('AreaFormCardBody');
+        var toggleAreaFormButton = document.getElementById('toggleAreaFormButton');
+        var mapDiv = document.getElementById('mapid');
+        var currentHeight = parseInt(mapDiv.style.height) || 0;
+        mapDiv.style.height = '400px';
+        initializeMap();
+
+        toggleAreaFormButton.addEventListener('click', function() {
+            if (AreaFormCardBody.style.display === 'none') {
+                AreaFormCardBody.style.display = 'block';
+                toggleAreaFormButton.textContent = 'Expandir mapa';
+                mapDiv.style.height = '400px';
+                mymap.invalidateSize();
+            } else {
+                AreaFormCardBody.style.display = 'none';
+                toggleAreaFormButton.textContent = 'Exibir formulário';
+                mapDiv.style.height = '800px';
+                mymap.invalidateSize();
+            }
+        });
+    });
+</script>
+
+{% endblock %}

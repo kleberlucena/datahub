@@ -128,6 +128,7 @@ INSTALLED_APPS = [
     'apps.termsofuse',
     'apps.protect_network',
     'apps.area',
+    'apps.georeference',
 
 ]
 
