@@ -28,18 +28,7 @@ class Area(models.Model):
     
     class Meta:
         verbose_name = "Área"
-        verbose_name_plural = "Áreas"
-
-    
-    # def get_centroid(self):
-    #     # Verifica se o campo area_polygon está definido
-    #     if self.area_polygon:
-    #         # Calcula o centroide usando a biblioteca GEOSGeometry
-    #         centroid = self.area_polygon.centroid
-    #         return centroid
-    #     else:
-    #         return None  # Retorna None se não houver polígono definido
-        
+        verbose_name_plural = "Áreas"      
 
 
 class SpotType(models.Model):
@@ -87,13 +76,6 @@ class Spot(models.Model):
     user_unit = models.ForeignKey(
         Entity,
         related_name = 'georef_spots_entity',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-    user = models.ForeignKey(
-        User,
-        related_name='georef_spot_user',
         on_delete=models.SET_NULL,
         null=True,
         blank=True
