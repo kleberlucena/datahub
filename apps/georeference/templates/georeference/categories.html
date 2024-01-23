@@ -17,7 +17,7 @@
 {% endblock %}
 
 {% block content %}
-{% if request.user|has_group:'profile:georeference_manager' %}
+{% if request.user|has_group:'profile:georeference_area_manager' %}
 <!-- INFO BOX-->
 <div class="callout callout-info">
   <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre categorias </h3>
@@ -43,7 +43,7 @@
                 <tr>
                   <th>Categoria</th>
                   <th>Descrição</th>
-                  {% if request.user|has_group:'profile:georeference_manager' %}
+                  {% if request.user|has_group:'profile:georeference_area_manager' %}
                     <th>Ação</th>
                   {% endif %}
                </tr>
@@ -55,10 +55,10 @@
                   <tr>
                     <td>{{ category.name }}</td>
                       <td>{{ category.description|default_if_none:"Sem descrição" }}</td>
-                      {% if request.user|has_group:'profile:georeference_manager' %}
+                      {% if request.user|has_group:'profile:georeference_area_manager' %}
                         <td colspan="2" class="project-actions text-center">
                           <a  class="btn btn-outline-info btn-sm" href="{% url 'georeference:category_update' category.pk %}">Editar</a>
-                          {% if request.user|has_group:'profile:georeference_manager' %}
+                          {% if request.user|has_group:'profile:georeference_area_manager' %}
                           <a  class="btn btn-outline-danger btn-sm" href="{% url 'georeference:category_delete' category.pk %}">Excluir</a>
                           {% endif %}
                         </td>
@@ -74,7 +74,7 @@
             </table>
           </div>
         </div>
-        {% if request.user|has_group:'profile:georeference_manager' %}
+        {% if request.user|has_group:'profile:georeference_area_manager' %}
         <div class="card-footer">
           <a href="{% url 'georeference:category_add' %}" alt="category_add"><button type="button" class="btn btn-primary"> Nova categoria </button></a>
         </div>
