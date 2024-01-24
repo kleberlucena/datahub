@@ -78,7 +78,6 @@ class Command(BaseCommand):
             "delete_spot",
         ]
 
-
         models_to_get = [Area, Category]
 
         with transaction.atomic():
