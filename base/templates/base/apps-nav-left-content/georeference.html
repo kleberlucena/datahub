@@ -1,5 +1,5 @@
 {% load custom_tags %}
-{% if request.user|has_group:'profile:georeference_basic,profile:georeference_advanced,profile:georeference_manager' %}
+{% if request.user|has_group:'profile:georeference_area_basic,profile:georeference_area_advanced,profile:georeference_area_manager' %}
 
 <!--Módulo Rede de Serviços-->
 <li class="nav-item module-item">
@@ -15,7 +15,7 @@
             </a>
         </li>
     
-        {% if request.user|has_group:'profile:georeference_manager' %}
+        {% if request.user|has_group:'profile:georeference_area_manager' %}
         <li class="nav-item menu-item">
             <a href="#" class="nav-link">
                 <i class="fas fa-wrench nav-icon"></i> 

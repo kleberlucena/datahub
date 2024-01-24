@@ -103,6 +103,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_celery_results',
     'django_celery_beat',
+    'django_extensions',
     'celery_progress',
     'guardian',
     'leaflet',

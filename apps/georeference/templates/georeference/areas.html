@@ -27,7 +27,7 @@
   </p>
 </div>
 
-{% if request.user|has_group:'profile:georeference_basic,profile:georeference_advanced,profile:georeference_manager' %}
+{% if request.user|has_group:'profile:georeference_area_basic,profile:georeference_area_advanced,profile:georeference_area_manager' %}
 
 <div class="row">
   <div class="col-md-12">
@@ -70,7 +70,7 @@
             </table>
           </div>
         </div>
-        {% if request.user|has_group:'profile:georeference_advanced,profile:georeference_manager' %}
+        {% if request.user|has_group:'profile:georeference_area_advanced,profile:georeference_area_manager' %}
         <div class="card-footer">
           <a href="{% url 'georeference:area_add' %}" alt="area_add"><button type="button" class="btn btn-primary"> Nova area </button></a>
         </div>

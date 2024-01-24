@@ -62,11 +62,11 @@ run tests:
         export IMAGE_TAG=${IMAGE_TAG}
         export STAGE_DJANGO_SECRET_KEY=${STAGE_DJANGO_SECRET_KEY}
         export STAGE_DJANGO_SITE_ID=${STAGE_DJANGO_SITE_ID}
-        export STAGE_DB_NAME=${STAGE_DB_NAME}
-        export STAGE_DB_USER=${STAGE_DB_USER}
-        export STAGE_DB_PASSWORD=${STAGE_DB_PASSWORD}
-        export STAGE_DB_HOST=${STAGE_DB_HOST}
-        export STAGE_DB_PORT=${STAGE_DB_PORT}
+        export TEST_DB_NAME=${TEST_DB_NAME}
+        export TEST_DB_USER=${TEST_DB_USER}
+        export TEST_DB_PASSWORD=${TEST_DB_PASSWORD}
+        export TEST_DB_HOST=${TEST_DB_HOST}
+        export TEST_DB_PORT=${TEST_DB_PORT}
         export STAGE_MINIO_ENDPOINT=${STAGE_MINIO_ENDPOINT}
         export STAGE_MINIO_EXTERNAL_ENDPOINT=${STAGE_MINIO_EXTERNAL_ENDPOINT}
         export STAGE_MINIO_ACCESS_KEY=${STAGE_MINIO_ACCESS_KEY}
@@ -260,6 +260,11 @@ undeploy stage:
         export STAGE_SERVICES_URL=${STAGE_SERVICES_URL}
         export STAGE_SERVICES_ENDPOINT_MARK=${STAGE_SERVICES_ENDPOINT_MARK}
         export STAGE_SERVICES_TOKEN=${STAGE_SERVICES_TOKEN}
+        export TEST_DB_NAME=${TEST_DB_NAME}
+        export TEST_DB_USER=${TEST_DB_USER}
+        export TEST_DB_PASSWORD=${TEST_DB_PASSWORD}
+        export TEST_DB_HOST=${TEST_DB_HOST}
+        export TEST_DB_PORT=${TEST_DB_PORT}
 
         docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
         docker-compose down

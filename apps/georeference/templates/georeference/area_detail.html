@@ -25,7 +25,7 @@
 {% endblock %}
 
 {% block content %}
-{% if request.user|has_group:'profile:georeference_basic,profile:georeference_advanced,profile:georeference_manager' %}
+{% if request.user|has_group:'profile:georeference_area_basic,profile:georeference_area_advanced,profile:georeference_area_manager' %}
 
 <!-- INFO BOX-->
 <div class="callout callout-info">
@@ -43,7 +43,7 @@
                 <h3 class="card-title">Detalhes</h3>
                 <div class="card-tools">
                     <a href="{{ request.META.HTTP_REFERER  }}" class="btn btn-tool"><i class="fas fa-arrow-left"></i></a>
-                    {% if request.user|has_group:'profile:georeference_advanced,profile:georeference_manager' %}
+                    {% if request.user|has_group:'profile:georeference_area_advanced,profile:georeference_area_manager' %}
                         <a  class="btn btn-tool btn-sm" href="{% url 'georeference:area_update' area.pk %}"><i class="fas fa-edit"></i></a>
                     {% endif %}
                 </div>
@@ -94,10 +94,10 @@
             </div>
             <div class="card-footer">
                 <a  class="btn btn-warning" href="{% url 'georeference:area_list'%}">Voltar</a>
-                {% if request.user|has_group:'profile:georeference_advanced,profile:georeference_manager' %}
+                {% if request.user|has_group:'profile:georeference_area_advanced,profile:georeference_area_manager' %}
                     <a  class="btn btn-info" href="{% url 'georeference:area_update' area.pk %}">Editar</a>
                 {% endif %}
-                {% if request.user|has_group:'profile:georeference_manager' %}
+                {% if request.user|has_group:'profile:georeference_area_manager' %}
                     <a  class="btn btn-danger" href="{% url 'georeference:area_delete' area.pk %}">Excluir</a>
                 {% endif %}    
             </div>

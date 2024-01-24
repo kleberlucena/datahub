@@ -10,11 +10,11 @@ services:
       - DJANGO_SECRET_KEY=$STAGE_DJANGO_SECRET_KEY
       - DJANGO_SITE_ID=$STAGE_DJANGO_SITE_ID
       - ALLOWED_HOSTS=172.16.150.140,.stage.pm.pb.gov.br
-      - DB_NAME=$STAGE_DB_NAME
-      - DB_USER=$STAGE_DB_USER
-      - DB_PASSWORD=$STAGE_DB_PASSWORD
-      - DB_HOST=$STAGE_DB_HOST
-      - DB_PORT=$STAGE_DB_PORT
+      - DB_NAME=$TEST_DB_NAME 
+      - DB_USER=$TEST_DB_USER 
+      - DB_PASSWORD=$TEST_DB_PASSWORD 
+      - DB_HOST=$TEST_DB_HOST 
+      - DB_PORT=$TEST_DB_PORT 
       - MINIO_ENDPOINT=$STAGE_MINIO_ENDPOINT
       - MINIO_EXTERNAL_ENDPOINT=$STAGE_MINIO_EXTERNAL_ENDPOINT
       - MINIO_ACCESS_KEY=$STAGE_MINIO_ACCESS_KEY
@@ -42,7 +42,8 @@ services:
       - PORTAL_RELATIVE_URL_LIST_ENTITY=$STAGE_PORTAL_RELATIVE_URL_LIST_ENTITY
       - SELF_URL_BASE=$STAGE_SELF_URL_BASE
 
-    command: bash -c -o pipefail "python manage.py migrate 
+    command: bash -c -o pipefail "python manage.py reset_db --noinput
+      && python manage.py migrate 
       && python manage.py collectstatic --noinput
       && python manage.py all_seed
       && python manage.py test"
