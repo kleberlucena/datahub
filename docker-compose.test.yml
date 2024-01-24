@@ -42,7 +42,7 @@ services:
       - PORTAL_RELATIVE_URL_LIST_ENTITY=$STAGE_PORTAL_RELATIVE_URL_LIST_ENTITY
       - SELF_URL_BASE=$STAGE_SELF_URL_BASE
 
-    command: bash -c -o pipefail "python manage.py reset_db
+    command: bash -c -o pipefail "python manage.py reset_db --noinput
       && python manage.py migrate 
       && python manage.py collectstatic --noinput
       && python manage.py all_seed
