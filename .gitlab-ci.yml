@@ -63,7 +63,7 @@ run tests:
         export STAGE_DJANGO_SECRET_KEY=${STAGE_DJANGO_SECRET_KEY}
         export STAGE_DJANGO_SITE_ID=${STAGE_DJANGO_SITE_ID}
         export TEST_DB_NAME=${TEST_DB_NAME}
-        export TEST_DB_USER=$}TEST_DB_USER}
+        export TEST_DB_USER=${TEST_DB_USER}
         export TEST_DB_PASSWORD=${TEST_DB_PASSWORD}
         export TEST_DB_HOST=${TEST_DB_HOST}
         export TEST_DB_PORT=${TEST_DB_PORT}
@@ -261,7 +261,7 @@ undeploy stage:
         export STAGE_SERVICES_ENDPOINT_MARK=${STAGE_SERVICES_ENDPOINT_MARK}
         export STAGE_SERVICES_TOKEN=${STAGE_SERVICES_TOKEN}
         export TEST_DB_NAME=${TEST_DB_NAME}
-        export TEST_DB_USER=$}TEST_DB_USER}
+        export TEST_DB_USER=${TEST_DB_USER}
         export TEST_DB_PASSWORD=${TEST_DB_PASSWORD}
         export TEST_DB_HOST=${TEST_DB_HOST}
         export TEST_DB_PORT=${TEST_DB_PORT}
