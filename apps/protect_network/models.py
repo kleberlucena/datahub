@@ -11,6 +11,8 @@ from apps.portal import models as portal_models
 # from apps.portal.models import Promotion # TODO: Remover
 
 
+#start of using georeference app for location source
+
 
 class SpotType(models.Model):
     name = models.CharField("Categoria",max_length=100, null=False, blank=False)
