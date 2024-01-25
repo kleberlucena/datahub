@@ -111,6 +111,8 @@ deploy stage:
   needs: [ "run tests" ]
   tags:
     - stage
+  only:
+    - main
   environment:
     name: stage
     url: https://bacinf.stage.pm.pb.gov.br

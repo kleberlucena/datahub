@@ -186,6 +186,7 @@
     }
     $(document).ready(function() {
       // Inicialize o Select2
+      console.log("Iniciando a pagina");
       $('#id_driver').select2({
         ajax: {
             url: '{% url "portal:list_militaries" %}',
