@@ -81,12 +81,20 @@ class CreateSpotView(GroupRequiredMixin, CreateView):
         latitude = form.cleaned_data['latitude']
         longitude = form.cleaned_data['longitude']
         self.object.location = GEOSGeometry(f"POINT ({longitude} {latitude})", srid=4326)
-        self.object.created_by = self.request.user
-        self.object.updated_by = self.request.user
+        user = self.request.user
+        self.object.created_by = user
+        self.object.updated_by = user
         self.object.updated_at = timezone.now()
         self.object.update_score = 100
-        military = get_object_or_404(portal_models.Military, military__user=self.request.user)
-        self.object.user_unit = military
+
+        enjoyer = get_object_or_404(portal_models.Enjoyer, user=user)
+        entity = enjoyer.entity
+        self.object.user_unit = entity
+
+        username = enjoyer
+        self.object.user_name = username
+
+
         spot_type = self.object.spot_type
         spot_next_update = spot_type.update_time
         is_headquarters = form.cleaned_data['is_headquarters']
@@ -103,7 +111,7 @@ class CreateSpotView(GroupRequiredMixin, CreateView):
         reference_value = form.cleaned_data.get('reference')
         address1 = models.Address(street=street_value,number=number_value, complement=complement_value,reference=reference_value, neighborhood=neighborhood_value,
                                     city=city_value, state="PB", region="NE", zipcode=zipcode_value, place=location_value, created_by=self.request.user,
-                                      updated_by=self.request.user)
+                                      updated_by=user)
         address1.save()
         self.object.addresses.add(address1)
         return super().form_valid(form)

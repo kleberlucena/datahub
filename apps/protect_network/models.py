@@ -8,6 +8,9 @@ from django.contrib.auth.models import User
 
 from apps.address.models import Address
 from apps.portal import models as portal_models
+from apps.portal.models import Enjoyer, Entity
+
+
 # from apps.portal.models import Promotion # TODO: Remover
 
 
@@ -127,7 +130,21 @@ class Spot(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='spots_updated')
     tags = models.ManyToManyField(Tag, blank=True)
     update_score = models.IntegerField(null=True, blank=True)
-    user_unit = models.ForeignKey(portal_models.Military, on_delete=models.PROTECT,verbose_name="Militar", related_name='spots')
+    user_unit = models.ForeignKey(
+        Entity,
+        related_name = 'protect_network_spot_entity',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    user_name = models.ForeignKey(
+        Enjoyer,
+        related_name = 'protect_network_spot_username',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
     next_update = models.IntegerField(null=True, blank=True)
     is_temporary = models.BooleanField(null=True, blank=True, default=False)
     date_initial = models.DateTimeField(null=True, blank=True)
