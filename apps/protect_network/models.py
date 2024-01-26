@@ -65,7 +65,7 @@ class NetworkResponsible(models.Model):
         unique_together = ['network', 'responsible']
 
     def __str__(self):
-        return "{} {}".format(self.responsible.rank, self.responsible.military)
+        return "{} {}".format(self.responsible.rank, self.responsible.nickname)
   
     
 class Image(models.Model):

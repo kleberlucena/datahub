@@ -683,5 +683,5 @@ class UpdateSurveyView(GroupRequiredMixin, UpdateView):
 
 def get_responsibles(request):
     responsibles = portal_models.Military.objects.all()
-    data = [{'id': responsible.id, 'text': f"{responsible.rank} {responsible.military}"} for responsible in responsibles]
+    data = [{'id': responsible.id, 'text': f"{responsible.rank} {responsible.nickname}"} for responsible in responsibles]
     return JsonResponse(data, safe=False)

@@ -87,8 +87,8 @@
                       <tboby>
                         {% for responsible in network_responsibles %}
                           <tr>
-                            <td>{{ responsible.responsible.rank }} {{ responsible.responsible.military }}</td>
-                            <td>{{ responsible.responsible.military.unit }}</td>
+                            <td>{{ responsible.responsible.rank }} {{ responsible.responsible.nickname }}</td>
+                            <td>{{ responsible.responsible.entity}}</td>
                             <td>{{ responsible.created_at|date:"d/m/Y H:i:s" }}</td>
                             <td>
                               {% if responsible.active %}

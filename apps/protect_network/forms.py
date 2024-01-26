@@ -213,7 +213,7 @@ class ResponsibleForm(forms.ModelForm):
                 widget=forms.HiddenInput())
 
     def label_from_promotion_instance(self, obj):
-        return f"{obj.rank}  {obj.military}"
+        return f"{obj.rank}  {obj.nickname}"
 
     class Meta:
         model = models.NetworkResponsible
