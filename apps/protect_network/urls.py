@@ -14,9 +14,11 @@ urlpatterns = [
   path('<int:pk>/spot/detail', views.DetailSpotView.as_view(), name='spot_detail'),
   path('<int:pk>/spot/detail_card', views.DetailCardSpotView.as_view(), name='spot_detail_card'),
   path('<int:pk>/spot/update/tags', views.UpdateSpotTagsView.as_view(), name='spot_tags_update'),
+
   path('spot_type', views.SpotTypeListView.as_view(), name='type_list'), 
   path('spot_type/add', views.CreateSpotTypeView.as_view(), name='type_add'), 
   path('<int:pk>/spot_type/update', views.UpdateSpotTypeView.as_view(), name='type_update'),
+  
   path('tag', views.TagListView.as_view(), name='tag_list'), 
   path('tag/add', views.CreateTagView.as_view(), name='tag_add'), 
   path('<int:pk>/tag/update', views.UpdateTagView.as_view(), name='tag_update'),

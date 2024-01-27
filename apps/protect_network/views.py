@@ -9,6 +9,8 @@ from base.mixins import GroupRequiredMixin
 
 from base.decorations.toast_decorator import include_toast
 from apps.portal import models as portal_models
+from apps.georeference.models import SpotType as geo_spottype
+from apps.georeference.models import Spot as geo_spot
 
 from . import models, forms
 
@@ -97,6 +99,7 @@ class CreateSpotView(GroupRequiredMixin, CreateView):
 
         spot_type = self.object.spot_type
         spot_next_update = spot_type.update_time
+        
         is_headquarters = form.cleaned_data['is_headquarters']
         self.object.is_headquarters = is_headquarters
         self.object.next_update = spot_next_update
@@ -114,8 +117,14 @@ class CreateSpotView(GroupRequiredMixin, CreateView):
                                       updated_by=user)
         address1.save()
         self.object.addresses.add(address1)
-        return super().form_valid(form)
 
+        spot1 = geo_spot(name=self.object.name, details=self.object.details, spot_type=self.object.spot_type ,latitude=self.object.latitude,
+                                   longitude=self.object.longitude,created_at=timezone.now(),updated_at=timezone.now(),created_by=user,updated_by=user,is_temporary=self.object.is_temporary,
+                                    date_initial=self.object.date_initial, date_final=self.object.date_final,active=self.object.active,
+                                      location=self.object.location,origin_system="bacinf",origin_app="point_interest",user_name=username,user_unit=entity)
+        spot1.save()
+        return super().form_valid(form)
+####################### spot type ID
 
 @include_toast
 class UpdateSpotView(GroupRequiredMixin, UpdateView):
@@ -193,30 +202,57 @@ class SpotListCreatedView(GroupRequiredMixin, ListView):
 
 @include_toast
 class CreateSpotTypeView(GroupRequiredMixin, CreateView):
-    model = models.SpotType
+    model = models.geo_spottype
     form_class = forms.SpotTypeForm
     template_name = 'protect_network/spot_type_add.html'
     group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     success_url = reverse_lazy('protect_network:type_list')
 
+# @include_toast
+# class CreateSpotTypeView(GroupRequiredMixin, CreateView):
+#     model = models.SpotType
+#     form_class = forms.SpotTypeForm
+#     template_name = 'protect_network/spot_type_add.html'
+#     group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
+#     success_url = reverse_lazy('protect_network:type_list'
+
+
+# @include_toast
+# class UpdateSpotTypeView(GroupRequiredMixin, UpdateView):
+#     model = models.SpotType
+#     template_name = 'protect_network/spot_type_add.html'
+#     group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
+#     form_class = forms.SpotTypeForm
+#     success_url = reverse_lazy('protect_network:type_list')
 
 @include_toast
 class UpdateSpotTypeView(GroupRequiredMixin, UpdateView):
-    model = models.SpotType
+    model = geo_spottype
     template_name = 'protect_network/spot_type_add.html'
     group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     form_class = forms.SpotTypeForm
     success_url = reverse_lazy('protect_network:type_list')
 
 
+# class SpotTypeListView(GroupRequiredMixin, ListView):
+#     model = models.SpotType
+#     template_name = 'protect_network/spot_type_list.html'
+#     group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
+
+#     def get_context_data(self, *args, **kwargs):
+#         context = super(SpotTypeListView, self).get_context_data(**kwargs)
+#         spot_type = models.SpotType.objects.all()
+#         context['spot_types'] = spot_type
+#         return context
+
 class SpotTypeListView(GroupRequiredMixin, ListView):
-    model = models.SpotType
+    model = geo_spottype
     template_name = 'protect_network/spot_type_list.html'
     group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(SpotTypeListView, self).get_context_data(**kwargs)
-        spot_type = models.SpotType.objects.all()
+        spot_type = geo_spottype.objects.all()
         context['spot_types'] = spot_type
         return context
     

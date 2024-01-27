@@ -2,16 +2,38 @@ from django import forms
 from . import models
 
 from apps.portal import models as portal_models
+from apps.georeference.models import SpotType as geo_spottype
+from apps.georeference.models import Spot as geo_spot
 
 
+
+
+# class SpotTypeForm(forms.ModelForm):
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.fields['spot_type_father'].queryset = models.SpotType.objects.exclude(id=self.instance.id)
+
+#     class Meta:
+#         model = models.SpotType
+#         fields = ['name', 'spot_type_father', 'update_time']
+#         labels = {
+#             'name': 'Categoria',
+#             'spot_type_father': 'Categoria Pai',
+#             'update_time' : 'Tempo de atualização',
+#         }
+#         widgets = {
+#             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome da categoria'}),
+#             'spot_type_father': forms.Select(attrs={'class': 'form-control'}),
+#             'update_time': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o tempo de atualização em dias'}),
+#         }
 
 class SpotTypeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['spot_type_father'].queryset = models.SpotType.objects.exclude(id=self.instance.id)
+        #self.fields['spot_type_father'].queryset = geo_spottype.objects.exclude(id=self.instance.id)
 
     class Meta:
-        model = models.SpotType
+        model = geo_spottype
         fields = ['name', 'spot_type_father', 'update_time']
         labels = {
             'name': 'Categoria',
