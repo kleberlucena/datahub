@@ -1,0 +1,206 @@
+{% extends "base/base.html" %}
+{% load widget_tweaks %}
+{% load custom_tags %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css' %}">
+{% comment %} bacinf style_sheet {% endcomment %}
+  
+  <style>
+    .callout-text {
+      text-align: justify
+    }
+    
+    /* insert error elemets to fields */
+    .errorlist {
+      list-style: none; 
+      color: red; 
+    }
+
+    .display-error {
+      border: 1px solid red; 
+    }
+
+    /* fix select2 field height */
+    .select2-selection,
+    .select2-selection--single {
+      height: 38px !important;
+    }
+
+    #select2-id_aeronave-container {
+      height: 38px !important;
+    }
+  </style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Cadastrar guarnição {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa:painel' %}">Painel</a></li>
+  <li class="breadcrumb-item active">Cadastrar Guarnição</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="callout callout-info">
+      <h3 class="text-info"><i class="fas fa-bullhorn"></i> Atenção ao preenchimento!</h3>
+      <p class="callout-text">Neste formulário, insira os componentes da guarnição de serviço, o telefone para contato e a cidade de atuação.</p>
+      <p class="callout-text">O piloto remoto deve ser diferente do piloto observador, porém ambos podem acumular a função de motorista.</p>
+    </div>
+
+    <div class="card card-primary card-outline">
+      <div class="card-header">
+        <h3 class="card-title">Cadastrar nova guarnição</h3>
+      </div>
+      <form class="p-3" method='POST' action="{% url 'rpa:police_group_form' %}" autocomplete='off'>
+        <div class="card-body">
+          {% csrf_token %}
+          <div class="form-row">
+          <div class="col-sm-12 col-md-6">
+            <div class="form-group">
+              <label for="#">Piloto remoto</label>
+              {{ user.first_name }} {{ user.last_name }}
+            </div>
+          </div>
+          </div>
+          <div class="form-row">
+          <div class="col-sm-12 col-md-6">
+            <div class="form-group">
+                <label for="id_observer_pilot">Piloto observador</label>
+                
+                {% comment %} <span>
+                  <input name="term" class="form-control"  placeholder="Informe a matrícula" hx-get="/rpa/militaries/" hx-trigger="keyup changed delay:500ms" hx-target="#select_observer_pilot" hx-swap="innerhtml" />
+                </span> {% endcomment %}
+                
+                <select id="select_observer_pilot" name="observer_pilot" class="form-control observer_pilot select2bs4">
+                  <option value="">----</option>
+                  {% comment %} {% include 'rpa/police_group/militaries_list.html' %} {% endcomment %}
+                </select>
+                
+                {{ form.observer_pilot.errors }}
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-6">
+            <div class="form-group">                
+                <label for="id_driver">Motorista</label>     
+                {% comment %} <span>
+                  <input name="term" class="form-control" placeholder="Informe a matrícula" hx-get="/rpa/militaries/" hx-trigger="keyup changed delay:500ms" hx-target="#select_driver" hx-swap="innerhtml" />
+                </span> {% endcomment %}
+                <select id="select_driver" name="driver" class="form-control driver select2bs4">                  
+                  <option value="">----</option>
+                </select>
+                {{ form.driver.errors }}             
+            </div>
+          </div>        
+          <div class="col-sm-12 col-md-6">
+            <div class="form-group">       
+                <label for="id_phone">Telefone</label>              
+                
+                {% render_field form.phone class="form-control phone" pattern="\([0-9]{2}\)[\s][0-9]{4,5}-[0-9]{4}" placeholder="Informe apenas números" %}
+                {{ form.phone.errors }}
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-6">
+            <div class="form-group">
+              <label for="id_location">Local</label>
+              {% render_field form.location class="form-control location select2bs4" %}
+              {{ form.location.errors }}
+                       
+            </div>
+          </div>
+          {{ form.remote_pilot }}
+        </div>        
+        <div class="card-footer">
+          <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'rpa:painel' %}">
+              <button type="button" class="btn btn-warning">Cancelar</button>
+            </a>
+          </div>
+        </div>
+        
+      </form>
+    </div>
+  </div>
+
+
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+  <script src="{% static 'adminlte-3.1.0/plugins/inputmask/jquery.inputmask.min.js' %}"></script>
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      $('.phone').mask("(99) 99999-9999");
+    });
+  </script>
+  <script>
+    $(document).ready(function () {
+      // Adicione um ID ao input do Select2 para o campo "Piloto observador"
+      $('#select_observer_pilot').on('select2:open', function (e) {
+        $('.select2-search__field').attr('id', 'select_observer_pilot_input');
+      });
+      $('#select_driver').on('select2:open', function (e) {
+        $('.select2-search__field').attr('id', 'select_driver_input');
+      });      
+      $('.location').select2({theme: 'bootstrap4'});
+      $('.observer_pilot').select2({
+        ajax: {
+          url: '{% url "portal:list_militaries" %}',
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {
+            console.log(data)
+            //updateObserverPilotSelect(data)
+            return {
+              results: data
+            };
+          },
+          cache: true
+        },
+        minimumInputLength: 3,
+        theme: 'bootstrap4'
+      });
+      $('.driver').select2({        
+        ajax: {
+            url: '{% url "portal:list_militaries" %}',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+              console.log(data)
+              //updateObserverPilotSelect(data)
+              return {
+                results: data
+              };
+            },
+            cache: true
+        },
+        minimumInputLength: 3,
+        theme: 'bootstrap4'
+      });
+    });    
+  </script>
+  
+
+  <script>
+    const errorList = document.querySelectorAll('ul.errorlist');
+
+    if (errorList) {
+      errorList.forEach((element) => element.previousElementSibling.classList.toggle('display-error'));
+    }
+  </script>
+
+{% endblock %}

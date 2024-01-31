@@ -11,6 +11,7 @@ from django.views.generic.edit import UpdateView
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django_datatables_view.base_datatable_view import BaseDatatableView
 from base.mixins import GroupRequiredMixin
 from django.contrib import messages
 import json
@@ -146,4 +147,18 @@ class DeleteMissaoView(GroupRequiredMixin, View):
         messages.info(self.request, 'Operação excluída com sucesso!')
         
         return HttpResponseRedirect(self.success_url)
+    
+class OperationListJsonView(PermissionRequiredMixin, BaseDatatableView):
+    print('chegou aqui')
+    max_display_length = 100
+    model = Operation
+    columns = [
+        'id',
+        'title',
+        'user',
+        'date',
+        'aircraft',
+        'completed'
+    ]
+    permission_required = 'rpa.view_operation'
 

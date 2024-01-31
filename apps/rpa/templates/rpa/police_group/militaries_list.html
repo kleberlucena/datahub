@@ -1,0 +1,7 @@
+{% if militaries %}
+    {% for militar in militaries %}
+        <option value="{{ militar.id }}">{{ militar.register}} - {{militar.name }}</option>
+    {% endfor %}
+{% else %}
+    <option value="">Nenhum militar encontrado</option>
+{% endif %}

@@ -1,6 +1,7 @@
 from typing import List, Dict
 from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
+from django.http.response import HttpResponse
 from django.views.generic import TemplateView, ListView
 from base.mixins import GroupRequiredMixin
 from .views_crud_aeronaves import *
@@ -127,7 +128,7 @@ class PainelView(TemplateView):
 
 
 class PrincipalView(GroupRequiredMixin, TemplateView):
-    template_name = 'rpa/list_operations.html'
+    template_name = 'rpa/operations_list.html'
     group_required = ['profile:rpa_view', 'profile:rpa_basic', 'profile:rpa_advanced']
 
     def get_context_data(self, **kwargs):
@@ -286,3 +287,10 @@ class TypeOfBatteryView(TemplateView):
         context['form'] = form
 
         return context
+    
+def check_military(request):
+    register = request.POST.get('phone')
+    if Military.objects.filter(register=register).exists():
+        return HttpResponse("<div style='color: red;'>Este username já existe</div>")
+    else:
+        return HttpResponse("<div style='color: green;'>Este username está disponível</div>")

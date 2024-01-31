@@ -1,4 +1,5 @@
 {% extends "base/base.html" %}
+{% load widget_tweaks %}
 {% load custom_tags %}
 {% load static %}
 
@@ -73,7 +74,7 @@
         <div class="form-row">
           <div class="col-6">
             <div class="form-group">
-                <label for="id_observer_pilot">Piloto observador</label>
+                <label for="id_observer_pilot">Piloto observador</label>                
                 {{ form.observer_pilot }}
                 {{ form.observer_pilot.errors }}
             </div>
@@ -88,7 +89,8 @@
           <div class="col-6">
             <div class="form-group">       
                 <label for="id_phone">Telefone</label>              
-                {{ form.phone }}
+                {% render_field form.phone class="form-control" %}
+                <div id="username-error"></div>
                 {{ form.phone.errors }}
             </div>
           </div>
