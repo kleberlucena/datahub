@@ -38,6 +38,10 @@ class DetailSpotView(GroupRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         spot = self.get_object()
+
+        geospot = geo_spot.objects.all()
+        network = models.ProtectNetworkSpot.objects.all()
+
         contact_info = models.ContactInfo.objects.filter(spot=spot)
         opening_hours = models.OpeningHours.objects.filter(spot=spot)
         images = models.Image.objects.filter(spot=spot).order_by('-id')[:12]
@@ -53,6 +57,10 @@ class DetailSpotView(GroupRequiredMixin, DetailView):
         #context['spot_types'] = spot_types
         context['spot_survey'] = survey
         context['spot_survey_score'] = survey_scores['average_score']
+
+        context['geospots'] = geospot
+        context['networks'] = network
+
         return context
 
 # class DetailSpotView(GroupRequiredMixin, DetailView):

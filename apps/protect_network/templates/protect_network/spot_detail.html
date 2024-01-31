@@ -116,7 +116,7 @@
                     <b>Nome:</b>
                 </div>
                 <div class="ml-1">
-                    {{ spot.name }}
+                    {{ spot.spot.name }}
                 </div>
             </div>
             <div class="row mb-1">
@@ -152,18 +152,10 @@
             {% endif %}
             <div class="row mb-1">
                 <div>
-                    <b>Nome:</b>
-                </div>
-                <div class="ml-1">
-                    {{ spot.name }}
-                </div>
-            </div>
-            <div class="row mb-1">
-                <div>
                     <b>Categoria:</b>
                 </div>
                 <div class="ml-1">
-                    {{ spot.spot_type }}
+                    {{ spot.spot.spot_type }}
                 </div>
             </div>
             <div class="row mb-1">
@@ -171,7 +163,7 @@
                     <b>Informações adicionais:</b>
                 </div>
                 <div class="ml-1 replace-none">
-                    {{ spot.details }}
+                    {{ spot.spot.details }}
                 </div>
             </div>
 
@@ -188,10 +180,12 @@
                     <b>Coordenadas no mapa:</b>
                 </div>
                 <div class="ml-1" id="id_location">
-                    {{ spot.latitude|stringformat:"f" }} , {{ spot.longitude|stringformat:"f" }}
+                    {{ spot.spot.latitude|stringformat:"f" }} , {{ spot.spot.longitude|stringformat:"f" }}
                 </div>
             </div>
-            {% for address in spot.addresses.all %}
+            
+
+            {% for address in spot.spot.addresses.all %}
                 <div class="row mb-1">
                     <div>
                         <b>Endereço:</b>
@@ -207,11 +201,20 @@
                             {% if address.complement %}
                                 - {{ address.complement }}
                             {% endif %}
-                            {% if address.reference %}
-                                , {{ address.reference }}
-                            {% endif %}
                         {% else %}
                             Incompleto ou não informado
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mb-1">
+                    <div>
+                        <b>Ponto de referência:</b>
+                    </div>
+                    <div class="ml-1">
+                        {% if address.reference %}
+                            {{ address.reference }}
+                        {% else %}
+                            Não forneceu
                         {% endif %}
                     </div>
                 </div>
@@ -268,7 +271,7 @@
                     <b>Criado por:</b>
                 </div>
                 <div class="ml-1">
-                    {{ spot.created_by }} em {{ spot.created_at }}</h6>
+                    {{ spot.spot.created_by }} em {{ spot.spot.created_at }}</h6>
                 </div>
             </div>
                 <div class="row mb-1">
@@ -276,15 +279,7 @@
                     <b>Unidade do criador:</b>
                 </div>
                 <div class="ml-1">
-                    {{ spot.user_unit|default_if_none:"Sem unidade cadastrada"}}
-                </div>
-            </div>
-            <div class="row mb-1">
-                <div>
-                    <b>Nome de guerra: </b>
-                </div>
-                <div class="ml-1">
-                    {{ spot.user_name.full_name|default_if_none:"Sem nome de guerra cadastrado"}}
+                    {{ spot.spot.user_unit|default_if_none:"Sem unidade cadastrada"}}
                 </div>
             </div>
             <div class="row mb-1">
@@ -292,7 +287,7 @@
                     <b>Usuário: </b>
                 </div>
                 <div class="ml-1">
-                    {{ spot.user_name.username|default_if_none:"Sem usuário cadastrado"}}
+                    {{ spot.spot.user_name |default_if_none:"Sem usuário cadastrado"}}
                 </div>
             </div>
             <div class="row mb-1">
