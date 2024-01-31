@@ -1,7 +1,7 @@
 from apps.rpa.views import *
 from django.urls import path
 
-from apps.rpa.views.views_police_group import PoliceGroupCreateView, PoliceGroupUpdateView, militaries, military_search, modal
+from apps.rpa.views.views_police_group import PoliceGroupArchiveView, PoliceGroupCreateView, PoliceGroupUpdateView, militaries, military_search, modal
 
 app_name = "rpa"
 
@@ -57,6 +57,7 @@ urlpatterns = [
     # Police Group
     path('police_group/form/', PoliceGroupCreateView.as_view(), name='police_group_form'),
     path('police_group/edit/<int:pk>/', PoliceGroupUpdateView.as_view(), name='police_group_edit'),
+    path('police_group/archive/<int:pk>/', PoliceGroupArchiveView.as_view(), name='police_group_archive'),
     # Guarnicao
     path('descadastrar/', DescadastrarGuarnicao.as_view(), name='descadastrar_guarnicao'),
     path('guarnicao_form/', GuarnicaoCreateView.as_view(), name='guarnicao_form'),

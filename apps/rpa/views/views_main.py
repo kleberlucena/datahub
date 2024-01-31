@@ -76,7 +76,7 @@ class PainelView(TemplateView):
         
         localidades = CitiesPB.objects.all()
         for local in localidades:
-            guarnicoes = PoliceGroup.objects.filter(location=local)
+            guarnicoes = PoliceGroup.objects.filter(location=local, status=True)
 
             for guarnicao in guarnicoes:
 

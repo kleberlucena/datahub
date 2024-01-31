@@ -40,7 +40,7 @@ class GuarnicaoCreateView(GroupRequiredMixin, CreateView):
     
     def get(self, request, *args, **kwargs):
         existing_guarnicao = PoliceGroup.objects.filter(
-            Q(remote_pilot=request.user.military) | Q(observer_pilot=request.user.military) | Q(driver=request.user.military)
+            Q(remote_pilot=request.user.military) | Q(observer_pilot=request.user.military) | Q(driver=request.user.military) & Q(status=True)
         ).first()
 
         if existing_guarnicao:

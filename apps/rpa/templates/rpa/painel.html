@@ -310,8 +310,11 @@
     const isCurrentUserCreator = equipe.piloto_remoto === user;
     let descadastroButton = ``
     if (isCurrentUserCreator) {
+      var urlDetail = '{% url "rpa:police_group_archive" "1" %}';
+      var id = equipe.id;
+      urlDetail = urlDetail.replace('1', id);
       descadastroButton = `
-        <a href="{% url 'rpa:descadastrar_guarnicao' %}">
+        <a href="${ urlDetail }">
           <button type="button" class="btn btn-outline-danger ml-3">Descadastrar</button>
         </a>`
     } else {
