@@ -6,6 +6,7 @@ from apps.protect_network import models
 
 admin.site.register(models.Tag)
 #admin.site.register(models.SpotType)
+admin.site.register(models.ProtectNetworkSpot)
 admin.site.register(models.ContactInfo)
 admin.site.register(models.Spot)
 admin.site.register(models.SpotAddresses)

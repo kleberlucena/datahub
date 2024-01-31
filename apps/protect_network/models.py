@@ -74,7 +74,7 @@ class NetworkResponsible(models.Model):
 class Image(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField("descrição", max_length=255, blank=True, null=True)
-    spot = models.ForeignKey('Spot', on_delete=models.CASCADE)
+    spot = models.ForeignKey('ProtectNetworkSpot', on_delete=models.CASCADE)
     created_at = models.DateTimeField('Criado', auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='images_created')
     imageSpot = StdImageField(
@@ -115,9 +115,10 @@ class Image(models.Model):
 #     def __str__(self):
 #         return f"{self.imageContact}"
 
-    class Meta:
-        verbose_name = "Imagem"
-        verbose_name_plural = "Imagens"        
+#     class Meta:
+#         verbose_name = "Imagem"
+#         verbose_name_plural = "Imagens"        
+
 
 
 class Spot(models.Model):
@@ -125,7 +126,6 @@ class Spot(models.Model):
     name = models.CharField("Ponto", max_length=100, null=False, blank=False)
     details = models.CharField("Informações adicionais", max_length=300, null=True, blank=True)
     spot_type = models.ForeignKey(geo_spottype, on_delete=models.CASCADE, null=False, blank=False, related_name='protect_network_spot_spottype')
-    #spot_type = models.ForeignKey(SpotType, on_delete=models.CASCADE, null=False, blank=False)
     latitude = models.FloatField("Latitude", default=0.0, null=False, blank=False)
     longitude = models.FloatField("Longitude", default=0.0, null=False, blank=False)
     created_at = models.DateTimeField('Criado', auto_now_add=True)
@@ -165,13 +165,19 @@ class Spot(models.Model):
     parent_company = models.CharField(max_length=20, null=True, blank=True)
     spot_network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=False)
     QPP = models.ForeignKey(Qpp, on_delete=models.CASCADE, null=False, blank=False)
-    
-       
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
 
-    def __str__(self):
-        return self.name
+
+class ProtectNetworkSpot(models.Model):
+    spot = models.ForeignKey(geo_spot, on_delete=models.CASCADE, null=False, blank=False)
+    tags = models.ManyToManyField(Tag, blank=True)
+    update_score = models.IntegerField(null=True, blank=True)
+    next_update = models.IntegerField(null=True, blank=True)
+    is_headquarters = models.BooleanField(default=True, null=True, blank=True)
+    cnpj = models.CharField(max_length=20, null=True, blank=True)
+    parent_company = models.CharField(max_length=20, null=True, blank=True)
+    spot_network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=False)
+    #QPP = models.ForeignKey(Qpp, on_delete=models.CASCADE, null=True, blank=True)
+
     
 
 class SpotAddresses(models.Model):
@@ -246,7 +252,7 @@ class ContactInfo(models.Model):
     email = models.CharField("E-mail", max_length=200, default="", null=True, blank=True)
     rg = models.CharField("RG", max_length=20, default="", null=True, blank=True)
     cpf = models.CharField("CPF", max_length=14, default="", null=True, blank=True)
-    spot = models.ForeignKey('Spot', on_delete=models.CASCADE)
+    spot = models.ForeignKey('ProtectNetworkSpot', on_delete=models.CASCADE)
 
 
 class OpeningHours(models.Model):
@@ -275,14 +281,14 @@ class OpeningHours(models.Model):
     opened_sun = models.BooleanField(choices=OPENED_OPTIONS, blank=True, null=True, default=True)
     open_time_sun = models.TimeField(blank=True, null=True)
     close_time_sun = models.TimeField(blank=True, null=True)
-    spot = models.ForeignKey('Spot', on_delete=models.CASCADE, related_name='opening_hours')
+    spot = models.ForeignKey('ProtectNetworkSpot', on_delete=models.CASCADE, related_name='opening_hours')
 
     def __str__(self):
         return self.spot
     
 
 class SecuritySurvey(models.Model):
-    spot = models.ForeignKey('Spot', on_delete=models.CASCADE, related_name='security_survey')
+    spot = models.ForeignKey('ProtectNetworkSpot', on_delete=models.CASCADE, related_name='security_survey')
     security_cameras = models.BooleanField(blank=False, null=False)
     security_cameras_rec = models.BooleanField(blank=False, null=False)
     private_security = models.BooleanField(blank=False, null=False)

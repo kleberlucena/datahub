@@ -8,8 +8,12 @@ app_name = 'protect_network'
 urlpatterns = [
   path('',views.IndexView.as_view(), name='index'), 
   path('spot', views.SpotListView.as_view(), name='spot_list'),
-  path('spot/list_created', views.SpotListCreatedView.as_view(), name='spot_list_created'),  
-  path('spot/add', views.CreateSpotView.as_view(), name='spot_add'), 
+  path('spot/list_created', views.SpotListCreatedView.as_view(), name='spot_list_created'), 
+  path('spot/add', views.CreateSpotView.as_view(), name='spot_add'), # OK
+
+  #path('geospot/add', views.CreateGeoSpotView.as_view(), name='geospot_add'), 
+
+
   path('<int:pk>/spot/update', views.UpdateSpotView.as_view(), name='spot_update'),
   path('<int:pk>/spot/detail', views.DetailSpotView.as_view(), name='spot_detail'),
   path('<int:pk>/spot/detail_card', views.DetailCardSpotView.as_view(), name='spot_detail_card'),
