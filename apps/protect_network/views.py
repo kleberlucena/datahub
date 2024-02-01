@@ -165,7 +165,7 @@ class CreateSpotView(GroupRequiredMixin, CreateView):
             spot_network=form.cleaned_data['spot_network'],
             cnpj=form.cleaned_data['cnpj'],
             parent_company=form.cleaned_data['parent_company'],
-            QPP=form.cleaned_data['QPP']
+            qpp=form.cleaned_data['QPP']
         )
         spot1.save()
 
@@ -457,7 +457,7 @@ class CreateContactInfoView(GroupRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         spot_id = self.kwargs.get('spot_id')
-        spot = get_object_or_404(models.Spot, pk=spot_id)
+        spot = get_object_or_404(models.ProtectNetworkSpot, pk=spot_id)
         context['spot_pk'] = spot.pk
         return context
     
@@ -514,7 +514,7 @@ class CreateOpeningHoursView(GroupRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         spot_id = self.kwargs.get('spot_id')
-        spot = get_object_or_404(models.Spot, pk=spot_id)
+        spot = get_object_or_404(models.ProtectNetworkSpot, pk=spot_id)
         context['spot_pk'] = spot.pk
         return context
 
@@ -728,7 +728,7 @@ class CreateSurveyView(GroupRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         spot_id = self.kwargs.get('spot_id')
-        spot = get_object_or_404(models.Spot, pk=spot_id)
+        spot = get_object_or_404(models.ProtectNetworkSpot, pk=spot_id)
         context['spot_pk'] = spot.pk
         return context
 
@@ -774,7 +774,7 @@ class UpdateSurveyView(GroupRequiredMixin, UpdateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         spot_id = self.kwargs['pk']
-        spot = get_object_or_404(models.Spot, pk=spot_id)
+        spot = get_object_or_404(models.ProtectNetworkSpot, pk=spot_id)
         self.object.spot = spot
         score = 0
         boolean_fields = [

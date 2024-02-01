@@ -100,7 +100,7 @@
                     <b>Rede:</b>
                 </div>
                 <div class="ml-1">
-                    {{ spot.spot_network }}
+                    {{ spot.spot_network|default_if_none:"Não informada"}}
                 </div>
             </div>
             <div class="row mb-1">
@@ -108,7 +108,7 @@
                     <b>QPP:</b>
                 </div>
                 <div class="ml-1">
-                    {{ spot.QPP }}
+                    {{ spot.qpp|default_if_none:"Não informado"}}
                 </div>
             </div>
             <div class="row mb-1">
@@ -124,7 +124,7 @@
                     <b>CNPJ:</b>
                 </div>
                 <div class="ml-1 replace-none">
-                    {{ spot.cnpj }}
+                    {{ spot.cnpj|default_if_none:"Não informado"}}
                 </div>
             </div>
             <div class="row mb-1">
@@ -146,7 +146,7 @@
                         <b>CNPJ da matriz:</b>
                     </div>
                     <div class="ml-1 replace-none">
-                        {{ spot.cnpj }}
+                        {{ spot.parent_company|default_if_none:"Não informado"}}
                     </div>
                 </div>
             {% endif %}
@@ -417,7 +417,7 @@
                         </div>
                     </div>
                     {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
-                    <a href="{% url 'protect_network:survey_update' spot.id %}">
+                    <a href="{% url 'protect_network:survey_update' spot_survey.first.id %}">
                         <button type="button" class="btn btn-outline-primary">
                             <i class=""></i>
                             Editar

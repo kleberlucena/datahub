@@ -176,7 +176,7 @@ class ProtectNetworkSpot(models.Model):
     cnpj = models.CharField(max_length=20, null=True, blank=True)
     parent_company = models.CharField(max_length=20, null=True, blank=True)
     spot_network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=False)
-    #QPP = models.ForeignKey(Qpp, on_delete=models.CASCADE, null=True, blank=True)
+    qpp = models.ForeignKey(Qpp, on_delete=models.CASCADE, null=True, blank=True)
 
     
 
@@ -300,6 +300,3 @@ class SecuritySurvey(models.Model):
     security_barriers = models.BooleanField(blank=False, null=False)
     other_security_measures = models.TextField(blank=True, null=True)
     score = models.IntegerField(blank=True, null=True)
-
-    def __str__(self):
-        return self.spot
