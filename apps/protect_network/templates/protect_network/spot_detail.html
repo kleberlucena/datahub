@@ -780,7 +780,7 @@
 
 <script>
     $(document).ready(function () {
-        var maxValue = {{ spot.spot_type.update_time }};
+        var maxValue = {{ spot.spot.spot_type.update_time }};
         var centerValue = 0;
         var initialValue = {{ spot.next_update }};
         var backgroundColor = initialValue <= centerValue ? "red" : "green";

@@ -39,27 +39,32 @@ class DetailSpotView(GroupRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         spot = self.get_object()
 
-        geospot = geo_spot.objects.all()
-        network = models.ProtectNetworkSpot.objects.all()
 
         contact_info = models.ContactInfo.objects.filter(spot=spot)
         opening_hours = models.OpeningHours.objects.filter(spot=spot)
         images = models.Image.objects.filter(spot=spot).order_by('-id')[:12]
-        #spot_types = geo_spottype.objects.filter(spot=spot)
         survey = models.SecuritySurvey.objects.filter(spot=spot)
-        #progress_bar_math = (spot.next_update / spot.spot_type.update_time) * 100
-        #progress_bar_math_rounded = round(progress_bar_math)
         survey_scores = models.SecuritySurvey.objects.filter(spot=spot).aggregate(average_score=Avg('score'))
-        #context['spot_progress_bar_math'] = progress_bar_math_rounded
         context['spot_contacts'] = contact_info
         context['spot_opening_hours'] = opening_hours
         context['spot_images'] = images
-        #context['spot_types'] = spot_types
         context['spot_survey'] = survey
         context['spot_survey_score'] = survey_scores['average_score']
 
-        context['geospots'] = geospot
-        context['networks'] = network
+        #spot_types = geo_spottype.objects.filter(spot=spot)
+        #progress_bar_math = (spot.next_update / spot.spot_type.update_time) * 100
+        #progress_bar_math_rounded = round(progress_bar_math)
+        #context['spot_progress_bar_math'] = progress_bar_math_rounded
+        #context['spot_types'] = spot_types
+
+        #spot_types = models.ProtectNetworkSpot.objects.filter(spot=spot)
+        progress_bar_math = (spot.next_update / spot.spot.spot_type.update_time) * 100
+        progress_bar_math_rounded = round(progress_bar_math)
+        context['spot_progress_bar_math'] = progress_bar_math_rounded
+        #context['spot_types'] = spot_types
+
+
+
 
         return context
 
@@ -346,7 +351,7 @@ class CreateTagView(GroupRequiredMixin, CreateView):
 
 @include_toast
 class UpdateSpotTagsView(GroupRequiredMixin, UpdateView):
-    model = models.Spot
+    model = models.ProtectNetworkSpot
     template_name = 'protect_network/spot_tags_form.html'
     group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     form_class = forms.SpotTagsForm
@@ -398,7 +403,7 @@ class CreateImageSpotView(GroupRequiredMixin, CreateView):
     def form_valid(self, form):
         spot_id = self.kwargs['spot_id']
         form.instance.spot_id = spot_id
-        spot = get_object_or_404(models.Spot, id=spot_id)
+        spot = get_object_or_404(models.ProtectNetworkSpot, id=spot_id)
         spot_image = form.save(commit=False)
         spot_image.spot = spot
         spot_image.created_by = self.request.user
@@ -438,7 +443,7 @@ class ImageListView(GroupRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         spot_id = self.kwargs.get('spot_id')
-        spot = get_object_or_404(models.Spot, pk=spot_id)
+        spot = get_object_or_404(models.ProtectNetworkSpot, pk=spot_id)
         context['spot_pk'] = spot.pk
         return context
     

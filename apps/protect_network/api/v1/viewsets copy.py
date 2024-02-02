@@ -67,14 +67,14 @@ class SpotListbyTypeView(generics.ListAPIView):
     
 
 class SpotListFilterView(generics.ListAPIView):
-    queryset = models.ProtectNetworkSpot.objects.all()
+    queryset = models.Spot.objects.all()
     serializer_class = serializers.SpotSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['spot_network__name']
     permission_classes = [IsProtectNetworkManager]
 
     def get_queryset(self):
-        queryset = models.ProtectNetworkSpot.objects.all()
+        queryset = models.Spot.objects.all()
         spot_network_names = self.request.query_params.get('spot_network_name', '')
         spot_network_names_list = spot_network_names.split(',')
 

@@ -11,18 +11,17 @@ urlpatterns = [
   path('spot/list_created', views.SpotListCreatedView.as_view(), name='spot_list_created'), 
   path('spot/add', views.CreateSpotView.as_view(), name='spot_add'), # OK
 
-  #path('geospot/add', views.CreateGeoSpotView.as_view(), name='geospot_add'), 
-
-
   path('<int:pk>/spot/update', views.UpdateSpotView.as_view(), name='spot_update'),
   path('<int:pk>/spot/detail', views.DetailSpotView.as_view(), name='spot_detail'),
   path('<int:pk>/spot/detail_card', views.DetailCardSpotView.as_view(), name='spot_detail_card'),
   path('<int:pk>/spot/update/tags', views.UpdateSpotTagsView.as_view(), name='spot_tags_update'),
 
+#SPOT TYPE OK
   path('spot_type', views.SpotTypeListView.as_view(), name='type_list'), 
   path('spot_type/add', views.CreateSpotTypeView.as_view(), name='type_add'), 
   path('<int:pk>/spot_type/update', views.UpdateSpotTypeView.as_view(), name='type_update'),
   
+#TAG OK
   path('tag', views.TagListView.as_view(), name='tag_list'), 
   path('tag/add', views.CreateTagView.as_view(), name='tag_add'), 
   path('<int:pk>/tag/update', views.UpdateTagView.as_view(), name='tag_update'),
@@ -37,12 +36,12 @@ urlpatterns = [
   path('<int:spot_id>/opening_hours/add', views.CreateOpeningHoursView.as_view(), name='opening_hours_add'), 
   path('<int:pk>/opening_hours/update', views.UpdateOpeningHoursView.as_view(), name='opening_hours_update'),
 
-
+#IMAGES OK
   path('<int:spot_id>/spot/image/add', views.CreateImageSpotView.as_view(), name='spot_image_add'),
   path('<int:spot_id>/spot/images', views.ImageListView.as_view(), name='spot_image_list'),
   path('spot/image/<int:pk>/delete/', views.ImageDeleteView.as_view(), name='spot_image_delete'),
 
-
+#network ok
   path('<int:pk>/network/detail', views.NetworkDetailView.as_view(), name='network_detail'),
   path('network', views.NetworkListView.as_view(), name='network_list'), 
   path('network/add', views.CreateNetworkView.as_view(), name='network_add'),
@@ -51,6 +50,7 @@ urlpatterns = [
   path('<int:pk>/responsible/update', views.UpdateResponsibleView.as_view(), name='responsible_update'),
   path('<int:pk>/responsible/delete', views.DeleteResponsibleView.as_view(), name='responsible_delete'),
 
+#qpp ok
   path('qpp', views.QppListView.as_view(), name='qpp_list'), 
   path('qpp/add', views.CreateQppView.as_view(), name='qpp_add'), 
   path('<int:pk>/qpp/update', views.UpdateQppView.as_view(), name='qpp_update'),
