@@ -59,55 +59,65 @@
               </thead>
 
               <tboby>
-                {% if spots %}
-                  {% for spot in spots %}
-                    <tr>
-                      <td>{{ spot.name }}</td>
-                      <td>
-                        {% if networks %}
+                {% if networks %}
+                    {% for spot in spots %}
+                        <tr>
+                          <td>
+                            {{ spot.name }}</td>
+                          <td>
+                            {% if networks %}
+                              {% for network in networks %}
+                                {% if network.spot_id == spot.id %}
+                                  {{network.spot_network}}
+                                {% endif %}
+                              {% endfor %}
+                            {% endif %} 
+                          </td>
+                          <td>
+                            {{ spot.details }}
+                          <td>
+                            {{ spot.spot_type }}
+                          <td>
+
+                          {% if networks %}
+                            {% for network in networks %}
+                              {% if network.spot_id == spot.id %}
+                                {% if network.update_score < 0  %}
+                                  <div class="badge bg-danger">Desatualizado</div>
+                                {% endif %}
+                                {% if network.update_score >= 0 and network.update_score <= 25 %}
+                                    <div class="badge bg-warning">Atualizado</div>
+                                {% endif %}
+                                {% if network.update_score >= 25 and network.update_score <= 50 %}
+                                    <div class="badge bg-orange">Atualizado</div>
+                                {% endif %}
+                                {% if network.update_score >= 50 and network.update_score <= 75 %}
+                                    <div class="badge bg-primary">Atualizado</div>
+                                {% endif %}
+                                {% if network.update_score > 75 %}
+                                    <div class="badge bg-success">Atualizado</div>
+                                {% endif %}
+                              {% endif %}
+                            {% endfor %}
+                          {% endif %}
+
                           {% for network in networks %}
                             {% if network.spot_id == spot.id %}
-                              {{network.spot_network}}
+                              <td class="project-actions text-center">
+                                <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:spot_detail' network.pk %}">Detalhes</a>
+                              </td>
                             {% endif %}
                           {% endfor %}
-                        {% endif %} 
-                      </td>
-                      <td>{{ spot.details }}</td>
-                      <td>{{ spot.spot_type }}</td>
-                      <td>
-                        {% if networks %}
-                          {% for network in networks %}
-                            {% if network.spot_id == spot.id %}
-                              {% if network.update_score < 0  %}
-                              <div class="badge bg-danger">Desatualizado</div>
-                              {% endif %}
-                              {% if network.update_score >= 0 and network.update_score <= 25 %}
-                                  <div class="badge bg-warning">Atualizado</div>
-                              {% endif %}
-                              {% if network.update_score >= 25 and network.update_score <= 50 %}
-                                  <div class="badge bg-orange">Atualizado</div>
-                              {% endif %}
-                              {% if network.update_score >= 50 and network.update_score <= 75 %}
-                                  <div class="badge bg-primary">Atualizado</div>
-                              {% endif %}
-                              {% if network.update_score > 75 %}
-                                  <div class="badge bg-success">Atualizado</div>
-                              {% endif %}
-                            {% endif %}
-                          {% endfor %}
-                        {% endif %}
-                      </td>
-                      <td class="project-actions text-center">
-                        <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:spot_detail' spot.pk %}">Detalhes</a>
-                      </td>
-                    </tr>
-                  {% endfor %}
+                        </tr>
+                    {% endfor %}
                 {% else %}
                   <tr>
                     <td colspan="4">Não existem estabelecimentos cadastrados</td>
                   </tr>
                 {% endif %}
               </tboby>
+
+
             </table>
           </div>
         </div>
