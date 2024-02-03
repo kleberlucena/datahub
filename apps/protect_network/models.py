@@ -121,50 +121,50 @@ class Image(models.Model):
 
 
 
-class Spot(models.Model):
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    name = models.CharField("Ponto", max_length=100, null=False, blank=False)
-    details = models.CharField("Informações adicionais", max_length=300, null=True, blank=True)
-    spot_type = models.ForeignKey(geo_spottype, on_delete=models.CASCADE, null=False, blank=False, related_name='protect_network_spot_spottype')
-    latitude = models.FloatField("Latitude", default=0.0, null=False, blank=False)
-    longitude = models.FloatField("Longitude", default=0.0, null=False, blank=False)
-    created_at = models.DateTimeField('Criado', auto_now_add=True)
-    updated_at = models.DateTimeField('Atualizado')
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='spots_created')
-    updated_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='spots_updated')
-    tags = models.ManyToManyField(Tag, blank=True)
-    update_score = models.IntegerField(null=True, blank=True)
-    user_unit = models.ForeignKey(
-        Entity,
-        related_name = 'protect_network_spot_entity',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-    user_name = models.ForeignKey(
-        Enjoyer,
-        related_name = 'protect_network_spot_username',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
+# class Spot(models.Model):
+#     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+#     name = models.CharField("Ponto", max_length=100, null=False, blank=False)
+#     details = models.CharField("Informações adicionais", max_length=300, null=True, blank=True)
+#     spot_type = models.ForeignKey(geo_spottype, on_delete=models.CASCADE, null=False, blank=False, related_name='protect_network_spot_spottype')
+#     latitude = models.FloatField("Latitude", default=0.0, null=False, blank=False)
+#     longitude = models.FloatField("Longitude", default=0.0, null=False, blank=False)
+#     created_at = models.DateTimeField('Criado', auto_now_add=True)
+#     updated_at = models.DateTimeField('Atualizado')
+#     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='spots_created')
+#     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='spots_updated')
+#     tags = models.ManyToManyField(Tag, blank=True)
+#     update_score = models.IntegerField(null=True, blank=True)
+#     user_unit = models.ForeignKey(
+#         Entity,
+#         related_name = 'protect_network_spot_entity',
+#         on_delete=models.SET_NULL,
+#         null=True,
+#         blank=True
+#     )
+#     user_name = models.ForeignKey(
+#         Enjoyer,
+#         related_name = 'protect_network_spot_username',
+#         on_delete=models.SET_NULL,
+#         null=True,
+#         blank=True
+#     )
 
-    next_update = models.IntegerField(null=True, blank=True)
-    is_temporary = models.BooleanField(null=True, blank=True, default=False)
-    date_initial = models.DateTimeField(null=True, blank=True)
-    date_final = models.DateTimeField(null=True, blank=True)
-    active = models.BooleanField(null=True, blank=True, default=True)
-    location = models.PointField("Localização", srid=4326, null=True, blank=True)
-    addresses = models.ManyToManyField(
-        Address,
-        through='SpotAddresses',
-        through_fields=('spot', 'address'),
-    )
-    is_headquarters = models.BooleanField(default=True, null=False, blank=False)
-    cnpj = models.CharField(max_length=20, null=True, blank=True)
-    parent_company = models.CharField(max_length=20, null=True, blank=True)
-    spot_network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=False)
-    QPP = models.ForeignKey(Qpp, on_delete=models.CASCADE, null=False, blank=False)
+#     next_update = models.IntegerField(null=True, blank=True)
+#     is_temporary = models.BooleanField(null=True, blank=True, default=False)
+#     date_initial = models.DateTimeField(null=True, blank=True)
+#     date_final = models.DateTimeField(null=True, blank=True)
+#     active = models.BooleanField(null=True, blank=True, default=True)
+#     location = models.PointField("Localização", srid=4326, null=True, blank=True)
+#     addresses = models.ManyToManyField(
+#         Address,
+#         through='SpotAddresses',
+#         through_fields=('spot', 'address'),
+#     )
+#     is_headquarters = models.BooleanField(default=True, null=False, blank=False)
+#     cnpj = models.CharField(max_length=20, null=True, blank=True)
+#     parent_company = models.CharField(max_length=20, null=True, blank=True)
+#     spot_network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=False)
+#     QPP = models.ForeignKey(Qpp, on_delete=models.CASCADE, null=False, blank=False)
 
 
 class ProtectNetworkSpot(models.Model):
@@ -180,10 +180,10 @@ class ProtectNetworkSpot(models.Model):
 
     
 
-class SpotAddresses(models.Model):
-    spot = models.ForeignKey(Spot, on_delete=models.CASCADE)
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
-    addressType = models.CharField(max_length=64, null=True, blank=True)
+# class SpotAddresses(models.Model):
+#     spot = models.ForeignKey(Spot, on_delete=models.CASCADE)
+#     address = models.ForeignKey(Address, on_delete=models.CASCADE)
+#     addressType = models.CharField(max_length=64, null=True, blank=True)
 
 # class Spot(models.Model):
 #     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)

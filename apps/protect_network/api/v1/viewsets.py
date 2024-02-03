@@ -14,54 +14,54 @@ class IsProtectNetworkManager(permissions.BasePermission):
         return has_permission
 
 
-class SpotListView(generics.ListAPIView):
-    queryset = models.Spot.objects.all()
-    serializer_class = serializers.SpotSerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['spot_network__name']
-    permission_classes = [IsProtectNetworkManager]
+# class SpotListView(generics.ListAPIView):
+#     queryset = models.Spot.objects.all()
+#     serializer_class = serializers.SpotSerializer
+#     filter_backends = [filters.SearchFilter]
+#     search_fields = ['spot_network__name']
+#     permission_classes = [IsProtectNetworkManager]
 
-    def get_queryset(self):
-        queryset = models.Spot.objects.order_by('-created_at')[:1000]
-        name = self.request.query_params.get('name', None)
-        if name is not None:
-            queryset = queryset.filter(name=name)
+#     def get_queryset(self):
+#         queryset = models.Spot.objects.order_by('-created_at')[:1000]
+#         name = self.request.query_params.get('name', None)
+#         if name is not None:
+#             queryset = queryset.filter(name=name)
            
-        return queryset
+#         return queryset
 
 
-class SpotListbyNetworkView(generics.ListAPIView):
-    queryset = models.Spot.objects.all()
-    serializer_class = serializers.SpotSerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['spot_network__name']
-    permission_classes = [IsProtectNetworkManager]
+# class SpotListbyNetworkView(generics.ListAPIView):
+#     queryset = models.Spot.objects.all()
+#     serializer_class = serializers.SpotSerializer
+#     filter_backends = [filters.SearchFilter]
+#     search_fields = ['spot_network__name']
+#     permission_classes = [IsProtectNetworkManager]
 
-    def get_queryset(self):
-        queryset = models.Spot.objects.all()
-        spot_network_name = self.request.query_params.get('spot_network_name', None)
-        if spot_network_name is not None:
-            queryset = queryset.filter(spot_network__name=spot_network_name)
+#     def get_queryset(self):
+#         queryset = models.Pro.objects.all()
+#         spot_network_name = self.request.query_params.get('spot_network_name', None)
+#         if spot_network_name is not None:
+#             queryset = queryset.filter(spot_network__name=spot_network_name)
 
-        queryset = queryset.order_by('-created_at')[:1000]
+#         queryset = queryset.order_by('-created_at')[:1000]
             
-        return queryset
+#         return queryset
     
 
 class SpotListbyTypeView(generics.ListAPIView):
-    queryset = models.Spot.objects.all()
+    queryset = models.ProtectNetworkSpot.objects.all()
     serializer_class = serializers.SpotSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ['spot_type__name']
+    search_fields = ['spot__spot_type__name']
     permission_classes = [IsProtectNetworkManager]
 
     def get_queryset(self):
-        queryset = models.Spot.objects.all()
+        queryset = models.ProtectNetworkSpot.objects.all()
         spot_type_name = self.request.query_params.get('spot_type_name', None)
         if spot_type_name is not None:
             queryset = queryset.filter(spot_type__name=spot_type_name)
 
-        queryset = queryset.order_by('-created_at')[:1000]
+        # queryset = queryset.order_by('-created_at')[:1000]
             
         return queryset
     
@@ -86,6 +86,6 @@ class SpotListFilterView(generics.ListAPIView):
 
             queryset = queryset.filter(query)
 
-        queryset = queryset.order_by('-created_at')[:1000]
+        # queryset = queryset.order_by('-created_at')[:1000]
 
         return queryset

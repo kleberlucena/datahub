@@ -65,7 +65,7 @@ class DetailSpotView(GroupRequiredMixin, DetailView):
 
 
 class DetailCardSpotView(GroupRequiredMixin, DetailView):
-    model = models.Spot
+    model = models.ProtectNetworkSpot
     template_name = 'protect_network/spot_detail_card.html'
     group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
     context_object_name = 'spot'

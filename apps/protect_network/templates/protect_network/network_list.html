@@ -50,7 +50,6 @@
                   <th>Ação</th>
                </tr>
               </thead>
-
               <tboby>
                 {% for network in networks %}
                 <tr>
@@ -60,10 +59,10 @@
                   {% else %}
                     <td>{{ network.details }}</td>
                   {% endif %}
-                  {% if network.spot_set.count == 0%}
+                  {% if network.protectnetworkspot_set.count == 0%}
                     <td> Nenhum estabelecimento na rede </td>
                   {% else %}
-                    <td> {{ network.spot_set.count }} </td>
+                    <td> {{ network.protectnetworkspot_set.count }} </td>
                   {% endif %}
                   <td colspan="2" class="project-actions text-center">
                     {% if request.user|has_group:'profile:protect_network_basic,profile:protect_network_advanced,profile:protect_network_manager' %}
@@ -76,6 +75,7 @@
                 </tr>
                 {% endfor %}
               </tboby>
+
             </table>
           </div>
         </div>
