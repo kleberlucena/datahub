@@ -1,17 +1,15 @@
 from django.views.generic import CreateView, TemplateView, UpdateView, ListView, DetailView, DeleteView
 from django.urls import reverse_lazy, reverse
-from django.shortcuts import  get_object_or_404
+from django.shortcuts import  get_object_or_404, render
 from django.utils import timezone
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Avg
 from django.http import JsonResponse
 from base.mixins import GroupRequiredMixin
-
 from base.decorations.toast_decorator import include_toast
 from apps.portal import models as portal_models
 from apps.georeference.models import SpotType as geo_spottype
 from apps.georeference.models import Spot as geo_spot
-
 from . import models, forms
 
 
@@ -25,8 +23,14 @@ class IndexView(GroupRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         spot_networks = models.Network.objects.all()
+        protect_network_spots = models.ProtectNetworkSpot.objects.all()
         context['spot_networks'] = spot_networks
+        context['protect_network_spots'] = protect_network_spots
         return context
+    
+    def index(request):
+        protect_network_spots = models.ProtectNetworkSpot.objects.all()
+        return render(request, 'protect_network/index.html', {'protect_network_spots': protect_network_spots})
 
 
 class DetailSpotView(GroupRequiredMixin, DetailView):
@@ -274,7 +278,6 @@ class SpotListCreatedView(GroupRequiredMixin, ListView):
 
 @include_toast
 class CreateSpotTypeView(GroupRequiredMixin, CreateView):
-    model = models.geo_spottype
     form_class = forms.SpotTypeForm
     template_name = 'protect_network/spot_type_add.html'
     group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']

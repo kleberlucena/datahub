@@ -2,6 +2,8 @@ from rest_framework import filters, generics, permissions, exceptions
 from apps.protect_network import models
 from apps.protect_network.api.v1 import serializers
 from django.db.models import Q
+from apps.georeference.models import Spot as geo_spot
+
 
 
 
@@ -86,6 +88,5 @@ class SpotListFilterView(generics.ListAPIView):
 
             queryset = queryset.filter(query)
 
-        # queryset = queryset.order_by('-created_at')[:1000]
-
+        #queryset = queryset.order_by('-created_at')[:1000]
         return queryset

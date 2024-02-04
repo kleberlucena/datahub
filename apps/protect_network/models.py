@@ -1,32 +1,15 @@
 import uuid
 from stdimage.models import StdImageField
 from django_minio_backend import MinioBackend
-
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.auth.models import User
-
 from apps.address.models import Address
 from apps.portal import models as portal_models
 from apps.portal.models import Enjoyer, Entity
 from apps.georeference.models import SpotType as geo_spottype
 from apps.georeference.models import Spot as geo_spot
 
-
-
-# from apps.portal.models import Promotion # TODO: Remover
-
-
-#start of using georeference app for location source
-
-
-# class SpotType(models.Model):
-#     name = models.CharField("Categoria",max_length=100, null=False, blank=False)
-#     spot_type_father = models.ForeignKey('self', null=True, blank=True, related_name='spot_type_son', on_delete=models.CASCADE, verbose_name='Categoria Pai')
-#     update_time = models.IntegerField(null=False, blank=False, default=30)
-
-#     def __str__(self):
-#         return self.name
 
 
 class Tag(models.Model):
@@ -96,76 +79,6 @@ class Image(models.Model):
         verbose_name_plural = "Imagens"
 
 
-# class ContactImage(models.Model): #### IMAGEM DO CONTATO
-#     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-#     contact = models.ForeignKey('ContactInfo', on_delete=models.CASCADE)
-#     created_at = models.DateTimeField('Criado', auto_now_add=True)
-#     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='contact_images_created')
-#     imageContact = StdImageField(
-#         'Imagem', 
-#         storage=MinioBackend(bucket_name=settings.MINIO_MEDIA_FILES_BUCKET),
-#         upload_to='protect_network_img',
-#         variations={
-#             'large': {'width': 720, 'height': 720, 'crop': True},
-#             'medium': {'width': 480, 'height': 480, 'crop': True},
-#             'thumbnail': {'width': 128, 'height': 128, 'crop': True},
-#         }, delete_orphans=True
-#     )
-
-#     def __str__(self):
-#         return f"{self.imageContact}"
-
-#     class Meta:
-#         verbose_name = "Imagem"
-#         verbose_name_plural = "Imagens"        
-
-
-
-# class Spot(models.Model):
-#     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-#     name = models.CharField("Ponto", max_length=100, null=False, blank=False)
-#     details = models.CharField("Informações adicionais", max_length=300, null=True, blank=True)
-#     spot_type = models.ForeignKey(geo_spottype, on_delete=models.CASCADE, null=False, blank=False, related_name='protect_network_spot_spottype')
-#     latitude = models.FloatField("Latitude", default=0.0, null=False, blank=False)
-#     longitude = models.FloatField("Longitude", default=0.0, null=False, blank=False)
-#     created_at = models.DateTimeField('Criado', auto_now_add=True)
-#     updated_at = models.DateTimeField('Atualizado')
-#     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='spots_created')
-#     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='spots_updated')
-#     tags = models.ManyToManyField(Tag, blank=True)
-#     update_score = models.IntegerField(null=True, blank=True)
-#     user_unit = models.ForeignKey(
-#         Entity,
-#         related_name = 'protect_network_spot_entity',
-#         on_delete=models.SET_NULL,
-#         null=True,
-#         blank=True
-#     )
-#     user_name = models.ForeignKey(
-#         Enjoyer,
-#         related_name = 'protect_network_spot_username',
-#         on_delete=models.SET_NULL,
-#         null=True,
-#         blank=True
-#     )
-
-#     next_update = models.IntegerField(null=True, blank=True)
-#     is_temporary = models.BooleanField(null=True, blank=True, default=False)
-#     date_initial = models.DateTimeField(null=True, blank=True)
-#     date_final = models.DateTimeField(null=True, blank=True)
-#     active = models.BooleanField(null=True, blank=True, default=True)
-#     location = models.PointField("Localização", srid=4326, null=True, blank=True)
-#     addresses = models.ManyToManyField(
-#         Address,
-#         through='SpotAddresses',
-#         through_fields=('spot', 'address'),
-#     )
-#     is_headquarters = models.BooleanField(default=True, null=False, blank=False)
-#     cnpj = models.CharField(max_length=20, null=True, blank=True)
-#     parent_company = models.CharField(max_length=20, null=True, blank=True)
-#     spot_network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=False)
-#     QPP = models.ForeignKey(Qpp, on_delete=models.CASCADE, null=False, blank=False)
-
 
 class ProtectNetworkSpot(models.Model):
     spot = models.ForeignKey(geo_spot, on_delete=models.CASCADE, null=False, blank=False)
@@ -177,73 +90,8 @@ class ProtectNetworkSpot(models.Model):
     parent_company = models.CharField(max_length=20, null=True, blank=True)
     spot_network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=False)
     qpp = models.ForeignKey(Qpp, on_delete=models.CASCADE, null=True, blank=True)
-
     
-
-# class SpotAddresses(models.Model):
-#     spot = models.ForeignKey(Spot, on_delete=models.CASCADE)
-#     address = models.ForeignKey(Address, on_delete=models.CASCADE)
-#     addressType = models.CharField(max_length=64, null=True, blank=True)
-
-# class Spot(models.Model):
-#     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-#     name = models.CharField("Ponto", max_length=100, null=False, blank=False)
-#     details = models.CharField("Informações adicionais", max_length=300, null=True, blank=True)
-#     spot_type = models.ForeignKey(geo_spottype, on_delete=models.CASCADE, null=False, blank=False, related_name='protect_network_spot_spottype')
-#     #spot_type = models.ForeignKey(SpotType, on_delete=models.CASCADE, null=False, blank=False)
-#     latitude = models.FloatField("Latitude", default=0.0, null=False, blank=False)
-#     longitude = models.FloatField("Longitude", default=0.0, null=False, blank=False)
-#     created_at = models.DateTimeField('Criado', auto_now_add=True)
-#     updated_at = models.DateTimeField('Atualizado')
-#     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='spots_created')
-#     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='spots_updated')
-#     tags = models.ManyToManyField(Tag, blank=True)
-#     update_score = models.IntegerField(null=True, blank=True)
-#     user_unit = models.ForeignKey(
-#         Entity,
-#         related_name = 'protect_network_spot_entity',
-#         on_delete=models.SET_NULL,
-#         null=True,
-#         blank=True
-#     )
-#     user_name = models.ForeignKey(
-#         Enjoyer,
-#         related_name = 'protect_network_spot_username',
-#         on_delete=models.SET_NULL,
-#         null=True,
-#         blank=True
-#     )
-
-#     next_update = models.IntegerField(null=True, blank=True)
-#     is_temporary = models.BooleanField(null=True, blank=True, default=False)
-#     date_initial = models.DateTimeField(null=True, blank=True)
-#     date_final = models.DateTimeField(null=True, blank=True)
-#     active = models.BooleanField(null=True, blank=True, default=True)
-#     location = models.PointField("Localização", srid=4326, null=True, blank=True)
-#     addresses = models.ManyToManyField(
-#         Address,
-#         through='SpotAddresses',
-#         through_fields=('spot', 'address'),
-#     )
-#     is_headquarters = models.BooleanField(default=True, null=False, blank=False)
-#     cnpj = models.CharField(max_length=20, null=True, blank=True)
-#     parent_company = models.CharField(max_length=20, null=True, blank=True)
-#     spot_network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=False)
-#     QPP = models.ForeignKey(Qpp, on_delete=models.CASCADE, null=False, blank=False)
-    
-       
-#     def save(self, *args, **kwargs):
-#         super().save(*args, **kwargs)
-
-#     def __str__(self):
-#         return self.name
-    
-
-# class SpotAddresses(models.Model):
-#     spot = models.ForeignKey(Spot, on_delete=models.CASCADE)
-#     address = models.ForeignKey(Address, on_delete=models.CASCADE)
-#     addressType = models.CharField(max_length=64, null=True, blank=True)
-    
+   
 
 class ContactInfo(models.Model):
     name = models.CharField("Contato", max_length=200, default="", null=False, blank=False)

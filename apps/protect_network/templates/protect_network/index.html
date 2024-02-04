@@ -75,12 +75,12 @@
 </div>
 
 
+
 {% endblock %}
 
 <!-- javascripts -->
 {% block js %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 
 {% leaflet_js plugins="ALL" %}
 <script type="text/javascript">
@@ -140,26 +140,38 @@
                 });
             }
         }
+
         function addMarker(spot) {
-            var lat = spot.latitude;
-            var lon = spot.longitude;
-            var name = spot.name;
-            var detailUrl = spot.detail_url;
-            var marker = L.marker([lat, lon]).addTo(map);
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", detailUrl, true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    var popupContent = xhr.responseText;
-                    marker.bindPopup(popupContent, { autoClose: false });
-                } else {
-                    marker.bindPopup('<a href="' + detailUrl + '">' + name + '</a>', { autoClose: false });
-                }
-            };
-            xhr.send();
+            if (spot.latitude !== undefined && spot.longitude !== undefined) {
+                console.log("aaaaaaaaaaa ", spot.spot);
+
+
+                // var lat = -7.121651;
+                // var lon = -34.88033;
+                var lat = spot.latitude;  // Obtém a latitude do ponto
+                var lon = spot.longitude; // Obtém a longitude do ponto
+                var name = spot.name;
+                var detailUrl = spot.detail_url;
+                var marker = L.marker([lat, lon]).addTo(map);
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", detailUrl, true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        var popupContent = xhr.responseText;
+                        marker.bindPopup(popupContent, { autoClose: false });
+                    } else {
+                        marker.bindPopup('<a href="' + detailUrl + '">' + name + '</a>', { autoClose: false });
+                    }
+                };
+                xhr.send();
+            } else {
+                console.log("aaaaaaaaaaa ", spot.spot);
+                console.error("Erro: Coordenadas de latitude ou longitude ausentes.");
+            }
         }
 
         loadPointsOfInterest([]);
     }
 </script>
 {% endblock %}
+
