@@ -61,7 +61,7 @@
               <th scope="col">Data</th>
               <th scope="col">Aeronave</th>
               <th scope="col">Status</th>
-              <th class="removerDoPdf" scope="col">Ações</th>
+              <th class="removerDoPdf" scope="col">Recursos</th>
             </tr>
           </thead>          
         </table>
@@ -114,7 +114,7 @@
               targets: [5],
                 render: function(data, type, row) {
                     if (type === 'display') {
-                        return data == "Ativo" ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-danger">Desativado</span>';
+                        return data == "Encerrada" ? '<span class="badge badge-success">Encerrada</span>' : '<span class="badge badge-danger">Em andamento</span>';
                     }
                     return data;  // retornar data para outros tipos (por exemplo, ordenação) sem formatação HTML
                 }
@@ -122,10 +122,19 @@
             {
               "render":
                 function (data, type, row) {
+                  console.log(data)
                   var urlDetail = '{% url "rpa:ver_missao" "1" %}';
+                  var urlUpdate = '{% url "rpa:editar_missao" "1" %}';
+                  var urlDelete = '{% url "rpa:deletar_missao" "1" %}';
                   var id = data[0];
                   urlDetail = urlDetail.replace('1', id);
-                  buttons = '<a  class="btn btn-outline-info btn-sm" href="'+ urlDetail +'">Visualizar</a>';
+                  //buttons = '<a  class="btn btn-outline-info btn-sm" href="'+ urlDetail +'">Visualizar</a>';
+                  actions_list = [
+                    '<a class="dropdown-item" href="'+ urlDetail +'">Ver operação</a>',
+                    '<a class="dropdown-item" href="'+ urlUpdate +'">Editar operação</a>',
+                    '<a class="dropdown-item" href="'+ urlDelete +'">Excluir operação</a>'
+                  ]                  
+                  buttons = '<div class="btn-group" style="display: flex; align-items: center; align-content: center;"> <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false"> <span class="sr-only">Toggle Dropdown</span> Ações </button> <div class="dropdown-menu" role="menu" style=""> <a class="dropdown-item" href="'+ urlDetail +'">Ver operação</a> {% if request.user.is_superuser or request.user|has_group:'profile:advanced' %} <a class="dropdown-item" href="'+ urlUpdate +'">Editar operação</a> <a class="dropdown-item" href="'+ urlDelete +'">Excluir operação</a> {% endif %} </div> </div>'
                   return buttons;
                 },
               "data": null,

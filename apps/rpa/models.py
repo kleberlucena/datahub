@@ -366,6 +366,40 @@ class RiskAssessment(models.Model):
         }, delete_orphans=True, blank=True, null=True
     )
 
+    def get_status(self):
+        """
+        Retorna o status do RiskAssessment baseado na data de expiração.
+        
+        Retorna:
+            'True' se a data atual for antes da expiration_date.
+            'False' se a data atual for após a expiration_date.
+            'None' se não houver uma expiration_date definida.
+        """
+        if self.expiration_date is None:
+            return None
+        
+        if timezone.now() < self.expiration_date:
+            return True
+        else:
+            return False
+        
+    def get_status_text(self):
+        """
+        Retorna o status do RiskAssessment baseado na data de expiração.
+        
+        Retorna:
+            'Válida' se a data atual for antes da expiration_date.
+            'Expirada' se a data atual for após a expiration_date.
+            'No Expiration Date' se não houver uma expiration_date definida.
+        """
+        if self.expiration_date is None:
+            return 'Sem Data de Expiração'
+        
+        if timezone.now() < self.expiration_date:
+            return 'Válida'
+        else:
+            return 'Expirada'
+
     def __str__(self):
         return f"{self.operational_scenario} - {self.operator} - {self.date}"
     

@@ -16,6 +16,7 @@ from base.mixins import GroupRequiredMixin
 from django.contrib import messages
 import json
 from django.utils.decorators import method_decorator
+from django.utils.html import escape
 from apps.rpa.handlers import require_permission
 from apps.rpa.utils.getAttetionPointsForOperation import getAttentionPointsForOperation
 
@@ -161,4 +162,16 @@ class OperationListJsonView(PermissionRequiredMixin, BaseDatatableView):
         'completed'
     ]
     permission_required = 'rpa.view_operation'
+
+    def render_column(self, row, column):
+        # We want to render user as a custom column
+        if column == 'completed':
+            # escape HTML for security reasons
+            # return escape('{0} {1}'.format(row.customer_firstname, row.customer_lastname))
+            if row.completed:
+                return escape('{0}'.format('Encerrada'))
+            else:
+                return escape('{0}'.format('Em andamento'))
+        else:
+            return super(OperationListJsonView, self).render_column(row, column)
 
