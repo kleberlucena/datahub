@@ -40,7 +40,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-12 mt-3">
+                <div class="col-sm-12 mt-3" id="id_responsible">
                     {{form.responsible|add_class:"form-control select2bs4"|as_crispy_field}}
                 </div>
             </div>
@@ -99,7 +99,7 @@
 </script>]
 
 <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.full.min.js' %}"></script>
-<script>
+<!-- <script>
   $(document).ready(function () {
       $('.select2bs4').select2({
           placeholder: 'Selecione um item',
@@ -118,7 +118,72 @@
           }
       });
   });
-</script>
+</script> -->
+<script>
+    $(document).ready(function () {
+      $('.id_responsible_escolha').select2();
+    });    
+  </script>
+  <script>
+    function updateResponsibleSelect(data) {
+      var $responsibleSelect = $('select[id="id_responsible"]');
+      $responsibleSelect.empty();
+
+      data.results.forEach(function(item) {
+        var displayText = item.nickname + ' - ' + item.register;
+        var option = new Option(displayText, item.id, false, false);
+        $responsibleSelect.append(option);
+      });
+
+      $responsibleSelect.trigger('change');
+    }
+    $(document).ready(function() {
+      // Inicialize o Select2
+      $('#id_responsible').select2({
+        ajax: {
+            url: '{% url "portal:list_militaries" %}',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+              console.log(data)
+              return {
+                results: data
+              };
+            },
+            cache: true
+        },
+        minimumInputLength: 3, 
+      });
+  
+      $('#id_responsible').on('select2:open', function (e) {
+        $('.select2-search__field').attr('id', 'id_responsible_input');
+      });
+      $('#id_responsible_input').on('input', function() {
+        var valorDoInput = $(this).val();
+        console.log("Valor do input: " + valorDoInput);
+      });
+    });
+  </script>
+
+
+<!-- <script>
+$(document).ready(function() {
+    $.ajax({
+        url: '{% url "portal:list_militaries" %}',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            var select = $('#id_responsible').find('select');
+            select.empty(); // Limpa as opções existentes, se houver
+            $.each(data, function(key, value) {
+                select.append('<option value="' + key + '">' + value + '</option>');
+            });
+            // Atualiza o plugin select2 após adicionar as opções
+            select.select2();
+        }
+    });
+});
+</script> -->
 
 
 {% endblock %}

@@ -25,7 +25,6 @@ class Command(BaseCommand):
             "view_image",
             "view_networkresponsible",
             "view_openinghours",
-            "view_qpp",
             "view_securitysurvey",
 
         ]
@@ -52,7 +51,6 @@ class Command(BaseCommand):
             "change_openinghours",
             "delete_openinghours",
             "view_openinghours",
-            "view_qpp",
             "add_securitysurvey",
             "change_securitysurvey",
             "delete_securitysurvey",
@@ -85,10 +83,6 @@ class Command(BaseCommand):
             "change_openinghours",
             "delete_openinghours",
             "view_openinghours",
-            "add_qpp",
-            "change_qpp",
-            "delete_qpp",
-            "view_qpp",
             "add_securitysurvey",
             "change_securitysurvey",
             "delete_securitysurvey",
@@ -105,7 +99,6 @@ class Command(BaseCommand):
             Tag,
             Image,
             NetworkResponsible,
-            Qpp,
             SecuritySurvey,
             Network,
         ]

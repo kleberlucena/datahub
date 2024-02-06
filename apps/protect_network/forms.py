@@ -32,13 +32,13 @@ class UpdateGeoSpotForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'}),
         required=True,
     )
-    QPP = forms.ModelChoiceField(
-        queryset=models.Qpp.objects.all(),
-        label='QPP',
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        required=False,
-        empty_label='Selecione um QPP'
-    )
+    # QPP = forms.ModelChoiceField(
+    #     queryset=models.Qpp.objects.all(),
+    #     label='QPP',
+    #     widget=forms.Select(attrs={'class': 'form-control'}),
+    #     required=False,
+    #     empty_label='Selecione um QPP'
+    # )
     spot_network = forms.ModelChoiceField(
         queryset=models.Network.objects.all(),
         label='Rede',
@@ -51,7 +51,7 @@ class UpdateGeoSpotForm(forms.ModelForm):
          
     class Meta:
         model = models.ProtectNetworkSpot
-        fields = ['tags', 'update_score', 'next_update', 'is_headquarters', 'cnpj', 'parent_company', 'spot_network', 'qpp']
+        fields = ['tags', 'update_score', 'next_update', 'is_headquarters', 'cnpj', 'parent_company', 'spot_network']
         widgets = {
             'tags': forms.SelectMultiple(attrs={'class': 'form-control'}),
             'update_score': forms.NumberInput(attrs={'class': 'form-control'}),
@@ -60,7 +60,7 @@ class UpdateGeoSpotForm(forms.ModelForm):
             'cnpj': forms.TextInput(attrs={'class': 'form-control'}),
             'parent_company': forms.TextInput(attrs={'class': 'form-control'}),
             'spot_network': forms.Select(attrs={'class': 'form-control'}),
-            'qpp': forms.Select(attrs={'class': 'form-control'}),
+            #'qpp': forms.Select(attrs={'class': 'form-control'}),
         }
 
     def save(self, commit=True):
@@ -93,13 +93,13 @@ class GeoSpotForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'}),
         required=True,
     )
-    QPP = forms.ModelChoiceField(
-        queryset=models.Qpp.objects.all(),
-        label='QPP',
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        required=False,
-        empty_label='Selecione um QPP'
-    )
+    # QPP = forms.ModelChoiceField(
+    #     queryset=models.Qpp.objects.all(),
+    #     label='QPP',
+    #     widget=forms.Select(attrs={'class': 'form-control'}),
+    #     required=False,
+    #     empty_label='Selecione um QPP'
+    # )
     spot_network = forms.ModelChoiceField(
         queryset=models.Network.objects.all(),
         label='Rede',
@@ -294,18 +294,18 @@ class ResponsibleForm(forms.ModelForm):
         }
 
 
-class QppForm(forms.ModelForm):
-    class Meta:
-        model = models.Qpp
-        fields = ['name', 'details']
-        labels = {
-            'name': 'QPP',
-            'details' : 'Informações adicionais',
-        }
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome do QPP'}),
-            'details': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Se houver, insira informações adicionais'}),
-        }
+# class QppForm(forms.ModelForm):
+#     class Meta:
+#         model = models.Qpp
+#         fields = ['name', 'details']
+#         labels = {
+#             'name': 'QPP',
+#             'details' : 'Informações adicionais',
+#         }
+#         widgets = {
+#             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome do QPP'}),
+#             'details': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Se houver, insira informações adicionais'}),
+#         }
 
 
 class SecuritySurveyForm(forms.ModelForm):

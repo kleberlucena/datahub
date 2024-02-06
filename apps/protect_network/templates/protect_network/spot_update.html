@@ -62,11 +62,8 @@
                 {% csrf_token %}
                 
                 <div class="row">
-                    <div class="col-sm-6 mt-3">
+                    <div class="col-sm-12 mt-3">
                         {{form.spot_network|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
-                    </div>
-                    <div class="col-sm-6 mt-3">
-                        {{ form.qpp|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
                     </div>
                 </div>
     
@@ -228,17 +225,11 @@
                     for (var i = 0; i < data.length; i++) {
                         (function() {
                             var spot = data[i];
-                            // var lat = spot.spot.latitude;
-                            // var lon = spot.spot.longitude;
-                            // var name = spot.spot.name;
                             var lat = spot.spot.latitude;
                             var lon = spot.spot.longitude;
-                            
                             var detailUrl = spot.detail_url;
-
                             var marker = L.marker([lat, lon],{ icon: grayIcon }).addTo(map);
                             markers.push(marker);
-
                             var xhr = new XMLHttpRequest();
                             xhr.open("GET", detailUrl, true);
                             xhr.onreadystatechange = function() {

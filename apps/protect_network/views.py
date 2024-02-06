@@ -143,7 +143,7 @@ class CreateSpotView(GroupRequiredMixin, CreateView):
             spot_network=form.cleaned_data['spot_network'],
             cnpj=form.cleaned_data['cnpj'],
             parent_company=form.cleaned_data['parent_company'],
-            qpp=form.cleaned_data['QPP']
+            #qpp=form.cleaned_data['QPP']
         )
         spot1.save()
 
@@ -255,12 +255,10 @@ class SpotListView(GroupRequiredMixin, ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(SpotListView, self).get_context_data(**kwargs)
-        spot = geo_spot.objects.all()
-        network = models.ProtectNetworkSpot.objects.all()
+        spot = models.ProtectNetworkSpot.objects.all()
         context['spots'] = spot
-        context['networks'] = network
         return context
-
+    
 
 class SpotListCreatedView(GroupRequiredMixin, ListView):
     model = models.ProtectNetworkSpot
@@ -269,10 +267,8 @@ class SpotListCreatedView(GroupRequiredMixin, ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(SpotListCreatedView, self).get_context_data(**kwargs)
-        spot = geo_spot.objects.all()
-        network = models.ProtectNetworkSpot.objects.all()
+        spot = models.ProtectNetworkSpot.objects.all()
         context['spots'] = spot
-        context['networks'] = network   
         return context
     
 
