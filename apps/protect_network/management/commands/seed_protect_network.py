@@ -19,14 +19,10 @@ class Command(BaseCommand):
         ]
 
         permissions_to_assign_protect_network_basic = [
-            #"view_spottype",
             "view_contactinfo",
             "view_openinghours",
-            #"view_spot",
             "view_tag",
             "view_image",
-            #"view_spotaddresses",
-            #"view_spot",
             "view_networkresponsible",
             "view_openinghours",
             "view_qpp",
@@ -35,10 +31,6 @@ class Command(BaseCommand):
         ]
 
         permissions_to_assign_protect_network_advanced = [
-            #"add_spottype",
-            #"change_spottype",
-            #"delete_spottype",
-            #"view_spottype",
             "add_contactinfo",
             "change_contactinfo",
             "delete_contactinfo",
@@ -47,10 +39,6 @@ class Command(BaseCommand):
             "change_openinghours",
             "delete_openinghours",
             "view_openinghours",
-            #"add_spot",
-            #"change_spot",
-            #"delete_spot",
-            #"view_spot",
             "add_tag",
             "change_tag",
             "delete_tag",
@@ -59,14 +47,6 @@ class Command(BaseCommand):
             "change_image",
             "delete_image",
             "view_image",
-            #"add_spotaddresses",
-            #"change_spotaddresses",
-            #"delete_spotaddresses",
-            #"view_spotaddresses",
-            #"add_spot",
-           # "change_spot",
-           # "delete_spot",
-            #"view_spot",
             "view_networkresponsible",
             "add_openinghours",
             "change_openinghours",
@@ -81,10 +61,6 @@ class Command(BaseCommand):
         ]
 
         permissions_to_assign_protect_network_manager = [
-           # "add_spottype",
-           # "change_spottype",
-           # "delete_spottype",
-            #"view_spottype",
             "add_contactinfo",
             "change_contactinfo",
             "delete_contactinfo",
@@ -93,10 +69,6 @@ class Command(BaseCommand):
             "change_openinghours",
             "delete_openinghours",
             "view_openinghours",
-            #"add_spot",
-           # "change_spot",
-           # "delete_spot",
-            #"view_spot",
             "add_tag",
             "change_tag",
             "delete_tag",
@@ -105,14 +77,6 @@ class Command(BaseCommand):
             "change_image",
             "delete_image",
             "view_image",
-            #"add_spotaddresses",
-            #"change_spotaddresses",
-            #"delete_spotaddresses",
-            #"view_spotaddresses",
-            #"add_spot",
-            #"change_spot",
-            #"delete_spot",
-           # "view_spot",
             "add_networkresponsible",
             "change_networkresponsible",
             "delete_networkresponsible",
@@ -136,13 +100,10 @@ class Command(BaseCommand):
         ]
 
         models_to_get = [
-           # SpotType,
             ContactInfo,
             OpeningHours,
-            Spot,
             Tag,
             Image,
-            #SpotAddresses,
             NetworkResponsible,
             Qpp,
             SecuritySurvey,

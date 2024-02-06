@@ -89,7 +89,7 @@ class ProtectNetworkSpot(models.Model):
     cnpj = models.CharField(max_length=20, null=True, blank=True)
     parent_company = models.CharField(max_length=20, null=True, blank=True)
     spot_network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=False)
-    qpp = models.ForeignKey(Qpp, on_delete=models.CASCADE, null=True, blank=True)
+    #qpp = models.ForeignKey(Qpp, on_delete=models.CASCADE, null=True, blank=True)
     
    
 
@@ -130,9 +130,6 @@ class OpeningHours(models.Model):
     open_time_sun = models.TimeField(blank=True, null=True)
     close_time_sun = models.TimeField(blank=True, null=True)
     spot = models.ForeignKey('ProtectNetworkSpot', on_delete=models.CASCADE, related_name='opening_hours')
-
-    def __str__(self):
-        return self.spot
     
 
 class SecuritySurvey(models.Model):

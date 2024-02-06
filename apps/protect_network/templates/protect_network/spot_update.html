@@ -228,9 +228,12 @@
                     for (var i = 0; i < data.length; i++) {
                         (function() {
                             var spot = data[i];
-                            var lat = spot.latitude;
-                            var lon = spot.longitude;
-                            var name = spot.name;
+                            // var lat = spot.spot.latitude;
+                            // var lon = spot.spot.longitude;
+                            // var name = spot.spot.name;
+                            var lat = spot.spot.latitude;
+                            var lon = spot.spot.longitude;
+                            
                             var detailUrl = spot.detail_url;
 
                             var marker = L.marker([lat, lon],{ icon: grayIcon }).addTo(map);

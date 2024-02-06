@@ -291,12 +291,12 @@
                 </div>
             </div>
             <div class="row mb-1">
-                {% if spot.updated_by %}
+                {% if spot.spot.updated_by %}
                     <div>
                         <b>Atualizado por:</b>
                     </div>
                     <div class="ml-1">
-                        {{ spot.updated_by }} em {{ spot.updated_at }}</p></h6>
+                        {{ spot.spot.updated_by }} em {{ spot.spot.updated_at }}</p></h6>
                     </div>
                 {% else %}
                     <div class="ml-1">

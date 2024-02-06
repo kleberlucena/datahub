@@ -87,7 +87,7 @@ class DetailCardSpotView(GroupRequiredMixin, DetailView):
 class CreateSpotView(GroupRequiredMixin, CreateView):
     model = geo_spot
     form_class = forms.GeoSpotForm
-    template_name = 'protect_network/geo_spot_add.html'
+    template_name = 'protect_network/spot_add.html'
     group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     success_url = reverse_lazy('protect_network:spot_list')
 
@@ -654,34 +654,34 @@ class DeleteResponsibleView(GroupRequiredMixin, DeleteView):
         return reverse_lazy('protect_network:network_detail', kwargs={'pk': network_pk})
 
 
-@include_toast
-class CreateQppView(GroupRequiredMixin, CreateView):
-    model = models.Qpp
-    form_class = forms.QppForm
-    template_name = 'protect_network/qpp_add.html'
-    group_required = ['profile:protect_network_manager']
-    success_url = reverse_lazy('protect_network:qpp_list')
+# @include_toast
+# class CreateQppView(GroupRequiredMixin, CreateView):
+#     model = models.Qpp
+#     form_class = forms.QppForm
+#     template_name = 'protect_network/qpp_add.html'
+#     group_required = ['profile:protect_network_manager']
+#     success_url = reverse_lazy('protect_network:qpp_list')
 
 
-@include_toast
-class UpdateQppView(GroupRequiredMixin, UpdateView):
-    model = models.Qpp
-    template_name = 'protect_network/qpp_add.html'
-    group_required = ['profile:protect_network_manager']
-    form_class = forms.QppForm
-    success_url = reverse_lazy('protect_network:qpp_list')
+# @include_toast
+# class UpdateQppView(GroupRequiredMixin, UpdateView):
+#     model = models.Qpp
+#     template_name = 'protect_network/qpp_add.html'
+#     group_required = ['profile:protect_network_manager']
+#     form_class = forms.QppForm
+#     success_url = reverse_lazy('protect_network:qpp_list')
 
 
-class QppListView(GroupRequiredMixin, ListView):
-    model = models.Qpp
-    template_name = 'protect_network/qpp_list.html'
-    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
+# class QppListView(GroupRequiredMixin, ListView):
+#     model = models.Qpp
+#     template_name = 'protect_network/qpp_list.html'
+#     group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(QppListView, self).get_context_data(**kwargs)
-        qpp = models.Qpp.objects.all()
-        context['qpps'] = qpp
-        return context
+#     def get_context_data(self, *args, **kwargs):
+#         context = super(QppListView, self).get_context_data(**kwargs)
+#         qpp = models.Qpp.objects.all()
+#         context['qpps'] = qpp
+#         return context
     
 
 @include_toast

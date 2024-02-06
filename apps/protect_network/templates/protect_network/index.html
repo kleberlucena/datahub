@@ -117,6 +117,7 @@
                         'spot_network_name': spotTypes
                     },
                     success: function(data) {
+                        console.log(data);
                         map.eachLayer(function(layer) {
                             if (layer instanceof L.Marker) {
                                 map.removeLayer(layer);
@@ -142,15 +143,10 @@
         }
 
         function addMarker(spot) {
-            if (spot.latitude !== undefined && spot.longitude !== undefined) {
-                console.log("aaaaaaaaaaa ", spot.spot);
-
-
-                // var lat = -7.121651;
-                // var lon = -34.88033;
-                var lat = spot.latitude;  // Obtém a latitude do ponto
-                var lon = spot.longitude; // Obtém a longitude do ponto
-                var name = spot.name;
+            if (spot.spot.latitude !== undefined && spot.spot.longitude !== undefined) {
+                var lat = spot.spot.latitude;
+                var lon = spot.spot.longitude;
+                var name = spot.spot.name;
                 var detailUrl = spot.detail_url;
                 var marker = L.marker([lat, lon]).addTo(map);
                 var xhr = new XMLHttpRequest();
