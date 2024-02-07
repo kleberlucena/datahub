@@ -172,7 +172,9 @@
       </div>
     </form>
 
-    <div id="map" style="height: 500px;"></div>
+    <div id="map" style="height: 500px;">
+      
+    </div>
   </div>
 </div>
 
@@ -212,7 +214,7 @@
     let map = L.map('map').setView(centerCoordinates, zoomLevel);
     let staticUrl = "{% static 'leaflet/images/marker-icon.png' %}"
 
-    const urlLocalImg = "{% static '/sti/img/drone.png' %}"
+    const urlLocalImg = "{% static 'sti/img/drone.png' %}"
     var droneMarkerIcon = L.icon({
       iconUrl: urlLocalImg,
       iconSize: [13, 13],
@@ -310,8 +312,11 @@
     const isCurrentUserCreator = equipe.piloto_remoto === user;
     let descadastroButton = ``
     if (isCurrentUserCreator) {
+      var urlDetail = '{% url "rpa:police_group_archive" "1" %}';
+      var id = equipe.id;
+      urlDetail = urlDetail.replace('1', id);
       descadastroButton = `
-        <a href="{% url 'rpa:descadastrar_guarnicao' %}">
+        <a href="${ urlDetail }">
           <button type="button" class="btn btn-outline-danger ml-3">Descadastrar</button>
         </a>`
     } else {

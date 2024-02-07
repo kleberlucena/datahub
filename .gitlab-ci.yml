@@ -22,8 +22,6 @@ stages:
   - build
   - test
   - deploy
-  - cleanup
-
 
 build image:
   stage: build
@@ -35,7 +33,7 @@ build image:
     - docker build --cache-from $CACHE_IMAGE_TAG --tag $IMAGE_TAG --tag $CACHE_IMAGE_TAG .
     - docker push $IMAGE_TAG
     - docker push $CACHE_IMAGE_TAG
-
+    
 
 run tests:
   extends: .server_access_granted
@@ -111,6 +109,8 @@ deploy stage:
   needs: [ "run tests" ]
   tags:
     - stage
+  only:
+    - main
   environment:
     name: stage
     url: https://bacinf.stage.pm.pb.gov.br
@@ -141,37 +141,6 @@ deploy prod:
     SERVER_IP: $PROD_SERVER_IP
     SERVER_PRIVATE_KEY: $PROD_SERVER_PRIVATE_KEY
     APP_FOLDER_NAME: app
-
-
-# Remove containers e limpa arquivos criados pelo deploy
-# ATENÇÃO:
-# Esse build step é um caminho sem volta.
-undeploy stage:
-  extends: .deploy_template
-  stage: cleanup
-  needs: ["deploy stage"]
-  when: manual
-  tags:
-    - docker
-    - pmpb
-  environment:
-    name: stage
-  variables:
-    COMPOSE_FILE: "docker-compose.stage.yml"
-    SERVER_IP: $STAGE_SERVER_IP
-    SERVER_PRIVATE_KEY: $STAGE_SERVER_PRIVATE_KEY
-  script:
-    - >
-      ssh root@$SERVER_IP << ENDSSH
-        cd app
-        export IMAGE_TAG=${IMAGE_TAG}
-        docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-        docker-compose stop
-        docker-compose down -v
-        docker system prune --all --volumes --force
-        cd ..
-        rm -rf app
-      ENDSSH
 
 
 # Da acesso ao servidor que queremos acessar via SSH

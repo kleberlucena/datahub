@@ -1,6 +1,8 @@
 from apps.rpa.views import *
 from django.urls import path
 
+from apps.rpa.views.views_police_group import PoliceGroupArchiveView, PoliceGroupCreateView, PoliceGroupUpdateView, militaries, military_search, modal
+
 app_name = "rpa"
 
 urlpatterns = [
@@ -52,6 +54,10 @@ urlpatterns = [
     path('edit_point/<int:pk>/', UpdatePointOfInterest.as_view(), name='edit_point'),
     path('delete_point/<int:pk>/', DeletePointOfInterest.as_view(), name='delete_point'),
     
+    # Police Group
+    path('police_group/form/', PoliceGroupCreateView.as_view(), name='police_group_form'),
+    path('police_group/edit/<int:pk>/', PoliceGroupUpdateView.as_view(), name='police_group_edit'),
+    path('police_group/archive/<int:pk>/', PoliceGroupArchiveView.as_view(), name='police_group_archive'),
     # Guarnicao
     path('descadastrar/', DescadastrarGuarnicao.as_view(), name='descadastrar_guarnicao'),
     path('guarnicao_form/', GuarnicaoCreateView.as_view(), name='guarnicao_form'),
@@ -59,6 +65,8 @@ urlpatterns = [
     path('guarnicao/delete/<int:pk>', GuarnicaoDeleteView.as_view(), name='guarnicao_delete'),
     
     # Operation
+    path('list_json/operations', OperationListJsonView.as_view(), name='operations_list_json'),
+
     path('ver_missao/<int:pk>/', VerMissaoView.as_view(), name="ver_missao"),
     path('criar_nova_missao/', CriarNovaMissaoView.as_view(), name="criar_nova_missao"),
     path('editar_missao/<int:pk>/', EditarMissaoView.as_view(), name="editar_missao"),
@@ -90,3 +98,11 @@ urlpatterns = [
     path('deletar_checklist/<int:pk>/', DeletarChecklistView.as_view(), name="deletar_checklist"),
     path('delete_image_checklist/<int:pk>/', ChecklistImageDeleteView.as_view(), name='delete_image_checklist'),
 ]
+
+htmx_urlpatterns = [
+    path('check_military/', check_military, name='check-military'),
+    path('militaries/', militaries, name='militaries'),
+    path('military_search/', military_search, name='military-search'),
+    path('modal/', modal, name='modal'),
+]
+urlpatterns += htmx_urlpatterns

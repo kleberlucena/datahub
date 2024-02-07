@@ -27,7 +27,7 @@
     
     {% if request.user|has_group:'profile:rpa_basic' or request.user|has_group:'profile:rpa_advanced'  %}
       <li class="nav-item">
-        <a href="{% url 'rpa:guarnicao_form' %}" class="nav-link">
+        <a href="{% url 'rpa:police_group_form' %}" class="nav-link">
           <i class="far fa-circle nav-icon"></i>
           <p>Início de serviço</p>
         </a>

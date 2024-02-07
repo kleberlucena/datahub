@@ -43,13 +43,14 @@
     <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
       <table id="objects_list" class="table table-bordered table-striped dataTable dtr-inline" role="grid"
         aria-describedby="objects_list_info" width="100%">
-        <thead class="tabela_cabecalho">
+        <thead>
           <tr>
-            <th scope="col">Cenário operacional</th>
-            <th scope="col">Data realizada</th>
-            <th scope="col">Data de expiração</th>
-            <th scope="col">Aeronaves</th>
-            <th class="removerDoPdf" scope="col">Ações</th>
+            <th>Cenário operacional</th>
+            <th>Data realizada</th>
+            <th>Data de expiração</th>
+            <th>Status</th>
+            <th>Aeronaves</th>
+            <th>Recursos</th>
           </tr>
         </thead>
         <tbody>
@@ -60,20 +61,31 @@
             <td>{{ risk_assessment.operational_scenario }}</td>
             <td data-sort='YYYYMMDD'>{{ risk_assessment.date|date:"d/m/Y"  }}</td>
             <td data-sort='YYYYMMDD'>{{ risk_assessment.expiration_date|date:"d/m/Y"  }}</td>
+            <td>
+              {% if risk_assessment.get_status is True %}
+                <span class="badge badge-success">{{ risk_assessment.get_status_text }}</span>
+              {% else %}
+                <span class="badge badge-warning">{{ risk_assessment.get_status_text }}</span>
+              {% endif %}
+            </td>
             <td>{{ risk_assessment.aircrafts.all|join:", " }}</td>
             <td>
               <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
                 <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown"
                   aria-expanded="false">
                   <span class="sr-only">Toggle Dropdown</span>
-                  Filtros
+                  Ações
                 </button>
                 <div class="dropdown-menu" role="menu" style="">
                   <a class="dropdown-item" href="{% url 'rpa:read_risk_assessment' risk_assessment.id %}">Ver avaliação</a>
-                  <a class="dropdown-item" href="{% url 'rpa:generate_pdf' risk_assessment.id %}" target="_blank">Emitir avaliação</a>
+                  {% if risk_assessment.get_status is True %}
+                    <a class="dropdown-item" href="{% url 'rpa:generate_pdf' risk_assessment.id %}" target="_blank">Emitir avaliação</a>
+                  {% endif %}
                   
                   {% if request.user.is_superuser or request.user|has_group:'profile:advanced' %}
-                    <a class="dropdown-item" href="{% url 'rpa:update_risk_assessment' risk_assessment.id %}">Editar avaliação</a>
+                    {% if risk_assessment.get_status is True %}
+                      <a class="dropdown-item" href="{% url 'rpa:update_risk_assessment' risk_assessment.id %}">Editar avaliação</a>
+                    {% endif %}
                     <a class="dropdown-item" href="{% url 'rpa:delete_risk_assessment' risk_assessment.id %}">Excluir avaliação</a>
                   {% endif %}
                 </div>
@@ -105,8 +117,6 @@
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
-  <script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
   <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>

@@ -3,6 +3,7 @@
 
 {% block style_sheet %}
 <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css' %}">
 <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
 <style>
   .map_options {
@@ -91,7 +92,7 @@
             <div class="row mt-3">
               <div class="col-md-6">
                 <label for="id_piloto_remoto" class="piloto_remoto">Piloto Remoto</label>
-                <br>{{ user.username }}<br>
+                <br>{{ user.military.rank }} {{ user.military.nickname }} - {{ user.military.register }}<br>
               </div>
             </div>
             <hr>
@@ -103,7 +104,9 @@
               </div>
               <div class="col-md-6">
                 <label for="id_observer_pilot">Piloto Observador</label>
-                {{ form.observer_pilot }}
+                <select id="select_observer_pilot" name="observer_pilot" class="form-control observer_pilot select2bs4">
+                  <option value="">----</option>
+                </select>
                 {{ form.observer_pilot.errors }}
               </div>
             </div>
@@ -303,6 +306,31 @@
 
   <script>
     $(document).ready(function () {
+      // Adicione um ID ao input do Select2 para o campo "Piloto observador"
+      $('.observer_pilot_escolha').on('select2:open', function (e) {
+        $('.select2-search__field').attr('id', 'select_observer_pilot_input');
+      });
+      $('#select_driver').on('select2:open', function (e) {
+        $('.select2-search__field').attr('id', 'select_driver_input');
+      });      
+      $('.location').select2({theme: 'bootstrap4'});
+      $('.observer_pilot').select2({
+        ajax: {
+          url: '{% url "portal:list_militaries" %}',
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {
+            console.log(data)
+            //updateObserverPilotSelect(data)
+            return {
+              results: data
+            };
+          },
+          cache: true
+        },
+        minimumInputLength: 3,
+        theme: 'bootstrap4'
+      });
       $('.location_escolha').select2()
     });
   </script>

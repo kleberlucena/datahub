@@ -155,6 +155,21 @@
         time: 'fa fa-clock',
       }
     });
+
+    $("#datetimepickerInitial").on("change.datetimepicker", function (e) {
+      var d = e.date;
+      var minDate = new Date(d);
+      var newDate = new Date(d);
+      minDate.setDate(newDate.getDate() +1);
+      newDate.setDate(newDate.getDate() +365);
+      
+      $('#datetimepickerFinal').datetimepicker(
+        'minDate', minDate
+      );
+      $('#datetimepickerFinal').datetimepicker(
+        'date', newDate
+      );
+    });
   });
 </script>
 

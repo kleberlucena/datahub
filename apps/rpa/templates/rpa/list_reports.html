@@ -20,7 +20,7 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Cadernetas {% endblock %}
+{% block title %} Relatórios de Operações {% endblock %}
 
 <!-- context title -->
 {% block title-header %} Operações aéreas {% endblock %}
@@ -50,7 +50,7 @@
               <th scope="col">Local</th>
               <th scope="col">Aeronave</th>
               <th scope="col">Entidade Apoiada</th>
-              <th class="removerDoPdf" scope="col">Ações</th>
+              <th class="removerDoPdf" scope="col">Recursos</th>
             </tr>
           </thead>
 
@@ -76,7 +76,7 @@
                   <div class="btn-group" style="display: flex; align-items: center; align-content: center;">
                     <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
                     <span class="sr-only">Toggle Dropdown</span>
-                    Filtros
+                    Ações
                     </button>
                     <div class="dropdown-menu" role="menu" style="">
                         <a class="dropdown-item" href="{% url 'rpa:ver_relatorio' relatorio.id %}">Ver Relatório</a>

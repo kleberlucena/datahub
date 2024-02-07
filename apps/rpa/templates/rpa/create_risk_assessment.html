@@ -166,6 +166,7 @@
 
 <script>
   $(function () {
+    var startDate = new Date();
     $('#datetimepickerInitial').datetimepicker({
       format: 'YYYY-MM-DD  HH:mm:ss',
       icons: {
@@ -179,9 +180,37 @@
         time: 'fa fa-clock',
       }
     });
+       
+    $("#datetimepickerInitial").on("change.datetimepicker", function (e) {
+      var d = e.date;
+      var minDate = new Date(d);
+      var newDate = new Date(d);
+      minDate.setDate(newDate.getDate() +1);
+      newDate.setDate(newDate.getDate() +365);
+      console.log(d)
+      console.log(minDate)
+      
+      $('#datetimepickerFinal').datetimepicker(
+        'minDate', minDate
+      );
+      $('#datetimepickerFinal').datetimepicker(
+        'date', newDate
+      );
+
+    });
   });
 </script>
-
+<script>
+  $(function () {
+    var startDate = new Date();
+    $('#datetimepickerInitial').change({
+      format: 'YYYY-MM-DD  HH:mm:ss',
+      icons: {
+        time: 'fa fa-clock',
+      }
+    });
+  });
+</script>
 <script>
   document.getElementById("fileButton").addEventListener("click", function() {
     document.getElementById("id_responsible_sign").click();
