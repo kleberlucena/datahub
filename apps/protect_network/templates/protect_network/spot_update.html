@@ -58,7 +58,7 @@
                 <h3 class="card-title">Editar ponto</h3>
                 {% endif %}
             </div>
-            <form class="p-3" method='post' enctype="multipart/form-data">
+            <form class="p-3" method='post' enctype="multipart/form-data" id="myForm">
                 {% csrf_token %}
                 
                 <div class="row">
@@ -164,13 +164,19 @@
                     {% leaflet_map "map" callback="window.map_init" %}
                 </div>
             </div>
-    
-            <div class="mt-3">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="{% url 'protect_network:spot_detail' spot_id %}"><button type="button" class="btn btn-warning">Cancelar</button></a>
-            </div>
             </form>
+
+            <div class="card-footer">
+                <button type="button" id="submitButton" class="btn btn-primary">Salvar</button>
+                <a href="{% url 'protect_network:spot_detail' spot_id %}">
+                    <button type="button" class="btn btn-warning">
+                        <i class="{{ request.META.HTTP_REFERER  }}"></i>
+                        Voltar
+                    </button>
+                </a>
+            </div>
         </div>
+        
     </div>
 </div>
 
@@ -184,6 +190,12 @@
 {% leaflet_js plugins="ALL" %}
 <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.full.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/inputmask/jquery.inputmask.min.js' %}"></script>
+<script>
+    document.getElementById("submitButton").addEventListener("click", function() {
+        document.getElementById("myForm").submit();
+    });
+</script>
+
 <script>
   $(function () {
     $('.select2bs4').select2({

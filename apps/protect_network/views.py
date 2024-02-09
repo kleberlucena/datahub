@@ -449,6 +449,20 @@ class UpdateContactInfoView(GroupRequiredMixin, UpdateView):
         spot_id = self.object.spot_id
         return reverse('protect_network:spot_detail', args=[spot_id])
     
+
+@include_toast
+class ContactInfoDetailView(GroupRequiredMixin, DetailView):
+    model = models.ContactInfo
+    template_name = 'protect_network/spot_contact_detail.html'
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
+    context_object_name = 'contact_info'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['spot_pk'] = self.object.spot_id
+        return context
+    
     
 @include_toast
 class DeleteContactInfoView(GroupRequiredMixin, DeleteView):

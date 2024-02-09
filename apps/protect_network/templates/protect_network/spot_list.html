@@ -105,15 +105,17 @@
             </table>
           </div>
         </div>
-        <div class="row mt-auto ml-0">
-          {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
-            <a href="{% url 'protect_network:spot_add' %}" alt="spot_add">
-              <button type="button" class="btn btn-block btn-primary"><i class="fa fa-plus"></i> Cadastrar novo estabelecimento</button>
-            </a>
-          {% endif %}
-        </div>
+      </div>
+      <div class="card-footer">
+        {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+          <a href="{% url 'protect_network:spot_add' %}" alt="spot_add">
+            <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Cadastrar novo estabelecimento</button>
+          </a>
+        {% endif %}
       </div>
     </div>
+  </div>
+</div>
     {% endblock %}
     {% block js %}
 <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>

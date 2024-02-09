@@ -1,0 +1,97 @@
+{% extends "base/base.html" %}
+{% load static crispy_forms_tags widget_tweaks custom_tags %}
+
+
+<!-- browser title -->
+{% block title %} Detalhes do funcionário {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+
+{% endblock %}
+
+
+{% block title-header %} Rede de Proteção {% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
+<li class="breadcrumb-item"><a>Detalhes do funcionário</a></li>
+{% endblock %}
+
+{% block content %}
+
+<div class="callout callout-info">
+    <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre detalhes dos funcionário</h3>
+    <p class="text-muted text-justify px-3 pt-2">
+        <b>Essa tela permite a visualização de informações de um funcionário </b>
+    </p>
+</div>
+
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-primary card-outline">
+            <div class="card-header">
+                <h3 class="card-title">Adicionar funcionário</h3>
+            </div>
+            <div class=card-body>
+                <div id="AreaFormCardBody" style="display: block;">     
+                    <div class="p-4">
+                        <div class="row mb-1">
+                            <b>Nome:</b>
+                            <div class="ml-1">
+                                {{ contact_info.name }}
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <b>Título ou função:</b>
+                            <div class="ml-1">
+                                {{ contact_info.role |default_if_none:"Não informado" }}
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <b>Telefone de contato:</b>
+                            <div class="ml-1">
+                                {{ contact_info.phone |default_if_none:"Não informado" }}
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <b>E-mail:</b>
+                            <div class="ml-1">
+                                {{ contact_info.email |default_if_none:"Não informado" }}
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <b>RG:</b>
+                            <div class="ml-1">
+                                {{ contact_info.rg |default_if_none:"Não informado" }}
+                            </div>
+                        </div>
+                        <div class="row mb-1">
+                            <b>CPF:</b>
+                            <div class="ml-1">
+                                {{ contact_info.cpf |default_if_none:"Não informado" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a  class="btn btn-warning" href="{% url 'protect_network:spot_detail' spot_pk %}">Voltar</a>
+                <a  class="btn btn-info" href="{% url 'protect_network:contact_update' object.id %}">Editar</a>
+                <a  class="btn btn-danger" href="{% url 'protect_network:contact_delete' object.id %}">Excluir</a>
+            </div>
+    </div>
+</div>
+
+{% endif %}
+
+
+{% endblock %}
+<!-- javascripts -->
+{% block js %}
+<script src="{% static 'adminlte-3.1.0/plugins/inputmask/jquery.inputmask.min.js' %}"></script>
+{% endblock %}

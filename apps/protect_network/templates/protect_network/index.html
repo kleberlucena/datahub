@@ -49,27 +49,28 @@
                 <h3 class="card-title">Mapa da rede</h3>
             </div>
 
-        <div class="row">
-            <div class="col-md-2">
-                <form id="filter-form" class="ml-3 mt-3">
-                    <label for="spot-types">Filtrar</label><br>
-                    {% for spot_network in spot_networks %}
-                        <input type="checkbox" name="spot_network" value="{{ spot_network.name }}"> {{ spot_network.name }}<br>
-                    {% endfor %}
-                    <button type="button" id="apply-filter" class="btn btn-outline-primary mb-3" data-api-url="{% url 'protect_network_api:list_filter_spots_index' %}">Aplicar Filtro</button>
-                </form>
-            </div>
-            <div class="col-md-10 pai">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card-body">
-                            {% leaflet_map "map" callback="window.map_init" %}
+            <div class="row">
+                <div class="col-md-2">
+                    <form id="filter-form" class="ml-3 mt-3">
+                        <label for="spot-types">Filtrar</label><br>
+                        {% for spot_network in spot_networks %}
+                            <input type="checkbox" name="spot_network" value="{{ spot_network.name }}"> {{ spot_network.name }}<br>
+                        {% endfor %}
+                        <button type="button" id="apply-filter" class="btn btn-outline-primary mb-3" data-api-url="{% url 'protect_network_api:list_filter_spots_index' %}">Aplicar Filtro</button>
+                    </form>
+                </div>
+                <div class="col-md-10 pai">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card-body">
+                                {% leaflet_map "map" callback="window.map_init" %}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-       
+            <div class="card-footer">
+            </div>
         </div>
     </div>
 </div>

@@ -198,18 +198,17 @@
                     <input type="hidden" name="sunday_close_name" id="sunday_close"/>
                 </div>
             </div>
-
-            <div>
-                <button type="submit" class="btn btn-primary" id="submit_button">Salvar</button>
-                <a href="{% url 'protect_network:spot_detail' spot_pk %}">
-                    <button type="button" class="btn btn-warning">
-                        <i class=""></i>
-                        Voltar
-                    </button>
-                </a>
-            </div>
         </form>
-            </div>
+        <div class="card-footer">
+            <button type="button" id="submitButton" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'protect_network:spot_detail' spot_pk %}">
+                <button type="button" class="btn btn-warning">
+                    <i class=""></i>
+                    Voltar
+                </button>
+            </a>
+        </div>
+    </div>
 </div>
 
 {% endif %}
@@ -221,6 +220,11 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/js/ion.rangeSlider.min.js"></script>
+<script>
+    document.getElementById("submitButton").addEventListener("click", function() {
+        document.getElementById("hours_form").submit();
+    });
+</script>
 
 <script>
     $(document).ready(function () {

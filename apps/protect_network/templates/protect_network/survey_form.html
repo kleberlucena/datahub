@@ -43,7 +43,7 @@
             <div class="card-header">
                 <h3 class="card-title">Questionário</h3>
             </div>
-        <form class="p-3" method='post' enctype="multipart/form-data">
+        <form class="p-3" method='post' enctype="multipart/form-data" id="myForm">
             {% csrf_token %}
         
             <div class="row">
@@ -79,16 +79,16 @@
                 </div>
             </div>
                
-            <div class="mt-3">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="{% url 'protect_network:spot_detail' spot_pk %}">
-                    <button type="button" class="btn btn-warning">
-                        <i class=""></i>
-                        Voltar
-                    </button>
-                </a>
-            </div>
         </form>
+        <div class="card-footer">
+            <button type="button" id="submitButton" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'protect_network:spot_detail' spot_pk %}">
+                <button type="button" class="btn btn-warning">
+                    <i class=""></i>
+                    Voltar
+                </button>
+            </a>
+        </div>
     </div>
 </div>
 
@@ -101,6 +101,11 @@
 <!-- javascripts -->
 {% block js %}
 <script src="{% static 'adminlte-3.1.0/plugins/inputmask/jquery.inputmask.min.js' %}"></script>
+<script>
+    document.getElementById("submitButton").addEventListener("click", function() {
+        document.getElementById("myForm").submit();
+    });
+</script>
 <script>
     $(document).ready(function() {
         $("#id_phone").inputmask("(99) 99999-9999");

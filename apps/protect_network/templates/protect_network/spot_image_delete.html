@@ -55,15 +55,19 @@
             </div>
 
 
-            <form method="post">
+            <form method="post" id="myForm">
                 {% csrf_token %}
-                <div class="row mt-auto ml-3 mb-3">
-                    <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-                    <a href="{% url 'protect_network:spot_image_list' spot_id %}"><button type="button" class="btn btn-warning">Cancelar</button></a>
-                </div>
-
             </form>
-        </div>
+            <div class="card-footer">
+                <button type="button" id="submitButton" class="btn btn-danger btn">Excluir</button>
+                <a href="{% url 'protect_network:spot_image_list' spot_id %}">
+                    <button type="button" class="btn btn-warning">
+                        <i class=""></i>
+                        Cancelar
+                    </button>
+                </a>
+            </div>
+            </div>
     </div>
 </div>
 {% endif %}
@@ -73,4 +77,10 @@
 {% endblock %}
 <!-- javascripts -->
 {% block js %}
+<script>
+    document.getElementById("submitButton").addEventListener("click", function() {
+        document.getElementById("myForm").submit();
+    });
+</script>
+
 {% endblock %}

@@ -296,16 +296,9 @@
                     </div>
                 {% endif %}
             </div>
-            
     </div>
-    <br><br>
-    <div class="row mt-auto ml-3">
-        <div>
-            {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
-            <a class="btn btn-outline-primary" href="{% url 'protect_network:spot_update' spot.pk %}">Editar</a>
-            {% endif %}
-        </div>
-    </div>
+
+
     
         </div>
         <div class="col-md-6">
@@ -316,6 +309,10 @@
                 {% leaflet_map "map" callback="window.map_init" %}
             </div>
         </div>
+    </div>
+    <div class="card-footer">
+        <a  class="btn btn-outline-primary" href="{% url 'protect_network:spot_update' spot.pk %}">Editar</a>
+        <a  class="btn btn-outline-warning" href="{{ request.META.HTTP_REFERER  }}">Voltar</a>
     </div>
 </div>
 
@@ -348,9 +345,7 @@
                                             <td class="replace-none">{{ spot_contact.phone }}</td>
                                             <td class="replace-none">{{ spot_contact.email }}</td>
                                             <td class="project-actions text-center">
-                                                <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:contact_update' spot_contact.id %}">Detalhes</a>
-                                                <a  class="btn btn-outline-primary btn-sm" href="{% url 'protect_network:contact_update' spot_contact.id %}">Editar</a>
-                                                <a  class="btn btn-outline-danger btn-sm" href="{% url 'protect_network:contact_delete' spot_contact.id %}">Excluir</a>
+                                                <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:contact_detail' spot_contact.id %}">Detalhes</a>
                                             </td>
                                         </tr>
                                         {% endfor %}
@@ -362,16 +357,19 @@
                                 </tbody>
                             </table>
                         </div>
-                        {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
-                        <a href="{% url 'protect_network:contact_add' spot.id %}">
-                            <button type="button" class="btn btn-outline-primary">
-                                <i class="fa fa-plus"></i>
-                                Inserir
-                            </button>
-                        </a>
-                        {% endif %}
+
             
                     </div>
+                </div>
+                <div class="card-footer">
+                    {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+                    <a href="{% url 'protect_network:contact_add' spot.id %}">
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class="fa fa-plus"></i>
+                            Inserir
+                        </button>
+                    </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -407,25 +405,18 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                    {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
-                    <a href="{% url 'protect_network:survey_update' spot_survey.first.id %}">
-                        <button type="button" class="btn btn-outline-primary">
-                            <i class=""></i>
-                            Editar
-                        </button>
-                    </a>
-                    {% endif %}
-                    
+                    </div>                    
                 {% else %}
                     <p>Não é possível avaliar o nível de segurança do estabelecimento pois o questionário ainda não foi respondido</p><br>
-                    {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
-                    <a href="{% url 'protect_network:survey_add' spot.id %}">
-                        <button type="button" class="btn btn-outline-primary">
-                            Responder questionário
-                        </button>
-                    </a>
-                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+                <a href="{% url 'protect_network:survey_add' spot.id %}">
+                    <button type="button" class="btn btn-outline-primary">
+                        Responder questionário
+                    </button>
+                </a>
                 {% endif %}
             </div>
         </div>
@@ -444,24 +435,18 @@
                         <div class="badge bg-warning">{{ tag.name }}</div>
                     {% endfor %}
                     <br><br>
-                    {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
-                    <a href="{% url 'protect_network:spot_tags_update' spot.id %}">
-                        <button type="button" class="btn btn-outline-primary">
-                            <i class="fa fa-plus"></i>
-                            Inserir
-                        </button>
-                    </a>
-                    {% endif %}
                 {% else %}
                     <p>Não existem tags cadastradas.</p><br>
-                    {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
-                    <a href="{% url 'protect_network:spot_tags_update' spot.id %}">
-                        <button type="button" class="btn btn-outline-primary">
-                            <i class="fa fa-plus"></i>
-                            Inserir
-                        </button>
-                    </a>
-                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+                <a href="{% url 'protect_network:spot_tags_update' spot.id %}">
+                    <button type="button" class="btn btn-outline-primary">
+                        <i class=""></i>
+                        Editar
+                    </button>
+                </a>
                 {% endif %}
             </div>
         </div>
@@ -490,8 +475,8 @@
                         <p>Não existem imagens cadastradas.</p>
                     {% endif %}
                 </div>
-                    
-                <br>
+            </div>
+            <div class="card-footer">
                 {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
                 <a href="{% url 'protect_network:spot_image_add' spot.id %}">
                     <button type="button" class="btn btn-outline-primary">
@@ -520,208 +505,201 @@
                 <h3 class="card-title">
                     <b>Horário de funcionamento</b></h3>
             </div>
-                <div class="card-body">
-                        <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                            <div class="table-responsive">
-                                <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
-                                    role="grid" aria-describedby="objects_list_info" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th>Dia da semana</th>
-                                            <th>Abertura</th>
-                                            <th>Encerramento</th>
-                                        </tr>
-                                    </thead>
-                                    <tboby>
-                                        {% if spot_opening_hours %}
-                                            {% for opening_hour in spot_opening_hours %}
-                                                    <tr>
-                                                    <td> Segunda-feira </td>
-                                                        {% if opening_hour.opened_mon == True %}
-
-                                                            {% if opening_hour.open_time_mon == None %}
-                                                                <td> Sem horário cadastrado </td>
-                                                            {% else %}
-                                                                <td>{{ opening_hour.open_time_mon }}</td>
-                                                            {% endif %}
-
-                                                            {% if opening_hour.close_time_mon == None %}
-                                                                <td> Sem horário cadastrado </td>
-                                                            {% else %}
-                                                                <td>{{ opening_hour.close_time_mon }}</td>
-                                                            {% endif %}
-                                                            
-                                                        {% else %}
-                                                            <td colspan="2">Fechado nesse dia</td>
-                                                        {% endif %}
-                                                </tr>
-                                                <tr>
-                                                    <td> Terça-feira </td>
-                                                        {% if opening_hour.opened_tue == True %}
-
-                                                            {% if opening_hour.open_time_tue == None %}
-                                                                <td> Sem horário cadastrado </td>
-                                                            {% else %}
-                                                                <td>{{ opening_hour.open_time_tue }}</td>
-                                                            {% endif %}
-
-                                                            {% if opening_hour.close_time_tue == None %}
-                                                                <td> Sem horário cadastrado </td>
-                                                            {% else %}
-                                                                <td>{{ opening_hour.close_time_tue }}</td>
-                                                            {% endif %}
-                                                            
-                                                        {% else %}
-                                                        <td colspan="2">Fechado nesse dia</td>
-                                                    {% endif %}
-                                                </tr>
-                                                <tr>
-                                                    <td> Quarta-feira </td>
-                                                        {% if opening_hour.opened_wed == True %}
-
-                                                            {% if opening_hour.open_time_wed == None %}
-                                                                <td> Sem horário cadastrado </td>
-                                                            {% else %}
-                                                                <td>{{ opening_hour.open_time_wed }}</td>
-                                                            {% endif %}
-
-                                                            {% if opening_hour.close_time_wed == None %}
-                                                                <td> Sem horário cadastrado </td>
-                                                            {% else %}
-                                                                <td>{{ opening_hour.close_time_wed }}</td>
-                                                            {% endif %}
-                                                            
-                                                        {% else %}
-                                                            <td colspan="2">Fechado nesse dia</td>
-                                                        {% endif %}
-                                                </tr>
-                                                <tr>
-                                                    <td> Quinta-feira </td>
-                                                        {% if opening_hour.opened_thu == True %}
-
-                                                            {% if opening_hour.open_time_thu == None %}
-                                                                <td> Sem horário cadastrado </td>
-                                                            {% else %}
-                                                                <td>{{ opening_hour.open_time_thu }}</td>
-                                                            {% endif %}
-
-                                                            {% if opening_hour.close_time_thu == None %}
-                                                                <td> Sem horário cadastrado </td>
-                                                            {% else %}
-                                                                <td>{{ opening_hour.close_time_thu }}</td>
-                                                            {% endif %}
-                                                            
-                                                        {% else %}
-                                                            <td colspan="2">Fechado nesse dia</td>
-                                                        {% endif %}
-                                                </tr>
-                                                <tr>
-                                                    <td> Sexta-feira </td>
-                                                        {% if opening_hour.opened_fri == True %}
-
-                                                            {% if opening_hour.open_time_fri == None %}
-                                                                <td> Sem horário cadastrado </td>
-                                                            {% else %}
-                                                                <td>{{ opening_hour.open_time_fri }}</td>
-                                                            {% endif %}
-
-                                                            {% if opening_hour.close_time_fri == None %}
-                                                                <td> Sem horário cadastrado </td>
-                                                            {% else %}
-                                                                <td>{{ opening_hour.close_time_fri }}</td>
-                                                            {% endif %}
-                                                            
-                                                        {% else %}
-                                                            <td colspan="2">Fechado nesse dia</td>
-                                                        {% endif %}
-                                                </tr>
-                                                <tr>
-                                                    <td> Sábado </td>
-                                                        {% if opening_hour.opened_sat == True %}
-
-                                                            {% if opening_hour.open_time_sat == None %}
-                                                                <td> Sem horário cadastrado </td>
-                                                            {% else %}
-                                                                <td>{{ opening_hour.open_time_sat }}</td>
-                                                            {% endif %}
-
-                                                            {% if opening_hour.close_time_sat == None %}
-                                                                <td> Sem horário cadastrado </td>
-                                                            {% else %}
-                                                                <td>{{ opening_hour.close_time_sat }}</td>
-                                                            {% endif %}
-                                                            
-                                                        {% else %}
-                                                            <td colspan="2">Fechado nesse dia</td>
-                                                        {% endif %}
-                                                </tr>
-                                                <tr>
-                                                    <td> Domingo </td>
-                                                    {% if opening_hour.opened_sun == True %}
-
-                                                        {% if opening_hour.open_time_sun == None %}
-                                                            <td> Sem horário cadastrado </td>
-                                                        {% else %}
-                                                            <td>{{ opening_hour.open_time_sun }}</td>
-                                                        {% endif %}
-
-                                                        {% if opening_hour.close_time_sun == None %}
-                                                            <td> Sem horário cadastrado </td>
-                                                        {% else %}
-                                                            <td>{{ opening_hour.close_time_sun }}</td>
-                                                        {% endif %}
-
-                                                    {% else %}
-                                                        <td colspan="2">Fechado nesse dia</td>
-                                                    {% endif %}
-                                                </tr>
-                                            {% endfor %}
-                                        {% else %}
-                                            <tr>
-                                                <td colspan="3" align="center">Não existem horários de funcionamenton cadastrados.</td>
-                                            </tr>
-                                        {% endif %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
-
+            <div class="card-body">
+                <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                    <div class="table-responsive">
+                        <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
+                            role="grid" aria-describedby="objects_list_info" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Dia da semana</th>
+                                    <th>Abertura</th>
+                                    <th>Encerramento</th>
+                                </tr>
+                            </thead>
+                            <tboby>
                                 {% if spot_opening_hours %}
                                     {% for opening_hour in spot_opening_hours %}
-                                        <a href="{% url 'protect_network:opening_hours_update' opening_hour.id  %}">
-                                            <button type="button" class="btn btn-outline-primary">
-                                                <i class=""></i>
-                                                Editar
-                                            </button>
-                                        </a>
+                                            <tr>
+                                            <td> Segunda-feira </td>
+                                                {% if opening_hour.opened_mon == True %}
+
+                                                    {% if opening_hour.open_time_mon == None %}
+                                                        <td> Sem horário cadastrado </td>
+                                                    {% else %}
+                                                        <td>{{ opening_hour.open_time_mon }}</td>
+                                                    {% endif %}
+
+                                                    {% if opening_hour.close_time_mon == None %}
+                                                        <td> Sem horário cadastrado </td>
+                                                    {% else %}
+                                                        <td>{{ opening_hour.close_time_mon }}</td>
+                                                    {% endif %}
+                                                    
+                                                {% else %}
+                                                    <td colspan="2">Fechado nesse dia</td>
+                                                {% endif %}
+                                        </tr>
+                                        <tr>
+                                            <td> Terça-feira </td>
+                                                {% if opening_hour.opened_tue == True %}
+
+                                                    {% if opening_hour.open_time_tue == None %}
+                                                        <td> Sem horário cadastrado </td>
+                                                    {% else %}
+                                                        <td>{{ opening_hour.open_time_tue }}</td>
+                                                    {% endif %}
+
+                                                    {% if opening_hour.close_time_tue == None %}
+                                                        <td> Sem horário cadastrado </td>
+                                                    {% else %}
+                                                        <td>{{ opening_hour.close_time_tue }}</td>
+                                                    {% endif %}
+                                                    
+                                                {% else %}
+                                                <td colspan="2">Fechado nesse dia</td>
+                                            {% endif %}
+                                        </tr>
+                                        <tr>
+                                            <td> Quarta-feira </td>
+                                                {% if opening_hour.opened_wed == True %}
+
+                                                    {% if opening_hour.open_time_wed == None %}
+                                                        <td> Sem horário cadastrado </td>
+                                                    {% else %}
+                                                        <td>{{ opening_hour.open_time_wed }}</td>
+                                                    {% endif %}
+
+                                                    {% if opening_hour.close_time_wed == None %}
+                                                        <td> Sem horário cadastrado </td>
+                                                    {% else %}
+                                                        <td>{{ opening_hour.close_time_wed }}</td>
+                                                    {% endif %}
+                                                    
+                                                {% else %}
+                                                    <td colspan="2">Fechado nesse dia</td>
+                                                {% endif %}
+                                        </tr>
+                                        <tr>
+                                            <td> Quinta-feira </td>
+                                                {% if opening_hour.opened_thu == True %}
+
+                                                    {% if opening_hour.open_time_thu == None %}
+                                                        <td> Sem horário cadastrado </td>
+                                                    {% else %}
+                                                        <td>{{ opening_hour.open_time_thu }}</td>
+                                                    {% endif %}
+
+                                                    {% if opening_hour.close_time_thu == None %}
+                                                        <td> Sem horário cadastrado </td>
+                                                    {% else %}
+                                                        <td>{{ opening_hour.close_time_thu }}</td>
+                                                    {% endif %}
+                                                    
+                                                {% else %}
+                                                    <td colspan="2">Fechado nesse dia</td>
+                                                {% endif %}
+                                        </tr>
+                                        <tr>
+                                            <td> Sexta-feira </td>
+                                                {% if opening_hour.opened_fri == True %}
+
+                                                    {% if opening_hour.open_time_fri == None %}
+                                                        <td> Sem horário cadastrado </td>
+                                                    {% else %}
+                                                        <td>{{ opening_hour.open_time_fri }}</td>
+                                                    {% endif %}
+
+                                                    {% if opening_hour.close_time_fri == None %}
+                                                        <td> Sem horário cadastrado </td>
+                                                    {% else %}
+                                                        <td>{{ opening_hour.close_time_fri }}</td>
+                                                    {% endif %}
+                                                    
+                                                {% else %}
+                                                    <td colspan="2">Fechado nesse dia</td>
+                                                {% endif %}
+                                        </tr>
+                                        <tr>
+                                            <td> Sábado </td>
+                                                {% if opening_hour.opened_sat == True %}
+
+                                                    {% if opening_hour.open_time_sat == None %}
+                                                        <td> Sem horário cadastrado </td>
+                                                    {% else %}
+                                                        <td>{{ opening_hour.open_time_sat }}</td>
+                                                    {% endif %}
+
+                                                    {% if opening_hour.close_time_sat == None %}
+                                                        <td> Sem horário cadastrado </td>
+                                                    {% else %}
+                                                        <td>{{ opening_hour.close_time_sat }}</td>
+                                                    {% endif %}
+                                                    
+                                                {% else %}
+                                                    <td colspan="2">Fechado nesse dia</td>
+                                                {% endif %}
+                                        </tr>
+                                        <tr>
+                                            <td> Domingo </td>
+                                            {% if opening_hour.opened_sun == True %}
+
+                                                {% if opening_hour.open_time_sun == None %}
+                                                    <td> Sem horário cadastrado </td>
+                                                {% else %}
+                                                    <td>{{ opening_hour.open_time_sun }}</td>
+                                                {% endif %}
+
+                                                {% if opening_hour.close_time_sun == None %}
+                                                    <td> Sem horário cadastrado </td>
+                                                {% else %}
+                                                    <td>{{ opening_hour.close_time_sun }}</td>
+                                                {% endif %}
+
+                                            {% else %}
+                                                <td colspan="2">Fechado nesse dia</td>
+                                            {% endif %}
+                                        </tr>
                                     {% endfor %}
                                 {% else %}
-                                    <a href="{% url 'protect_network:opening_hours_add' spot.id %}">
-                                        <button type="button" class="btn btn-outline-primary">
-                                            <i class="fa fa-plus"></i>
-                                            Inserir
-                                        </button>
-                                    </a>
+                                    <tr>
+                                        <td colspan="3" align="center">Não existem horários de funcionamenton cadastrados.</td>
+                                    </tr>
                                 {% endif %}
-                            
-                            {% endif %}
-                        </div>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+            <div class="card-footer">
+                {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+
+                {% if spot_opening_hours %}
+                    {% for opening_hour in spot_opening_hours %}
+                        <a href="{% url 'protect_network:opening_hours_update' opening_hour.id  %}">
+                            <button type="button" class="btn btn-outline-primary">
+                                <i class=""></i>
+                                Editar
+                            </button>
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <a href="{% url 'protect_network:opening_hours_add' spot.id %}">
+                        <button type="button" class="btn btn-outline-primary">
+                            <i class="fa fa-plus"></i>
+                            Inserir
+                        </button>
+                    </a>
+                {% endif %}
+            
+            {% endif %}
+            </div>
         </div>
-
-</div>
-
+    </div>
 </div>
 
 
     
-
-        
-
-
-
-
 
 {% endblock %}
 <!-- javascripts -->
