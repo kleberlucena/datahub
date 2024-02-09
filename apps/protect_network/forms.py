@@ -12,7 +12,7 @@ class UpdateGeoSpotForm(forms.ModelForm):
         (False, 'Não'),
     ]
     name = forms.CharField(max_length=100, label='Ponto', required=True)
-    details = forms.CharField(max_length=300, label='Informações adicionais', required=False)
+    details = forms.CharField(max_length=300, label='Informações adicionais', required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Se houver, forneça informações adicionais sobre o ponto'}))
     spot_type = forms.ModelChoiceField(queryset=geo_spottype.objects.all(), label='Tipo de Ponto', widget=forms.Select(attrs={'class': 'form-control'}), required=True)
     latitude = forms.FloatField(label="Latitude", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Clique no mapa ou digite as coordenadas'}))
     longitude = forms.FloatField(label="Longitude", required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Clique no mapa ou digite as coordenadas'}))
@@ -46,8 +46,8 @@ class UpdateGeoSpotForm(forms.ModelForm):
         required=False,
         empty_label='Selecione uma rede'
     )
-    cnpj = forms.CharField(label='CNPJ', max_length=20, required=False)
-    parent_company = forms.CharField(label='CNPJ da matriz', max_length=20, required=False)
+    cnpj = forms.CharField(label='CNPJ', max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '11.111.111/1111-11'}))
+    parent_company = forms.CharField(label='CNPJ da matriz', max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '11.111.111/1111-11'}))
          
     class Meta:
         model = models.ProtectNetworkSpot
@@ -107,8 +107,8 @@ class GeoSpotForm(forms.ModelForm):
         required=False,
         empty_label='Selecione uma rede'
     )
-    cnpj = forms.CharField(label='CNPJ', max_length=20, required=False)
-    parent_company = forms.CharField(label='CNPJ da matriz', max_length=20, required=False)
+    cnpj = forms.CharField(label='CNPJ', max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '11.111.111/1111-11'}))
+    parent_company = forms.CharField(label='CNPJ da matriz', max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '11.111.111/1111-11'}))
 
     class Meta:
         model = geo_spot
@@ -121,7 +121,7 @@ class GeoSpotForm(forms.ModelForm):
         }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome do ponto'}),
-            'details': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Se houver, digite informações adicionais'}),
+            'details': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Se houver, forneça informações adicionais sobre o ponto'}),
             'spot_type': forms.Select(attrs={'class': 'form-control'}),
         }
 

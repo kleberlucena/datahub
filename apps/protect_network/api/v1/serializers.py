@@ -10,7 +10,7 @@ class SpotSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ProtectNetworkSpot
         fields = ['spot', 'tags', 'update_score', 'next_update', 'is_headquarters', 'cnpj', 
-                  'parent_company', 'spot_network', 'qpp' ] + ['detail_url']
+                  'parent_company', 'spot_network' ] + ['detail_url']
 
     def get_spot(self, obj):
         resposta = {"name": obj.spot.name, "latitude": obj.spot.latitude, "longitude": obj.spot.longitude}

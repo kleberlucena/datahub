@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
 {% endblock %}
 
-{% block title-header %} Redes de Proteção {% endblock %}
+{% block title-header %} Rede de Proteção {% endblock %}
 
 {% block breadcrumb %}
 <li class="breadcrumb-item"><a href="{% url 'protect_network:index' %}">Painel</a></li>
@@ -72,13 +72,13 @@
             </table>
           </div>
         </div>
-        <div class="row mt-auto ml-0">
-          {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
-            <a href="{% url 'protect_network:tag_add' %}" alt="type_add">
-              <button type="button" class="btn btn-block btn-primary"> Nova tag</button>
-            </a>
-          {% endif %}
-        </div>
+      </div>
+      <div class="card-footer">
+        {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+          <a href="{% url 'protect_network:tag_add' %}" alt="type_add">
+            <button type="button" class="btn btn-primary"> Nova tag</button>
+          </a>
+        {% endif %}
       </div>
     </div>
     {% endblock %}

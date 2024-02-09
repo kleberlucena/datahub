@@ -15,11 +15,6 @@
     .div-pai {
     position: relative;
     }
-
-    #apply-filter {
-        position: absolute;
-        bottom: 0;
-    }
 </style>
 {% endblock %}
 
@@ -56,7 +51,6 @@
                         {% for spot_network in spot_networks %}
                             <input type="checkbox" name="spot_network" value="{{ spot_network.name }}"> {{ spot_network.name }}<br>
                         {% endfor %}
-                        <button type="button" id="apply-filter" class="btn btn-outline-primary mb-3" data-api-url="{% url 'protect_network_api:list_filter_spots_index' %}">Aplicar Filtro</button>
                     </form>
                 </div>
                 <div class="col-md-10 pai">
@@ -70,6 +64,7 @@
                 </div>
             </div>
             <div class="card-footer">
+                <button type="button" id="apply-filter" class="btn btn-outline-primary" data-api-url="{% url 'protect_network_api:list_filter_spots_index' %}">Aplicar Filtro</button>
             </div>
         </div>
     </div>
@@ -84,6 +79,11 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 {% leaflet_js plugins="ALL" %}
+<script>
+    document.getElementById("apply-filter").addEventListener("click", function() {
+    });
+</script>
+
 <script type="text/javascript">
     function map_init(map, options) {
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -118,7 +118,6 @@
                         'spot_network_name': spotTypes
                     },
                     success: function(data) {
-                        console.log(data);
                         map.eachLayer(function(layer) {
                             if (layer instanceof L.Marker) {
                                 map.removeLayer(layer);
@@ -162,7 +161,6 @@
                 };
                 xhr.send();
             } else {
-                console.log("aaaaaaaaaaa ", spot.spot);
                 console.error("Erro: Coordenadas de latitude ou longitude ausentes.");
             }
         }

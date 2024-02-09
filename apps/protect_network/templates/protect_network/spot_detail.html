@@ -478,19 +478,13 @@
             </div>
             <div class="card-footer">
                 {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
-                <a href="{% url 'protect_network:spot_image_add' spot.id %}">
+                <a href="{% url 'protect_network:spot_image_list' spot.id %}">
                     <button type="button" class="btn btn-outline-primary">
-                        <i class="fa fa-plus"></i>
-                        Inserir
+                        <i class=""></i>
+                        Editar
                     </button>
                 </a>
                 {% endif %}
-                <a href="{% url 'protect_network:spot_image_list' spot.id %}">
-                    <button type="button" class="btn btn-outline-info">
-                        <i class=""></i>
-                        Listar
-                    </button>
-                </a>
             </div>
         </div>
     </div>

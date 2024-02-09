@@ -75,13 +75,13 @@
             </table>
           </div>
         </div>
-        <div class="row mt-auto ml-0">
+      </div>
+      <div class="card-footer">
         {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
-          <a href="{% url 'protect_network:type_add' %}" alt="type_add">
-            <button type="button" class="btn btn-block btn-primary"><i class="fa fa-plus"></i> Inserir</button>
-          </a>
-        {% endif %}
-        </div>
+        <a href="{% url 'protect_network:type_add' %}" alt="type_add">
+          <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Inserir</button>
+        </a>
+      {% endif %}
       </div>
     </div>
     {% endblock %}

@@ -25,7 +25,6 @@
           Uma rede pode abranger a área de mais de um batalhão caso haja necessidade.</b>
       <br> - Essa tela exibe todas as redes existentes e a quantidade de estabelecimentos cadastrados em cada rede. Um estabelecimento só pode fazer parte de uma rede.
       <br> - Clique em detalhes para exibir mais informações sobre a rede, como quais são os militares responsáveis pela mesma.
-      
   </p>
 </div>
 
@@ -68,9 +67,6 @@
                     {% if request.user|has_group:'profile:protect_network_basic,profile:protect_network_advanced,profile:protect_network_manager' %}
                       <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:network_detail' pk=network.pk %}">Detalhes</a>
                     {% endif %}
-                    {% if request.user|has_group:'profile:protect_network_manager' %}
-                      <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:network_update' pk=network.pk %}">Editar</a>
-                    {% endif %}
                   </td>
                 </tr>
                 {% endfor %}
@@ -79,13 +75,15 @@
             </table>
           </div>
         </div>
-        <div class="row mt-auto ml-0">
-          {% if request.user|has_group:'profile:protect_network_manager' %}
-            <a href="{% url 'protect_network:network_add' %}" alt="network_add"><button type="button" class="btn btn-primary"> + Adicionar rede</button></a>
-          {% endif %}
-        </div>
+      </div>
+      <div class="card-footer">
+        {% if request.user|has_group:'profile:protect_network_manager' %}
+          <a href="{% url 'protect_network:network_add' %}" alt="network_add"><button type="button" class="btn btn-primary"> + Adicionar rede</button></a>
+        {% endif %}
       </div>
     </div>
+  </div>
+</div>
     {% endblock %}
     {% block js %}
 <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>

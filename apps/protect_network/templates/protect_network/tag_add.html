@@ -33,7 +33,6 @@
             <b>Essa tela permite a alteração de tags para cadastro dos estabelecimentos.</b>
         </p>
     {% endif %}
-
 </div>
 {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
     <div class="row">
@@ -46,7 +45,7 @@
                     <h3 class="card-title">Editar tag</h3>
                     {% endif %}
                 </div>
-            <form class="p-3" method='post' enctype="multipart/form-data">
+            <form class="p-3" method='post' enctype="multipart/form-data" id="myForm">
                 {% csrf_token %}
             
                 <div class="row mb-1">
@@ -59,13 +58,16 @@
                         {{form.details|add_class:"form-control"|as_crispy_field}}
                     </div>
                 </div>
-
-                
-                <div class="mt-3">
-                    <button type="submit" class="btn btn-primary">Salvar</button>
-                    <a href="{% url 'protect_network:tag_list' %}"><button type="button" class="btn btn-warning">Cancelar</button></a>
-                </div>
             </form>
+            <div class="card-footer">
+                <button type="button" id="submitButton" class="btn btn-primary">Salvar</button>
+                <a href="{% url 'protect_network:tag_list' %}">
+                    <button type="button" class="btn btn-warning">
+                        <i class=""></i>
+                        Cancelar
+                    </button>
+                </a>
+            </div>
         </div>
     </div>
 {% endif %}
@@ -75,4 +77,9 @@
 {% endblock %}
 <!-- javascripts -->
 {% block js %}
+<script>
+    document.getElementById("submitButton").addEventListener("click", function() {
+        document.getElementById("myForm").submit();
+    });
+</script>
 {% endblock %}
