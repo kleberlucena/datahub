@@ -15,6 +15,15 @@
     .div-pai {
     position: relative;
     }
+    .leaflet-popup-content-wrapper {
+        border: none !important; /* Remove a borda do popup */
+        box-shadow: none !important; /* Remove a sombra do popup */
+        background-color: transparent !important; /* Define o fundo como transparente */
+    }
+
+    .leaflet-popup-tip {
+        display: none !important; /* Oculta a ponta do popup */
+    }
 </style>
 {% endblock %}
 
@@ -154,9 +163,9 @@
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === 4 && xhr.status === 200) {
                         var popupContent = xhr.responseText;
-                        marker.bindPopup(popupContent, { autoClose: false });
+                        marker.bindPopup(popupContent, { autoClose: false, closeButton: false });
                     } else {
-                        marker.bindPopup('<a href="' + detailUrl + '">' + name + '</a>', { autoClose: false });
+                        marker.bindPopup('<a href="' + detailUrl + '">' + name + '</a>', { autoClose: false, closeButton: false });
                     }
                 };
                 xhr.send();

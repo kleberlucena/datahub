@@ -94,6 +94,7 @@
         <div class="card-header">
             <h3 class="card-title"><b> Informações do estabelecimento</b></h3>
         </div>
+        <h4 class="p-3 no-margin-bottom"><b>{{ spot.spot.name }}</b></h4>
         <div class="p-4">
             <div class="row mb-1">
                 <div>
@@ -101,14 +102,6 @@
                 </div>
                 <div class="ml-1">
                     {{ spot.spot_network|default_if_none:"Não informada"}}
-                </div>
-            </div>
-            <div class="row mb-1">
-                <div>
-                    <b>Nome:</b>
-                </div>
-                <div class="ml-1">
-                    {{ spot.spot.name }}
                 </div>
             </div>
             <div class="row mb-1">

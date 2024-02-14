@@ -1,9 +1,9 @@
 
-{% load static leaflet_tags crispy_forms_tags widget_tweaks %}
+{% load static %}
 
 
 <!-- browser title -->
-{% block title %}{% endblock %}
+
 
 <!-- styles -->
 <style>
@@ -26,19 +26,20 @@
         width: 40ch;
         height: auto;
     }
+    .button-container {
+        text-align: center;
+    }
+    .btn {
+        display: inline-block; /* Isso faz com que o botão se ajuste ao conteúdo e seja centralizado */
+        width: 120px; /* Defina a largura desejada para o botão */
+    }
 
 </style>
-{% block style_sheet %}
-{% leaflet_css plugins="ALL" %}
-{% endblock %}
 
 
-{% block title-header %}{% endblock %}
 
-{% block breadcrumb %}
-{% endblock %}
 
-{% block content %}
+
 
 <div class="card card-row card-primary">
     <div class="card-header">
@@ -49,51 +50,45 @@
         </div>
     </div>
 
-<div class="card-body">
+    <div class="card-body">
 
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="image-container">
-                    {% if spot_images %}
-                        {% for spot_image in spot_images %} 
-                            <div class="image-wrapper">
-                                <div>
-                                    <a href="{% url 'protect_network:spot_detail' spot.pk %}">
-                                        <img src="{{ spot_image.imageSpot.thumbnail.url }}" alt="{{ spot_image.name }}">
-                                    </a>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="image-container">
+                        {% if spot_images %}
+                            {% for spot_image in spot_images %} 
+                                <div class="image-wrapper">
+                                    <div>
+                                        <a href="{% url 'protect_network:spot_detail' spot.pk %}">
+                                            <img src="{{ spot_image.imageSpot.thumbnail.url }}" alt="{{ spot_image.name }}">
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                    {% endif %}
-                </div>
-                <div class="row spacer">
-                    <div class="col-md-12">
-                        {% if spot.details %}
-                            {{ spot.details }}
+                            {% endfor %}
                         {% else %}
-                            Sem informações adicionais.
                         {% endif %}
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <br><a  class="btn btn-outline-primary btn-sm" href="{% url 'protect_network:spot_detail' spot.pk %}">Detalhes</a>
+                    <div class="row spacer">
+                        <div class="col-md-12">
+                            {% if spot.details %}
+                                {{ spot.details }}
+                            {% else %}
+                                Sem informações adicionais.
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="button-container">
+                            <br><a  class="btn btn-outline-primary btn-sm" href="{% url 'protect_network:spot_detail' spot.pk %}">Detalhes</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
-
-
-
-{% endblock %}
-<!-- javascripts -->
-{% block js %}
-{% endblock %}
