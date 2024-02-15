@@ -42,8 +42,6 @@ class DetailSpotView(GroupRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         spot = self.get_object()
-
-
         contact_info = models.ContactInfo.objects.filter(spot=spot)
         opening_hours = models.OpeningHours.objects.filter(spot=spot)
         images = models.Image.objects.filter(spot=spot).order_by('-id')[:12]
@@ -64,7 +62,6 @@ class DetailSpotView(GroupRequiredMixin, DetailView):
         progress_bar_math_rounded = round(progress_bar_math)
         context['spot_progress_bar_math'] = progress_bar_math_rounded
         #context['spot_types'] = spot_types
-
         return context
 
 
@@ -80,7 +77,6 @@ class DetailCardSpotView(GroupRequiredMixin, DetailView):
         images = models.Image.objects.filter(spot=spot).order_by('-id')[:1]
         context['spot_images'] = images
         return context
-
 
 
 @include_toast
@@ -292,7 +288,7 @@ class UpdateSpotTypeView(GroupRequiredMixin, UpdateView):
 class SpotTypeListView(GroupRequiredMixin, ListView):
     model = geo_spottype
     template_name = 'protect_network/spot_type_list.html'
-    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(SpotTypeListView, self).get_context_data(**kwargs)
@@ -340,7 +336,7 @@ class UpdateTagView(GroupRequiredMixin, UpdateView):
 class TagListView(GroupRequiredMixin, ListView):
     model = models.Tag
     template_name = 'protect_network/tag_list.html'
-    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(TagListView, self).get_context_data(**kwargs)
@@ -454,7 +450,7 @@ class UpdateContactInfoView(GroupRequiredMixin, UpdateView):
 class ContactInfoDetailView(GroupRequiredMixin, DetailView):
     model = models.ContactInfo
     template_name = 'protect_network/spot_contact_detail.html'
-    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
+    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
     context_object_name = 'contact_info'
 
 
@@ -595,7 +591,7 @@ class UpdateNetworkView(GroupRequiredMixin, UpdateView):
 class NetworkListView(GroupRequiredMixin, ListView):
     model = models.Network
     template_name = 'protect_network/network_list.html'
-    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(NetworkListView, self).get_context_data(**kwargs)
@@ -608,7 +604,7 @@ class NetworkListView(GroupRequiredMixin, ListView):
 class NetworkDetailView(GroupRequiredMixin, DetailView):
     model = models.Network
     template_name = 'protect_network/network_detail.html'
-    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     context_object_name = 'network'
 
     def get_context_data(self, **kwargs):

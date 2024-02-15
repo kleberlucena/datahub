@@ -7,8 +7,8 @@
 
 <!-- styles -->
 {% block style_sheet %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css" />
+<link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+<link rel="stylesheet" href="{% static 'sti/css/ion.rangeSlider.min.css' %}">
 {% leaflet_css plugins="ALL" %}
 <style>
     #map-container {
@@ -17,17 +17,12 @@
     #map {
         height: 100%;
     }
-</style>
-
-<style>
     .badge {
         display: inline-block;
         padding: 0.5em 0.5em;
         font-size: 0.8em;
         border-radius: 10px;
     }
-</style>
-<style>
     .image-container {
         display: flex;
         flex-wrap: wrap;
@@ -50,13 +45,12 @@
     .irs2 .irs-bar {
         background-color: gray;
     }
+
     .outdated {
         color: red;
     }
 
-</style>
-
-  
+</style>  
 {% endblock %}
 
 
@@ -68,6 +62,8 @@
 {% endblock %}
 
 {% block content %}
+{% if request.user|has_group:'profile:protect_network_basic,profile:protect_network_advanced,profile:protect_network_manager' %}
+
 
 <div class="callout callout-info">
     <h3 class="text-info"><i class="fas fa-bullhorn"></i> Detalhes do estabelecimento</h3>
@@ -304,7 +300,9 @@
         </div>
     </div>
     <div class="card-footer">
-        <a  class="btn btn-outline-primary" href="{% url 'protect_network:spot_update' spot.pk %}">Editar</a>
+        {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+            <a  class="btn btn-outline-primary" href="{% url 'protect_network:spot_update' spot.pk %}">Editar</a>
+        {% endif %}
         <a  class="btn btn-outline-warning" href="{{ request.META.HTTP_REFERER  }}">Voltar</a>
     </div>
 </div>
@@ -687,11 +685,12 @@
 
 
     
+{% endif %}
 
 {% endblock %}
 <!-- javascripts -->
 {% block js %}
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="{% static 'leaflet/leaflet.js' %}"></script>
 {% leaflet_js plugins="ALL" %}
 <script type="text/javascript">
     function map_init(map, options) {
@@ -732,8 +731,8 @@
     }
   </script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/js/ion.rangeSlider.min.js"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'sti/js/ion.rangeSlider.min.js' %}"></script>
 
 <script>
     $(document).ready(function () {
@@ -785,10 +784,7 @@
 </script>
 
 <script type="text/javascript">
-
     var elementsToCheck = document.querySelectorAll('.replace-none');
-
-
     for (var i = 0; i < elementsToCheck.length; i++) {
         var element = elementsToCheck[i];
         if (element.textContent.trim() === 'None') {

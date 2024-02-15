@@ -7,7 +7,7 @@
 
 <!-- styles -->
 {% block style_sheet %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css" />
+<link rel="stylesheet" href="{% static 'sti/css/ion.rangeSlider.min.css' %}">
 <style>
     .center {
         text-align: center;
@@ -218,8 +218,8 @@
 <!-- javascripts -->
 {% block js %}
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/js/ion.rangeSlider.min.js"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'sti/js/ion.rangeSlider.min.js' %}"></script>
 <script>
     document.getElementById("submitButton").addEventListener("click", function() {
         document.getElementById("hours_form").submit();

@@ -17,6 +17,7 @@
 {% endblock %}
 
 {% block content %}
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
 <!-- INFO BOX-->
 <div class="callout callout-info">
     <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre lista de categorias</h3>
@@ -84,8 +85,10 @@
       {% endif %}
       </div>
     </div>
-    {% endblock %}
-    {% block js %}
+
+  {% endif %}
+  {% endblock %}
+  {% block js %}
 <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>

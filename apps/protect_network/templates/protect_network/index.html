@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load static leaflet_tags crispy_forms_tags widget_tweaks %}
+{% load static leaflet_tags crispy_forms_tags widget_tweaks custom_tags %}
 
 
 <!-- browser title -->
@@ -37,12 +37,14 @@
 {% endblock %}
 
 {% block content %}
+{% if request.user|has_group:'profile:protect_network_basic,profile:protect_network_advanced,profile:protect_network_manager' %}
+
 <div class="callout callout-info">
     <h3 class="text-info"><i class="fas fa-bullhorn"></i> Mapa da rede</h3>
         <p class="text-muted text-justify px-3 pt-2">
-            <b>Essa tela exibe no mapa todos os estabelecimentos cadastrados na rede.</b>
-            <br>
-            - Clique em Detalhes após escolher um estabelecimento para exibir informações detalhadas sobre ele.
+            <b>Essa tela exibe no mapa todos os estabelecimentos cadastrados nas redes selecionadas.</b>
+            <br>- Selecione as redes desejadas e clique em "Aplicar filtro" para exibir os estabelecimetos
+            <br>- Para exibir os detalhes sobre um estabelecimento, clique no seu ícono e depois em Detalhes.
         </p>
 </div>
 
@@ -80,14 +82,13 @@
 </div>
 
 
-
+{% endif %}
 {% endblock %}
 
 <!-- javascripts -->
 {% block js %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 {% leaflet_js plugins="ALL" %}
+
 <script>
     document.getElementById("apply-filter").addEventListener("click", function() {
     });
@@ -97,7 +98,6 @@
     function map_init(map, options) {
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
-            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
         }).addTo(map);
 
         var initialZoom = 12;

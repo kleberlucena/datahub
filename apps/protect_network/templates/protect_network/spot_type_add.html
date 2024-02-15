@@ -19,6 +19,7 @@
 {% endblock %}
 
 {% block content %}
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
 
 <div class="callout callout-info">
     {% if "/add" in request.path %}
@@ -83,6 +84,7 @@
 {% endif %}
 
 
+{% endif %}
 
 {% endblock %}
 <!-- javascripts -->

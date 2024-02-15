@@ -19,6 +19,8 @@
 {% endblock %}
 
 {% block content %}
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+
 
 <!-- INFO BOX-->
 <div class="callout callout-info">
@@ -73,7 +75,7 @@
 {% endif %}
 
 
-
+{% endif %}
 {% endblock %}
 <!-- javascripts -->
 {% block js %}

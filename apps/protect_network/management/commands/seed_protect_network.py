@@ -19,6 +19,7 @@ class Command(BaseCommand):
         ]
 
         permissions_to_assign_protect_network_basic = [
+            "view_protectnetworkspot",
             "view_contactinfo",
             "view_openinghours",
             "view_tag",
@@ -26,10 +27,12 @@ class Command(BaseCommand):
             "view_networkresponsible",
             "view_openinghours",
             "view_securitysurvey",
-
         ]
 
         permissions_to_assign_protect_network_advanced = [
+            "view_protectnetworkspot",
+            "add_protectnetworkspot",
+            "change_protectnetworkspot",
             "add_contactinfo",
             "change_contactinfo",
             "delete_contactinfo",
@@ -59,6 +62,10 @@ class Command(BaseCommand):
         ]
 
         permissions_to_assign_protect_network_manager = [
+            "view_protectnetworkspot",
+            "add_protectnetworkspot",
+            "change_protectnetworkspot",
+            "delete_protectnetworkspot",
             "add_contactinfo",
             "change_contactinfo",
             "delete_contactinfo",
@@ -101,6 +108,7 @@ class Command(BaseCommand):
             NetworkResponsible,
             SecuritySurvey,
             Network,
+            ProtectNetworkSpot,
         ]
 
             

@@ -26,6 +26,8 @@
 {% endblock %}
 
 {% block content %}
+{% if request.user|has_group:'profile:protect_network_basic,profile:protect_network_advanced,profile:protect_network_manager' %}
+
 <!-- INFO BOX-->
 <div class="callout callout-info">
 <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre meus estabelecimentos</h3>
@@ -99,9 +101,11 @@
                             </div>
                           {% endif %}
                         </td>
-                        <td class="project-actions text-center">
-                          <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:spot_detail' spot.pk %}">Detalhes</a>
-                        </td>
+                        {% if request.user|has_group:'profile:protect_network_basic,profile:protect_network_advanced,profile:protect_network_manager' %}
+                          <td class="project-actions text-center">
+                            <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:spot_detail' spot.pk %}">Detalhes</a>
+                          </td>
+                        {% endif %}
                       </tr>
                     {% else %}
                       <tr>
@@ -130,7 +134,8 @@
     </div>
   </div>
 </div>
-    
+
+{% endif %}
 {% endblock %}
 {% block js %}
 <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
