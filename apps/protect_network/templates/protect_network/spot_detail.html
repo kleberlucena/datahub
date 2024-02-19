@@ -401,15 +401,26 @@
                     <p>Não é possível avaliar o nível de segurança do estabelecimento pois o questionário ainda não foi respondido</p><br>
                 {% endif %}
             </div>
-            <div class="card-footer">
-                {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
-                <a href="{% url 'protect_network:survey_add' spot.id %}">
-                    <button type="button" class="btn btn-outline-primary">
-                        Responder questionário
-                    </button>
-                </a>
+            {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+                {% if spot_survey %}
+                    <div class="card-footer">
+                        <a href="{% url 'protect_network:survey_update' spot.id %}">
+                            <button type="button" class="btn btn-outline-primary">
+                                Responder questionário
+                            </button>
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="card-footer">
+                        <a href="{% url 'protect_network:survey_add' spot.id %}">
+                            <button type="button" class="btn btn-outline-primary">
+                                Responder questionário
+                            </button>
+                        </a>
+                    </div>
                 {% endif %}
-            </div>
+            {% endif %}
+
         </div>
     </div>
 </div>
