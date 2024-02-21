@@ -34,7 +34,7 @@ build image:
     - docker build --cache-from $CACHE_IMAGE_TAG --tag $IMAGE_TAG --tag $CACHE_IMAGE_TAG .
     - docker push $IMAGE_TAG
     - docker push $CACHE_IMAGE_TAG
-
+    
 
 run tests:
   extends: .server_access_granted

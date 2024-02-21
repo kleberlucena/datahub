@@ -15,7 +15,7 @@ from apps.rpa.handlers import require_permission
 from django.contrib import messages
 from django.utils import timezone
 
-MESSAGE_MODEL_NAME = 'Caderneta'
+MESSAGE_MODEL_NAME = 'Relatório de Operação'
 
 
 class VerRelatorioView(GroupRequiredMixin, DetailView):

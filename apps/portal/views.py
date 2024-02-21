@@ -108,7 +108,7 @@ class AutocompleteMilitaryView(View):
 
                 militaries = models.Military.objects.filter(
                     self.build_filter_conditions(term)
-                )
+                ).exclude(id=request.user.military.id)
                 # page = self.paginate_queryset(queryset)
                 # serializer = self.get_serializer(page, many=True) if page is not None else self.get_serializer(queryset, many=True)
                 data = []

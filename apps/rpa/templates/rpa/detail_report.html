@@ -43,15 +43,15 @@
 {% endblock style_sheet %}
 
 <!-- browser title -->
-{% block title %} Detalhes Caderneta {% endblock %}
+{% block title %} Detalhes Relatório {% endblock %}
 
 <!-- context title -->
 {% block title-header %} Operações aéreas {% endblock %}
 
 <!-- breadcrumb -->
 {% block breadcrumb %}
-  <li class="breadcrumb-item"><a href="{% url 'rpa:relatorios' %}">Cadernetas</a></li>
-  <li class="breadcrumb-item active">Dados Caderneta</li>
+  <li class="breadcrumb-item"><a href="{% url 'rpa:relatorios' %}">Operações</a></li>
+  <li class="breadcrumb-item active">Dados da Operação</li>
 {% endblock %}
 
 <!-- main container -->
@@ -59,7 +59,7 @@
 
 <div class="card card-primary card-outline">
   <div class="card-header">
-    <h3 class="card-title">Dados do Caderneta</h3>
+    <h3 class="card-title">Relatório de Operação</h3>
   </div> 
 
   <div class="detail_report">

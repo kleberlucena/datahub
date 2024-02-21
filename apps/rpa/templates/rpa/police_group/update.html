@@ -1,0 +1,222 @@
+{% extends "base/base.html" %}
+{% load custom_tags %}
+{% load static %}
+
+<!-- styles -->
+{% block style_sheet %}
+{% comment %} bacinf style_sheet {% endcomment %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <style>
+    .callout-text {
+      text-align: justify
+    }
+    
+    /* insert error elemets to fields */
+    .errorlist {
+      list-style: none; 
+      color: red; 
+    }
+
+    .card {
+      min-width: 300px;
+    }
+
+    .display-error {
+      border: 1px solid red; 
+    }
+
+    /* fix select2 field height */
+    .select2-selection,
+    .select2-selection--single {
+      height: 38px !important;
+    }
+
+    #select2-id_aeronave-container {
+      height: 38px !important;
+    }
+  </style>
+{% endblock style_sheet %}
+
+<!-- browser title -->
+{% block title %} Editar guarnição {% endblock %}
+
+<!-- context title -->
+{% block title-header %} Operações aéreas {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'rpa:painel' %}">Painel</a></li>
+  <li class="breadcrumb-item active">Editar guarnição</li>
+{% endblock %}
+
+<!-- main container -->
+{% block content %}
+  
+<div class="row">
+  <div class="col-md-12">    
+      <div class="card card-primary card-outline">
+        <div class="card-header">
+          <h3 class="card-title">Atualizar guarnição</h3>
+        </div>
+        <form class="p-3" method='POST' action="{% url 'rpa:police_group_form' %}" autocomplete='off'>
+          <div class="card-body">
+            {% csrf_token %}
+            <div class="form-row">
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">
+                <label for="#">Piloto remoto</label>
+                {{ object.remote_pilot.first_name }} {{ object.remote_pilot.last_name }}
+              </div>
+            </div>
+            </div>
+            <div class="form-row">
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">
+                  <label for="id_observer_pilot">Piloto observador</label>
+                  
+                  {% comment %} <span>
+                    <input name="term" class="form-control"  placeholder="Informe a matrícula" hx-get="/rpa/militaries/" hx-trigger="keyup changed delay:500ms" hx-target="#select_observer_pilot" hx-swap="innerhtml" />
+                  </span> {% endcomment %}
+                  
+                  <select id="select_observer_pilot" name="observer_pilot" class="form-control observer_pilot select2bs4">
+                    <option value="{{ object.observer_pilot }}">{{ object.observer_pilot.nickname }}</option>
+                    {% comment %} {% include 'rpa/police_group/militaries_list.html' %} {% endcomment %}
+                  </select>
+                  
+                  {{ form.observer_pilot.errors }}
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">                
+                  <label for="id_driver">Motorista</label>     
+                  {% comment %} <span>
+                    <input name="term" class="form-control" placeholder="Informe a matrícula" hx-get="/rpa/militaries/" hx-trigger="keyup changed delay:500ms" hx-target="#select_driver" hx-swap="innerhtml" />
+                  </span> {% endcomment %}
+                  <select id="select_driver" name="driver" class="form-control driver select2bs4">                  
+                    <option value="{{ object.driver }}">{{ object.driver }}</option>
+                  </select>
+                  {{ form.driver.errors }}             
+              </div>
+            </div>        
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">       
+                  <label for="id_phone">Telefone</label>              
+                  
+                  {% render_field form.phone class="form-control phone" value="{{ object.phone }}" pattern="\([0-9]{2}\)[\s][0-9]{4,5}-[0-9]{4}" placeholder="Informe apenas números" %}
+                  {{ form.phone.errors }}
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">
+                <label for="id_location">Local</label>
+                {% render_field form.location value="{{ object.location }}" class="form-control location select2bs4" %}
+                {{ form.location.errors }}
+                         
+              </div>
+            </div>
+            {{ form.remote_pilot }}
+          </div>        
+          <div class="card-footer">
+            <div class="mt-3">
+              <button type="submit" class="btn btn-primary">Salvar</button>
+              <a href="{% url 'rpa:painel' %}">
+                <button type="button" class="btn btn-warning">Cancelar</button>
+              </a>
+            </div>
+          </div>
+          
+        </form>
+      </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- javascripts -->
+{% block js %}
+<!-- DataTables  & Plugins -->
+  <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.min.js' %}"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      $('.phone').mask("(99) 99999-9999");
+    });
+  </script>
+  <script>
+    $(document).ready(function () {
+      $('.location_escolha').select2();
+      $('.observer_pilot_escolha').select2();
+      $('.driver_escolha').select2();
+    });    
+  </script>
+
+  <script>
+    
+    $(document).ready(function() {
+      // Inicialize o Select2
+      $('#id_observer_pilot').select2({
+        ajax: {
+            url: '{% url "portal:list_militaries" %}',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+              return {
+                results: data
+              };
+            },
+            cache: true
+        },
+        minimumInputLength: 3, // Defina o comprimento mínimo de caracteres para acionar a pesquisa AJAX
+      });
+  
+      // Adicione um ID ao input do Select2 para o campo "Piloto observador"
+      $('#id_observer_pilot').on('select2:open', function (e) {
+        $('.select2-search__field').attr('id', 'id_observer_pilot_input');
+      });
+      // Acesse o valor do input quando ele for modificado
+      $('#id_observer_pilot_input').on('input', function() {
+        var valorDoInput = $(this).val();
+      });
+    });
+  </script>
+
+  <script>
+    $(document).ready(function() {
+      // Inicialize o Select2
+      $('#id_driver').select2({
+        ajax: {
+            url: '{% url "portal:list_militaries" %}',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+              return {
+                results: data
+              };
+            },
+            cache: true
+        },
+        minimumInputLength: 3, // Defina o comprimento mínimo de caracteres para acionar a pesquisa AJAX
+      });
+  
+      // Adicione um ID ao input do Select2 para o campo "Piloto observador"
+      $('#id_observer_pilot').on('select2:open', function (e) {
+        $('.select2-search__field').attr('id', 'id_observer_pilot_input');
+      });
+      // Acesse o valor do input quando ele for modificado
+      $('#id_observer_pilot_input').on('input', function() {
+        var valorDoInput = $(this).val();
+      });
+    });
+  </script>
+
+  
+
+  <script>
+    const errorList = document.querySelectorAll('ul.errorlist');
+
+    if (errorList) {
+      errorList.forEach((element) => element.previousElementSibling.classList.toggle('display-error'));
+    }
+  </script>
+
+{% endblock %}

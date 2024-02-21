@@ -1,8 +1,11 @@
 {% extends "base/base.html" %}
+{% load widget_tweaks %}
+{% load custom_tags %}
 {% load static %}
 
 {% block style_sheet %}
   <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css' %}">
   <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
 <style>
   .callout-text {
@@ -81,42 +84,48 @@
       </div>
 
       <form class="p-3" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-row">
-          <div class="form-group col-md-12 mb-0">
-            <div class="row mt-3">
-              <div class="col-md-6">
-                <label for="id_piloto_remoto" class="piloto_remoto">Piloto Remoto</label>
-                <br>{{ user.military.nickname }}<br>
+        <div class="card-body">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="col-sm-12 col-md-12">
+              <div class="form-group">
+                  <label for="id_piloto_remoto" class="piloto_remoto">Piloto Remoto</label>
+                  <br>{{ user.military.rank }} {{ user.military.nickname }} - {{ user.military.register }}<br>
               </div>
             </div>
             <hr>
-            <div class="row mt-3">
-              <div class="col-md-6">
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">
                 <label for="id_title">Título da Operação</label>
                 {{ form.title }}
                 {{ form.title.errors }}
               </div>
-              <div class="col-md-6">
+            </div>
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">                
                 <label for="id_observer_pilot">Piloto Observador</label>
-                {{ form.observer_pilot }}
+                <select id="select_observer_pilot" name="observer_pilot" class="form-control observer_pilot select2bs4">
+                  <option value="">----</option>
+                </select>
                 {{ form.observer_pilot.errors }}
               </div>
             </div>
-            <div class="row mt-3">
-              <div class="col-md-6">
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">
                 <label for="id_who_requested">Quem Solicitou</label>
                 {{ form.who_requested }}
                 {{ form.who_requested.errors }}
               </div>
-              <div class="col-md-6">
+            </div>
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">
                 <label for="id_who_authorized">Quem Autorizou</label>
                 {{ form.who_authorized }}
                 {{ form.who_authorized.errors }}
               </div>
             </div>
-            <div class="row mt-3">
-              <div class="col-md-6">
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">
                 <label for="id_aircraft">Aeronave</label>
                 <select name="aircraft" id="id_aircraft" class="form-control">
                   <option value="" selected>Selecione uma aeronave</option>
@@ -126,19 +135,23 @@
                 </select>
                 {{ form.aircraft.errors }}
               </div>
-              <div class="col-md-6">
+            </div>
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">
                 <label for="id_location">Local</label>
-                {{ form.location }}
-                {{ form.location.errors }}
+                {% render_field form.location class="form-control location select2bs4" %}
+                {{ form.location.errors }}                
               </div>
             </div>
-            <div class="row mt-3">
-              <div class="col-md-6">
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">
                 <label for="id_latitude">Ponto de Decolagem: Latitude</label>
                 {{ form.latitude }}
                 {{ form.latitude.errors }}
               </div>
-              <div class="col-md-6">
+            </div>
+            <div class="col-sm-12 col-md-6">
+              <div class="form-group">
                 <label for="id_longitude">Ponto de Decolagem: Longitude</label>
                 {{ form.longitude }}
                 {{ form.longitude.errors }}
@@ -146,31 +159,30 @@
             </div>
             {{ form.user }}
           </div>
-        </div>
-
-
-        <div class="map_options">
-          <button type="button" class="btn btn-outline-primary ml-3 mt-3" onclick="inserirPontoDecolagem();">Inserir
-            Ponto de
-            Decolagem</button>
-          <div class="input-container mt-3">
-            <input type="text" class="form-control" id="endereco" placeholder="Digite o endereço" />
-            <i class="fas fa-times-circle clear-icon" onclick="limparCampo()"></i>
-          </div>
-          <button type="button" class="btn btn-outline-info mt-3" style="max-height: 38px;" onclick="pesquisarEndereco()">Pesquisar
-            Endereço</button>
-          <div class="loading_search">
-            <p style="margin-top: 25px;">Pesquisando...</p>
-          </div>
-        </div>
         
-        <div id="map" class="ml-3 mr-3 mt-3" style="height: 400px;"></div>
-
-        <div class="ml-3 mb-3 mt-3">
-          <button type="submit" class="btn btn-primary">Salvar</button>
-          <a href="{% url 'rpa:principal' %}">
-            <button type="button" class="btn btn-warning">Cancelar</button>
-          </a>
+          <div class="map_options">
+            <button type="button" class="btn btn-outline-primary ml-3 mt-3" onclick="inserirPontoDecolagem();">Inserir
+              Ponto de
+              Decolagem</button>
+            <div class="input-container mt-3">
+              <input type="text" class="form-control" id="endereco" placeholder="Digite o endereço" />
+              <i class="fas fa-times-circle clear-icon" onclick="limparCampo()"></i>
+            </div>
+            <button type="button" class="btn btn-outline-info mt-3" style="max-height: 38px;" onclick="pesquisarEndereco()">Pesquisar
+              Endereço</button>
+            <div class="loading_search">
+              <p style="margin-top: 25px;">Pesquisando...</p>
+            </div>
+          </div>       
+          <div id="map" class="ml-3 mr-3 mt-3" style="height: 400px;"></div>          
+        </div>
+        <div class="card-footer">
+          <div class="ml-3 mb-3 mt-3">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'rpa:principal' %}">
+              <button type="button" class="btn btn-warning">Cancelar</button>
+            </a>
+          </div>
         </div>
       </form>
     </div>
@@ -303,8 +315,53 @@
     $(document).ready(function () {
       $('.location_escolha').select2();
       $('.aircraft_escolha').select2();
-      $('.observer_pilot_escolha').select2();
     });
+  </script>
+  <script>
+    $(document).ready(function () {
+      // Adicione um ID ao input do Select2 para o campo "Piloto observador"
+      $('.observer_pilot_escolha').on('select2:open', function (e) {
+        $('.select2-search__field').attr('id', 'select_observer_pilot_input');
+      });
+      $('#select_driver').on('select2:open', function (e) {
+        $('.select2-search__field').attr('id', 'select_driver_input');
+      });      
+      $('.location').select2({theme: 'bootstrap4'});
+      $('.observer_pilot').select2({
+        ajax: {
+          url: '{% url "portal:list_militaries" %}',
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {
+            console.log(data)
+            //updateObserverPilotSelect(data)
+            return {
+              results: data
+            };
+          },
+          cache: true
+        },
+        minimumInputLength: 3,
+        theme: 'bootstrap4'
+      });
+      $('.driver').select2({        
+        ajax: {
+            url: '{% url "portal:list_militaries" %}',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+              console.log(data)
+              //updateObserverPilotSelect(data)
+              return {
+                results: data
+              };
+            },
+            cache: true
+        },
+        minimumInputLength: 3,
+        theme: 'bootstrap4'
+      });
+    });    
   </script>
 
   <script>
