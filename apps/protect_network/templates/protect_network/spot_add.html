@@ -42,14 +42,11 @@
             <div class="card-header">
                 <h3 class="card-title">Adicionar estabelecimento</h3>
             </div>
-            <form class="p-3" method='post' enctype="multipart/form-data">
+            <form class="p-3" method='post' enctype="multipart/form-data" id="myForm">
                 {% csrf_token %}
             <div class="row">
-                <div class="col-sm-6 mt-3">
+                <div class="col-sm-12 mt-3">
                     {{form.spot_network|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
-                </div>
-                <div class="col-sm-6 mt-3">
-                    {{ form.QPP|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
                 </div>
             </div>
 
@@ -146,12 +143,16 @@
                 </div>
             </div>
     
-            <div class="mt-3">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="{{ request.META.HTTP_REFERER  }}" alt="type_add"><button type="button" class="btn btn-warning ml-1"> Cancelar</button></a>
-
-            </div>
             </form>
+            <div class="card-footer">
+                <button type="button" id="submitButton" class="btn btn-primary">Salvar</button>
+                <a href="{% url 'georeference:area_list' %}">
+                    <button type="button" class="btn btn-warning">
+                        <i class=""></i>
+                        Cancelar
+                    </button>
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -167,6 +168,12 @@
 {% leaflet_js plugins="ALL" %}
 <script src="{% static 'adminlte-3.1.0/plugins/inputmask/jquery.inputmask.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.full.min.js' %}"></script>
+<script>
+    document.getElementById("submitButton").addEventListener("click", function() {
+        document.getElementById("myForm").submit();
+    });
+</script>
+
 <script>
   $(function () {
     $('.select2bs4').select2({

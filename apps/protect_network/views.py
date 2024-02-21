@@ -1,15 +1,15 @@
 from django.views.generic import CreateView, TemplateView, UpdateView, ListView, DetailView, DeleteView
 from django.urls import reverse_lazy, reverse
-from django.shortcuts import  get_object_or_404
+from django.shortcuts import  get_object_or_404, render
 from django.utils import timezone
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Avg
 from django.http import JsonResponse
 from base.mixins import GroupRequiredMixin
-
 from base.decorations.toast_decorator import include_toast
 from apps.portal import models as portal_models
-
+from apps.georeference.models import SpotType as geo_spottype
+from apps.georeference.models import Spot as geo_spot
 from . import models, forms
 
 
@@ -23,12 +23,18 @@ class IndexView(GroupRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         spot_networks = models.Network.objects.all()
+        protect_network_spots = models.ProtectNetworkSpot.objects.all()
         context['spot_networks'] = spot_networks
+        context['protect_network_spots'] = protect_network_spots
         return context
+    
+    def index(request):
+        protect_network_spots = models.ProtectNetworkSpot.objects.all()
+        return render(request, 'protect_network/index.html', {'protect_network_spots': protect_network_spots})
 
 
 class DetailSpotView(GroupRequiredMixin, DetailView):
-    model = models.Spot
+    model = models.ProtectNetworkSpot
     template_name = 'protect_network/spot_detail.html'
     group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
     context_object_name = 'spot'
@@ -39,23 +45,28 @@ class DetailSpotView(GroupRequiredMixin, DetailView):
         contact_info = models.ContactInfo.objects.filter(spot=spot)
         opening_hours = models.OpeningHours.objects.filter(spot=spot)
         images = models.Image.objects.filter(spot=spot).order_by('-id')[:12]
-        spot_types = models.SpotType.objects.filter(spot=spot)
         survey = models.SecuritySurvey.objects.filter(spot=spot)
-        progress_bar_math = (spot.next_update / spot.spot_type.update_time) * 100
-        progress_bar_math_rounded = round(progress_bar_math)
         survey_scores = models.SecuritySurvey.objects.filter(spot=spot).aggregate(average_score=Avg('score'))
-        context['spot_progress_bar_math'] = progress_bar_math_rounded
         context['spot_contacts'] = contact_info
         context['spot_opening_hours'] = opening_hours
         context['spot_images'] = images
-        context['spot_types'] = spot_types
         context['spot_survey'] = survey
         context['spot_survey_score'] = survey_scores['average_score']
-        return context    
+        #spot_types = geo_spottype.objects.filter(spot=spot)
+        #progress_bar_math = (spot.next_update / spot.spot_type.update_time) * 100
+        #progress_bar_math_rounded = round(progress_bar_math)
+        #context['spot_progress_bar_math'] = progress_bar_math_rounded
+        #context['spot_types'] = spot_types
+        #spot_types = models.ProtectNetworkSpot.objects.filter(spot=spot)
+        progress_bar_math = (spot.next_update / spot.spot.spot_type.update_time) * 100
+        progress_bar_math_rounded = round(progress_bar_math)
+        context['spot_progress_bar_math'] = progress_bar_math_rounded
+        #context['spot_types'] = spot_types
+        return context
 
 
 class DetailCardSpotView(GroupRequiredMixin, DetailView):
-    model = models.Spot
+    model = models.ProtectNetworkSpot
     template_name = 'protect_network/spot_detail_card.html'
     group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
     context_object_name = 'spot'
@@ -70,8 +81,8 @@ class DetailCardSpotView(GroupRequiredMixin, DetailView):
 
 @include_toast
 class CreateSpotView(GroupRequiredMixin, CreateView):
-    model = models.Spot
-    form_class = forms.SpotForm
+    model = geo_spot
+    form_class = forms.GeoSpotForm
     template_name = 'protect_network/spot_add.html'
     group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     success_url = reverse_lazy('protect_network:spot_list')
@@ -81,17 +92,17 @@ class CreateSpotView(GroupRequiredMixin, CreateView):
         latitude = form.cleaned_data['latitude']
         longitude = form.cleaned_data['longitude']
         self.object.location = GEOSGeometry(f"POINT ({longitude} {latitude})", srid=4326)
-        self.object.created_by = self.request.user
-        self.object.updated_by = self.request.user
+        user = self.request.user
+        self.object.created_by = user
+        self.object.updated_by = user
         self.object.updated_at = timezone.now()
-        self.object.update_score = 100
-        military = get_object_or_404(portal_models.Military, military__user=self.request.user)
-        self.object.user_unit = military
-        spot_type = self.object.spot_type
-        spot_next_update = spot_type.update_time
-        is_headquarters = form.cleaned_data['is_headquarters']
-        self.object.is_headquarters = is_headquarters
-        self.object.next_update = spot_next_update
+        enjoyer = get_object_or_404(portal_models.Enjoyer, user=user)
+        entity = enjoyer.entity
+        self.object.user_unit = entity
+        username = enjoyer
+        self.object.user_name = username
+        self.object.origin_system=('bacinf')
+        self.object.origin_app=('protect_network')
         self.object.save()
         location_value = GEOSGeometry(f"POINT ({longitude} {latitude})", srid=4326)
         zipcode_value = form.cleaned_data.get('zipcode')
@@ -101,91 +112,164 @@ class CreateSpotView(GroupRequiredMixin, CreateView):
         number_value = form.cleaned_data.get('number')
         complement_value = form.cleaned_data.get('complement')
         reference_value = form.cleaned_data.get('reference')
-        address1 = models.Address(street=street_value,number=number_value, complement=complement_value,reference=reference_value, neighborhood=neighborhood_value,
-                                    city=city_value, state="PB", region="NE", zipcode=zipcode_value, place=location_value, created_by=self.request.user,
-                                      updated_by=self.request.user)
+        address1 = models.Address(
+            street=street_value,
+            number=number_value,
+            complement=complement_value,
+            reference=reference_value,
+            neighborhood=neighborhood_value,
+            city=city_value,
+            state="PB",
+            region="NE",
+            zipcode=zipcode_value,
+            place=location_value,
+            created_by=self.request.user,
+            updated_by=user
+        )
         address1.save()
         self.object.addresses.add(address1)
+        
+        
+        spot_type = self.object.spot_type
+        spot1 = models.ProtectNetworkSpot(
+            spot=self.object,
+            update_score=100,
+            next_update=spot_type.update_time,
+            is_headquarters=form.cleaned_data['is_headquarters'],
+            spot_network=form.cleaned_data['spot_network'],
+            cnpj=form.cleaned_data['cnpj'],
+            parent_company=form.cleaned_data['parent_company'],
+            #qpp=form.cleaned_data['QPP']
+        )
+        spot1.save()
+
         return super().form_valid(form)
+    
 
 
 @include_toast
 class UpdateSpotView(GroupRequiredMixin, UpdateView):
-    model = models.Spot
+    model = models.ProtectNetworkSpot
     template_name = 'protect_network/spot_update.html'
     group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
-    form_class = forms.SpotForm
+    form_class = forms.UpdateGeoSpotForm
 
+    def get_initial(self):
+        initial = super().get_initial()
+        obj = self.get_object()
+        initial['name'] = obj.spot.name if obj.spot.name else ''
+        initial['details'] = obj.spot.details if obj.spot.details else ''
+        initial['latitude'] = obj.spot.latitude if obj.spot.latitude else ''
+        initial['longitude'] = obj.spot.longitude if obj.spot.longitude else ''
+        initial['name'] = obj.spot.name if obj.spot.name else ''
+        initial['spot_type'] = obj.spot.spot_type if obj.spot.spot_type else ''
+        return initial
+    
+    
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        latitude = form.cleaned_data['latitude']
-        longitude = form.cleaned_data['longitude']
-        self.object.location = GEOSGeometry(f"POINT ({longitude} {latitude})", srid=4326)
-        self.object.updated_by = self.request.user
-        self.object.update_score = 100
+        spot=self.object
+        user = self.request.user
+        self.object.created_by = user
+        self.object.updated_by = user
         self.object.updated_at = timezone.now()
-        spot_type = self.object.spot_type
-        spot_next_update = spot_type.update_time
-        self.object.next_update = spot_next_update
-        tags = self.request.POST.getlist('tags')
-        location_value = GEOSGeometry(f"POINT ({longitude} {latitude})", srid=4326)
-        zipcode_value = form.cleaned_data.get('zipcode')
-        city_value = form.cleaned_data.get('city')
-        neighborhood_value = form.cleaned_data.get('neighborhood')
-        street_value = form.cleaned_data.get('street')
-        number_value = form.cleaned_data.get('number')
-        complement_value = form.cleaned_data.get('complement')
-        reference_value = form.cleaned_data.get('reference')
-        address_id = self.object.spotaddresses_set.first().address.id
+        spot.update_score=100
+        spot.next_update=spot.spot.spot_type.update_time
+        #GEOREFERENCE APP BLOCK
+        latitude = form.cleaned_data['latitude']
+        spot.spot.latitude = latitude
+        longitude = form.cleaned_data['longitude']
+        spot.spot.longitude = longitude
+        location = GEOSGeometry(f"POINT ({longitude} {latitude})", srid=4326)
+        spot.spot.location = location
+        details = form.cleaned_data['details']
+        spot.spot.details = details
+        name = form.cleaned_data['name']
+        spot.spot.name = name
+        spot_type = form.cleaned_data['spot_type']
+        spot.spot.spot_type = spot_type
+        spot.spot.created_by = user
+        spot.spot.updated_by = user
+        spot.spot.created_at = timezone.now()
+        spot.spot.updated_at = timezone.now()
+        enjoyer = get_object_or_404(portal_models.Enjoyer, user=user)
+        entity = enjoyer.entity
+        spot.spot.user_unit = entity
+        username = enjoyer
+        spot.spot.user_name = username
+        spot.spot.origin_system=('bacinf')
+        spot.spot.origin_app=('protect_network')
+        #ADDRESS APP BLOCK
+        obj = self.get_object()
+        address_id = obj.spot.spotaddresses_set.first().address.id
         existing_address = get_object_or_404(models.Address, id=address_id)
-        existing_address.street = street_value
-        existing_address.number = number_value
-        existing_address.complement = complement_value
-        existing_address.reference = reference_value
-        existing_address.neighborhood = neighborhood_value
-        existing_address.city = city_value
+        zipcode_value = form.cleaned_data.get('zipcode')
         existing_address.zipcode = zipcode_value
-        existing_address.place = location_value
-        existing_address.save()
-        self.object.addresses.add(existing_address)
-        is_headquarters = form.cleaned_data['is_headquarters']
-        self.object.is_headquarters = is_headquarters
+        city_value = form.cleaned_data.get('city')
+        existing_address.city = city_value
+        neighborhood_value = form.cleaned_data.get('neighborhood')
+        existing_address.neighborhood = neighborhood_value
+        street_value = form.cleaned_data.get('street')
+        existing_address.street = street_value
+        number_value = form.cleaned_data.get('number')
+        existing_address.number = number_value
+        complement_value = form.cleaned_data.get('complement')
+        existing_address.complement = complement_value
+        reference_value = form.cleaned_data.get('reference')
+        existing_address.reference = reference_value
+        existing_address.state="PB"
+        existing_address.region="NE"
+        existing_address.place=location
+        existing_address.created_by=user
+        existing_address.updated_by=user
         self.object.save()
-        self.object.tags.set(tags)
+        spot.spot.save()
+        existing_address.save()
         return super().form_valid(form)
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        spot_id = self.object.pk
+        context['spot_id'] = spot_id
+        obj = self.get_object()
+        address_id = obj.spot.spotaddresses_set.first().address.id
+        existing_address = get_object_or_404(models.Address, id=address_id)
+        context['address'] = existing_address
+
+        return context   
+
     def get_success_url(self):
         spot_pk = self.object.pk
         return reverse('protect_network:spot_detail', kwargs={'pk': spot_pk})
+
     
 
 class SpotListView(GroupRequiredMixin, ListView):
-    model = models.Spot
+    model = models.ProtectNetworkSpot
     template_name = 'protect_network/spot_list.html'
     group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(SpotListView, self).get_context_data(**kwargs)
-        spot = models.Spot.objects.all()
+        spot = models.ProtectNetworkSpot.objects.all()
         context['spots'] = spot
         return context
-
+    
 
 class SpotListCreatedView(GroupRequiredMixin, ListView):
-    model = models.Spot
+    model = models.ProtectNetworkSpot
     template_name = 'protect_network/spot_list_created.html'
     group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(SpotListCreatedView, self).get_context_data(**kwargs)
-        spot = models.Spot.objects.all()
+        spot = models.ProtectNetworkSpot.objects.all()
         context['spots'] = spot
         return context
     
 
 @include_toast
 class CreateSpotTypeView(GroupRequiredMixin, CreateView):
-    model = models.SpotType
     form_class = forms.SpotTypeForm
     template_name = 'protect_network/spot_type_add.html'
     group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
@@ -194,7 +278,7 @@ class CreateSpotTypeView(GroupRequiredMixin, CreateView):
 
 @include_toast
 class UpdateSpotTypeView(GroupRequiredMixin, UpdateView):
-    model = models.SpotType
+    model = geo_spottype
     template_name = 'protect_network/spot_type_add.html'
     group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     form_class = forms.SpotTypeForm
@@ -202,13 +286,13 @@ class UpdateSpotTypeView(GroupRequiredMixin, UpdateView):
 
 
 class SpotTypeListView(GroupRequiredMixin, ListView):
-    model = models.SpotType
+    model = geo_spottype
     template_name = 'protect_network/spot_type_list.html'
-    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(SpotTypeListView, self).get_context_data(**kwargs)
-        spot_type = models.SpotType.objects.all()
+        spot_type = geo_spottype.objects.all()
         context['spot_types'] = spot_type
         return context
     
@@ -224,7 +308,7 @@ class CreateTagView(GroupRequiredMixin, CreateView):
 
 @include_toast
 class UpdateSpotTagsView(GroupRequiredMixin, UpdateView):
-    model = models.Spot
+    model = models.ProtectNetworkSpot
     template_name = 'protect_network/spot_tags_form.html'
     group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     form_class = forms.SpotTagsForm
@@ -252,7 +336,7 @@ class UpdateTagView(GroupRequiredMixin, UpdateView):
 class TagListView(GroupRequiredMixin, ListView):
     model = models.Tag
     template_name = 'protect_network/tag_list.html'
-    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(TagListView, self).get_context_data(**kwargs)
@@ -276,7 +360,7 @@ class CreateImageSpotView(GroupRequiredMixin, CreateView):
     def form_valid(self, form):
         spot_id = self.kwargs['spot_id']
         form.instance.spot_id = spot_id
-        spot = get_object_or_404(models.Spot, id=spot_id)
+        spot = get_object_or_404(models.ProtectNetworkSpot, id=spot_id)
         spot_image = form.save(commit=False)
         spot_image.spot = spot
         spot_image.created_by = self.request.user
@@ -316,7 +400,7 @@ class ImageListView(GroupRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         spot_id = self.kwargs.get('spot_id')
-        spot = get_object_or_404(models.Spot, pk=spot_id)
+        spot = get_object_or_404(models.ProtectNetworkSpot, pk=spot_id)
         context['spot_pk'] = spot.pk
         return context
     
@@ -335,7 +419,7 @@ class CreateContactInfoView(GroupRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         spot_id = self.kwargs.get('spot_id')
-        spot = get_object_or_404(models.Spot, pk=spot_id)
+        spot = get_object_or_404(models.ProtectNetworkSpot, pk=spot_id)
         context['spot_pk'] = spot.pk
         return context
     
@@ -360,6 +444,20 @@ class UpdateContactInfoView(GroupRequiredMixin, UpdateView):
     def get_success_url(self):
         spot_id = self.object.spot_id
         return reverse('protect_network:spot_detail', args=[spot_id])
+    
+
+@include_toast
+class ContactInfoDetailView(GroupRequiredMixin, DetailView):
+    model = models.ContactInfo
+    template_name = 'protect_network/spot_contact_detail.html'
+    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
+    context_object_name = 'contact_info'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['spot_pk'] = self.object.spot_id
+        return context
     
     
 @include_toast
@@ -392,7 +490,7 @@ class CreateOpeningHoursView(GroupRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         spot_id = self.kwargs.get('spot_id')
-        spot = get_object_or_404(models.Spot, pk=spot_id)
+        spot = get_object_or_404(models.ProtectNetworkSpot, pk=spot_id)
         context['spot_pk'] = spot.pk
         return context
 
@@ -493,7 +591,7 @@ class UpdateNetworkView(GroupRequiredMixin, UpdateView):
 class NetworkListView(GroupRequiredMixin, ListView):
     model = models.Network
     template_name = 'protect_network/network_list.html'
-    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
 
     def get_context_data(self, *args, **kwargs):
         context = super(NetworkListView, self).get_context_data(**kwargs)
@@ -506,7 +604,7 @@ class NetworkListView(GroupRequiredMixin, ListView):
 class NetworkDetailView(GroupRequiredMixin, DetailView):
     model = models.Network
     template_name = 'protect_network/network_detail.html'
-    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
+    group_required = ['profile:protect_network_advanced', 'profile:protect_network_manager']
     context_object_name = 'network'
 
     def get_context_data(self, **kwargs):
@@ -562,34 +660,34 @@ class DeleteResponsibleView(GroupRequiredMixin, DeleteView):
         return reverse_lazy('protect_network:network_detail', kwargs={'pk': network_pk})
 
 
-@include_toast
-class CreateQppView(GroupRequiredMixin, CreateView):
-    model = models.Qpp
-    form_class = forms.QppForm
-    template_name = 'protect_network/qpp_add.html'
-    group_required = ['profile:protect_network_manager']
-    success_url = reverse_lazy('protect_network:qpp_list')
+# @include_toast
+# class CreateQppView(GroupRequiredMixin, CreateView):
+#     model = models.Qpp
+#     form_class = forms.QppForm
+#     template_name = 'protect_network/qpp_add.html'
+#     group_required = ['profile:protect_network_manager']
+#     success_url = reverse_lazy('protect_network:qpp_list')
 
 
-@include_toast
-class UpdateQppView(GroupRequiredMixin, UpdateView):
-    model = models.Qpp
-    template_name = 'protect_network/qpp_add.html'
-    group_required = ['profile:protect_network_manager']
-    form_class = forms.QppForm
-    success_url = reverse_lazy('protect_network:qpp_list')
+# @include_toast
+# class UpdateQppView(GroupRequiredMixin, UpdateView):
+#     model = models.Qpp
+#     template_name = 'protect_network/qpp_add.html'
+#     group_required = ['profile:protect_network_manager']
+#     form_class = forms.QppForm
+#     success_url = reverse_lazy('protect_network:qpp_list')
 
 
-class QppListView(GroupRequiredMixin, ListView):
-    model = models.Qpp
-    template_name = 'protect_network/qpp_list.html'
-    group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
+# class QppListView(GroupRequiredMixin, ListView):
+#     model = models.Qpp
+#     template_name = 'protect_network/qpp_list.html'
+#     group_required = ['profile:protect_network_basic', 'profile:protect_network_advanced', 'profile:protect_network_manager']
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(QppListView, self).get_context_data(**kwargs)
-        qpp = models.Qpp.objects.all()
-        context['qpps'] = qpp
-        return context
+#     def get_context_data(self, *args, **kwargs):
+#         context = super(QppListView, self).get_context_data(**kwargs)
+#         qpp = models.Qpp.objects.all()
+#         context['qpps'] = qpp
+#         return context
     
 
 @include_toast
@@ -606,7 +704,7 @@ class CreateSurveyView(GroupRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         spot_id = self.kwargs.get('spot_id')
-        spot = get_object_or_404(models.Spot, pk=spot_id)
+        spot = get_object_or_404(models.ProtectNetworkSpot, pk=spot_id)
         context['spot_pk'] = spot.pk
         return context
 
@@ -652,7 +750,7 @@ class UpdateSurveyView(GroupRequiredMixin, UpdateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         spot_id = self.kwargs['pk']
-        spot = get_object_or_404(models.Spot, pk=spot_id)
+        spot = get_object_or_404(models.ProtectNetworkSpot, pk=spot_id)
         self.object.spot = spot
         score = 0
         boolean_fields = [
@@ -675,5 +773,5 @@ class UpdateSurveyView(GroupRequiredMixin, UpdateView):
 
 def get_responsibles(request):
     responsibles = portal_models.Military.objects.all()
-    data = [{'id': responsible.id, 'text': f"{responsible.rank} {responsible.military}"} for responsible in responsibles]
+    data = [{'id': responsible.id, 'text': f"{responsible.rank} {responsible.nickname}"} for responsible in responsibles]
     return JsonResponse(data, safe=False)

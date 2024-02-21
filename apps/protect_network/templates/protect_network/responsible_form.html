@@ -18,6 +18,9 @@
 {% endblock %}
 
 {% block content %}
+{% if request.user|has_group:'profile:protect_network_manager' %}
+
+
 <!-- INFO BOX-->
 <div class="callout callout-info">
   <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre adicionar responsável</h3>
@@ -40,7 +43,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-12 mt-3">
+                <div class="col-sm-12 mt-3" id="id_responsible">
                     {{form.responsible|add_class:"form-control select2bs4"|as_crispy_field}}
                 </div>
             </div>
@@ -59,8 +62,9 @@
 </div>
 {% endif %}
 
-    {% endblock %}
-    {% block js %}
+{% endif %}
+{% endblock %}
+{% block js %}
 <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
@@ -99,7 +103,7 @@
 </script>]
 
 <script src="{% static 'adminlte-3.1.0/plugins/select2/js/select2.full.min.js' %}"></script>
-<script>
+<!-- <script>
   $(document).ready(function () {
       $('.select2bs4').select2({
           placeholder: 'Selecione um item',
@@ -118,7 +122,27 @@
           }
       });
   });
+</script> -->
+<script>
+  $(document).ready(function () {
+      $('.select2bs4').select2({
+          placeholder: 'Selecione um item',
+          theme: 'bootstrap4',
+          width: '100%',
+          ajax: {
+              url: '{% url "portal:list_militaries" %}',
+              dataType: 'json',
+              delay: 250,
+              processResults: function (data) {
+                  return {
+                      results: data
+                  };
+              },
+              cache: true
+          },
+          minimumInputLength: 3,
+      });
+  });
 </script>
-
 
 {% endblock %}

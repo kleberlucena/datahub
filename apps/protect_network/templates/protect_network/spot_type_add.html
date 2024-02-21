@@ -19,6 +19,7 @@
 {% endblock %}
 
 {% block content %}
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
 
 <div class="callout callout-info">
     {% if "/add" in request.path %}
@@ -43,34 +44,55 @@
     <div class="col-md-12">
         <div class="card card-primary card-outline">
             <div class="card-header">
-                <h3 class="card-title">Adicionar categoria</h3>
+                {% if "/add" in request.path %}
+                    <h3 class="card-title">Adicionar categoria</h3>
+                {% elif "/update" in request.path %}
+                <h3 class="card-title">Editar categoria</h3>
+                {% endif %}
             </div>
-        <form class="p-3" method='post' enctype="multipart/form-data">
-            {% csrf_token %}
-        
-            <div class="row mb-1">
-                <div class="col-sm-12">
-                    {{form.name|add_class:"form-control"|as_crispy_field}}
+            <form class="p-3" method='post' enctype="multipart/form-data" id="myForm">
+                {% csrf_token %}
+            
+                <div class="row mb-1">
+                    <div class="col-sm-12">
+                        {{form.name|add_class:"form-control"|as_crispy_field}}
+                    </div>
                 </div>
-            </div>
-            <div class="row mb-1 mt-3">
-                <div class="col-sm-12">
-                    {{form.details|add_class:"form-control"|as_crispy_field}}
+                <div class="row mb-1 mt-3">
+                    <div class="col-sm-12">
+                        {{form.spot_type_father|add_class:"form-control"|as_crispy_field}}
+                    </div>
                 </div>
+                <div class="row mb-1 mt-3">
+                    <div class="col-sm-12">
+                        {{form.update_time|add_class:"form-control"|as_crispy_field}}
+                    </div>
+                </div>
+            </form>
+            <div class="card-footer">
+                <button type="button" id="submitButton" class="btn btn-primary">Salvar</button>
+                <a href="{{ request.META.HTTP_REFERER  }}">
+                    <button type="button" class="btn btn-warning">
+                        <i class=""></i>
+                        Voltar
+                    </button>
+                </a>
             </div>
-               
-            <div class="mt-3">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="{{ request.META.HTTP_REFERER  }}"><button type="button" class="btn btn-warning ml-1"> Cancelar </button></a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 {% endif %}
 
 
+{% endif %}
 
 {% endblock %}
 <!-- javascripts -->
 {% block js %}
+<script>
+    document.getElementById("submitButton").addEventListener("click", function() {
+        document.getElementById("myForm").submit();
+    });
+</script>
+
 {% endblock %}

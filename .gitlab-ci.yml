@@ -23,6 +23,7 @@ stages:
   - test
   - deploy
 
+
 build image:
   stage: build
   tags:

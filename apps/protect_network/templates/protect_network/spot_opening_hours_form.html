@@ -7,7 +7,7 @@
 
 <!-- styles -->
 {% block style_sheet %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css" />
+<link rel="stylesheet" href="{% static 'sti/css/ion.rangeSlider.min.css' %}">
 <style>
     .center {
         text-align: center;
@@ -198,18 +198,17 @@
                     <input type="hidden" name="sunday_close_name" id="sunday_close"/>
                 </div>
             </div>
-
-            <div>
-                <button type="submit" class="btn btn-primary" id="submit_button">Salvar</button>
-                <a href="{% url 'protect_network:spot_detail' spot_pk %}">
-                    <button type="button" class="btn btn-warning">
-                        <i class=""></i>
-                        Voltar
-                    </button>
-                </a>
-            </div>
         </form>
-            </div>
+        <div class="card-footer">
+            <button type="button" id="submitButton" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'protect_network:spot_detail' spot_pk %}">
+                <button type="button" class="btn btn-warning">
+                    <i class=""></i>
+                    Voltar
+                </button>
+            </a>
+        </div>
+    </div>
 </div>
 
 {% endif %}
@@ -219,8 +218,13 @@
 <!-- javascripts -->
 {% block js %}
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/js/ion.rangeSlider.min.js"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'sti/js/ion.rangeSlider.min.js' %}"></script>
+<script>
+    document.getElementById("submitButton").addEventListener("click", function() {
+        document.getElementById("hours_form").submit();
+    });
+</script>
 
 <script>
     $(document).ready(function () {
@@ -414,7 +418,7 @@
             closeTimeMondayFormField.value = minToDatefield(closeTimeMondayField) 
             update_sliders()
         } else {
-            closeTimeMondayFormField.value = minToDatefield(0)
+            closeTimeMondayFormField.value = minToDatefield(1439)
         }
         if (def_opentime_tue_min) {
             var openTimeTuesdayField = def_opentime_tue_min
@@ -428,7 +432,7 @@
             closeTimeTuesdayFormField.value = minToDatefield(closeTimeTuesdayField)
             update_sliders()
         } else {
-            closeTimeTuesdayFormField.value = minToDatefield(0)
+            closeTimeTuesdayFormField.value = minToDatefield(1439)
         }
         if (def_opentime_wed_min) {
             var openTimeWednesdayField = def_opentime_wed_min
@@ -442,7 +446,7 @@
             closeTimeWednesdayFormField.value = minToDatefield(closeTimeWednesdayField)
             update_sliders()
         } else {
-            closeTimeWednesdayFormField.value = minToDatefield(0)
+            closeTimeWednesdayFormField.value = minToDatefield(1439)
         }
         if (def_opentime_thu_min) {
             var openTimeThursdayField = def_opentime_thu_min
@@ -456,7 +460,7 @@
             closeTimeThursdayFormField.value = minToDatefield(closeTimeThursdayField)
             update_sliders()
         } else {
-            closeTimeThursdayFormField.value = minToDatefield(0)
+            closeTimeThursdayFormField.value = minToDatefield(1439)
         }
         if (def_opentime_fri_min) {
             var openTimeFridayField = def_opentime_fri_min
@@ -470,7 +474,7 @@
             closeTimeFridayFormField.value = minToDatefield(closeTimeFridayField)
             update_sliders()
         } else {
-            closeTimeFridayFormField.value = minToDatefield(0)
+            closeTimeFridayFormField.value = minToDatefield(1439)
         }
         if (def_opentime_sat_min) {
             var openTimeSaturdayField = def_opentime_sat_min
@@ -484,7 +488,7 @@
             closeTimeSaturdayFormField.value = minToDatefield(closeTimeSaturdayField)
             update_sliders()
         } else {
-            closeTimeSaturdayFormField.value = minToDatefield(0)
+            closeTimeSaturdayFormField.value = minToDatefield(1439)
         }
         if (def_opentime_sun_min) {
             var openTimeSundayField = def_opentime_sun_min
@@ -498,7 +502,7 @@
             closeTimeSundayFormField.value = minToDatefield(closeTimeSundayField)
             update_sliders()
         } else {
-            closeTimeSundayFormField.value = minToDatefield(0)
+            closeTimeSundayFormField.value = minToDatefield(1439)
         }
 
 

@@ -75,25 +75,23 @@
             </table>
           </div>
         </div>
-        
-      {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
-        <a href="{% url 'protect_network:spot_image_add' spot_pk %}">
-          <button type="button" class="btn btn-primary">
-              <i class="fa fa-plus"></i>
-              Inserir
-          </button>
-        </a>
-      {% endif %}
-    <a href="{% url 'protect_network:spot_detail' spot_pk %}">
-        <button type="button" class="btn btn-warning">
-            <i class=""></i>
-            Cancelar
-        </button>
-    </a>
-
-        
-
       </div>
+      <div class="card-footer">
+        {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+          <a href="{% url 'protect_network:spot_image_add' spot_pk %}">
+            <button type="button" class="btn btn-primary">
+                <i class="fa fa-plus"></i>
+                Inserir
+            </button>
+          </a>
+        {% endif %}
+        <a href="{% url 'protect_network:spot_detail' spot_pk %}">
+            <button type="button" class="btn btn-warning">
+                <i class=""></i>
+                Voltar
+            </button>
+        </a>
+    </div>
     </div>
     {% endblock %}
     {% block js %}

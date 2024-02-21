@@ -37,14 +37,19 @@
             </div>
 
 
-            <form method="post">
+            <form method="post" id="myForm">
                 {% csrf_token %}
-                <div class="row mt-auto ml-3 mb-3">
-                    <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-                    <a href="{{ request.META.HTTP_REFERER  }}" alt="type_add"><button type="button" class="btn btn-warning ml-1"> Cancelar </button></a>
-                </div>
 
             </form>
+            <div class="card-footer">
+                <button type="button" id="submitButton" class="btn btn-danger btn">Excluir</button>
+                <a href="{{ request.META.HTTP_REFERER  }}">
+                    <button type="button" class="btn btn-warning">
+                        <i class=""></i>
+                        Cancelar
+                    </button>
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -55,6 +60,7 @@
 
     {% endblock %}
     {% block js %}
+
 <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
@@ -67,6 +73,12 @@
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+<script>
+    document.getElementById("submitButton").addEventListener("click", function() {
+        document.getElementById("myForm").submit();
+    });
+</script>
+
 <script>
   $(function () {
     var dt_table = $('#objects_list').dataTable({

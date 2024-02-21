@@ -60,18 +60,16 @@
             {{ network_responsibles|length }}
           </div>
         </div>
-
-
-        <br>
-        <h3 class="card-title"><b>Lista de responsáveis pela rede </b></h3>
-        <br>
-        <hr>
-
+      </div>
+      <hr>
         <div class="card-body">
           <div id="objects_list_wrapper" class="dataTables_wrapper dt-bootstrap4">
               <div class="table-responsive">
                   <table id="objects_list" class="table table-bordered table-striped responsive dataTable dtr-inline"
                       role="grid" aria-describedby="objects_list_info" width="100%">
+                      <h3 class="card-title"><b>Responsáveis pela rede </b></h3>
+                      <br>
+
                       <thead>
                           <tr>
                               <th>Militar</th>
@@ -87,8 +85,8 @@
                       <tboby>
                         {% for responsible in network_responsibles %}
                           <tr>
-                            <td>{{ responsible.responsible.rank }} {{ responsible.responsible.military }}</td>
-                            <td>{{ responsible.responsible.military.unit }}</td>
+                            <td>{{ responsible.responsible.rank }} {{ responsible.responsible.nickname }}</td>
+                            <td>{{ responsible.responsible.entity}}</td>
                             <td>{{ responsible.created_at|date:"d/m/Y H:i:s" }}</td>
                             <td>
                               {% if responsible.active %}
@@ -108,23 +106,24 @@
                       </tbody>
                   </table>
               </div>
-
-  
           </div>
-      </div>
-
-
-        <div class="row mt-auto ml-0">
-          {% if request.user|has_group:'profile:protect_network_manager' %}
-            <a href="{% url 'protect_network:responsible_add' network.id %}" alt="responsible_add"><button type="button" class="btn btn-primary"> + Adicionar responsável</button></a>
-          {% endif %}
-          <a href="{% url 'protect_network:network_list' %}" alt="network_list"><button type="button" class="btn btn-warning ml-1"> Voltar</button></a>
         </div>
-
+      
+        <div class="card-footer">
+        {% if request.user|has_group:'profile:protect_network_manager' %}
+          <a href="{% url 'protect_network:responsible_add' network.id %}" alt="responsible_add"><button type="button" class="btn btn-primary"> Adicionar responsável</button></a>
+        {% endif %}
+        {% if request.user|has_group:'profile:protect_network_manager' %}
+        <a href="{% url 'protect_network:network_update' pk=network.pk %}"><button type="button" class="btn btn-info"> Editar </button></a>
+        {% endif %}
+        <a href="{% url 'protect_network:network_list' %}" alt="network_list"><button type="button" class="btn btn-warning"> Voltar</button></a>
       </div>
     </div>
-  {% endblock %}
-  {% block js %}
+  </div>
+</div>
+
+{% endblock %}
+{% block js %}
 <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>

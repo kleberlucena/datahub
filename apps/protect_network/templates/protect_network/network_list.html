@@ -17,6 +17,8 @@
 {% endblock %}
 
 {% block content %}
+{% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
+
 <!-- INFO BOX-->
 <div class="callout callout-info">
   <h3 class="text-info"><i class="fas fa-bullhorn"></i> Sobre lista de redes</h3>
@@ -25,7 +27,6 @@
           Uma rede pode abranger a área de mais de um batalhão caso haja necessidade.</b>
       <br> - Essa tela exibe todas as redes existentes e a quantidade de estabelecimentos cadastrados em cada rede. Um estabelecimento só pode fazer parte de uma rede.
       <br> - Clique em detalhes para exibir mais informações sobre a rede, como quais são os militares responsáveis pela mesma.
-      
   </p>
 </div>
 
@@ -50,7 +51,6 @@
                   <th>Ação</th>
                </tr>
               </thead>
-
               <tboby>
                 {% for network in networks %}
                 <tr>
@@ -60,34 +60,36 @@
                   {% else %}
                     <td>{{ network.details }}</td>
                   {% endif %}
-                  {% if network.spot_set.count == 0%}
+                  {% if network.protectnetworkspot_set.count == 0%}
                     <td> Nenhum estabelecimento na rede </td>
                   {% else %}
-                    <td> {{ network.spot_set.count }} </td>
+                    <td> {{ network.protectnetworkspot_set.count }} </td>
                   {% endif %}
                   <td colspan="2" class="project-actions text-center">
-                    {% if request.user|has_group:'profile:protect_network_basic,profile:protect_network_advanced,profile:protect_network_manager' %}
+                    {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
                       <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:network_detail' pk=network.pk %}">Detalhes</a>
-                    {% endif %}
-                    {% if request.user|has_group:'profile:protect_network_manager' %}
-                      <a  class="btn btn-outline-info btn-sm" href="{% url 'protect_network:network_update' pk=network.pk %}">Editar</a>
                     {% endif %}
                   </td>
                 </tr>
                 {% endfor %}
               </tboby>
+
             </table>
           </div>
         </div>
-        <div class="row mt-auto ml-0">
-          {% if request.user|has_group:'profile:protect_network_manager' %}
-            <a href="{% url 'protect_network:network_add' %}" alt="network_add"><button type="button" class="btn btn-primary"> + Adicionar rede</button></a>
-          {% endif %}
-        </div>
+      </div>
+      <div class="card-footer">
+        {% if request.user|has_group:'profile:protect_network_manager' %}
+          <a href="{% url 'protect_network:network_add' %}" alt="network_add"><button type="button" class="btn btn-primary"> + Adicionar rede</button></a>
+        {% endif %}
       </div>
     </div>
-    {% endblock %}
-    {% block js %}
+  </div>
+</div>
+
+{% endif %}
+  {% endblock %}
+  {% block js %}
 <script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
