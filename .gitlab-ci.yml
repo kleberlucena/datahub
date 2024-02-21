@@ -144,37 +144,6 @@ deploy prod:
     APP_FOLDER_NAME: app
 
 
-# Remove containers e limpa arquivos criados pelo deploy
-# ATENÇÃO:
-# Esse build step é um caminho sem volta.
-undeploy stage:
-  extends: .deploy_template
-  stage: cleanup
-  needs: ["deploy stage"]
-  when: manual
-  tags:
-    - docker
-    - pmpb
-  environment:
-    name: stage
-  variables:
-    COMPOSE_FILE: "docker-compose.stage.yml"
-    SERVER_IP: $STAGE_SERVER_IP
-    SERVER_PRIVATE_KEY: $STAGE_SERVER_PRIVATE_KEY
-  script:
-    - >
-      ssh root@$SERVER_IP << ENDSSH
-        cd app
-        export IMAGE_TAG=${IMAGE_TAG}
-        docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-        docker-compose stop
-        docker-compose down -v
-        docker system prune --all --volumes --force
-        cd ..
-        rm -rf app
-      ENDSSH
-
-
 # Da acesso ao servidor que queremos acessar via SSH
 .server_access_granted:
   before_script:
