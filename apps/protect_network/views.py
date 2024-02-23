@@ -46,11 +46,13 @@ class DetailSpotView(GroupRequiredMixin, DetailView):
         opening_hours = models.OpeningHours.objects.filter(spot=spot)
         images = models.Image.objects.filter(spot=spot).order_by('-id')[:12]
         survey = models.SecuritySurvey.objects.filter(spot=spot)
+        survey_id = models.SecuritySurvey.objects.filter(spot=spot).first()
         survey_scores = models.SecuritySurvey.objects.filter(spot=spot).aggregate(average_score=Avg('score'))
         context['spot_contacts'] = contact_info
         context['spot_opening_hours'] = opening_hours
         context['spot_images'] = images
         context['spot_survey'] = survey
+        context['spot_survey_id'] = survey_id.id if survey_id else None
         context['spot_survey_score'] = survey_scores['average_score']
         #spot_types = geo_spottype.objects.filter(spot=spot)
         #progress_bar_math = (spot.next_update / spot.spot_type.update_time) * 100
@@ -637,6 +639,12 @@ class UpdateResponsibleView(GroupRequiredMixin, UpdateView):
     template_name = 'protect_network/responsible_form.html'
     group_required = ['profile:protect_network_manager']
     form_class = forms.ResponsibleForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['obj'] = self.get_object()
+        context['function_type'] = 'update'
+        return context
 
     def get_success_url(self):
         responsible = self.object

@@ -39,7 +39,16 @@
             {% csrf_token %}
             <div class="row">
                 <div class="col-sm-12">
-                    {{form.network|add_class:"form-control"|as_crispy_field}}
+                    {% if function_type == 'update' %}
+                    <div class="row ml-1">
+                        <b>Nome da rede:</b>
+                    </div>
+                    <div class="ml-1 mt-1">
+                        {{ obj.network }}
+                    </div>
+                    {% else %}
+                        {{form.network|add_class:"form-control"|as_crispy_field}}
+                    {% endif %}
                 </div>
             </div>
             <div class="row">
