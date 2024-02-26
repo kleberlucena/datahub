@@ -31,11 +31,6 @@ class Tag(models.Model):
 class Network(models.Model):
     name = models.CharField("Nome da rede", max_length=200)
     details = models.CharField("Informações adicionais", max_length=300, null=True, blank=True)
-    responsibles = models.ManyToManyField(
-        portal_models.Military,
-        through='NetworkResponsible',
-        through_fields=('network', 'responsible'),
-    )
 
     def __str__(self):
         return self.name
@@ -43,12 +38,10 @@ class Network(models.Model):
 
 class NetworkResponsible(models.Model):
     network = models.ForeignKey(Network, on_delete=models.CASCADE)
-    responsible = models.ForeignKey(portal_models.Military, on_delete=models.CASCADE)
+    #responsible = models.ForeignKey(portal_models.Military, on_delete=models.CASCADE, unique=True)
+    responsible  = models.OneToOneField(portal_models.Military, unique=True, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField('Criado', auto_now_add=True)
     active = models.BooleanField(null=True, blank=True, default=True)
-
-    class Meta:
-        unique_together = ['network', 'responsible']
 
     def __str__(self):
         return "{} {}".format(self.responsible.rank, self.responsible.nickname)
@@ -88,7 +81,7 @@ class ProtectNetworkSpot(models.Model):
     is_headquarters = models.BooleanField(default=True, null=True, blank=True)
     cnpj = models.CharField(max_length=20, null=True, blank=True)
     parent_company = models.CharField(max_length=20, null=True, blank=True)
-    spot_network = models.ForeignKey(Network, on_delete=models.CASCADE, null=True, blank=False)
+    spot_network = models.ForeignKey(Network, on_delete=models.SET_NULL, null=True, blank=False)
     #qpp = models.ForeignKey(Qpp, on_delete=models.CASCADE, null=True, blank=True)
     
    

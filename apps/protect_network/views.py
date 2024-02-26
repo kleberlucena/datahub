@@ -4,12 +4,13 @@ from django.shortcuts import  get_object_or_404, render
 from django.utils import timezone
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Avg
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from base.mixins import GroupRequiredMixin
 from base.decorations.toast_decorator import include_toast
 from apps.portal import models as portal_models
 from apps.georeference.models import SpotType as geo_spottype
 from apps.georeference.models import Spot as geo_spot
+from django.contrib import messages
 from . import models, forms
 
 
@@ -131,19 +132,32 @@ class CreateSpotView(GroupRequiredMixin, CreateView):
         address1.save()
         self.object.addresses.add(address1)
         
-        
         spot_type = self.object.spot_type
-        spot1 = models.ProtectNetworkSpot(
-            spot=self.object,
-            update_score=100,
-            next_update=spot_type.update_time,
-            is_headquarters=form.cleaned_data['is_headquarters'],
-            spot_network=form.cleaned_data['spot_network'],
-            cnpj=form.cleaned_data['cnpj'],
-            parent_company=form.cleaned_data['parent_company'],
-            #qpp=form.cleaned_data['QPP']
-        )
-        spot1.save()
+
+        # Inicializa network_responsible como None
+        network_responsible = None
+
+        try:
+            military = user.military
+            # Obtém a instância de NetworkResponsible com base no usuário do modelo Military
+            network_responsible = models.NetworkResponsible.objects.get(responsible=military)
+            # Define spot_network como a rede associada ao usuário logado
+            form.instance.spot_network = network_responsible.network
+            # Cria a instância ProtectNetworkSpot com spot_network definido
+            spot1 = models.ProtectNetworkSpot(
+                spot=self.object,
+                update_score=100,
+                next_update=spot_type.update_time,
+                is_headquarters=form.cleaned_data['is_headquarters'],
+                spot_network=network_responsible.network,  # Define spot_network aqui
+                cnpj=form.cleaned_data['cnpj'],
+                parent_company=form.cleaned_data['parent_company'],
+            )
+            spot1.save()  # Salva a instância
+
+        except (AttributeError, models.NetworkResponsible.DoesNotExist):
+            messages.error(self.request, "Você não está associado a nenhuma rede, contacte o administrador da rede.")
+            return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
         return super().form_valid(form)
     
@@ -172,6 +186,11 @@ class UpdateSpotView(GroupRequiredMixin, UpdateView):
         self.object = form.save(commit=False)
         spot=self.object
         user = self.request.user
+
+        obj = self.get_object()
+        spot_network_value = obj.spot_network
+        spot.spot_network = spot_network_value
+
         self.object.created_by = user
         self.object.updated_by = user
         self.object.updated_at = timezone.now()
@@ -237,6 +256,7 @@ class UpdateSpotView(GroupRequiredMixin, UpdateView):
         address_id = obj.spot.spotaddresses_set.first().address.id
         existing_address = get_object_or_404(models.Address, id=address_id)
         context['address'] = existing_address
+        context['obj'] = obj
 
         return context   
 
@@ -625,7 +645,9 @@ class CreateResponsibleView(GroupRequiredMixin, CreateView):
     form_class = forms.ResponsibleForm
     template_name = 'protect_network/responsible_form.html'
     group_required = ['profile:protect_network_manager']
-    success_url = reverse_lazy('protect_network:network_list')
+
+    def get_success_url(self):
+        return reverse_lazy('protect_network:network_detail', kwargs={'pk': self.kwargs['pk']})
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -633,7 +655,13 @@ class CreateResponsibleView(GroupRequiredMixin, CreateView):
         kwargs['network'] = network
         return kwargs
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['network_id'] = self.kwargs['pk']
+        return context
+
   
+@include_toast
 class UpdateResponsibleView(GroupRequiredMixin, UpdateView):
     model = models.NetworkResponsible
     template_name = 'protect_network/responsible_form.html'
@@ -643,8 +671,21 @@ class UpdateResponsibleView(GroupRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['obj'] = self.get_object()
+        context['network_id'] = self.get_object().network.id
         context['function_type'] = 'update'
         return context
+    
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        net_responsible = self.object
+        obj = self.get_object()
+        responsible_value = obj.responsible
+        network_value = obj.network
+        net_responsible.responsible = responsible_value
+        net_responsible.network = network_value
+        print("form valid")
+        self.object.save()
+        return super().form_valid(form)
 
     def get_success_url(self):
         responsible = self.object
@@ -779,7 +820,7 @@ class UpdateSurveyView(GroupRequiredMixin, UpdateView):
         return reverse('protect_network:spot_detail', args=[spot_id])
     
 
-def get_responsibles(request):
-    responsibles = portal_models.Military.objects.all()
-    data = [{'id': responsible.id, 'text': f"{responsible.rank} {responsible.nickname}"} for responsible in responsibles]
-    return JsonResponse(data, safe=False)
+# def get_responsibles(request):
+#     responsibles = portal_models.Military.objects.all()
+#     data = [{'id': responsible.id, 'text': f"{responsible.rank} {responsible.nickname}"} for responsible in responsibles]
+#     return JsonResponse(data, safe=False)

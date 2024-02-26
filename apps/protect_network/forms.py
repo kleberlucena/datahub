@@ -43,7 +43,7 @@ class UpdateGeoSpotForm(forms.ModelForm):
         queryset=models.Network.objects.all(),
         label='Rede',
         widget=forms.Select(attrs={'class': 'form-control'}),
-        required=True,
+        required=False,
         empty_label='Selecione uma rede'
     )
     cnpj = forms.CharField(label='CNPJ', max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '11.111.111/1111-11'}))
@@ -104,7 +104,7 @@ class GeoSpotForm(forms.ModelForm):
         queryset=models.Network.objects.all(),
         label='Rede',
         widget=forms.Select(attrs={'class': 'form-control'}),
-        required=True,
+        required=False,
         empty_label='Selecione uma rede'
     )
     cnpj = forms.CharField(label='CNPJ', max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '11.111.111/1111-11'}))
