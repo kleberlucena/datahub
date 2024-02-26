@@ -404,7 +404,7 @@
             {% if request.user|has_group:'profile:protect_network_advanced,profile:protect_network_manager' %}
                 {% if spot_survey %}
                     <div class="card-footer">
-                        <a href="{% url 'protect_network:survey_update' spot.id %}">
+                        <a href="{% url 'protect_network:survey_update' spot_survey_id %}">
                             <button type="button" class="btn btn-outline-primary">
                                 Responder questionário
                             </button>

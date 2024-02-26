@@ -42,5 +42,5 @@ urlpatterns = [
   # path('<int:pk>/qpp/update', views.UpdateQppView.as_view(), name='qpp_update'),
   path('<int:spot_id>/survey/add', views.CreateSurveyView.as_view(), name='survey_add'),
   path('<int:pk>/survey/update', views.UpdateSurveyView.as_view(), name='survey_update'), 
-  path('get_responsibles/', views.get_responsibles, name='get_responsibles'),
+  # path('get_responsibles/', views.get_responsibles, name='get_responsibles'),
 ]

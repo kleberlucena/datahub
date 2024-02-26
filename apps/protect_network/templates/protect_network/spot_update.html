@@ -62,11 +62,17 @@
                 {% csrf_token %}
                 
                 <div class="row">
-                    <div class="col-sm-12 mt-3">
-                        {{form.spot_network|add_class:"select2bs4"|add_class:"select2-hidden-accessible"|as_crispy_field}}
+                    <div class="col-sm-12">
+                        <div class="row ml-1">
+                            <b>Rede:</b>
+                        </div>
+                        <div class="ml-1 mt-1">
+                            {{obj.spot_network|default_if_none:"Não informada"}}
+
+                        </div>
                     </div>
-                </div>
-    
+                </div>            
+                
                 <div class="row">
                     <div class="col-sm-6 mt-3">
                         {{form.name|add_class:"form-control"|as_crispy_field}}
