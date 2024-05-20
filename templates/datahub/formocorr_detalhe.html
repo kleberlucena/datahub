@@ -1,0 +1,335 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+<!-- browser title -->
+{% block title %} CCD {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+{% endblock %}
+
+<!-- context title -->
+{% block title-header %} Módulo CCD {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'base:index' %}">Início</a></li>
+  <li class="breadcrumb-item active">Formulário de Ocorrência</li>
+{% endblock %}
+<!-- main container -->
+{% block content %}
+<!-- CONTEÚDO DO FORMULÁRIO  -->
+
+
+<section class="content">
+	<div class="card">
+		<div class="card-header">
+			<h3 class="text-primary">Detalhes da Ocorrência</h3>
+			
+		</div>
+
+		<div class="card-body">
+			<div class="row">
+				<div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
+
+					<!-- quatro quadros -->
+
+					<div class="row">
+						<div class="col-lg-3 col-6">
+							<div class="small-box bg-info">
+								<div class="inner">
+									<p>Número do Registro-PM:</p>
+									<h6 >PM2022.1231.2359 00501</h6>
+									
+								</div>
+								
+								
+							</div>
+						</div>
+					
+						<div class="col-lg-3 col-6">
+							<div class="small-box bg-success">
+								<div class="inner">
+									<p>Natureza:</p>
+									<h6>Homicídio Doloso</h6>
+								</div>
+								
+							
+							</div>
+						</div>
+					
+						<div class="col-lg-3 col-6">
+							<div class="small-box bg-warning">
+								<div class="inner">
+									<p>Data/Hora:</p>
+									<h6>31/12/2022 23:59</h6>
+								</div>
+								
+							</div>
+						</div>
+					
+						<div class="col-lg-3 col-6">
+							<div class="small-box bg-danger">
+								<div class="inner">
+									<p>OPM:</p>
+									<h6>10ª AISP/10º BPM - QPP 4</h6>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+					
+					<!-- fim dos quatro quadros-->
+					<div class="row">
+						<div class="col-12">
+							
+							
+							<div class="post">
+								<div class="user-block">
+									
+									<h3 class="text-primary">Descrição do fato</h3>
+									
+								</div>
+
+								<p>
+									A GUARNIÇÃO ESTEVE NO LOCAL E FALOU COM KATYANNE ROBERTA PIMENTEL CHAVES SOLICITANTE, INFORMOU QUE FOI AGREDIDA POR UMA PESSOA DE NOME THAIS DA ROCHA ARAUJO. AMBAS FORAM CONDUZIDAS E APRESENTADAS A AUTORIDADE POLICIAL PARA PROVIDENCIAS CABÍVEIS AO FATO</p>
+								<p>
+									<a href="#" class="link-black text-sm"><i class="fas fa-link mr-1"></i> Demo File 1 v1</a>
+								</p>
+							</div>
+						</div>
+					</div>
+
+<!-- informações da correncia  -->
+
+<div class="row mt-4">
+	<nav class="w-100">
+	  <div class="nav nav-tabs" id="product-tab" role="tablist">
+		<a class="nav-item nav-link" id="product-desc-tab" data-toggle="tab" href="#product-desc" role="tab" aria-controls="product-desc" aria-selected="false">Suspeitos</a>
+		<a class="nav-item nav-link active" id="product-comments-tab" data-toggle="tab" href="#product-comments" role="tab" aria-controls="product-comments" aria-selected="true">Vítimas</a>
+		<a class="nav-item nav-link" id="product-rating-tab" data-toggle="tab" href="#product-rating" role="tab" aria-controls="product-rating" aria-selected="false">Objetos</a>
+	  </div>
+	</nav>
+	<div class="tab-content p-3" id="nav-tabContent">
+	  <div class="tab-pane fade" id="product-desc" role="tabpanel" aria-labelledby="product-desc-tab"> 
+			<table class="table table-striped projects">
+				<thead>
+				<tr>
+					
+					<th > Nome </th>
+					<th > Data de nasc. </th>
+					<th> CPF</th>
+					
+					<th ></th>
+				</tr>
+				</thead>
+				<tbody>
+					<tr>
+						
+						<td>
+						<a> José de Arimatéia</a>
+						
+						</td>
+						<td>
+						<ul class="list-inline">
+							07/04/1980
+						</ul>
+						</td>
+						
+						<td>
+							025.125.521-89
+						</td>
+						<td class="project-actions text-right">
+						
+						<a class="btn btn-info btn-sm" href="#">
+							<i class="fas fa-pencil-alt"></i> Detalhes </a>
+						
+						</td>
+					</tr>
+				
+				</tbody>
+		  	</table>
+	  </div>
+	  <div class="tab-pane fade active show" id="product-comments" role="tabpanel" aria-labelledby="product-comments-tab">
+		<table class="table table-striped projects">
+			<thead>
+			<tr>
+				
+				<th > Nome </th>
+				<th > Data de nasc. </th>
+				<th> CPF</th>
+				
+				<th ></th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					
+					<td>
+					<a> Maria Juberlita</a>
+					
+					</td>
+					<td>
+					<ul class="list-inline">
+						07/04/1980
+					</ul>
+					</td>
+					
+					<td>
+						025.125.521-89
+					</td>
+					<td class="project-actions text-right">
+					
+					<a class="btn btn-info btn-sm" href="#">
+						<i class="fas fa-pencil-alt"></i> Detalhes </a>
+					
+					</td>
+				</tr>
+			
+			</tbody>
+		  </table>
+	  </div>
+	  <div class="tab-pane fade" id="product-rating" role="tabpanel" aria-labelledby="product-rating-tab">
+		<table class="table table-striped projects">
+			<thead>
+			<tr>
+				
+				<th > Tipo </th>
+				<th > Descrição </th>
+				<th> QTD</th>
+				
+				<th ></th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr>
+					
+					<td>
+					<a> Drogas</a>
+					
+					</td>
+					<td>
+					<ul class="list-inline">
+						Cocaína
+					</ul>
+					</td>
+					
+					<td>
+						10 Kg
+					</td>
+					<td class="project-actions text-right">
+					
+					<a class="btn btn-info btn-sm" href="#">
+						<i class="fas fa-pencil-alt"></i> Detalhes </a>
+					
+					</td>
+				</tr>
+
+				<tr>
+					
+					<td>
+					<a> Drogas</a>
+					
+					</td>
+					<td>
+					<ul class="list-inline">
+						Maconha
+					</ul>
+					</td>
+					
+					<td>
+						175 Kg
+					</td>
+					<td class="project-actions text-right">
+					
+					<a class="btn btn-info btn-sm" href="#">
+						<i class="fas fa-pencil-alt"></i> Detalhes </a>
+					
+					</td>
+				</tr>
+
+				<tr>
+					
+					<td>
+					<a> Armas</a>
+					
+					</td>
+					<td>
+					<ul class="list-inline">
+						Pistola
+					</ul>
+					</td>
+					
+					<td>
+						01
+					</td>
+					<td class="project-actions text-right">
+					
+					<a class="btn btn-info btn-sm" href="#">
+						<i class="fas fa-pencil-alt"></i> Detalhes </a>
+					
+					</td>
+				</tr>
+			
+			</tbody>
+		  </table>
+	  </div>
+	</div>
+  </div>
+
+<!-- FIM informações da correncia  -->
+
+
+
+				</div>
+				<div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
+					<h3 class="text-primary">Local da ocorrência</h3>
+
+
+					
+				<!-- inicio mapa !-->	
+					<div class="card bg-gradient-primary" style="position: relative; left: 0px; top: 0px;">
+						<div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
+							
+					
+							<div class="card-tools">
+								
+								<button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
+									<i class="fas fa-minus"></i>
+								</button>
+							</div>
+						</div>
+						
+						<div class="card-body" style="display: block;">
+							<div id="world-map" style="height: 250px; width: 100%; position: relative; overflow: hidden; background-color: transparent;">
+								<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19387.920281800434!2d-34.84379198770783!3d-7.035376270433207!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7acdf5d329d9c9d%3A0xf6008c1954b201c9!2sComando%20Geral%20da%20Pol%C3%ADcia%20Militar%20da%20Para%C3%ADba%20(PMPB)!5e0!3m2!1spt-BR!2sbr!4v1701956999485!5m2!1spt-BR!2sbr" width="400" height="250" style="border:0;" allowfullscreen="" loading="lazy" ></iframe>
+								
+							</div>
+						</div>
+					</div>
+				<!-- fim mapa !-->	
+					
+					<div class="text-center mt-5 mb-3">
+						<a href="#" class="btn btn-sm btn-primary">Editar ocorrência</a>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+
+<!-- FIM DO CONTEÚDO DO FORMULÁRIO  -->
+
+
+{% endblock %}
+
+<!-- javascripts -->
+{% block js %}{% endblock %}

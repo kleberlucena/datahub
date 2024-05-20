@@ -1,0 +1,154 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Detalhes da Ocorrência{% endblock %}
+
+{% block content %}
+<div class="container mt-3 mb-3">
+    <div class="card mb-4">
+        <div class="card-header">
+            <h1>Detalhes da Ocorrência - {{ incident.CCD_key }}</h1>
+            <div class="d-flex justify-content-end">
+                <div>
+                    <a href="{% url 'datahub:incident_edit' incident.CCD_key %}" class="btn btn-primary">Editar</a>
+                    <form action="{% url 'datahub:incident_delete' incident.CCD_key %}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir esta ocorrência?');" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Excluir</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="map" style="height: 400px; width: 100%;"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Informações Básicas</h2>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Data da Ocorrência: {{ incident.occurrence_date }}</li>
+            <li class="list-group-item">Endereço: {{ local.endereco }}</li>
+            <li class="list-group-item">Região DRI: {{ incident.dri_region.name }}</li>
+            <li class="list-group-item">Área NI: {{ incident.ni_area.name }}</li>
+            <li class="list-group-item">NI da Equipe de Prisão: {% for ni in incident.ostensive_arresting.all %}{{ ni.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</li>
+            <li class="list-group-item">NI de Apoio: {% for ni in incident.supporting_ni.all %}{{ ni.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</li>
+            <li class="list-group-item">Natureza da Ocorrência: {{ incident.occurrence_nature.name }}</li>
+        </ul>
+    </div>
+
+    {% if local %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Localização</h2>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Latitude: {{ local.latitude }}</li>
+            <li class="list-group-item">Longitude: {{ local.longitude }}</li>
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if guns %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Armas e Munições</h2>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Revólver: {{ guns.guns_revolver }}</li>
+            <li class="list-group-item">Pistola: {{ guns.guns_pistol }}</li>
+            <li class="list-group-item">Pistolão: {{ guns.guns_bpistol }}</li>
+            <li class="list-group-item">Espingarda: {{ guns.guns_shotgun }}</li>
+            <li class="list-group-item">Carabina: {{ guns.guns_carbine }}</li>
+            <li class="list-group-item">Metralhadora: {{ guns.guns_mg }}</li>
+            <li class="list-group-item">Rifle: {{ guns.guns_rifle }}</li>
+            <li class="list-group-item">Explosivo: {{ guns.guns_explosive }}</li>
+            <li class="list-group-item">Cassetete: {{ guns.guns_clump }}</li>
+            <li class="list-group-item">Arma Artesanal: {{ guns.guns_handcrafted }}</li>
+            <li class="list-group-item">Simulacro: {{ guns.guns_simulacrum }}</li>
+            <li class="list-group-item">Munição: {{ guns.guns_ammunition }}</li>
+            <li class="list-group-item">Colete Balístico: {{ guns.guns_bodyarmor }}</li>
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if vehicles %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Veículos</h2>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Carro Recuperado: {{ vehicles.recovered_car }}</li>
+            <li class="list-group-item">Moto Recuperada: {{ vehicles.recovered_moto }}</li>
+            <li class="list-group-item">Pick-Up Recuperada: {{ vehicles.recovered_pickup }}</li>
+            <li class="list-group-item">Caminhão Recuperado: {{ vehicles.recovered_truck }}</li>
+            <li class="list-group-item">Outros Veículos Recuperados: {{ vehicles.recovered_other }}</li>
+            <li class="list-group-item">Carro Apreendido Administrativamente: {{ vehicles.administratively_seized_car }}</li>
+            <li class="list-group-item">Moto Apreendida Administrativamente: {{ vehicles.administratively_seized_moto }}</li>
+            <li class="list-group-item">Pick-Up Apreendida Administrativamente: {{ vehicles.administratively_seized_pickup }}</li>
+            <li class="list-group-item">Caminhão Apreendido Administrativamente: {{ vehicles.administratively_seized_truck }}</li>
+            <li class="list-group-item">Outros Apreendidos Administrativamente: {{ vehicles.administratively_seized_other }}</li>
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if drug %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Drogas</h2>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Artane: {{ drug.artane }}</li>
+            <li class="list-group-item">LSD: {{ drug.lsd }}</li>
+            <li class="list-group-item">Ecstasy: {{ drug.ecstasy }}</li>
+            <li class="list-group-item">Loló: {{ drug.lolo }}</li>
+            <li class="list-group-item">Crack: {{ drug.crack }}</li>
+            <li class="list-group-item">Haxixe: {{ drug.haxixe }}</li>
+            <li class="list-group-item">THC: {{ drug.tch }}</li>
+            <li class="list-group-item">Maconha: {{ drug.marihuana }}</li>
+            <li class="list-group-item">Skank: {{ drug.skank }}</li>
+            <li class="list-group-item">Cocaína: {{ drug.cocaine }}</li>
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if money %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Dinheiro</h2>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Valor em Dinheiro: {{ money.amount|default:"N/A"}}</li>
+        </ul>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<script>
+  function initMap() {
+      var latitude = parseFloat('{{ local.latitude|default:"0" }}'.replace(',', '.'));
+      var longitude = parseFloat('{{ local.longitude|default:"0" }}'.replace(',', '.'));
+      var mapOptions = {
+          center: { lat: latitude, lng: longitude },
+          zoom: 15
+      };
+      var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+      var marker = new google.maps.Marker({
+          position: { lat: latitude, lng: longitude },
+          map: map,
+          title: 'Local da Ocorrência'
+      });
+  }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADtX7byUDoLd6mnD4fuPB7GIe6IsJW6iE&libraries=places&callback=initMap" async defer></script>
+{% endblock %}
+    
+

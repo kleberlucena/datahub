@@ -1,0 +1,166 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- browser title -->
+{% block title %} CCD {% endblock %}
+
+<!-- styles -->
+
+{% block style_sheet %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <style>
+    /* Estilo para a linha azul acima do card */
+    
+    .card-header-top-line {
+      border-top: 3px solid #007bff;
+      
+    }
+    /* Estilo para o fundo cinza do breadcrumb */
+    .breadcrumb-bg {
+      background-color: #f4f6f9;
+      padding: 0.75rem 1rem;
+    }
+    /* Estilo para a caixa de pesquisa */
+    .search-box {
+      float: right;
+    }
+    .table td, .table th {
+      border: 1px solid #dee2e6; /* Cor da borda como exemplo */
+      
+    }
+  </style>
+{% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <div class="breadcrumb-bg">
+   
+
+  </div>
+{% endblock %}
+
+<!-- chamar a mensagem do JS e lá em baixo nos scripts referenciar que são TOASTR -->
+{% for message in messages %}
+<script>
+  {% for message in messages %}
+  toastr.options = {
+      "closeButton": true,
+      "progressBar": true,
+      "positionClass": "toast-bottom-right", // Por exemplo, você pode querer especificar a posição
+  };
+  {% if message.tags %}
+      toastr["{{ message.tags }}"]("{{ message }}");
+  {% else %}
+      toastr["info"]("Editar ocorrência - {{ incident.CCD_key }}");
+  {% endif %}
+  {% endfor %}
+</script>
+{% endfor %}
+
+<!-- main container -->
+{% block content %}
+<div class="card card-header-top-line">
+  <div class="card-header">
+    <h3 class="card-title">Ocorrências cadastradas</h3>
+    <div class="card-tools">
+      <!-- Botões de ações do card aqui, se necessário -->
+    </div>
+  </div>
+  <div class="card-body">
+    <table class="table table-striped projects">
+      <thead>
+        <tr>
+          <th >
+          Código Ocorrência PM
+          </th>
+
+          <th >
+          Data
+          </th>
+
+          <th >
+          Narureza
+          </th>
+
+          <th style="text-align:center;">
+          E-mail
+          </th>
+
+          <th style="text-align:left;">
+            Ações
+          </th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Linhas de resultado -->
+       
+
+        {% for incident in incidents %}
+            <tr>
+                <td><a href="{% url 'datahub:incident_detail' incident.CCD_key %}">{{ incident.CCD_key }}</a></td>
+                
+                <td>{{ incident.occurrence_date }}</td>
+                <td>{{ incident.occurrence_nature }}</td>
+                <td>{{ incident.email_address }}</td>
+                <td>
+                  <a href="{% url 'datahub:incident_detail' incident.CCD_key %}" class="btn btn-info">Exibir</a>
+                  <a href="{% url 'datahub:incident_edit' incident.CCD_key %}" class="btn btn-primary">Editar</a>
+                  <form action="{% url 'datahub:incident_delete' incident.CCD_key %}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir esta ocorrência?');" style="display: inline;">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger">Excluir</button>
+                  </form>  
+                 </td>
+            </tr>
+        {% endfor %}
+
+        
+        <!-- FIM das Linhas de resultado -->
+      </tbody>
+    </table>
+
+  </div>
+  <!-- Botão para adicionar nova entidade -->
+  <div class="card-footer">
+    <a href="{% url 'datahub:create_incidentView' %}" class="btn btn-success btn-sm">Cadastrar nova ocorrência</a>
+  </div>
+</div>
+{% endblock %}
+
+<!-- javascripts -->
+<!-- javascripts -->
+{% block js %}
+<script src="{% static 'adminlte-3.1.0/plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+
+<script>
+$(document).ready(function () {
+    var table = $('.table').DataTable({
+        'responsive': true,
+        'lengthChange': true,
+        'autoWidth': false,
+        'buttons': ['copy', 'csv', 'excel', 'pdf', 'print'],
+        'order': [[0, 'desc']], 
+        'language': {
+            'url': '//cdn.datatables.net/plug-ins/1.10.21/i18n/Portuguese-Brasil.json'
+        }
+    });
+
+    table.buttons().container().appendTo('.card-tools');
+});
+</script>
+{% endblock %}

@@ -1,0 +1,318 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+<!-- browser title -->
+{% block title %} CCD {% endblock %}
+
+<!-- styles -->
+
+{% block style_sheet %}
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+  <style>
+    /* Estilo para a linha azul acima do card */
+    
+    .card-header-top-line {
+      border-top: 3px solid #007bff;
+      
+    }
+    /* Estilo para o fundo cinza do breadcrumb */
+    .breadcrumb-bg {
+      background-color: #f4f6f9;
+      padding: 0.75rem 1rem;
+    }
+    /* Estilo para a caixa de pesquisa */
+    .search-box {
+      float: right;
+    }
+    .table td, .table th {
+      border: 1px solid #dee2e6; /* Cor da borda como exemplo */
+      
+    }
+  </style>
+{% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <div class="breadcrumb-bg">
+   
+
+  </div>
+{% endblock %}
+
+<!-- chamar a mensagem do JS e lá em baixo nos scripts referenciar que são TOASTR -->
+{% for message in messages %}
+<script>
+  {% for message in messages %}
+  toastr.options = {
+      "closeButton": true,
+      "progressBar": true,
+      "positionClass": "toast-bottom-right", // Por exemplo, você pode querer especificar a posição
+  };
+  {% if message.tags %}
+      toastr["{{ message.tags }}"]("{{ message }}");
+  {% else %}
+      toastr["info"]("Editar ocorrência - {{ incident.CCD_key }}");
+  {% endif %}
+  {% endfor %}
+</script>
+{% endfor %}
+
+<!-- main container -->
+{% block content %}
+
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2"></div>
+  </div>
+</div>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+          <div class="inner">
+            <h3>7053</h3>
+            <p>Total de inidcações</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-bag"></i>
+          </div>
+          <a href="#" class="small-box-footer">Detalhes <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>5184</sup>
+            </h3>
+            <p>Total de presos por MJ</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-stats-bars"></i>
+          </div>
+          <a href="#" class="small-box-footer">Detalhes <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>172</h3>
+            <p>Apreendidos por MDBA</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-person-add"></i>
+          </div>
+          <a href="#" class="small-box-footer">Detalhes <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+          <div class="inner">
+            <h3>65</h3>
+            <p>Indicações com suspeita validada</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-pie-graph"></i>
+          </div>
+          <a href="#" class="small-box-footer">Detalhes <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <section class="col-lg-7 connectedSortable ui-sortable">
+        <div class="card">
+          <div class="card-header ui-sortable-handle" style="cursor: move;">
+            <h3 class="card-title">
+              <i class="fas fa-chart-pie mr-1"></i> Participação em ocorrência por natureza
+            </h3>
+            <div class="card-tools">
+              <ul class="nav nav-pills ml-auto">
+                <li class="nav-item">
+                  <a class="nav-link" href="#revenue-chart" data-toggle="tab">Anual</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link active" href="#sales-chart" data-toggle="tab">Mensal</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="tab-content p-0">
+              <div class="chart tab-pane" id="revenue-chart" style="position: relative; height: 300px;">
+                <div class="chartjs-size-monitor">
+                  <div class="chartjs-size-monitor-expand">
+                    <div class=""></div>
+                  </div>
+                  <div class="chartjs-size-monitor-shrink">
+                    <div class=""></div>
+                  </div>
+                </div>
+                <canvas id="revenue-chart-canvas" style="height: 300px; display: block; width: 676px;" width="845" class="chartjs-render-monitor"></canvas>
+              </div>
+              <div class="chart tab-pane active" id="sales-chart" style="position: relative; height: 300px;">
+                <div class="chartjs-size-monitor">
+                  <div class="chartjs-size-monitor-expand">
+                    <div class=""></div>
+                  </div>
+                  <div class="chartjs-size-monitor-shrink">
+                    <div class=""></div>
+                  </div>
+                </div>
+                <canvas id="sales-chart-canvas" height="375" style="height: 300px; display: block; width: 470px;" width="587" class="chartjs-render-monitor"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        
+      </section>
+      <section class="col-lg-5 connectedSortable ui-sortable">
+        <div class="card bg-gradient-primary">
+          <div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
+            <h3 class="card-title">
+              <i class="fas fa-map-marker-alt mr-1"></i>Mapa de Distribuição Espacial de Eventos
+            </h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-primary btn-sm daterange" title="Date range">
+                <i class="far fa-calendar-alt"></i>
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+           
+          </div>
+          <div class="card-footer bg-transparent">
+            <div class="row">
+              <div class="col-4 text-center">
+                <div id="sparkline-1">
+                  <canvas width="100" height="62" style="width: 80px; height: 50px;"></canvas>
+                </div>
+                <div class="text-white">Visitors</div>
+              </div>
+              <div class="col-4 text-center">
+                <div id="sparkline-2">
+                  <canvas width="100" height="62" style="width: 80px; height: 50px;"></canvas>
+                </div>
+                <div class="text-white">Online</div>
+              </div>
+              <div class="col-4 text-center">
+                <div id="sparkline-3">
+                  <canvas width="100" height="62" style="width: 80px; height: 50px;"></canvas>
+                </div>
+                <div class="text-white">Sales</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        
+      </section>
+    </div>
+  </div>
+</section>
+
+  <section class="col-lg-12 connectedSortable ui-sortable">
+   
+   
+    <div class="card card-header-top-line">
+      <div class="card-header">
+        <h3 class="card-title">Ocorrências cadastradas</h3>
+        <div class="card-tools">
+          <!-- Botões de ações do card aqui, se necessário -->
+        </div>
+      </div>
+      <div class="card-body">
+        
+        <table class="table table-striped projects">
+          <thead>
+            <tr>
+              <th >
+              Código Ocorrência PM
+              </th>
+    
+              <th >
+              Data
+              </th>
+    
+              <th >
+              Narureza
+              </th>
+    
+              <th style="text-align:center;">
+              E-mail
+              </th>
+    
+              <th style="text-align:left;">
+                Ações
+              </th>
+    
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Linhas de resultado -->
+           
+    
+            {% for incident in incidents %}
+            <tr>
+                <td><a href="{% url 'datahub:incident_edit' incident.CCD_key %}">{{ incident.CCD_key }}</a></td>
+                
+                <td>{{ incident.occurrence_date }}</td>
+                <td>{{ incident.occurrence_nature }}</td>
+                <td>{{ incident.email_address }}</td>
+                <td>
+                  <a href="{% url 'datahub:incident_detail' incident.CCD_key %}" class="btn btn-info">Exibir</a>
+                  <a href="{% url 'datahub:incident_edit' incident.CCD_key %}" class="btn btn-primary">Editar</a>
+                  <form action="{% url 'datahub:incident_delete' incident.CCD_key %}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir esta ocorrência?');" style="display: inline;">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger">Excluir</button>
+                  </form>  
+                 </td>
+            </tr>
+            {% endfor %}
+            
+            <!-- FIM das Linhas de resultado -->
+          </tbody>
+        </table>
+    
+      </div>
+      <!-- Botão para adicionar nova entidade -->
+      <div class="card-footer">
+        <a href="{% url 'datahub:create_incidentView' %}" class="btn btn-success btn-sm">Cadastrar nova ocorrência</a>
+      </div>
+    </div>    
+  </section>
+
+        
+
+{% endblock %}
+
+<!-- javascripts -->
+{% block js %}
+
+<script>
+  $(document).ready(function () {
+      var table = $('.table').DataTable({
+          'responsive': true,
+          'lengthChange': true,
+          'autoWidth': false,
+          'buttons': ['copy', 'csv', 'excel', 'pdf', 'print'],
+          'order': [[0, 'desc']], 
+          'language': {
+              'url': '//cdn.datatables.net/plug-ins/1.10.21/i18n/Portuguese-Brasil.json'
+          }
+      });
+  
+      table.buttons().container().appendTo('.card-tools');
+  });
+</script>
+{% endblock %}

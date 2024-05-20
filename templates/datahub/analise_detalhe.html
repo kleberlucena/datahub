@@ -1,0 +1,307 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+<!-- browser title -->
+{% block title %} CCD {% endblock %}
+
+<!-- styles -->
+{% block style_sheet %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2/css/select2.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+{% endblock %}
+
+<!-- context title -->
+{% block title-header %} Módulo CCD {% endblock %}
+
+<!-- breadcrumb -->
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'base:index' %}">Início</a></li>
+  <li class="breadcrumb-item active">Detalhes da Análise da Vítima </li>
+{% endblock %}
+<!-- main container -->
+{% block content %}
+<!-- CONTEÚDO DO FORMULÁRIO  -->
+
+
+<section class="content">
+	<div class="card">
+		<div class="card-header">
+			<h3 class="text-primary">Detalhes da Análise da Vítima</h3>
+			<div class="card-tools">
+				<button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+					<i class="fas fa-minus"></i>
+				</button>
+				<button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+					<i class="fas fa-times"></i>
+				</button>
+			</div>
+		</div>
+
+		<div class="card-body">
+			
+				
+
+					<!-- quatro quadros -->
+
+					<div class="row">
+						
+						<div class="col-2">
+							<div class="small-box bg-info">
+								<div class="inner">
+									<p>Registro CCD:</p>
+									<h6 >CCD-00501</h6>
+									
+								</div>
+								
+								
+							</div>
+						</div>
+
+						<div class="col-2">
+							<div class="small-box bg-warning">
+								<div class="inner">
+									<p>Data/Hora:</p>
+									<h6>31/12/2022 23:59</h6>
+								</div>
+								
+							</div>
+						</div>
+					
+						<div class="col-2">
+							<div class="small-box bg-success">
+								<div class="inner">
+									<p>Natureza:</p>
+									
+									<h6>
+										<div class="form-group">
+											<select id="inputStatus" class="form-control custom-select">
+												<option >Homicídio</option>
+												<option>Tráfico</option>
+												<option>Porte de arma de fogo</option>
+											
+											</select>
+									 	</div>
+									</h6>
+								</div>
+								
+							
+							</div>
+						</div>
+											
+						<div class=" col-2">
+							<div class="small-box bg-danger">
+								<div class="inner">
+									<p>Cidade/Bairro</p>
+									<h6>
+										<div class="form-group">
+											<select id="inputStatus" class="form-control custom-select">
+												<option >Bancários</option>
+												<option>Mangabeira</option>
+												<option>Jaguaribe</option>
+											
+											</select>
+									 	</div>
+									</h6>
+								</div>
+								
+							</div>
+						</div>
+						
+						<div class="col-2">
+							<div class="small-box bg-warning">
+								<div class="inner">
+									<p>AISP:</p>
+									<h6>
+										<div class="form-group">
+											<select id="inputStatus" class="form-control custom-select">
+												<option >1ª AISP</option>
+												<option>2ª AISP</option>
+												<option>3ª AISP</option>
+											
+											</select>
+									 	</div>
+									</h6>
+								</div>
+								
+							</div>
+						</div>
+
+						<div class="col-2">
+							<div class="small-box bg-success">
+								<div class="inner">
+									<p>NI:</p>
+									<h6>
+										<div class="form-group">
+											<select id="inputStatus" class="form-control custom-select">
+												<option >NI 5</option>
+												<option>NI 3</option>
+												<option>NI 1</option>
+											
+											</select>
+									 	</div>
+									</h6>
+								</div>
+								
+							
+							</div>
+						</div>
+
+
+					</div>
+					
+					<!-- fim dos quatro quadros-->
+
+
+					<!-- Início formulário de edição -->
+
+					<div class="col-md-12">
+						<div class="card card-primary">
+						   
+						   <div class="card-body">
+							  <div class="form-group">
+								 <label for="inputName">Nome da Vítima</label>
+								 <input type="text" id="inputName" class="form-control" value="AROMÁRIO DA SILVA LINS">
+							  </div>
+							  <div class="form-group">
+								 <label for="inputDescription">Idade</label>
+								 <input id="inputName" class="form-control" style="width: 50px;" value="52">
+							   </div>
+							  <div class="form-group">
+								 <label for="inputStatus">Sexo</label>
+								 <select id="inputStatus" class="form-control custom-select">
+									
+									<option>Masculino</option>
+									<option>Feminino</option>
+								
+								 </select>
+							  </div>
+							  <div class="form-group">
+								 <label for="inputClientCompany">Client Company</label>
+								 <input type="text" id="inputClientCompany" class="form-control" value="Deveint Inc">
+							  </div>
+							  <div class="form-group">
+								 <label for="inputProjectLeader">Project Leader</label>
+								 <input type="text" id="inputProjectLeader" class="form-control" value="Tony Chicken">
+							  </div>
+
+							  <!-- inicio check box -->
+							  <div class="custom-control custom-checkbox">
+								<input class="custom-control-input custom-control-input-danger" type="checkbox" id="" checked="">
+								<label for="customCheckbox4" class="custom-control-label">
+									Confronto policial			
+								</label>
+							  </div>
+
+							  <div class="custom-control custom-checkbox">
+								<input class="custom-control-input custom-control-input-danger" type="checkbox" id="" checked="">
+								<label for="customCheckbox4" class="custom-control-label">
+									Autor ocorrência CIOP			
+								</label>
+							  </div>
+
+							  <div class="custom-control custom-checkbox">
+								<input class="custom-control-input custom-control-input-danger" type="checkbox" id="customCheckbox4" checked="">
+								<label for="customCheckbox4" class="custom-control-label">
+									Ex. presidiário(a)			
+								</label>
+							  </div>
+
+							  <div class="custom-control custom-checkbox">
+								<input class="custom-control-input custom-control-input-danger" type="checkbox" id="customCheckbox4" checked="">
+								<label for="customCheckbox4" class="custom-control-label">
+									Mandado de prisão			
+								</label>
+							  </div>
+
+							  <div class="custom-control custom-checkbox">
+								<input class="custom-control-input custom-control-input-danger" type="checkbox" id="customCheckbox4" checked="">
+								<label for="customCheckbox4" class="custom-control-label">
+									Processo			
+								</label>
+							  </div>
+
+							  <div class="custom-control custom-checkbox">
+								<input class="custom-control-input custom-control-input-danger" type="checkbox" id="customCheckbox4" checked="">
+								<label for="customCheckbox4" class="custom-control-label">
+									Informe			
+								</label>
+							  </div>
+
+							  <div class="custom-control custom-checkbox">
+								<input class="custom-control-input custom-control-input-danger" type="checkbox" id="customCheckbox4" checked="">
+								<label for="customCheckbox4" class="custom-control-label">
+									Passional			
+								</label>
+							  </div>
+
+							  <div class="custom-control custom-checkbox">
+								<input class="custom-control-input custom-control-input-danger" type="checkbox" id="customCheckbox4" checked="">
+								<label for="customCheckbox4" class="custom-control-label">
+									Mandado de prisão			
+								</label>
+							  </div>
+
+							  <div class="custom-control custom-checkbox">
+								<input class="custom-control-input custom-control-input-danger" type="checkbox" id="customCheckbox4" checked="">
+								<label for="customCheckbox4" class="custom-control-label">
+									Nada constatado			
+								</label>
+							  </div>
+
+							  <div class="custom-control custom-checkbox">
+								<input class="custom-control-input custom-control-input-danger" type="checkbox" id="customCheckbox4" checked="">
+								<label for="customCheckbox4" class="custom-control-label">
+									Ignorado		
+								</label>
+							  </div>
+							  <!-- fim check box -->
+
+						   
+						</div>
+
+
+
+
+						</div>
+
+						
+
+
+					 </div>
+
+					 
+
+
+					<!-- Início formulário de edição -->
+					
+					<div class="text-center mt-5 mb-3">
+						<a href="#" class="btn btn-sm btn-primary">Salvar</a>
+						
+					</div>
+
+
+				
+				
+
+					
+				
+					
+					
+				
+			
+		</div>
+	</div>
+</section>
+
+
+
+<!-- FIM DO CONTEÚDO DO FORMULÁRIO  -->
+
+
+{% endblock %}
+
+<!-- javascripts -->
+{% block js %}{% endblock %}

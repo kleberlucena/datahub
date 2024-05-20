@@ -1,0 +1,181 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}CCD{% endblock %}
+
+{% block style_sheet %}
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'adminlte-3.1.0/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css">
+<style>
+  .nav-tabs .nav-link { border-radius: 0; }
+  #map { height: 400px; }
+  #pac-input { margin-top: 20px; width: 300px; }
+  .coordinate-input { margin-top: 10px; width: 150px; }
+</style>
+{% endblock %}
+
+{% block title-header %}Módulo CCD{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'base:index' %}">Início</a></li>
+<li class="breadcrumb-item active">Cadastro de Ocorrência</li>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-lg-12 col-md-10 mx-auto">
+      <div class="card card-primary card-tabs">
+        <h3 style="margin: 10px;" class="card-title">Cadastro de Ocorrência</h3>
+        <div class="card-header p-0 pt-1">
+          <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+            <li class="nav-item"><a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">Informações Básicas</a></li>
+            <li class="nav-item"><a class="nav-link" id="custom-tabs-one-local-tab" data-toggle="pill" href="#custom-tabs-one-local" role="tab" aria-controls="custom-tabs-one-local" aria-selected="false">Localização</a></li>
+            <li class="nav-item"><a class="nav-link" id="custom-tabs-one-guns-tab" data-toggle="pill" href="#custom-tabs-one-guns" role="tab" aria-controls="custom-tabs-one-guns" aria-selected="false">Armas e Munições</a></li>
+            <li class="nav-item"><a class="nav-link" id="custom-tabs-one-vehicles-tab" data-toggle="pill" href="#custom-tabs-one-vehicles" role="tab" aria-controls="custom-tabs-one-vehicles" aria-selected="false">Veículos</a></li>
+            <li class="nav-item"><a class="nav-link" id="custom-tabs-one-drug-money-tab" data-toggle="pill" href="#custom-tabs-one-drug-money" role="tab" aria-controls="custom-tabs-one-drug-money" aria-selected="false">Drogas e Dinheiro</a></li>
+          </ul>
+        </div>
+        <div class="card-body">
+          <form method="post" action="{% url 'datahub:create_incidentView' %}">
+            {% csrf_token %}
+            <div class="container">
+              {% if messages %}
+              <div class="container mt-2">
+                  {% for message in messages %}
+                  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                      {{ message }}
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  {% endfor %}
+              </div>
+              {% endif %}
+              <!-- Outros componentes da página -->
+            </div>
+            <div class="tab-content" id="custom-tabs-one-tabContent">
+              <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
+                {{ form.as_p }}
+              </div>
+
+              <div class="tab-pane fade" id="custom-tabs-one-local" role="tabpanel" aria-labelledby="custom-tabs-one-local-tab">
+                <input type="text" id="pac-input" name="endereco" class="controls" placeholder="Enter a location">
+                <input type="text" id="id_latitude" name="latitude" class="form-control coordinate-input" required>
+                <input type="text" id="id_longitude" name="longitude" class="form-control coordinate-input" required>
+                <button class="btn btn-primary" type="button" id="clearCoordinates">Limpar</button>
+                <div id="map"></div>
+                <!-- ÓTIMO PARA IDENTIFICAR OS ERROS-->
+                {% if local_form.errors %}
+                    <div class="alert alert-danger">
+                   {{ local_form.errors }}
+                    </div>
+                {% endif %}
+              </div>
+
+              <div class="tab-pane fade" id="custom-tabs-one-guns" role="tabpanel" aria-labelledby="custom-tabs-one-guns-tab">
+
+                <fieldset>
+                  <legend>Armas</legend>
+                {{ guns_form.as_p }}
+                </fieldset>
+              </div>
+
+              <div class="tab-pane fade" id="custom-tabs-one-vehicles" role="tabpanel" aria-labelledby="custom-tabs-one-vehicles-tab">
+
+              <fieldset>
+              <legend>Veículos</legend>
+              {{ vehicles_form.as_p }}
+                  
+              </fieldset>
+             </div>
+
+              <div class="tab-pane fade" id="custom-tabs-one-drug-money" role="tabpanel" aria-labelledby="custom-tabs-one-drug-money-tab">
+
+                <fieldset>
+                    <legend>Drogas</legend>
+                    {{ drug_form.as_p }}  
+                </fieldset>
+
+                <fieldset>
+                    <legend>Dinheiro</legend>
+                    {{ money_form.as_p }} 
+                </fieldset>
+
+              </div>
+
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar ocorrência</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% if messages %}
+<script type="text/javascript">
+$(document).ready(function() {
+    {% for message in messages %}
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+    toastr.{{ message.tags }}("{{ message }}");
+    {% endfor %}
+});
+</script>
+{% endif %}
+{% endblock %}
+
+<!-- javascripts -->
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<!-- script toster -->
+<script>
+  function initMap() {
+      var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 8
+      });
+      var input = document.getElementById('pac-input');
+      var autocomplete = new google.maps.places.Autocomplete(input);
+      autocomplete.bindTo('bounds', map);
+
+      autocomplete.addListener('place_changed', function() {
+          var place = autocomplete.getPlace();
+          if (!place.geometry) {
+              window.alert("No details available for input: '" + place.name + "'");
+              return;
+          }
+
+          // Atualiza os campos de latitude e longitude
+          document.getElementById('id_latitude').value = place.geometry.location.lat();
+          document.getElementById('id_longitude').value = place.geometry.location.lng();
+      });
+
+      document.getElementById('clearCoordinates').onclick = function() {
+          document.getElementById('pac-input').value = '';
+          document.getElementById('id_latitude').value = '';
+          document.getElementById('id_longitude').value = '';
+      };
+  }
+</script>
+<!-- fim script toster -->
+<!-- Certifique-se de adicionar a chave API e chamar o initMap corretamente no callback -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADtX7byUDoLd6mnD4fuPB7GIe6IsJW6iE&libraries=places&callback=initMap" async defer></script>
+{% endblock %}

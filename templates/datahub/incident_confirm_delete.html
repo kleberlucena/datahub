@@ -1,0 +1,13 @@
+<!-- incident_confirm_delete.html -->
+{% extends "base/base.html" %}
+
+{% block content %}
+<div class="alert alert-danger" role="alert">
+    Para sua segurança, confirme a exclusão!
+</div>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Excluir</button>
+    <a href="{% url 'datahub:incident_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}
