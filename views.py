@@ -15,6 +15,7 @@ from django.db import transaction
 from .forms import IncidentForm, LocalFormSet, GunsFormSet, VehiclesFormSet, DrugFormSet, MoneyFormSet
 from django.forms import modelformset_factory
 from django.views.generic.edit import UpdateView
+from django.conf import settings
 
 
 class IndexView(TemplateView):
@@ -65,6 +66,9 @@ class create_incidentView(CreateView):
             context['money_form'] = MoneyForm()
         if 'drug_form' not in context:
             context['drug_form'] = DrugForm()
+
+        context['google_maps_api_key'] = settings.GOOGLE_MAPS_API_KEY
+
         return context
 
     def form_valid(self, form):
@@ -153,6 +157,8 @@ class IncidentUpdateView(UpdateView):
         if 'drug_form' not in context:
             context['drug_form'] = DrugForm(instance=Drug.objects.filter(incident=self.object).first())
 
+        context['google_maps_api_key'] = settings.GOOGLE_MAPS_API_KEY
+
         return context
 
     def form_valid(self, form):
@@ -209,8 +215,6 @@ class IncidentUpdateView(UpdateView):
             return self.render_to_response(self.get_context_data(form=form, local_form=local_form, guns_form=guns_form, vehicles_form=vehicles_form, money_form=money_form, drug_form=drug_form))
 
         return redirect(self.get_success_url())
-
-
 
 class IncidentDeleteView(DeleteView):
     model = Incident
