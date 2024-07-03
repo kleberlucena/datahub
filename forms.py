@@ -3,9 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.forms.models import inlineformset_factory
 from apps.georeference.models import Area, Category
-from django import forms
-from django.forms.models import inlineformset_factory
-from .models import Incident, Local, Guns, Vehicles, Drug, Money, DriRegion, NiIndication, SupportingNI, OccurrenceNature
+from .models import Incident, Local, Guns, Vehicles, Drug, Money, DriRegion, NiIndication, SupportingNI,  Arrestings, OccurrenceNature, OccurrenceNaturelist
 
 class IncidentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -17,7 +15,7 @@ class IncidentForm(forms.ModelForm):
 
     class Meta:
         model = Incident
-        fields = ['email_address', 'occurrence_date', 'dri_region', 'ni_area', 'ni_indication', 'ostensive_arresting', 'supporting_ni', 'occurrence_nature']
+        fields = ['email_address', 'occurrence_date', 'dri_region', 'ni_area', 'ni_indication', 'ostensive_arresting', 'supporting_ni']
         labels = {
             'email_address': 'Endereço de E-mail',
             'occurrence_date': 'Data da Ocorrência',
@@ -26,7 +24,7 @@ class IncidentForm(forms.ModelForm):
             'ni_indication': 'Ni responsável pela indicação',
             'ostensive_arresting': 'Ostensivo responsável pela prisão',
             'supporting_ni': 'NI que prestou apoio',
-            'occurrence_nature': 'Natureza da ocorrência',
+            #'occurrence_nature': 'Natureza da ocorrência',
         }
         widgets = {
             'email_address': forms.EmailInput(attrs={'class': 'form-control'}),
@@ -36,7 +34,6 @@ class IncidentForm(forms.ModelForm):
             'ni_indication': forms.SelectMultiple(attrs={'class': 'form-control'}),
             'ostensive_arresting': forms.SelectMultiple(attrs={'class': 'form-control'}),
             'supporting_ni': forms.SelectMultiple(attrs={'class': 'form-control'}),
-            'occurrence_nature': forms.Select(attrs={'class': 'form-control'}),
         }
           
 class LocalForm(forms.ModelForm):
@@ -158,10 +155,40 @@ class MoneyForm(forms.ModelForm):
             'amount': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
+class ArrestingsForm(forms.ModelForm):
+    class Meta:
+        model = Arrestings
+        fields = ['arrestings_minor', 'arrestings_adult', 'arrestings_mp']  
+        labels = {
+            'arrestings_minor': 'Apreensão em flagrante',
+            'arrestings_adult': 'Prisão em flagrante',
+            'arrestings_mp': 'Prisão por MP',
+        }
+        widgets = {
+            'arrestings_minor': forms.NumberInput(attrs={'class': 'form-control'}),
+            'arrestings_adult': forms.NumberInput(attrs={'class': 'form-control'}),
+            'arrestings_mp': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
+class OcurrencenatureForm(forms.ModelForm):
+    class Meta:
+        model = OccurrenceNature
+        fields = ['occurrence_nature']  
+        labels = {
+            'occurrence_nature': 'Natureza da Ocorrência',
+            
+        }
+        widgets = {
+            'occurrence_nature': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            
+        }
+
 LocalFormSet = inlineformset_factory(Incident, Local, form=LocalForm, can_delete=False, extra=1)
 GunsFormSet = inlineformset_factory(Incident, Guns, form=GunsForm, can_delete=False, extra=1)
 VehiclesFormSet = inlineformset_factory(Incident, Vehicles, form=VehiclesForm, can_delete=False, extra=1)
 DrugFormSet = inlineformset_factory(Incident, Drug, form=DrugForm, can_delete=False, extra=1)
 MoneyFormSet = inlineformset_factory(Incident, Money, form=MoneyForm, can_delete=False, extra=1)
+ArrestingsFormSet = inlineformset_factory(Incident, Arrestings, form=ArrestingsForm, can_delete=False, extra=1)
+OcurrencenatureFormSet = inlineformset_factory(Incident, OccurrenceNature, form=OcurrencenatureForm, can_delete=False, extra=1)
 
 

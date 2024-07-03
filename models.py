@@ -16,7 +16,7 @@ class OstensiveArresting(models.Model):
     def __str__(self):
         return self.name
 
-class OccurrenceNature(models.Model):
+class OccurrenceNaturelist(models.Model):
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -45,8 +45,8 @@ class Incident(models.Model):
     ni_indication = models.ManyToManyField(NiIndication, related_name="incidents")
     ostensive_arresting = models.ManyToManyField(OstensiveArresting, related_name="incidents")
     supporting_ni = models.ManyToManyField(SupportingNI, related_name="incidents")
-    occurrence_nature = models.ForeignKey(OccurrenceNature, on_delete=models.CASCADE, related_name="incidents")
-    
+        
+
 
     def save(self, *args, **kwargs):
         if not self.CCD_key:
@@ -129,3 +129,20 @@ class Money(models.Model):
 
     def __str__(self):
         return f'Money for Incident {self.incident.CCD_key}'
+
+class Arrestings(models.Model):
+    incident = models.ForeignKey(Incident, on_delete=models.CASCADE, related_name='arrestings')
+    arrestings_minor = models.IntegerField(default=0)
+    arrestings_adult = models.IntegerField(default=0)
+    arrestings_mp = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return f'Arrestings for Incident {self.incident.CCD_key}'
+
+
+class OccurrenceNature(models.Model):
+    incident = models.ForeignKey(Incident, on_delete=models.CASCADE, related_name='occurrencenature')
+    occurrence_nature = models.ManyToManyField(OccurrenceNaturelist, related_name='occurrencenature')
+        
+    def __str__(self):
+        return f'OccurrenceNature for Incident {self.incident.CCD_key}'

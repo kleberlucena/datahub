@@ -34,7 +34,7 @@
             <li class="list-group-item">Área NI: {{ incident.ni_area.name }}</li>
             <li class="list-group-item">NI da Equipe de Prisão: {% for ni in incident.ostensive_arresting.all %}{{ ni.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</li>
             <li class="list-group-item">NI de Apoio: {% for ni in incident.supporting_ni.all %}{{ ni.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</li>
-            <li class="list-group-item">Natureza da Ocorrência: {{ incident.occurrence_nature.name }}</li>
+            <li class="list-group-item">Natureza da Ocorrência: {% for nature in incident.occurrencenature.all %}{% for nature_item in nature.occurrence_nature.all %}{{ nature_item.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if not forloop.last %}, {% endif %}{% endfor %}</li>
         </ul>
     </div>
 

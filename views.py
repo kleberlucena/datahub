@@ -8,11 +8,9 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django_datatables_view.base_datatable_view import BaseDatatableView
-from . import models
-from .models import Incident, Local, Vehicles, Guns, Money, Drug
-from .forms import IncidentForm, LocalForm, VehiclesForm, GunsForm, MoneyForm, DrugForm
-from django.db import transaction
-from .forms import IncidentForm, LocalFormSet, GunsFormSet, VehiclesFormSet, DrugFormSet, MoneyFormSet
+from .models import Incident, Local, Vehicles, Guns, Money, Drug, Arrestings, OccurrenceNature, OccurrenceNaturelist
+from .forms import IncidentForm, LocalForm, ArrestingsForm, VehiclesForm, GunsForm, MoneyForm, DrugForm, OcurrencenatureForm
+from .forms import ArrestingsFormSet, LocalFormSet, GunsFormSet, VehiclesFormSet, DrugFormSet, MoneyFormSet, OcurrencenatureFormSet
 from django.forms import modelformset_factory
 from django.views.generic.edit import UpdateView
 from django.conf import settings
@@ -58,6 +56,8 @@ class create_incidentView(CreateView):
         context = super().get_context_data(**kwargs)
         if 'local_form' not in context:
             context['local_form'] = LocalForm()
+        if 'arrestings_form' not in context:
+            context['arrestings_form'] = ArrestingsForm()
         if 'guns_form' not in context:
             context['guns_form'] = GunsForm()
         if 'vehicles_form' not in context:
@@ -66,6 +66,8 @@ class create_incidentView(CreateView):
             context['money_form'] = MoneyForm()
         if 'drug_form' not in context:
             context['drug_form'] = DrugForm()
+        if 'occurrencenature_form' not in context:
+            context['occurrencenature_form'] = OcurrencenatureForm()
 
         context['google_maps_api_key'] = settings.GOOGLE_MAPS_API_KEY
 
@@ -123,7 +125,17 @@ class create_incidentView(CreateView):
         else:
             print(drug_form.errors)
             return self.render_to_response(self.get_context_data(form=form, local_form=local_form, guns_form=guns_form, vehicles_form=vehicles_form, money_form=money_form, drug_form=drug_form))
-
+        
+        # Processa o OccurrenceNatureForm
+        occurrencenature_form = OcurrencenatureForm(self.request.POST)
+        if occurrencenature_form.is_valid():
+            occurrencenature_instance = occurrencenature_form.save(commit=False)
+            occurrencenature_instance.incident = self.object
+            occurrencenature_instance.save()
+            occurrencenature_form.save_m2m()  # Salva as relações ManyToMany
+        else:
+            print(occurrencenature_form.errors)
+            return self.render_to_response(self.get_context_data(form=form, local_form=local_form, guns_form=guns_form, vehicles_form=vehicles_form, money_form=money_form, drug_form=drug_form, occurrencenature_form=occurrencenature_form))
         return redirect(self.get_success_url())
 
 class IncidentListView(ListView):
@@ -248,5 +260,6 @@ class IncidentDetailView(DetailView):
         context['vehicles'] = Vehicles.objects.filter(incident=incident).first()
         context['drug'] = Drug.objects.filter(incident=incident).first()
         context['money'] = Money.objects.filter(incident=incident).first()
+        context['occurrence_nature'] = OccurrenceNature.objects.filter(incident=incident).first()
         
         return context
